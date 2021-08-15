@@ -74,7 +74,7 @@ class SearchAndRunCli:
         )
         s.run("search_run export_configuration")
 
-    def register_clibpoard(self):
+    def register_clipboard(self):
         return RegisterNew().infer_from_clipboard()
 
     def register_snippet_clipboard(self):

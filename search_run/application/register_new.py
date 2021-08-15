@@ -10,8 +10,9 @@ from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
 from search_run.config import MAIN_FILE
-from search_run.domain.ask_question import AskQuestion
+from grimoire.ask_question import AskQuestion
 from search_run.domain.interpreter.base import BaseInterpreter
+from search_run.domain.interpreter.main import Interpreter
 
 from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
