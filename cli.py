@@ -7,7 +7,8 @@ from grimoire import s
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.desktop.dmenu import Dmenu
 from search_run.application.dmenu_run import DmenuRun
-from search_run.application.export_configuration import ExportConfiguration
+from search_run.export_configuration import ConfigurationExporter
+from search_run.ranking import Ranking
 from search_run.application.register_new import RegisterNew
 from search_run.application.run_key import RunKey
 from search_run.config import MAIN_FILE, PROJECT_ROOT
@@ -24,7 +25,11 @@ class SearchAndRunCli:
     SEARCH_LOG_FILE = "/tmp/search_and_run_log"
 
     def __init__(self):
-        self.exporter = ExportConfiguration
+        self.configuration_exporter = ConfigurationExporter
+        self.ranking = Ranking
+
+    def export_configuration(self, shortcuts=True):
+        self.configuration_exporter().export(shortcuts)
 
     def dmenu(self):
         DmenuRun().run(self._all_rows_cmd())
@@ -93,8 +98,6 @@ class SearchAndRunCli:
 
         Interpreter.build_instance().default(result)
 
-    def export_configuration(self, shortcuts=True):
-        self.exporter().export(shortcuts)
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         return RunKey().run(key, force_gui_mode, gui_mode, from_shortcut)
@@ -113,7 +116,7 @@ class SearchAndRunCli:
         s.run(f"tail -f " + SearchAndRunCli.SEARCH_LOG_FILE)
 
     def _all_rows_cmd(self):
-        configuration_file_name = ExportConfiguration.get_cached_file_name()
+        configuration_file_name = ConfigurationExporter.get_cached_file_name()
         cmd = f' cat "{configuration_file_name}" '
         return cmd
 
@@ -122,8 +125,6 @@ class SearchAndRunCli:
 
 
 if __name__ == "__main__":
-    from grimoire.startup import ApplicationStartup
 
-    ApplicationStartup().with_fire(SearchAndRunCli).log_to_file(
-        SearchAndRunCli.SEARCH_LOG_FILE
-    ).start()
+    from fire import Fire
+    Fire(SearchAndRunCli)

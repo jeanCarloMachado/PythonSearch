@@ -20,7 +20,7 @@ from grimoire.time import Date, date_from_str, is_today
 
 class RunKey:
     def __init__(self):
-        self.message_passing = MessageBroker("run_key_command_performed")
+        self.message_broker = MessageBroker("search_runs_executed")
 
     @tracer.wrap("run_key_entire_process")
     def run(self, key: Key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
@@ -30,10 +30,8 @@ class RunKey:
         if from_shortcut:
             send_notification(f"{key}")
 
-        event = RunExecuted(**{"key": key})
-        broker = MessageBroker("search_runs_executed")
-        # broker.register_consumer(DailyGmailUsageCounter().listen)
-        broker.produce(event.dict())
+        event = {"key": key, "from_shortcut": from_shortcut}
+        self.message_broker.produce(event)
 
         matches = self._matching_keys(key)
         if force_gui_mode or gui_mode:
@@ -93,9 +91,6 @@ class DailyGmailUsageCounter:
         result = int(self.redis.hget(f"search_run_statistics", "daily_gmail_usage"))
         return result
 
-
-class RunExecuted(BaseModel):
-    key: str
 
 
 class RunException(Exception):

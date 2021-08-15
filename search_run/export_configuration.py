@@ -6,9 +6,10 @@ from grimoire.file import file_exists, write_file
 from grimoire.search_run.search_run_config import Configuration
 from grimoire.shell import shell
 from grimoire.string import generate_identifier
+from search_run.ranking import Ranking
 
 
-class ExportConfiguration:
+class ConfigurationExporter:
     """
     Write to the file all the commands and generates shortcuts
     """
@@ -27,7 +28,7 @@ class ExportConfiguration:
     def get_cached_file_name():
         """singleton kind of method, will not initalize the configuration if it is already in cache"""
         if not file_exists(Configuration.cached_filename):
-            ExportConfiguration()._write_to_file()
+            ConfigurationExporter()._write_to_file()
 
         return Configuration.cached_filename
 
@@ -36,7 +37,7 @@ class ExportConfiguration:
         @todo cache this function
         """
         logging.info(f"Writing to file: {self.configuration.cached_filename}")
-        self.export_configuration_to_file()
+        Ranking().recompute_rank()
         self.generate_gnome_shortcuts()
         self.generate_i3_shortcuts()
 

@@ -51,13 +51,14 @@ class Interpreter:
         specific_interpreter: BaseInterpreter = self.get_interpreter(given_input)
         return specific_interpreter.interpret_clipboard()
 
+
     def get_interpreter(self, given_input: str) -> BaseInterpreter:
         self.context.set_input(given_input)
         """
         Returns the instance of the matched interpreter
         """
-        key = self._get_key(given_input)
-        self.message_passing.produce({"key": key})
+        key = self.get_key(given_input)
+        self.message_passing.produce({"key": key, "given_input": given_input})
 
         try:
             given_input = self._configuration.get_command(key)
@@ -65,6 +66,14 @@ class Interpreter:
             logging.error(e)
 
         return self._match_interpreter(given_input)
+
+    def get_key(self, given_input):
+        key_value = re.compile("([A-Za-z0-9 _-]+): (.*)")
+        matches_kv = key_value.search(given_input)
+        key = given_input
+        if matches_kv:
+            key = matches_kv.group(1)
+        return key
 
     def _match_interpreter(self, cmd):
         for interpreter in self.interpreters:
@@ -78,10 +87,3 @@ class Interpreter:
 
         raise Exception("Received a dict but did not match any type")
 
-    def _get_key(self, given_input):
-        key_value = re.compile("([A-Za-z0-9 _-]+): (.*)")
-        matches_kv = key_value.search(given_input)
-        key = given_input
-        if matches_kv:
-            key = matches_kv.group(1)
-        return key
