@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+print("New seearch_run![")
+
 from typing import Optional
 
 from grimoire import s
