@@ -1,4 +1,4 @@
-from search_run.domain import BaseConfiguration
+from search_run.domain.configuration import BaseConfiguration
 
 
 def build_config(given_commands):

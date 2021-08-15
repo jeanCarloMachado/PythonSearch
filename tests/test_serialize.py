@@ -2,10 +2,10 @@ import unittest
 
 import pytest
 
-from search_run.domain import Interpreter
+from search_run.domain.interpreter.main import Interpreter
 
 from search_run.domain.context import Context
-from search_run.tests.utils import build_config
+from tests.utils import build_config
 
 
 @pytest.mark.skipif(

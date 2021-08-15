@@ -12,7 +12,7 @@ from grimoire.notification import send_notification
 from search_run import MAIN_FILE
 from search_run.domain import AskQuestion
 from search_run.domain.interpreter.base import BaseInterpreter
-from search_run.domain import Interpreter
+
 from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
 

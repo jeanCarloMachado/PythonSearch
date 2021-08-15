@@ -13,7 +13,7 @@ from search_run.domain.interpreter.file import FileInterpreter
 from search_run.domain.interpreter.group import GroupInterpreter
 from search_run.domain.interpreter.snippet import SnippetInterpreter
 from search_run.domain.interpreter.url import UrlInterpreter
-from search_run.config import Configuration
+from grimoire.search_run.search_run_config import Configuration
 
 
 class Interpreter:

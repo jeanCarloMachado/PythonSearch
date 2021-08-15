@@ -9,7 +9,7 @@ from grimoire.desktop.dmenu import Dmenu
 from grimoire.desktop.window import Window
 from grimoire.logging import logging
 from grimoire.notification import send_notification
-from search_run.domain import Context
+from search_run.domain.context import Context
 from grimoire.shell import shell
 
 

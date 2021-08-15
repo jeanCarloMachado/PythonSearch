@@ -1,7 +1,7 @@
 import os
 from typing import Any
 
-from search_run.domain import Context
+from search_run.domain.context import Context
 from search_run.domain.interpreter.base import (
     BaseInterpreter,
     CommandDoNotMatchException,

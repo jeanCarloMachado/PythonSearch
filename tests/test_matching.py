@@ -1,13 +1,13 @@
 import unittest
 
-from search_run.domain import Interpreter
+from search_run.domain.interpreter.main import Interpreter
 from search_run.domain.interpreter.url import UrlInterpreter
 
 from search_run.domain.context import Context
-from search_run.domain.interpreter import CmdInterpreter
-from search_run.domain.interpreter import FileInterpreter
-from search_run.domain.interpreter import SnippetInterpreter
-from search_run.tests.utils import build_config
+from search_run.domain.interpreter.cmd import CmdInterpreter
+from search_run.domain.interpreter.file import FileInterpreter
+from search_run.domain.interpreter.snippet import SnippetInterpreter
+from tests.utils import build_config
 
 
 class MatchingTestCase(unittest.TestCase):
