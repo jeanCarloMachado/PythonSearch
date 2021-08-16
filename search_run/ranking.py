@@ -21,6 +21,9 @@ class Ranking:
 
     @notify_execution()
     def recompute_rank(self, generate_shortcuts=True):
+        """
+            Recomputes the rank and saves the results on the file to be read
+        """
         with open('/data/grimoire/message_topics/run_key_command_performed') as f:
             data = []
             for line in f.readlines():
@@ -42,9 +45,9 @@ class Ranking:
 
         data = last_active_items + list(items_dict.items())
 
-        return self.export_configuration_to_file(data)
+        return self._export_to_file(data)
 
-    def export_configuration_to_file(self, data):
+    def _export_to_file(self, data):
         fzf_lines = ""
         for name, content in data:
             fzf_lines += f"{name.lower()}: {content}\n"
