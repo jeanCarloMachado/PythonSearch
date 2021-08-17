@@ -72,6 +72,7 @@ class Ranking:
 
 
         result = []
+        used_keys = []
         for position in range(0, total_items):
 
             if position % 2 == 0 and len(sorted_used_items_score) > 0:
@@ -79,7 +80,11 @@ class Ranking:
             else:
                 key = sorted_natural_position_score.pop(0)
 
+            if key in used_keys:
+                continue
+
             result.append((key, items_dict[key]))
+            used_keys.append(key)
 
 
 
