@@ -31,21 +31,59 @@ class Ranking:
                     data.append(json.loads(line))
                 except Exception as e:
                     print(f"Line broken: {line}")
-            df = pd.DataFrame(data)
-            df = df.iloc[::-1]
-            last_active_keys = df['key'].drop_duplicates().head(50).tolist()
 
 
         items_dict = self.configuration.commands
-        last_active_items = [(i, items_dict[i]) for i in last_active_keys if i in items_dict]
 
-        for key in last_active_keys:
-            if key in items_dict:
-                del items_dict[key]
+        df = pd.DataFrame(data)
+        df = df.iloc[::-1]
+        used_items = df['key'].tolist()
 
-        data = last_active_items + list(items_dict.items())
 
-        return self._export_to_file(data)
+
+        # linear decay for use
+        #used_items = used_items[0:1000]
+        total_used_items = len(used_items)
+        scores_used_items = {}
+        for position, key in enumerate(used_items):
+            if key not in items_dict:
+                continue
+
+            score = (total_used_items - position) / total_used_items
+
+            if key in scores_used_items:
+                aggregation = score + (scores_used_items[key]  * (1/position))
+                score = aggregation if aggregation < 1 else 1
+
+            scores_used_items[key] = score
+        sorted_used_items_score = sorted(scores_used_items, key=scores_used_items.get, reverse=True)
+
+
+
+        #quadratic decay for position
+        total_items = len(items_dict)
+        natural_position_scored = {}
+        for position, (key, value) in enumerate(items_dict.items()):
+
+            natural_position_scored[key] = total_items / (total_items + position)
+
+        sorted_natural_position_score = sorted(natural_position_scored, key=natural_position_scored.get, reverse=True)
+
+
+
+        result = []
+        for position in range(0, total_items):
+
+            if position % 2 == 0 and len(sorted_used_items_score) > 0:
+                key = sorted_used_items_score.pop(0)
+            else:
+                key = sorted_natural_position_score.pop(0)
+
+            result.append((key, items_dict[key]))
+
+
+
+        return self._export_to_file(result)
 
     def _export_to_file(self, data):
         fzf_lines = ""
