@@ -16,7 +16,7 @@ class Ranking:
     """
 
     def __init__(self):
-        self.configuration = Configuration()
+        self.configuration = Configuration
         self.cached_file = Configuration.cached_filename
 
     @notify_execution()
@@ -33,7 +33,7 @@ class Ranking:
                     print(f"Line broken: {line}")
 
 
-        items_dict = self.configuration.commands
+        items_dict = self.configuration().commands
 
         df = pd.DataFrame(data)
         df = df.iloc[::-1]
@@ -71,9 +71,18 @@ class Ranking:
 
 
 
+
+        result = self.cyclical_placment(items_dict, sorted_used_items_score, sorted_natural_position_score)
+
+
+        return self._export_to_file(result)
+
+    def cyclical_placment(self, items_dict, sorted_used_items_score, sorted_natural_position_score):
         result = []
         used_keys = []
-        for position in range(0, total_items):
+        total_items = len(items_dict)
+        position =0
+        while len(sorted_natural_position_score) > 0:
 
             if position % 2 == 0 and len(sorted_used_items_score) > 0:
                 key = sorted_used_items_score.pop(0)
@@ -85,10 +94,10 @@ class Ranking:
 
             result.append((key, items_dict[key]))
             used_keys.append(key)
+            position = position + 1
 
+        return result
 
-
-        return self._export_to_file(result)
 
     def _export_to_file(self, data):
         fzf_lines = ""
