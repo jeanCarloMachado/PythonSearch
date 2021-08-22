@@ -56,7 +56,6 @@ class Interpreter:
         specific_interpreter: BaseInterpreter = self.get_interpreter(given_input)
         return specific_interpreter.interpret_clipboard()
 
-
     def get_interpreter(self, given_input: str) -> BaseInterpreter:
         """
         Returns the instance of the matched interpreter given an text input
@@ -92,4 +91,3 @@ class Interpreter:
                 pass
 
         raise Exception("Received a dict but did not match any type")
-

@@ -1,4 +1,7 @@
 class BaseConfiguration:
+    """
+    Base business entity that all other enttities depend upon
+    """
     cached_filename = "/tmp/search_and_run_configuration_cached"
     commands: dict = {}
 

@@ -91,7 +91,6 @@ class DailyGmailUsageCounter:
         return result
 
 
-
 class RunException(Exception):
     @staticmethod
     def key_does_not_match(key: Key, matches: List[Key]):

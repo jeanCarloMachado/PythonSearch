@@ -3,8 +3,8 @@ import logging
 from grimoire.decorators import notify_execution
 from grimoire.desktop.shortcut import Shortcut
 from grimoire.file import file_exists, write_file
-from grimoire.search_run.search_run_config import Configuration
 from grimoire.shell import shell
+from search_run.configuration import BaseConfiguration
 from grimoire.string import generate_identifier
 from search_run.ranking import Ranking
 
@@ -14,8 +14,8 @@ class ConfigurationExporter:
     Write to the file all the commands and generates shortcuts
     """
 
-    def __init__(self):
-        self.configuration = Configuration()
+    def __init__(self, configuration : BaseConfiguration):
+        self.configuration = configuration
         self.shortcut = Shortcut()
         self.generate_shortcuts = True
 
@@ -24,13 +24,12 @@ class ConfigurationExporter:
         self.generate_shortcuts = generate_shortcuts
         self._write_to_file()
 
-    @staticmethod
-    def get_cached_file_name():
+    def get_cached_file_name(self):
         """singleton kind of method, will not initalize the configuration if it is already in cache"""
-        if not file_exists(Configuration.cached_filename):
+        if not file_exists(self.configuration.cached_filename):
             ConfigurationExporter()._write_to_file()
 
-        return Configuration.cached_filename
+        return self.configuration.cached_filename
 
     def _write_to_file(self):
         """

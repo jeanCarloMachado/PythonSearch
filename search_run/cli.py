@@ -13,16 +13,15 @@ from search_run.ranking import Ranking
 
 class SearchAndRunCli:
     """
-    Converts a dict in the format: {"keyIdentifer: {commandDetails, "keyIndentifier2": {commandDetails}
-    to executable magic in python
+    Entrypoint of the application
     """
 
     SEARCH_LOG_FILE = "/tmp/search_and_run_log"
 
-    def __init__(self, application_name='default', data=None):
-        self.configuration_exporter = ConfigurationExporter
+    def __init__(self, configuration):
+        self.configuration = configuration
+        self.configuration_exporter = ConfigurationExporter(self.configuration)
         self.ranking = Ranking
-        self.application_name = application_name
 
     def export_configuration(self, shortcuts=True):
         self.configuration_exporter().export(shortcuts)
@@ -64,7 +63,6 @@ class SearchAndRunCli:
         self.edit_config(file, line)
 
     def edit_config(self, file_name: Optional[str] = None, line: Optional[int] = None):
-
         if not file_name:
             file_name = MAIN_FILE
         if not line:
@@ -91,8 +89,10 @@ class SearchAndRunCli:
     def tail_log(self):
         s.run(f"tail -f " + SearchAndRunCli.SEARCH_LOG_FILE)
 
-    def _all_rows_cmd(self):
-        configuration_file_name = ConfigurationExporter.get_cached_file_name()
+    def _all_rows_cmd(self) -> str:
+        """ returns the shell command to perform to get all rows_cmd
+         and generates the side-effect of createing a new cache file if it does not exist """
+        configuration_file_name = self.configuration_exporter.get_cached_file_name()
         cmd = f' cat "{configuration_file_name}" '
         return cmd
 

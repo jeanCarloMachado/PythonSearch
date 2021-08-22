@@ -10,8 +10,8 @@ class DmenuRun:
     Opens dmenu, gets a string and interprets it
 
     """
-    def run(self, cmd_get_rows):
 
+    def run(self, cmd_get_rows):
         @tracer.wrap("render_dmenu_options")
         def select_option():
             ui = Dmenu(title="Search run:")
