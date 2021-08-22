@@ -1,1 +1,0 @@
-/home/jean/projects/grimoire/grimoire/search_run/search_run_config.py
