@@ -81,25 +81,12 @@ class SearchAndRunCli:
     def register_snippet_clipboard(self):
         return RegisterNew().snippet_from_clipboard()
 
-    def fzf(self):
-        ui = Dmenu()
-        result = ui.fzf(self._all_rows_cmd())
-
-        Interpreter.build_instance().default(result)
-
-
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         return RunKey().run(key, force_gui_mode, gui_mode, from_shortcut)
 
     def r(self, key):
         """ Shorter verion of run key for when lazy"""
         return self.run_key(key)
-
-    def repeat_last_run(self):
-        from grimoire.event_sourcing.message import MessageBroker
-
-        message = MessageBroker("run_key_command_performed").consume_last()
-        self.run_key(message["key"])
 
     def tail_log(self):
         s.run(f"tail -f " + SearchAndRunCli.SEARCH_LOG_FILE)

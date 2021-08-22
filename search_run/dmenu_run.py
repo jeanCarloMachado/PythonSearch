@@ -7,12 +7,10 @@ from search_run.interpreter.main import Interpreter
 
 class DmenuRun:
     """
-    Main entry point of the application
     Opens dmenu, gets a string and interprets it
 
     """
     def run(self, cmd_get_rows):
-        # @todo manage to get the rows from inside this application rather than having it passed
 
         @tracer.wrap("render_dmenu_options")
         def select_option():
@@ -26,6 +24,4 @@ class DmenuRun:
             return
 
         Context.get_instance().enable_gui_mode()
-
-
         Interpreter.build_instance().default(text_input)
