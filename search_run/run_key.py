@@ -5,13 +5,12 @@ import re
 from typing import List
 
 from ddtrace import tracer
-from pydantic import BaseModel
 
 from grimoire.databases.redis import get_redis
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
-from search_run.domain.context import Context
-from search_run.domain.interpreter.main import Interpreter
+from search_run.context import Context
+from search_run.interpreter.main import Interpreter
 
 from grimoire.search_run.search_run_config import Configuration
 from grimoire.string import generate_identifier

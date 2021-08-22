@@ -2,9 +2,9 @@ import unittest
 
 import pytest
 
-from search_run.domain.interpreter.main import Interpreter
+from search_run.interpreter.main import Interpreter
 
-from search_run.domain.context import Context
+from search_run.context import Context
 from tests.utils import build_config
 
 

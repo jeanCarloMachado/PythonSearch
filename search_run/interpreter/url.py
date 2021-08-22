@@ -1,11 +1,11 @@
 import logging
 
 from grimoire.desktop.browser import Browser
-from search_run.domain.interpreter.base import (
+from search_run.interpreter.base import (
     BaseInterpreter,
     CommandDoNotMatchException,
 )
-from search_run.domain.interpreter.cmd import CmdInterpreter
+from search_run.interpreter.cmd import CmdInterpreter
 from grimoire.string import Url
 
 

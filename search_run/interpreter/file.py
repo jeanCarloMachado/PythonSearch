@@ -1,12 +1,12 @@
 import os
 from typing import Any
 
-from search_run.domain.context import Context
-from search_run.domain.interpreter.base import (
+from search_run.context import Context
+from search_run.interpreter.base import (
     BaseInterpreter,
     CommandDoNotMatchException,
 )
-from search_run.domain.interpreter.cmd import CmdInterpreter
+from search_run.interpreter.cmd import CmdInterpreter
 
 
 class FileInterpreter(BaseInterpreter):

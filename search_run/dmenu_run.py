@@ -1,8 +1,8 @@
 from ddtrace import tracer
 
 from grimoire.desktop.dmenu import Dmenu
-from search_run.domain.context import Context
-from search_run.domain.interpreter.main import Interpreter
+from search_run.context import Context
+from search_run.interpreter.main import Interpreter
 
 
 class DmenuRun:

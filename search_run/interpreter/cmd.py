@@ -2,8 +2,8 @@ import logging
 
 from grimoire.desktop.terminal import Terminal
 from grimoire.notification import send_notification
-from search_run.domain.context import Context
-from search_run.domain.interpreter.base import (
+from search_run.context import Context
+from search_run.interpreter.base import (
     BaseInterpreter,
     CommandDoNotMatchException,
 )

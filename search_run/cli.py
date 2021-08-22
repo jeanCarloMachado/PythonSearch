@@ -2,11 +2,11 @@ from typing import Optional
 
 from grimoire.desktop.dmenu import Dmenu
 from grimoire.shell import shell
-from search_run.application.dmenu_run import DmenuRun
-from search_run.application.register_new import RegisterNew
-from search_run.application.run_key import RunKey
+from search_run.dmenu_run import DmenuRun
+from search_run.register_new import RegisterNew
+from search_run.run_key import RunKey
 from search_run.config import PROJECT_ROOT, MAIN_FILE
-from search_run.domain.interpreter.main import Interpreter
+from search_run.interpreter.main import Interpreter
 from search_run.export_configuration import ConfigurationExporter
 from search_run.ranking import Ranking
 

@@ -1,5 +1,5 @@
 from grimoire.desktop.clipboard import Clipboard
-from search_run.domain.interpreter.base import (
+from search_run.interpreter.base import (
     BaseInterpreter,
     CommandDoNotMatchException,
 )

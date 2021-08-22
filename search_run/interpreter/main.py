@@ -3,16 +3,16 @@ import re
 from loguru import logger as logging
 
 from grimoire.event_sourcing.message import MessageBroker
-from search_run.domain.context import Context
-from search_run.domain.interpreter.base import (
+from search_run.context import Context
+from search_run.interpreter.base import (
     BaseInterpreter,
     CommandDoNotMatchException,
 )
-from search_run.domain.interpreter.cmd import CmdInterpreter
-from search_run.domain.interpreter.file import FileInterpreter
-from search_run.domain.interpreter.group import GroupInterpreter
-from search_run.domain.interpreter.snippet import SnippetInterpreter
-from search_run.domain.interpreter.url import UrlInterpreter
+from search_run.interpreter.cmd import CmdInterpreter
+from search_run.interpreter.file import FileInterpreter
+from search_run.interpreter.group import GroupInterpreter
+from search_run.interpreter.snippet import SnippetInterpreter
+from search_run.interpreter.url import UrlInterpreter
 from grimoire.search_run.search_run_config import Configuration
 
 

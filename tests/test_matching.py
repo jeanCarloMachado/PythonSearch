@@ -1,12 +1,12 @@
 import unittest
 
-from search_run.domain.interpreter.main import Interpreter
-from search_run.domain.interpreter.url import UrlInterpreter
+from search_run.interpreter.main import Interpreter
+from search_run.interpreter.url import UrlInterpreter
 
-from search_run.domain.context import Context
-from search_run.domain.interpreter.cmd import CmdInterpreter
-from search_run.domain.interpreter.file import FileInterpreter
-from search_run.domain.interpreter.snippet import SnippetInterpreter
+from search_run.context import Context
+from search_run.interpreter.cmd import CmdInterpreter
+from search_run.interpreter.file import FileInterpreter
+from search_run.interpreter.snippet import SnippetInterpreter
 from tests.utils import build_config
 
 
