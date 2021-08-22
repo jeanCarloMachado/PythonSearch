@@ -7,8 +7,10 @@ from search_run.register_new import RegisterNew
 from search_run.run_key import RunKey
 from search_run.config import PROJECT_ROOT, MAIN_FILE
 from search_run.interpreter.main import Interpreter
+from search_run.configuration import BaseConfiguration
 from search_run.export_configuration import ConfigurationExporter
 from search_run.ranking import Ranking
+from grimoire import s
 
 
 class SearchAndRunCli:
@@ -18,7 +20,7 @@ class SearchAndRunCli:
 
     SEARCH_LOG_FILE = "/tmp/search_and_run_log"
 
-    def __init__(self, configuration):
+    def __init__(self, configuration : Optional[BaseConfiguration] = None):
         self.configuration = configuration
         self.configuration_exporter = ConfigurationExporter(self.configuration)
         self.ranking = Ranking
