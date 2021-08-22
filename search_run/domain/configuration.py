@@ -3,6 +3,7 @@ class BaseConfiguration:
     commands: dict = {}
 
     def get_command(self, given_key):
+        """ Returns command value based on the key name, must match 11"""
         given_key = given_key.lower()
         for key, value in self.commands.items():
             if key.lower() == given_key:

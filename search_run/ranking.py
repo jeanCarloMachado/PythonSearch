@@ -24,20 +24,10 @@ class Ranking:
         """
             Recomputes the rank and saves the results on the file to be read
         """
-        with open('/data/grimoire/message_topics/run_key_command_performed') as f:
-            data = []
-            for line in f.readlines():
-                try:
-                    data.append(json.loads(line))
-                except Exception as e:
-                    print(f"Line broken: {line}")
 
-
-        items_dict = self.configuration().commands
-
-        df = pd.DataFrame(data)
-        df = df.iloc[::-1]
+        df = self.load_dataset()
         used_items = df['key'].tolist()
+        items_dict = self.configuration().commands
 
 
 
@@ -76,6 +66,23 @@ class Ranking:
 
 
         return self._export_to_file(result)
+
+    def load_dataset(self):
+
+        with open('/data/grimoire/message_topics/run_key_command_performed') as f:
+            data = []
+            for line in f.readlines():
+                try:
+                    data.append(json.loads(line))
+                except Exception as e:
+                    print(f"Line broken: {line}")
+        df = pd.DataFrame(data)
+
+        # revert the list (latest on top)
+        df = df.iloc[::-1]
+
+        return df
+
 
     def cyclical_placment(self, items_dict, sorted_used_items_score, sorted_natural_position_score):
         result = []

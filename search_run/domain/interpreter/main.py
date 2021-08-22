@@ -44,7 +44,12 @@ class Interpreter:
         ]
 
     def default(self, given_input: str):
+        """
+        Applies the default behaviour to an interpreter
+        """
+
         specific_interpreter = self.get_interpreter(given_input)
+
         return specific_interpreter.default()
 
     def clipboard(self, given_input: str):
@@ -53,10 +58,11 @@ class Interpreter:
 
 
     def get_interpreter(self, given_input: str) -> BaseInterpreter:
+        """
+        Returns the instance of the matched interpreter given an text input
+        """
         self.context.set_input(given_input)
-        """
-        Returns the instance of the matched interpreter
-        """
+
         key = self.get_key(given_input)
         self.message_passing.produce({"key": key, "given_input": given_input})
 

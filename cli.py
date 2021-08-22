@@ -85,13 +85,6 @@ class SearchAndRunCli:
     def register_snippet_clipboard(self):
         return RegisterNew().snippet_from_clipboard()
 
-    def interpret_clipboard(self):
-        """
-        Rather than opening-dmenu sends the content of the clipboard for the interpreter
-
-        """
-        Interpreter.build_instance().default(Clipboard().get_content())
-
     def fzf(self):
         ui = Dmenu()
         result = ui.fzf(self._all_rows_cmd())

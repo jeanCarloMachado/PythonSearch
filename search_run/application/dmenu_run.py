@@ -3,7 +3,6 @@ from ddtrace import tracer
 from grimoire.desktop.dmenu import Dmenu
 from search_run.domain.context import Context
 from search_run.domain.interpreter.main import Interpreter
-from grimoire.event_sourcing.message import MessageBroker
 
 
 class DmenuRun:
@@ -12,8 +11,9 @@ class DmenuRun:
     Opens dmenu, gets a string and interprets it
 
     """
-    # @todo manage to get the rows from inside this application rather than having it passed
     def run(self, cmd_get_rows):
+        # @todo manage to get the rows from inside this application rather than having it passed
+
         @tracer.wrap("render_dmenu_options")
         def select_option():
             ui = Dmenu(title="Search run:")
