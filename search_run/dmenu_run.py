@@ -12,12 +12,8 @@ class DmenuRun:
     """
 
     def run(self, cmd_get_rows):
-        @tracer.wrap("render_dmenu_options")
-        def select_option():
-            ui = Dmenu(title="Search run:")
-            return ui.rofi(cmd_get_rows)
 
-        text_input = select_option()
+        text_input = self._select_option(cmd_get_rows)
 
         if not text_input:
             print("No content, returning")
@@ -25,3 +21,9 @@ class DmenuRun:
 
         Context.get_instance().enable_gui_mode()
         Interpreter.build_instance().default(text_input)
+
+
+    @tracer.wrap("render_dmenu_options")
+    def _select_option(self, cmd_get_rows):
+        ui = Dmenu(title="Search run:")
+        return ui.rofi(cmd_get_rows)

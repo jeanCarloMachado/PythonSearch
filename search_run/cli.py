@@ -26,7 +26,7 @@ class SearchAndRunCli:
         self.ranking = Ranking
 
     def export_configuration(self, shortcuts=True):
-        self.configuration_exporter().export(shortcuts)
+        self.configuration_exporter.export(shortcuts)
 
     def dmenu(self):
         DmenuRun().run(self._all_rows_cmd())
@@ -92,7 +92,7 @@ class SearchAndRunCli:
         s.run(f"tail -f " + SearchAndRunCli.SEARCH_LOG_FILE)
 
     def _all_rows_cmd(self) -> str:
-        """ returns the shell command to perform to get all rows_cmd
+        """ returns the shell command to perform to get all get_options_cmd
          and generates the side-effect of createing a new cache file if it does not exist """
         configuration_file_name = self.configuration_exporter.get_cached_file_name()
         cmd = f' cat "{configuration_file_name}" '
