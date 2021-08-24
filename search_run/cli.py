@@ -28,8 +28,11 @@ class SearchAndRunCli:
     def export_configuration(self, shortcuts=True):
         self.configuration_exporter.export(shortcuts)
 
-    def dmenu(self):
+    def search(self):
         Search().run(self._all_rows_cmd())
+
+    def dmenu(self):
+        self.search()
 
     def dmenu_clipboard(self):
         """
