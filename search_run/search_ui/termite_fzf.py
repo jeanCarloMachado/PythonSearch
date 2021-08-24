@@ -8,35 +8,26 @@ from search_run.exceptions import MenuException
 from search_run.search_ui.interface import SearchInterface, SearchResult
 
 
-class Rofi(SearchInterface):
+class TermiteFzf(SearchInterface):
+    """
+    Renders the search ui using the termite terminal + fzf
+    """
     def __init__(
-            self, title="Run: "
+            self, title="RunT: "
     ):
         self.title = title
 
     def run(
-            self, cmd: Optional[str] = None
-    ) -> str:
+            self, cmd: str
+    ) -> (str, str):
 
-        entries_cmd = ""
 
         # Tried things that did not work:
-        rofi_cmd = f"""{entries_cmd} nice -19 rofi\
-          -width 1000\
-          -no-filter\
-          -no-lazy-grab -i\
-          -show-match\
-          -no-sort\
-          -dpi 120\
-          -no-levenshtein-sort\
-          -sorting-method fzf\
-          -dmenu\
-          -p '{self.title}'"""
-
-        rofi_cmd = f"{cmd} | {rofi_cmd}"
+        termite_cmd = f"""termite --title=launcher -e "bash -c '{cmd} | fzf --print-query '"
+        """
 
         try:
-            result = s.check_output(rofi_cmd)
+            result = s.check_output(termite_cmd)
         except CalledProcessError:
             return None
 
@@ -46,6 +37,6 @@ class Rofi(SearchInterface):
         if emptish(result):
             raise MenuException.given_empty_value()
 
-        return SearchResult(result=result, query="")
+        return SearchResult(result)
 
 
