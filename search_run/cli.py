@@ -2,7 +2,7 @@ from typing import Optional
 
 from grimoire.desktop.dmenu import Dmenu
 from grimoire.shell import shell
-from search_run.dmenu_run import DmenuRun
+from search_run.search import Search
 from search_run.register_new import RegisterNew
 from search_run.run_key import RunKey
 from search_run.config import PROJECT_ROOT, MAIN_FILE
@@ -29,7 +29,7 @@ class SearchAndRunCli:
         self.configuration_exporter.export(shortcuts)
 
     def dmenu(self):
-        DmenuRun().run(self._all_rows_cmd())
+        Search().run(self._all_rows_cmd())
 
     def dmenu_clipboard(self):
         """

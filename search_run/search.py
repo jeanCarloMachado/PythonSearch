@@ -1,11 +1,11 @@
 from ddtrace import tracer
 
-from grimoire.desktop.dmenu import Dmenu
+from search_run.search_ui.rofi import Rofi
 from search_run.context import Context
 from search_run.interpreter.main import Interpreter
 
 
-class DmenuRun:
+class Search:
     """
     Opens dmenu, gets a string and interprets it
 
@@ -25,5 +25,5 @@ class DmenuRun:
 
     @tracer.wrap("render_dmenu_options")
     def _select_option(self, cmd_get_rows):
-        ui = Dmenu(title="Search run:")
-        return ui.rofi(cmd_get_rows)
+        ui = Rofi(title="Search")
+        return ui.run(cmd_get_rows)
