@@ -23,13 +23,13 @@ class TermiteFzf(SearchInterface):
 
 
         # Tried things that did not work:
-        termite_cmd = f"""termite --title=launcher -e "bash -c '{cmd} | fzf --print-query '"
+        termite_cmd = f"""termite --title=launcher -e "bash -c '{cmd} | \
+        fzf --reverse --exact --no-sort --print-query  \
+        > /tmp/termite_result'"
         """
 
-        try:
-            result = s.check_output(termite_cmd)
-        except CalledProcessError:
-            return None
+        s.run(termite_cmd)
+        result : str = s.check_output('cat /tmp/termite_result')
 
         logging.info(f"Rofi result: {result}")
 
@@ -37,6 +37,7 @@ class TermiteFzf(SearchInterface):
         if emptish(result):
             raise MenuException.given_empty_value()
 
-        return SearchResult(result)
+        result_lines = result.splitlines()
+        return SearchResult(result=result_lines[1], query=result_lines[0])
 
 

@@ -6,5 +6,5 @@ from  search_run.search_ui.rofi import Rofi
 class UIFactory:
     @staticmethod
     def get_instance() -> SearchInterface:
-        return Rofi()
-        #return TermiteFzf()
+        #return Rofi()
+        return TermiteFzf()
