@@ -4,6 +4,7 @@ from loguru import logger as logging
 
 from grimoire.event_sourcing.message import MessageBroker
 from search_run.context import Context
+from search_run.events import SearchPerformed
 from search_run.interpreter.base import (
     BaseInterpreter,
 )
@@ -14,6 +15,7 @@ from search_run.interpreter.group import GroupInterpreter
 from search_run.interpreter.snippet import SnippetInterpreter
 from search_run.interpreter.url import UrlInterpreter
 from grimoire.search_run.search_run_config import Configuration
+from search_run.entities import SearchResult
 
 
 class Interpreter:
@@ -34,7 +36,6 @@ class Interpreter:
         self._configuration: Configuration = configuration
         self.context = context
         self.context.set_interpreter(self)
-        self.message_passing = MessageBroker("run_key_command_performed")
         self.interpreters = [
             UrlInterpreter,
             FileInterpreter,
@@ -61,9 +62,7 @@ class Interpreter:
         Returns the instance of the matched interpreter given an text input
         """
         self.context.set_input(given_input)
-
         key = self.get_key(given_input)
-        self.message_passing.produce({"key": key, "given_input": given_input})
 
         try:
             given_input = self._configuration.get_command(key)
@@ -72,7 +71,13 @@ class Interpreter:
 
         return self._match_interpreter(given_input)
 
+
     def get_key(self, given_input):
+        """
+        @deprecated use it from searchresult instead
+        :param given_input:
+        :return:
+        """
         key_value = re.compile("([A-Za-z0-9 _-]+): (.*)")
         matches_kv = key_value.search(given_input)
         key = given_input

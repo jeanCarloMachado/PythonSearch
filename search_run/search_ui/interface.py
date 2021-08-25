@@ -1,9 +1,7 @@
-from typing import Optional, NamedTuple
+from typing import Optional
 
+from search_run.entities import SearchResult
 
-class SearchResult(NamedTuple):
-    result: str
-    query: Optional[str]
 
 class SearchInterface:
     def run(self, cmd: str) -> Optional[SearchResult]:

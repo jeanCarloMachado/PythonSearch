@@ -3,7 +3,8 @@ import logging
 from grimoire.shell import shell as s
 from grimoire.string import chomp, emptish
 from search_run.exceptions import MenuException
-from search_run.search_ui.interface import SearchInterface, SearchResult
+from search_run.search_ui.interface import SearchInterface
+from search_run.entities import SearchResult
 
 
 class FzfInTerminal(SearchInterface):
