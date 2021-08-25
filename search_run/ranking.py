@@ -1,11 +1,7 @@
-import logging
 
 from grimoire.decorators import notify_execution
-from grimoire.desktop.shortcut import Shortcut
 from grimoire.file import file_exists, write_file
 from grimoire.search_run.search_run_config import Configuration
-from grimoire.shell import shell
-from grimoire.string import generate_identifier
 import pandas as pd
 import json
 

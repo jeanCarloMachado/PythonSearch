@@ -4,7 +4,7 @@ class BaseConfiguration:
     """
 
     # the location of the dumped index
-    _cached_filename : str = "/tmp/search_and_run_configuration_cached"
+    cached_filename : str = "/tmp/search_and_run_configuration_cached"
     commands: dict = {}
 
     def __init__(self):
@@ -52,4 +52,4 @@ class BaseConfiguration:
             self.commands = {**self.commands, **cmd_items}
 
     def get_cached_filename(self):
-        return self._cached_filename
+        return self.cached_filename

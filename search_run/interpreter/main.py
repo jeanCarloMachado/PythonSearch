@@ -2,9 +2,7 @@ import re
 
 from loguru import logger as logging
 
-from grimoire.event_sourcing.message import MessageBroker
 from search_run.context import Context
-from search_run.events import SearchPerformed
 from search_run.interpreter.base import (
     BaseInterpreter,
 )
@@ -15,7 +13,6 @@ from search_run.interpreter.group import GroupInterpreter
 from search_run.interpreter.snippet import SnippetInterpreter
 from search_run.interpreter.url import UrlInterpreter
 from grimoire.search_run.search_run_config import Configuration
-from search_run.entities import SearchResult
 
 
 class Interpreter:
