@@ -4,8 +4,8 @@ from typing import Any
 from search_run.context import Context
 from search_run.interpreter.base import (
     BaseInterpreter,
-    CommandDoNotMatchException,
 )
+from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.cmd import CmdInterpreter
 
 

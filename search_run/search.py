@@ -8,9 +8,7 @@ from search_run.interpreter.main import Interpreter
 class Search:
     """
     Opens dmenu, gets a string and interprets it
-
     """
-
     def run(self, cmd_get_rows):
 
         text_input = self._select_option(cmd_get_rows)

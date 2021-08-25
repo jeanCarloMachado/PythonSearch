@@ -26,21 +26,21 @@ class ConfigurationExporter:
 
     def get_cached_file_name(self):
         """singleton kind of method, will not initalize the configuration if it is already in cache"""
-        if not file_exists(self.configuration.cached_filename):
+        if not file_exists(self.configuration.get_cached_filename()):
             ConfigurationExporter()._write_to_file()
 
-        return self.configuration.cached_filename
+        return self.configuration.get_cached_filename()
 
     def _write_to_file(self):
         """
         @todo cache this function
         """
-        logging.info(f"Writing to file: {self.configuration.cached_filename}")
+        logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
         Ranking().recompute_rank()
-        self.generate_gnome_shortcuts()
+        #self.generate_gnome_shortcuts()
         self.generate_i3_shortcuts()
 
-        return self.configuration.cached_filename
+        return self.configuration.get_cached_filename()
 
     @notify_execution()
     def generate_i3_shortcuts(self):
@@ -86,4 +86,4 @@ class ConfigurationExporter:
         for name, content in list(self.configuration.commands.items()):
             fzf_lines += f"{name.lower()}: {content}\n"
 
-        write_file(self.configuration.cached_filename, fzf_lines)
+        write_file(self.configuration.get_cached_filename(), fzf_lines)

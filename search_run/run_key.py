@@ -6,7 +6,6 @@ from typing import List
 
 from ddtrace import tracer
 
-from grimoire.databases.redis import get_redis
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
 from search_run.context import Context
@@ -14,8 +13,6 @@ from search_run.interpreter.main import Interpreter
 
 from grimoire.search_run.search_run_config import Configuration
 from grimoire.string import generate_identifier
-from grimoire.time import Date, date_from_str, is_today
-
 
 class RunKey:
     def __init__(self):
@@ -60,37 +57,6 @@ class RunKey:
 
 
 Key = str
-
-
-class DailyGmailUsageCounter:
-    def __init__(self):
-        self.redis = get_redis()
-
-    def listen(self, event):
-        previous_str: str = self.redis.hget(
-            f"search_run_statistics", "daily_gmail_usage"
-        )
-        previous: int = 0 if not previous_str else int(previous_str)
-
-        latest_usage_str = self.redis.hget(
-            f"search_run_statistics", "latest_gmail_usage"
-        )
-        latest_usage = date_from_str(latest_usage_str)
-        if not is_today(latest_usage):
-            previous = 0
-
-        if event["key"] != "gmailclient":
-            return
-
-        new_value = previous + 1
-        self.redis.hset(f"search_run_statistics", "daily_gmail_usage", new_value)
-        self.redis.hset(f"search_run_statistics", "latest_gmail_usage", Date.now_str())
-
-    def get_daily_total(self) -> int:
-        result = int(self.redis.hget(f"search_run_statistics", "daily_gmail_usage"))
-        return result
-
-
 class RunException(Exception):
     @staticmethod
     def key_does_not_match(key: Key, matches: List[Key]):

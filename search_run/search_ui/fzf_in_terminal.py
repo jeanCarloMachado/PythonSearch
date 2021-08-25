@@ -6,7 +6,7 @@ from search_run.exceptions import MenuException
 from search_run.search_ui.interface import SearchInterface, SearchResult
 
 
-class TermiteFzf(SearchInterface):
+class FzfInTerminal(SearchInterface):
     """
     Renders the search ui using fzf + termite terminal
     """

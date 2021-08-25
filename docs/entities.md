@@ -6,12 +6,18 @@
 ## Entry
 
 
-A dictionary like entitiy that is available to be searched and executed.
+The main entity of this project. Composed of a tuple of (entry_name : str, entry_values: dict).
+The name is searched and the values executed.
 
+## Configuration
+
+A configuration of the hole application. Also includes entries configurations
 
 ## Interpreter
 
 The interpreter of an entry
+
+
 
 
 ## Search ui

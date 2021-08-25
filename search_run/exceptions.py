@@ -10,3 +10,7 @@ class MenuException(Exception):
     @staticmethod
     def given_empty_value():
         return MenuException("No option selected in search ui!")
+
+
+class CommandDoNotMatchException(Exception):
+    pass

@@ -1,9 +1,14 @@
 class BaseConfiguration:
     """
-    Base business entity that all other enttities depend upon
+    Main configuration of the application. Customers are supposed to pass their own
     """
-    cached_filename = "/tmp/search_and_run_configuration_cached"
+
+    # the location of the dumped index
+    _cached_filename : str = "/tmp/search_and_run_configuration_cached"
     commands: dict = {}
+
+    def __init__(self):
+        pass
 
     def get_command(self, given_key):
         """ Returns command value based on the key name, must match 11"""
@@ -45,3 +50,6 @@ class BaseConfiguration:
                 cmd_items = instance.commands
 
             self.commands = {**self.commands, **cmd_items}
+
+    def get_cached_filename(self):
+        return self._cached_filename

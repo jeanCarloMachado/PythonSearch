@@ -18,6 +18,10 @@ from grimoire.string import emptish, quote_with, remove_new_lines, remove_specia
 
 
 class RegisterNew:
+    """
+    Responsible for registering new entries in search run
+    """
+
     def __init__(self):
         self.message_broker = MessageBroker("search_run_register_new")
 

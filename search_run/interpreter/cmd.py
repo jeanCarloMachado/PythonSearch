@@ -5,8 +5,8 @@ from grimoire.notification import send_notification
 from search_run.context import Context
 from search_run.interpreter.base import (
     BaseInterpreter,
-    CommandDoNotMatchException,
 )
+from search_run.exceptions import CommandDoNotMatchException
 from grimoire.shell import shell
 from grimoire.string import remove_special_chars
 

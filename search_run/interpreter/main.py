@@ -6,8 +6,8 @@ from grimoire.event_sourcing.message import MessageBroker
 from search_run.context import Context
 from search_run.interpreter.base import (
     BaseInterpreter,
-    CommandDoNotMatchException,
 )
+from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.cmd import CmdInterpreter
 from search_run.interpreter.file import FileInterpreter
 from search_run.interpreter.group import GroupInterpreter

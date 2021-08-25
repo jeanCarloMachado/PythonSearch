@@ -118,5 +118,3 @@ class BaseInterpreter:
         return False
 
 
-class CommandDoNotMatchException(Exception):
-    pass
