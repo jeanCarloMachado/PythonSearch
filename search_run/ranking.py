@@ -1,9 +1,25 @@
 
+import sys
+import logging
 from grimoire.decorators import notify_execution
 from grimoire.file import file_exists, write_file
 from grimoire.search_run.search_run_config import Configuration
 import pandas as pd
 import json
+
+
+
+
+def configure_logger() -> logging.Logger:
+    logger = logging.getLogger("ranking")
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+    # use this for debug purposes
+    # logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
+    return logger
+
+
+logger = configure_logger()
 
 
 class Ranking:
@@ -21,16 +37,26 @@ class Ranking:
         Recomputes the rank and saves the results on the file to be read
         """
 
+        entries : dict = self.configuration().commands
+
+        result = self.cyclical_placment(
+            entries, self.compute_used_items_score(entries), self.compute_natural_position_scores(entries)
+        )
+
+        return self._export_to_file(result)
+
+    def compute_used_items_score(self, entries):
         df = self.load_dataset()
+
+        # a list with the keys of used entries, separated by space
         used_items = df["key"].tolist()
-        items_dict = self.configuration().commands
 
         # linear decay for use
-        # used_items = used_items[0:1000]
         total_used_items = len(used_items)
         scores_used_items = {}
         for position, key in enumerate(used_items):
-            if key not in items_dict:
+            if key not in entries:
+                logger.info(f"key not in entries: {key}")
                 continue
 
             score = (total_used_items - position) / total_used_items
@@ -44,10 +70,15 @@ class Ranking:
             scores_used_items, key=scores_used_items.get, reverse=True
         )
 
+        return sorted_used_items_score
+
+
+
+    def compute_natural_position_scores(self, entries):
         # quadratic decay for position
-        total_items = len(items_dict)
+        total_items = len(entries)
         natural_position_scored = {}
-        for position, (key, value) in enumerate(items_dict.items()):
+        for position, (key, value) in enumerate(entries.items()):
 
             natural_position_scored[key] = total_items / (total_items + position)
 
@@ -55,31 +86,12 @@ class Ranking:
             natural_position_scored, key=natural_position_scored.get, reverse=True
         )
 
-        result = self.cyclical_placment(
-            items_dict, sorted_used_items_score, sorted_natural_position_score
-        )
-
-        return self._export_to_file(result)
-
-    def load_dataset(self):
-
-        with open("/data/grimoire/message_topics/run_key_command_performed") as f:
-            data = []
-            for line in f.readlines():
-                try:
-                    data.append(json.loads(line))
-                except Exception as e:
-                    print(f"Line broken: {line}")
-        df = pd.DataFrame(data)
-
-        # revert the list (latest on top)
-        df = df.iloc[::-1]
-
-        return df
+        return sorted_natural_position_score
 
     def cyclical_placment(
         self, items_dict, sorted_used_items_score, sorted_natural_position_score
     ):
+        """Put 1 result of natural rank after 1 result of visits"""
         result = []
         used_keys = []
         total_items = len(items_dict)
@@ -99,6 +111,22 @@ class Ranking:
             position = position + 1
 
         return result
+
+    def load_dataset(self):
+
+        with open("/data/grimoire/message_topics/run_key_command_performed") as f:
+            data = []
+            for line in f.readlines():
+                try:
+                    data.append(json.loads(line))
+                except Exception as e:
+                    print(f"Line broken: {line}")
+        df = pd.DataFrame(data)
+
+        # revert the list (latest on top)
+        df = df.iloc[::-1]
+
+        return df
 
     def _export_to_file(self, data):
         fzf_lines = ""
