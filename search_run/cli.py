@@ -9,7 +9,7 @@ from search_run.config import PROJECT_ROOT, MAIN_FILE
 from search_run.interpreter.main import Interpreter
 from search_run.configuration import BaseConfiguration
 from search_run.export_configuration import ConfigurationExporter
-from search_run.ranking import Ranking
+from search_run.ranking.ranking import Ranking
 from grimoire import s
 
 
@@ -20,7 +20,7 @@ class SearchAndRunCli:
 
     SEARCH_LOG_FILE = "/tmp/search_and_run_log"
 
-    def __init__(self, configuration : Optional[BaseConfiguration] = None):
+    def __init__(self, configuration: Optional[BaseConfiguration] = None):
         self.configuration = configuration
         self.configuration_exporter = ConfigurationExporter(self.configuration)
         self.ranking = Ranking
@@ -95,8 +95,8 @@ class SearchAndRunCli:
         s.run(f"tail -f " + SearchAndRunCli.SEARCH_LOG_FILE)
 
     def _all_rows_cmd(self) -> str:
-        """ returns the shell command to perform to get all get_options_cmd
-         and generates the side-effect of createing a new cache file if it does not exist """
+        """returns the shell command to perform to get all get_options_cmd
+        and generates the side-effect of createing a new cache file if it does not exist"""
         configuration_file_name = self.configuration_exporter.get_cached_file_name()
         cmd = f' cat "{configuration_file_name}" '
         return cmd

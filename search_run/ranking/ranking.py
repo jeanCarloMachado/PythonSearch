@@ -1,23 +1,10 @@
-
-import sys
-import logging
 from grimoire.decorators import notify_execution
-from grimoire.file import file_exists, write_file
+from grimoire.file import write_file
 from grimoire.search_run.search_run_config import Configuration
 import pandas as pd
 import json
 
-
-
-
-def configure_logger() -> logging.Logger:
-    logger = logging.getLogger("ranking")
-    logger.addHandler(logging.StreamHandler(sys.stdout))
-    # use this for debug purposes
-    # logger.setLevel(logging.DEBUG)
-    logger.setLevel(logging.INFO)
-    return logger
-
+from search_run.logger import configure_logger
 
 logger = configure_logger()
 
@@ -37,19 +24,43 @@ class Ranking:
         Recomputes the rank and saves the results on the file to be read
         """
 
-        entries : dict = self.configuration().commands
+        entries: dict = self.configuration().commands
+        commands_performed = self.load_commands_performed_df()
 
-        result = self.cyclical_placment(
-            entries, self.compute_used_items_score(entries), self.compute_natural_position_scores(entries)
-        )
+        result = self.cyclical_placment(entries, commands_performed)
 
         return self._export_to_file(result)
 
-    def compute_used_items_score(self, entries):
-        df = self.load_dataset()
+    def cyclical_placment(self, entries, commands_performed):
+        """Put 1 result of natural rank after 1 result of visits"""
+
+        used_items = self.compute_used_items_score(entries, commands_performed)
+        natural_position = self.compute_natural_position_scores(entries)
+
+        result = []
+        used_keys = []
+        total_items = len(entries)
+        position = 0
+        while len(natural_position) > 0:
+
+            if position % 2 == 0 and len(used_items) > 0:
+                key = used_items.pop(0)
+            else:
+                key = natural_position.pop(0)
+
+            if key in used_keys:
+                continue
+
+            result.append((key, entries[key]))
+            used_keys.append(key)
+            position = position + 1
+
+        return result
+
+    def compute_used_items_score(self, entries, commands_performed):
 
         # a list with the keys of used entries, separated by space
-        used_items = df["key"].tolist()
+        used_items = commands_performed["key"].tolist()
 
         # linear decay for use
         total_used_items = len(used_items)
@@ -66,13 +77,9 @@ class Ranking:
                 score = aggregation if aggregation < 1 else 1
 
             scores_used_items[key] = score
-        sorted_used_items_score = sorted(
-            scores_used_items, key=scores_used_items.get, reverse=True
-        )
+        used_items = sorted(scores_used_items, key=scores_used_items.get, reverse=True)
 
-        return sorted_used_items_score
-
-
+        return used_items
 
     def compute_natural_position_scores(self, entries):
         # quadratic decay for position
@@ -82,38 +89,13 @@ class Ranking:
 
             natural_position_scored[key] = total_items / (total_items + position)
 
-        sorted_natural_position_score = sorted(
+        natural_position = sorted(
             natural_position_scored, key=natural_position_scored.get, reverse=True
         )
 
-        return sorted_natural_position_score
+        return natural_position
 
-    def cyclical_placment(
-        self, items_dict, sorted_used_items_score, sorted_natural_position_score
-    ):
-        """Put 1 result of natural rank after 1 result of visits"""
-        result = []
-        used_keys = []
-        total_items = len(items_dict)
-        position = 0
-        while len(sorted_natural_position_score) > 0:
-
-            if position % 2 == 0 and len(sorted_used_items_score) > 0:
-                key = sorted_used_items_score.pop(0)
-            else:
-                key = sorted_natural_position_score.pop(0)
-
-            if key in used_keys:
-                continue
-
-            result.append((key, items_dict[key]))
-            used_keys.append(key)
-            position = position + 1
-
-        return result
-
-    def load_dataset(self):
-
+    def load_commands_performed_df(self):
         with open("/data/grimoire/message_topics/run_key_command_performed") as f:
             data = []
             for line in f.readlines():
