@@ -1,10 +1,11 @@
+from typing import List, Any
 from search_run.logger import configure_logger
 
 logger = configure_logger()
 
 
 class CiclicalPlacement:
-    def cyclical_placment(self, entries, commands_performed):
+    def cyclical_placment(self, entries, commands_performed) -> List[Any]:
         """Put 1 result of natural rank after 1 result of visits"""
 
         used_items = self.compute_used_items_score(entries, commands_performed)

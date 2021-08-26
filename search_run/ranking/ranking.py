@@ -18,17 +18,25 @@ class Ranking:
         self.cached_file = Configuration.cached_filename
 
     @notify_execution()
-    def recompute_rank(self, generate_shortcuts=True):
+    def recompute_rank(self):
         """
         Recomputes the rank and saves the results on the file to be read
         """
 
-        entries: dict = self.configuration().commands
+        entries: dict = self.load_entries()
         commands_performed = self.load_commands_performed_df()
 
-        result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
+        ml_enabled = False
+
+        if ml_enabled:
+            result = self.compute_ml(entries, commands_performed)
+        else:
+            result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
 
         return self._export_to_file(result)
+
+    def compute_ml(self, entries, commands_performed):
+        pass
 
     def load_commands_performed_df(self):
         with open("/data/grimoire/message_topics/run_key_command_performed") as f:
@@ -51,3 +59,6 @@ class Ranking:
             fzf_lines += f"{name.lower()}: {content}\n"
 
         write_file(self.configuration.cached_filename, fzf_lines)
+
+    def load_entries(self):
+        return self.configuration().commands
