@@ -32,6 +32,7 @@ class Shortcuts:
     # DO_NOT_USE for deleting words in vim
     CTRL_W = "Control+w"
 
+    CTRL_SHIFT_N = "Control+Shift+n"
     CTRL_SHIFT_9 = "Control+Shift+9"
     CTRL_SHIFT_X = "Control+Shift+x"
     # focus
