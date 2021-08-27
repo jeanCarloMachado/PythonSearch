@@ -24,7 +24,7 @@ class FzfInTerminal(SearchInterface):
         termite_cmd = f"""kitty --title=launcher -o remember_window_size=n \
         -o initial_window_width=1300 -o transparency=yes -o  initial_window_height=500 \
         bash -c '{cmd} | \
-        fzf --reverse --exact --no-sort --print-query \
+        fzf --reverse -i --exact --no-sort --print-query \
         > /tmp/termite_result'
         """
 
