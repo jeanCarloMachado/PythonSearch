@@ -26,17 +26,9 @@ class Ranking:
         entries: dict = self.load_entries()
         commands_performed = self.load_commands_performed_df()
 
-        ml_enabled = False
-
-        if ml_enabled:
-            result = self.compute_ml(entries, commands_performed)
-        else:
-            result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
+        result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
 
         return self._export_to_file(result)
-
-    def compute_ml(self, entries, commands_performed):
-        pass
 
     def load_commands_performed_df(self):
         """

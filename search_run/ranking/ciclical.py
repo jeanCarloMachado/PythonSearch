@@ -1,5 +1,7 @@
 from typing import List, Any
 from search_run.logger import configure_logger
+import pandas as pd
+import glob
 
 logger = configure_logger()
 
@@ -8,8 +10,11 @@ class CiclicalPlacement:
     def cyclical_placment(self, entries, commands_performed) -> List[Any]:
         """Put 1 result of natural rank after 1 result of visits"""
 
-        used_items = self.compute_used_items_score(entries, commands_performed)
         natural_position = self.compute_natural_position_scores(entries)
+        used_items = self.compute_used_items_score(entries, commands_performed)
+        file_name = glob.glob('/data/search_run/predict_input_lenght/latest/*.csv')
+        input_lenght_df = pd.read_csv(file_name[0])
+
 
         result = []
         used_keys = []
@@ -18,10 +23,24 @@ class CiclicalPlacement:
 
             if position % 2 == 0 and len(used_items) > 0:
                 key = used_items.pop(0)
+            if position % 3 == 0 and len(input_lenght_df) > 0:
+                while True:
+                    key = input_lenght_df.iloc[0]['key']
+                    input_lenght_df = input_lenght_df.iloc[1:]
+
+                    if key in entries and key not in used_keys:
+                        logger.debug(f"Key from lodel found in entries or found in used_keys {key}")
+                        break
+                    else:
+                        logger.debug(f"Key from lodel not found in entries {key}")
             else:
                 key = natural_position.pop(0)
 
             if key in used_keys:
+                continue
+
+            if key not in entries:
+                logger.info(f"key {key} not found in entries")
                 continue
 
             result.append((key, entries[key]))
@@ -39,7 +58,7 @@ class CiclicalPlacement:
         scores_used_items = {}
         for position, key in enumerate(used_items):
             if key not in entries:
-                logger.info(f"key not in entries: {key}")
+                logger.debug(f"key not in entries: {key}")
                 continue
 
             score = (total_used_items - position) / total_used_items
