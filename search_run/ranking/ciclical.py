@@ -13,7 +13,6 @@ class CiclicalPlacement:
 
         result = []
         used_keys = []
-        total_items = len(entries)
         position = 0
         while len(natural_position) > 0:
 
