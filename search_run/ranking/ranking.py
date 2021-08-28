@@ -3,10 +3,10 @@ from grimoire.file import write_file
 from grimoire.search_run.search_run_config import Configuration
 import pandas as pd
 import json
-
 from search_run.logger import configure_logger
 from search_run.ranking.ciclical import CiclicalPlacement
 
+logger = configure_logger()
 
 class Ranking:
     """
@@ -39,13 +39,16 @@ class Ranking:
         pass
 
     def load_commands_performed_df(self):
+        """
+        Returns a pandas datafarme with the commands performed
+        """
         with open("/data/grimoire/message_topics/run_key_command_performed") as f:
             data = []
             for line in f.readlines():
                 try:
                     data.append(json.loads(line))
                 except Exception as e:
-                    print(f"Line broken: {line}")
+                    logger.debug(f"Line broken: {line}")
         df = pd.DataFrame(data)
 
         # revert the list (latest on top)
@@ -59,6 +62,23 @@ class Ranking:
             fzf_lines += f"{name.lower()}: {content}\n"
 
         write_file(self.configuration.cached_filename, fzf_lines)
+
+    def load_entries_df(self, spark):
+        """ loads a spark dataframe with the configuration entries"""
+
+        entries = self.load_entries()
+
+        entries
+        entries = [{"key": entry[0], "content": f"{entry[1]}", "position": position + 1} for position, entry in
+                   enumerate(entries
+                             .items())]
+        # entries
+
+        rdd = spark.sparkContext.parallelize(entries)
+
+        entries_df = spark.read.json(rdd)
+        entries_df = entries_df.drop("_corrupt_record")
+        return entries_df
 
     def load_entries(self):
         return self.configuration().commands
