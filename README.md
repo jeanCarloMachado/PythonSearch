@@ -1,8 +1,46 @@
 # search_run
 
-This application allows one to:
 
-- collect pieces of actionable text in the internet
-- add actions to them by their type
+- collect pieces of actionable text in the internet and add them to python dictionaries
 - search and execute them
 - add shortcuts to actions
+- add custom types and actions
+
+
+## How to use:
+
+Create your own items, as you go:
+
+```python
+from search_run.cli import SearchAndRunCli
+import datetime
+from fire import Fire
+
+data = {
+    # a browser url
+    "search browser": {"url": "https://google.com"},
+    # snippets to the clipboard
+    "date current today now copy": {
+        # anything can be
+        "snippet": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        #shortcuts are supported!
+        "i3_shortcut": "Control+Shift+0",
+    },
+    # a shell command
+    "watch current cpu frequency": {
+        "new-window-non-cli": True,
+        # a command will pop up a window with the results by default
+        "cmd": """
+                sudo watch \
+                 cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
+            """,
+    },
+}
+
+instance = SearchAndRunCli(application_name="test", data=data)
+
+Fire(instance)
+```
+## Legal
+
+db-rocket is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE.txt) for the full text.

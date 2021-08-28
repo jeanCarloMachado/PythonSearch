@@ -7,6 +7,10 @@ logger = configure_logger()
 
 
 class CiclicalPlacement:
+    """
+    Joins multiple ranking methods and place them in clycles
+    """
+
     def cyclical_placment(self, entries, commands_performed) -> List[Any]:
         """Put 1 result of natural rank after 1 result of visits"""
 
