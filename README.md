@@ -43,4 +43,4 @@ Fire(instance)
 ```
 ## Legal
 
-db-rocket is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE.txt) for the full text.
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE.txt) for the full text.
