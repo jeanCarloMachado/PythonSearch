@@ -23,12 +23,17 @@ class CiclicalPlacement:
         result = []
         used_keys = []
         position = 0
+
+        # make the first result be the last executed
+        key = used_items.pop(0)
+        result.append((key, entries[key]))
+
         while len(natural_position) > 0:
 
             if position % 2 == 0 and len(used_items) > 0:
                 key = used_items.pop(0)
             if position % 3 == 0 and len(input_lenght_df) > 0:
-                while True:
+                while True and len(input_lenght_df):
                     key = input_lenght_df.iloc[0]['key']
                     input_lenght_df = input_lenght_df.iloc[1:]
 
