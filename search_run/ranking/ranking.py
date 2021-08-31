@@ -1,17 +1,25 @@
+import json
+from collections import namedtuple
+
+import pandas as pd
+import pyspark.sql.functions as F
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 from grimoire.search_run.search_run_config import Configuration
-import pandas as pd
-import json
+
 from search_run.logger import configure_logger
 from search_run.ranking.ciclical import CiclicalPlacement
 
 logger = configure_logger()
 
+
 class Ranking:
     """
     Write to the file all the commands and generates shortcuts
     """
+
+    ModelInfo = namedtuple("ModelInfo", "features label")
+    model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
     def __init__(self):
         self.configuration = Configuration
@@ -48,6 +56,16 @@ class Ranking:
 
         return df
 
+    def load_commands_performed_dataframe(self, spark):
+        dataset = Ranking().load_commands_performed_df()
+        schema = "`key` STRING,  `generated_date` STRING, `uuid` STRING, `given_input` STRING"
+        original_df = spark.createDataFrame(dataset, schema=schema)
+        performed_df = original_df.withColumn("input_lenght", F.length("given_input"))
+        performed_df = performed_df.filter('given_input != "NaN"')
+        performed_df = performed_df.drop("uuid")
+
+        return performed_df
+
     def _export_to_file(self, data):
         fzf_lines = ""
         for name, content in data:
@@ -56,20 +74,25 @@ class Ranking:
         write_file(self.configuration.cached_filename, fzf_lines)
 
     def load_entries_df(self, spark):
-        """ loads a spark dataframe with the configuration entries"""
+        """
+        loads a spark dataframe with the configuration entries
+        """
 
         entries = self.load_entries()
 
         entries
-        entries = [{"key": entry[0], "content": f"{entry[1]}", "position": position + 1} for position, entry in
-                   enumerate(entries
-                             .items())]
+        entries = [
+            {"key": entry[0], "content": f"{entry[1]}", "position": position + 1}
+            for position, entry in enumerate(entries.items())
+        ]
         # entries
 
         rdd = spark.sparkContext.parallelize(entries)
 
         entries_df = spark.read.json(rdd)
         entries_df = entries_df.drop("_corrupt_record")
+        entries_df = entries_df.withColumn("key_lenght", F.length("key"))
+
         return entries_df
 
     def load_entries(self):
