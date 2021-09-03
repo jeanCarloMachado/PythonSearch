@@ -11,6 +11,10 @@ class FzfInTerminal(SearchInterface):
     """
     Renders the search ui using fzf + termite terminal
     """
+
+    HEIGHT = 500
+    WIDTH = 1100
+
     def __init__(
             self, title="RunT: "
     ):
@@ -22,7 +26,7 @@ class FzfInTerminal(SearchInterface):
 
 
         termite_cmd = f"""kitty --title=launcher -o remember_window_size=n \
-        -o initial_window_width=1300 -o transparency=yes -o  initial_window_height=500 \
+        -o initial_window_width={FzfInTerminal.WIDTH} -o transparency=yes -o  initial_window_height={FzfInTerminal.HEIGHT} \
         bash -c '{cmd} | \
         fzf --reverse -i --exact --no-sort --print-query \
         > /tmp/termite_result'
@@ -39,5 +43,3 @@ class FzfInTerminal(SearchInterface):
         if emptish(result):
             raise MenuException.given_empty_value()
         return SearchResult(result=result_lines[1], query=result_lines[0])
-
-

@@ -16,12 +16,13 @@ from search_run.context import Context
 from search_run.interpreter.main import Interpreter
 
 
-class RunKey:
+class Runner:
+    """Responsible to execute the entries matched"""
     def __init__(self):
         self.message_broker = MessageBroker("search_runs_executed")
 
     @tracer.wrap("run_key_entire_process")
-    def run(self, key: Key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
+    def run(self, key: str, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         """
         from_shortcut means that the key execution was triggered by a desktop shortcut
         """
@@ -39,7 +40,7 @@ class RunKey:
 
         return Interpreter.build_instance().default(matches[0])
 
-    def _matching_keys(self, key: Key) -> List[Key]:
+    def _matching_keys(self, key: str) -> List[str]:
         """
         give a key it will give suggestions that matches
         """
@@ -58,12 +59,10 @@ class RunKey:
         return matching_keys
 
 
-Key = str
-
 
 class RunException(Exception):
     @staticmethod
-    def key_does_not_match(key: Key, matches: List[Key]):
+    def key_does_not_match(key: str, matches: List[str]):
         return RunException(
             f"Does pattern does not match 1 key ({key}) and ({matches})"
         )

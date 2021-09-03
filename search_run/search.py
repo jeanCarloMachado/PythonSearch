@@ -16,7 +16,7 @@ class Search:
     def __init__(self):
         self.message_passing = MessageBroker("run_key_command_performed")
 
-
+    @tracer.wrap("search_entire_process")
     def run(self, cmd_get_rows):
 
         result = self._select_option(cmd_get_rows)

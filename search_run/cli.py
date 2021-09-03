@@ -10,8 +10,9 @@ from search_run.export_configuration import ConfigurationExporter
 from search_run.interpreter.main import Interpreter
 from search_run.ranking.ranking import Ranking
 from search_run.register_new import RegisterNew
-from search_run.run_key import RunKey
+from search_run.runner import Runner
 from search_run.search import Search
+from search_run.config import MAIN_FILE
 
 
 class SearchAndRunCli:
@@ -26,10 +27,9 @@ class SearchAndRunCli:
         self.configuration_exporter = ConfigurationExporter(self.configuration)
         self.ranking = Ranking
 
-    def export_configuration(self, shortcuts=True):
-        self.configuration_exporter.export(shortcuts)
 
     def search(self):
+        """ Main entrypoint of the application """
         Search().run(self._all_rows_cmd())
 
     def dmenu(self):
@@ -51,12 +51,14 @@ class SearchAndRunCli:
         result = ui.rofi(self._all_rows_cmd())
 
         if not result:
-            raise Exception("Nothing to edit")
+            self._edit_config(MAIN_FILE)
+            return
 
         result = result.split(":")
 
         if not len(result):
-            raise Exception("Nothing to edit")
+            self._edit_config(MAIN_FILE)
+            return
 
         key = result[0]
         result_shell = shell.run_with_result(f"ack '{key}' {PROJECT_ROOT} || true")
@@ -67,6 +69,9 @@ class SearchAndRunCli:
         file, line, *_ = result_shell.split(":")
 
         self._edit_config(file, line)
+
+    def export_configuration(self, shortcuts=True):
+        self.configuration_exporter.export(shortcuts)
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30):
         s.run(
@@ -81,10 +86,13 @@ class SearchAndRunCli:
         return RegisterNew().snippet_from_clipboard()
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
-        return RunKey().run(key, force_gui_mode, gui_mode, from_shortcut)
+        return Runner().run(key, force_gui_mode, gui_mode, from_shortcut)
 
     def r(self, key):
-        """ Shorter verion of run key for when lazy"""
+        """
+        DEPRECATED: use run instead and use an alias if you are so lazy
+        Shorter verion of run key for when lazy
+        """
         return self.run_key(key)
 
     def tail_log(self):
