@@ -1,16 +1,17 @@
 from typing import Optional
 
+from grimoire import s
 from grimoire.desktop.dmenu import Dmenu
 from grimoire.shell import shell
-from search_run.search import Search
-from search_run.register_new import RegisterNew
-from search_run.run_key import RunKey
-from search_run.config import PROJECT_ROOT, MAIN_FILE
-from search_run.interpreter.main import Interpreter
+
+from search_run.config import PROJECT_ROOT
 from search_run.configuration import BaseConfiguration
 from search_run.export_configuration import ConfigurationExporter
+from search_run.interpreter.main import Interpreter
 from search_run.ranking.ranking import Ranking
-from grimoire import s
+from search_run.register_new import RegisterNew
+from search_run.run_key import RunKey
+from search_run.search import Search
 
 
 class SearchAndRunCli:
@@ -43,21 +44,21 @@ class SearchAndRunCli:
         Interpreter.build_instance().clipboard(result)
 
     def dmenu_edit(self):
+        """
+        Edits the configuration files by searching the text
+        """
         ui = Dmenu(title="Edit search run:")
         result = ui.rofi(self._all_rows_cmd())
 
         if not result:
-            self.edit_config()
-            return
+            raise Exception("Nothing to edit")
 
         result = result.split(":")
 
         if not len(result):
-            self.edit_config()
-            return
+            raise Exception("Nothing to edit")
 
         key = result[0]
-
         result_shell = shell.run_with_result(f"ack '{key}' {PROJECT_ROOT} || true")
         if not result_shell:
             self.edit_config()
@@ -65,14 +66,9 @@ class SearchAndRunCli:
 
         file, line, *_ = result_shell.split(":")
 
-        self.edit_config(file, line)
+        self._edit_config(file, line)
 
-    def edit_config(self, file_name: Optional[str] = None, line: Optional[int] = None):
-        if not file_name:
-            file_name = MAIN_FILE
-        if not line:
-            line = 30
-
+    def _edit_config(self, file_name: str, line: Optional[int] = 30):
         s.run(
             f"MY_TITLE='GrimorieSearchRun' runFunction terminal_run 'vim {file_name} +{line}' ",
         )
