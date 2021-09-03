@@ -5,7 +5,7 @@ import pandas as pd
 import pyspark.sql.functions as F
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
-from grimoire.search_run.search_run_config import Configuration
+from grimoire.search_run.entries.main import Configuration
 
 from search_run.logger import configure_logger
 from search_run.ranking.ciclical import CiclicalPlacement

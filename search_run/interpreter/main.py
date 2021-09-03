@@ -1,18 +1,17 @@
 import re
 
+# @todo inject rather than import
+from grimoire.search_run.entries.main import Configuration
 from loguru import logger as logging
 
 from search_run.context import Context
-from search_run.interpreter.base import (
-    BaseInterpreter,
-)
 from search_run.exceptions import CommandDoNotMatchException
+from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.cmd import CmdInterpreter
 from search_run.interpreter.file import FileInterpreter
 from search_run.interpreter.group import GroupInterpreter
 from search_run.interpreter.snippet import SnippetInterpreter
 from search_run.interpreter.url import UrlInterpreter
-from grimoire.search_run.search_run_config import Configuration
 
 
 class Interpreter:
