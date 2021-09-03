@@ -67,7 +67,6 @@ class Interpreter:
 
         return self._match_interpreter(given_input)
 
-
     def get_key(self, given_input):
         """
         @deprecated use it from searchresult instead
