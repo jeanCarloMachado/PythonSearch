@@ -12,7 +12,7 @@ from search_run.search_ui.factory import UIFactory
 
 class Search:
     """
-    Opens dmenu, gets a string and interprets it
+    Opens search with all entries, selects one, and interprets it
     """
 
     def __init__(self):

@@ -1,7 +1,8 @@
 
-from  search_run.search_ui.interface import SearchInterface
-from  search_run.search_ui.fzf_in_terminal import FzfInTerminal
-from  search_run.search_ui.rofi import Rofi
+from search_run.search_ui.fzf_in_terminal import FzfInTerminal
+from search_run.search_ui.interface import SearchInterface
+from search_run.search_ui.rofi import Rofi
+
 
 class UIFactory:
     @staticmethod
