@@ -1,22 +1,24 @@
 import re
-from ddtrace import tracer
 
+from ddtrace import tracer
 from grimoire.event_sourcing.message import MessageBroker
-from search_run.entities import SearchResult
-from search_run.search_ui.factory import UIFactory
+
 from search_run.context import Context
-from search_run.interpreter.main import Interpreter
+from search_run.entities import SearchResult
 from search_run.events import SearchPerformed
+from search_run.interpreter.main import Interpreter
+from search_run.search_ui.factory import UIFactory
 
 
 class Search:
     """
     Opens dmenu, gets a string and interprets it
     """
+
     def __init__(self):
         self.message_passing = MessageBroker("run_key_command_performed")
 
-    @tracer.wrap("search_entire_process")
+    @tracer.wrap("search_run.search.run")
     def run(self, cmd_get_rows):
 
         result = self._select_option(cmd_get_rows)
@@ -25,20 +27,28 @@ class Search:
             print("No content, returning")
             return
 
+        self._send_event(result)
+        self._execute_selected(result)
 
-        event = SearchPerformed(key=self.get_key(result.result), given_input=result.query)
-        self.message_passing.produce(event.__dict__)
-
-        Context.get_instance().enable_gui_mode()
-        Interpreter.build_instance().default(result.result)
-
-
-    @tracer.wrap("render_dmenu_options")
+    @tracer.wrap("search_run.search.select_option")
     def _select_option(self, cmd_get_rows) -> SearchResult:
+        """ Open the search ui with the options """
         ui = UIFactory.get_instance()
         return ui.run(cmd_get_rows)
 
-    def get_key(self, given_input):
+    @tracer.wrap("search_run.search.execute_selected")
+    def _execute_selected(self, result):
+        Context.get_instance().enable_gui_mode()
+        Interpreter.build_instance().default(result.result)
+
+    @tracer.wrap("search_run.search.send_event")
+    def _send_event(self, result):
+        event = SearchPerformed(
+            key=self._get_key(result.result), given_input=result.query
+        )
+        self.message_passing.produce(event.__dict__)
+
+    def _get_key(self, given_input):
         """
         @todo move this code to a centalized place
         :param given_input:

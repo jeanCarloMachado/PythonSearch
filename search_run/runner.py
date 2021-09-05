@@ -7,7 +7,6 @@ from typing import List
 from ddtrace import tracer
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
-
 # @todo inject rather than import
 from grimoire.search_run.entries.main import Configuration
 from grimoire.string import generate_identifier
@@ -18,10 +17,11 @@ from search_run.interpreter.main import Interpreter
 
 class Runner:
     """Responsible to execute the entries matched"""
+
     def __init__(self):
         self.message_broker = MessageBroker("search_runs_executed")
 
-    @tracer.wrap("run_key_entire_process")
+    @tracer.wrap("search_run.runner.run")
     def run(self, key: str, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         """
         from_shortcut means that the key execution was triggered by a desktop shortcut
@@ -57,7 +57,6 @@ class Runner:
                 matching_keys.append(registered_key)
 
         return matching_keys
-
 
 
 class RunException(Exception):
