@@ -7,6 +7,7 @@ from typing import List
 from ddtrace import tracer
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
+
 # @todo inject rather than import
 from grimoire.search_run.entries.main import Configuration
 from grimoire.string import generate_identifier
