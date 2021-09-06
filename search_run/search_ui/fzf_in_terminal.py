@@ -1,10 +1,11 @@
-import logging
 
+import os
 from grimoire.shell import shell as s
 from grimoire.string import chomp, emptish
 from search_run.exceptions import MenuException
 from search_run.search_ui.interface import SearchInterface
 from search_run.entities import SearchResult
+from search_run.logger import logger
 
 
 class FzfInTerminal(SearchInterface):
@@ -25,18 +26,22 @@ class FzfInTerminal(SearchInterface):
     ) -> (str, str):
 
 
-        termite_cmd = f"""kitty --title=launcher -o remember_window_size=n \
-        -o initial_window_width={FzfInTerminal.WIDTH} -o transparency=yes -o  initial_window_height={FzfInTerminal.HEIGHT} \
+        launch_cmd = f"""
+        kitty --title=launcher -o remember_window_size=n \
+        -o initial_window_width={FzfInTerminal.WIDTH}  \
+        -o  initial_window_height={FzfInTerminal.HEIGHT} \
         bash -c '{cmd} | \
         fzf --reverse -i --exact --no-sort --print-query \
-        > /tmp/termite_result'
+        > /tmp/search_run_result'
         """
+        logger.info(f"{launch_cmd}")
+        os.system(launch_cmd)
 
-        s.run(termite_cmd)
-        result : str = s.check_output('cat /tmp/termite_result')
-        logging.info(f"Result: {result}")
+        with open('/tmp/search_run_result') as file:
+            result = file.read()
+            logger.info(f"Result: {result}")
+
         result = chomp(result)
-
         # the terminal result from fzf is the first line having the query and the second the matched result
         result_lines = result.splitlines()
 
