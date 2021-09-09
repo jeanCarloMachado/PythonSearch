@@ -31,6 +31,8 @@ class Shortcuts:
 
     # DO_NOT_USE for deleting words in vim
     CTRL_W = "Control+w"
+    CTRL_SPACE = "Control+space"
+    SUPER_SPACE = "Mod4+space"
 
     CTRL_SHIFT_N = "Control+Shift+n"
     CTRL_SHIFT_9 = "Control+Shift+9"
@@ -55,7 +57,6 @@ class Shortcuts:
     CTRL_SHIFT_W = "Control+Shift+w"
     CTRL_ALT_T = "Control+Mod1+t"
 
-    ALT_SHIFT_M = "Mod1+Shift+m"
     ALT_SHIFT_I = "Mod1+Shift+i"
     ALT_SHIFT_0 = "Mod1+Shift+0"
     ALT_SHIFT_Z = "Mod1+Shift+z"
@@ -74,6 +75,7 @@ class Shortcuts:
     ALT_N = "Mod1+n"
     # manual interactive script
     ALT_M = "Mod1+m"
+    ALT_SHIFT_M = "Mod1+Shift+m"
     ALT_F = "Mod1+f"
     ALT_SHIFT_F = "Mod1+Shift+f"
     ALT_E = "Mod1+e"
