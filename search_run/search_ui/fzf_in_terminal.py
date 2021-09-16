@@ -27,7 +27,7 @@ class FzfInTerminal(SearchInterface):
 
 
         launch_cmd = f"""
-        kitty --title=launcher -o remember_window_size=n \
+        ionice -n 3 nice -19 kitty --title=launcher -o remember_window_size=n \
         -o initial_window_width={FzfInTerminal.WIDTH}  \
         -o  initial_window_height={FzfInTerminal.HEIGHT} \
         bash -c '{cmd} | \
