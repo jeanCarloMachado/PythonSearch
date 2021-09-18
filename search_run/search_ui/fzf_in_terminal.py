@@ -29,6 +29,8 @@ class FzfInTerminal(SearchInterface):
         bash -c '{cmd} | \
         fzf \
             --bind "enter:execute-silent:(nohup search_run run_key {{}} & disown)" \
+            --bind "ctrl-l:clear-query" \
+            --bind "esc:execute-silent:(hide_launcher.sh)" \
             --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . " \
             --preview-window=right,40% \
             --reverse -i --exact --no-sort'

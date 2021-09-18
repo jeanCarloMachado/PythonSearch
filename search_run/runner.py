@@ -32,9 +32,7 @@ class Runner:
         # usually the key from fzf, and our keys do not accept :
         if ":" in key:
             key = key.split(":")[0]
-            import os
-
-            os.system("i3-msg '[title=launcher] move scratchpad'")
+            self.hide_launcher()
 
         if from_shortcut:
             send_notification(f"{key}")
@@ -49,6 +47,10 @@ class Runner:
             raise RunException.key_does_not_match(key, matches)
 
         return Interpreter.build_instance().default(matches[0])
+
+    def hide_launcher(self):
+            import os
+            os.system("i3-msg '[title=launcher] move scratchpad'")
 
     def _matching_keys(self, key: str) -> List[str]:
         """
