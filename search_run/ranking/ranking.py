@@ -69,6 +69,12 @@ class Ranking:
     def _export_to_file(self, data):
         fzf_lines = ""
         for name, content in data:
+
+            try:
+                content = json.dumps(content, default=tuple)
+            except:
+                content = content
+
             fzf_lines += f"{name.lower()}: {content}\n"
 
         write_file(self.configuration.cached_filename, fzf_lines)
@@ -77,7 +83,6 @@ class Ranking:
         """
         loads a spark dataframe with the configuration entries
         """
-
         entries = self.load_entries()
 
         entries

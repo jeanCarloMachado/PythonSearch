@@ -21,7 +21,8 @@ class Search:
     @tracer.wrap("search_run.search.run")
     def run(self, cmd_get_rows):
 
-        result = self._select_option(cmd_get_rows)
+        result: SearchResult = self._select_option(cmd_get_rows)
+        return
 
         if not result.result:
             print("No content, returning")

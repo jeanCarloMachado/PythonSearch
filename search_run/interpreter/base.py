@@ -7,8 +7,9 @@ from grimoire.desktop.dmenu import Dmenu
 from grimoire.desktop.window import Window
 from grimoire.logging import logging
 from grimoire.notification import send_notification
-from search_run.context import Context
 from grimoire.shell import shell
+
+from search_run.context import Context
 
 
 class BaseInterpreter:
@@ -107,7 +108,7 @@ class BaseInterpreter:
             if shell.run(
                 f"i3-msg '[{match_type}=\"{focus_identifier}\"] scratchpad show'"
             ):
-                shell.run('sleep 1; i3-msg "floating toggle"')
+                shell.run('sleep 0.5; i3-msg "floating disable; floating enable"')
             else:
                 shell.run(
                     f"i3-msg '[{match_type}=\"{focus_identifier}\"] scratchpad show'"
@@ -116,5 +117,3 @@ class BaseInterpreter:
             return True
 
         return False
-
-

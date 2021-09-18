@@ -27,6 +27,15 @@ class Runner:
         """
         from_shortcut means that the key execution was triggered by a desktop shortcut
         """
+
+        # if there are : in the line just take all before it as it is
+        # usually the key from fzf, and our keys do not accept :
+        if ":" in key:
+            key = key.split(":")[0]
+            import os
+
+            os.system("i3-msg '[title=launcher] move scratchpad'")
+
         if from_shortcut:
             send_notification(f"{key}")
 
