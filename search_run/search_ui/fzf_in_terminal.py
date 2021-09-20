@@ -31,6 +31,10 @@ class FzfInTerminal(SearchInterface):
             --bind "enter:execute-silent:(nohup search_run run_key {{}} & disown)" \
             --bind "enter:+clear-query" \
             --bind "ctrl-l:clear-query" \
+            --bind "ctrl-c:execute-silent:(nohup search_run clipboard_key {{}} & disown)" \
+            --bind "ctrl-k:execute-silent:(nohup search_run edit_key {{}} & disown)" \
+            --bind "ctrl-k:+execute-silent:(hide_launcher.sh)" \
+            --bind "ctrl-d:abort" \
             --bind "esc:execute-silent:(hide_launcher.sh)" \
             --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . " \
             --preview-window=right,60% \
@@ -40,14 +44,4 @@ class FzfInTerminal(SearchInterface):
         os.system(launch_cmd)
 
         return
-        with open("/tmp/search_run_result") as file:
-            result = file.read()
-            logger.info(f"Result: {result}")
-
-        result = chomp(result)
-        # the terminal result from fzf is the first line having the query and the second the matched result
-        result_lines = result.splitlines()
-
-        if emptish(result):
-            raise MenuException.given_empty_value()
-        return SearchResult(result=result_lines[1], query=result_lines[0])
+        # return SearchResult(result=result_lines[1], query=result_lines[0])
