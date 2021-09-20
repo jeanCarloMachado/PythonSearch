@@ -1,5 +1,5 @@
-
 from dataclasses import dataclass
+
 
 @dataclass
 class SearchPerformed:
@@ -7,5 +7,3 @@ class SearchPerformed:
     given_input: str
     # name of the entry matched
     key: str
-
-

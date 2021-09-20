@@ -1,5 +1,3 @@
-
-
 class MenuException(Exception):
     config = {
         "disable_tray_message": True,

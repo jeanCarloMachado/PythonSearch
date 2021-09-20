@@ -1,6 +1,8 @@
-from search_run.cli import SearchAndRunCli
 import datetime
+
 from fire import Fire
+
+from search_run.cli import SearchAndRunCli
 
 data = {
     # a browser url
@@ -11,7 +13,6 @@ data = {
         "snippet": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "i3_shortcut": "Control+Shift+0",
     },
-
     # a shell command
     "watch current cpu frequency": {
         "new-window-non-cli": True,

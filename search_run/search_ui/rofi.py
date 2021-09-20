@@ -4,20 +4,17 @@ from typing import Optional
 
 from grimoire.shell import shell as s
 from grimoire.string import chomp, emptish
+
+from search_run.entities import SearchResult
 from search_run.exceptions import MenuException
 from search_run.search_ui.interface import SearchInterface
-from search_run.entities import SearchResult
 
 
 class Rofi(SearchInterface):
-    def __init__(
-            self, title="Run: "
-    ):
+    def __init__(self, title="Run: "):
         self.title = title
 
-    def run(
-            self, cmd: Optional[str] = None
-    ) -> str:
+    def run(self, cmd: Optional[str] = None) -> str:
 
         entries_cmd = ""
 
@@ -48,5 +45,3 @@ class Rofi(SearchInterface):
             raise MenuException.given_empty_value()
 
         return SearchResult(result=result, query="")
-
-

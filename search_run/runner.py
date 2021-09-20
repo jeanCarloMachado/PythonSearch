@@ -49,8 +49,9 @@ class Runner:
         return Interpreter.build_instance().default(matches[0])
 
     def hide_launcher(self):
-            import os
-            os.system("i3-msg '[title=launcher] move scratchpad'")
+        import os
+
+        os.system("i3-msg '[title=launcher] move scratchpad'")
 
     def _matching_keys(self, key: str) -> List[str]:
         """

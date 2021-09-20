@@ -33,7 +33,7 @@ class FzfInTerminal(SearchInterface):
             --bind "ctrl-l:clear-query" \
             --bind "esc:execute-silent:(hide_launcher.sh)" \
             --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . " \
-            --preview-window=right,40% \
+            --preview-window=right,60% \
             --reverse -i --exact --no-sort'
             """
         logger.info(f"{launch_cmd}")

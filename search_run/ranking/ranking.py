@@ -71,6 +71,7 @@ class Ranking:
         for name, content in data:
 
             try:
+                content["key_name"] = name
                 content = json.dumps(content, default=tuple)
             except:
                 content = content
