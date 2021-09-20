@@ -28,6 +28,9 @@ class FzfInTerminal(SearchInterface):
         -o  initial_window_height={FzfInTerminal.HEIGHT} \
         bash -c '{cmd} | \
         fzf \
+            --cycle \
+            --no-hscroll \
+            --hscroll-off=0 \
             --bind "enter:execute-silent:(nohup search_run run_key {{}} & disown)" \
             --bind "enter:+clear-query" \
             --bind "ctrl-l:clear-query" \
@@ -36,8 +39,9 @@ class FzfInTerminal(SearchInterface):
             --bind "ctrl-k:+execute-silent:(hide_launcher.sh)" \
             --bind "ctrl-d:abort" \
             --bind "esc:execute-silent:(hide_launcher.sh)" \
-            --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . " \
-            --preview-window=right,60% \
+            --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
+            --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . -C " \
+            --preview-window=right,60%,wrap \
             --reverse -i --exact --no-sort'
             """
         logger.info(f"{launch_cmd}")
