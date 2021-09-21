@@ -43,10 +43,19 @@ instance = SearchAndRunCli(application_name="test", data=data)
 
 Fire(instance)
 ```
-
 UI example:
 
 ![img.png](img.png)
+
+
+## Training models
+
+### Predict entry complexity
+
+Run the following notebooks in order:
+
+- [Train model](notebooks/train_model.ipynb)
+- [Predict ranking](notebooks/predict_ranking.ipynb)
 
 ## Legal
 

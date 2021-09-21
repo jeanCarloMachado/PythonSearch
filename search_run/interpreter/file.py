@@ -2,10 +2,8 @@ import os
 from typing import Any
 
 from search_run.context import Context
-from search_run.interpreter.base import (
-    BaseInterpreter,
-)
 from search_run.exceptions import CommandDoNotMatchException
+from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.cmd import CmdInterpreter
 
 
@@ -39,7 +37,9 @@ class FileInterpreter(BaseInterpreter):
         elif file_extension == ".pdf":
             # executable = "okular"
             executable = "zathura"
-        elif file_extension == ".py" or file_extension == ".ipynb":
+        elif file_extension == ".py":
+            executable = "vim"
+        elif file_extension == ".ipynb":
             executable = "pycharm"
 
         return executable
