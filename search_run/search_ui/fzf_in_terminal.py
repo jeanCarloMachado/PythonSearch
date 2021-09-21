@@ -35,6 +35,8 @@ class FzfInTerminal(SearchInterface):
             --bind "enter:+clear-query" \
             --bind "ctrl-l:clear-query" \
             --bind "ctrl-c:execute-silent:(nohup search_run clipboard_key {{}} & disown)" \
+            --bind "ctrl-e:execute-silent:(nohup search_run edit_key {{}} & disown)" \
+            --bind "ctrl-e:+execute-silent:(hide_launcher.sh)" \
             --bind "ctrl-k:execute-silent:(nohup search_run edit_key {{}} & disown)" \
             --bind "ctrl-k:+execute-silent:(hide_launcher.sh)" \
             --bind "ctrl-d:abort" \
