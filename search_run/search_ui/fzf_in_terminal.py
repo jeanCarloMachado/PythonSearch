@@ -42,6 +42,7 @@ class FzfInTerminal(SearchInterface):
             --bind "ctrl-d:abort" \
             --bind "esc:execute-silent:(hide_launcher.sh)" \
             --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
+            --bind "ctrl-r:reload:({cmd})" \
             --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . -C " \
             --preview-window=right,60%,wrap \
             --reverse -i --exact --no-sort'
