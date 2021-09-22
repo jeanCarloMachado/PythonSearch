@@ -32,7 +32,7 @@ class Runner:
         # usually the key from fzf, and our keys do not accept :
         if ":" in key:
             key = key.split(":")[0]
-            self.hide_launcher()
+            # self.hide_launcher()
 
         if from_shortcut:
             send_notification(f"{key}")
