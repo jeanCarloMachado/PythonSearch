@@ -1,8 +1,6 @@
 from search_run.context import Context
-from search_run.interpreter.base import (
-    BaseInterpreter,
-)
 from search_run.exceptions import CommandDoNotMatchException
+from search_run.interpreter.base import BaseInterpreter
 
 
 class GroupInterpreter(BaseInterpreter):

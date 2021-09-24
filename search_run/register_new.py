@@ -2,19 +2,18 @@ from __future__ import annotations
 
 from typing import Tuple
 
-from pydantic import BaseModel
-
 from grimoire import s
+from grimoire.ask_question import AskQuestion
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
+from pydantic import BaseModel
+
 from search_run.config import MAIN_FILE
-from grimoire.ask_question import AskQuestion
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.main import Interpreter
-
-from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
 
 class RegisterNew:

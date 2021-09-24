@@ -77,9 +77,9 @@ class Ranking:
                 content = content
                 content = str(content)
 
-            fzf_lines += f"{name.lower()}: " +  content + "\n"
+            fzf_lines += f"{name.lower()}: " + content + "\n"
 
-        fzf_lines = fzf_lines.replace('\\', '\\\\')
+        fzf_lines = fzf_lines.replace("\\", "\\\\")
         write_file(self.configuration.cached_filename, fzf_lines)
 
     def load_entries_df(self, spark):

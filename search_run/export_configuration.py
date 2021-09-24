@@ -4,8 +4,9 @@ from grimoire.decorators import notify_execution
 from grimoire.desktop.shortcut import Shortcut
 from grimoire.file import file_exists, write_file
 from grimoire.shell import shell
-from search_run.configuration import BaseConfiguration
 from grimoire.string import generate_identifier
+
+from search_run.configuration import BaseConfiguration
 from search_run.ranking.ranking import Ranking
 
 
