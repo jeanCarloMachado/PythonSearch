@@ -31,6 +31,7 @@ class FzfInTerminal(SearchInterface):
             --cycle \
             --no-hscroll \
             --hscroll-off=0 \
+            --bind "alt-enter:execute-silent:(nohup search_run run_key {{}} & disown)" \
             --bind "enter:execute-silent:(nohup search_run run_key {{}} & disown)" \
             --bind "enter:+execute-silent:(hide_launcher.sh)" \
             --bind "enter:+clear-query" \
