@@ -44,8 +44,7 @@ Fire(instance)
 ```
 UI example:
 
-![img.png](img.png)
-
+![2021-09-24_21-44](https://user-images.githubusercontent.com/2252355/134731739-226793b3-260c-45bd-ae36-e422da14d7a8.png)
 
 ## Training models
 
