@@ -23,9 +23,11 @@ class FzfInTerminal(SearchInterface):
     def run(self, cmd: str) -> (str, str):
 
         launch_cmd = f"""
-        ionice -n 3 nice -19 kitty --title=launcher -o remember_window_size=n \
+        ionice -n 3 nice -19 kitty \
+        --title=launcher -o remember_window_size=n \
         -o initial_window_width={FzfInTerminal.WIDTH}  \
         -o  initial_window_height={FzfInTerminal.HEIGHT} \
+        -o font_size=13 \
         bash -c '{cmd} | \
         fzf \
             --cycle \
