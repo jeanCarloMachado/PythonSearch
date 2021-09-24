@@ -1,5 +1,4 @@
-# search_run
-
+# PythonSearch
 
 - collect pieces of actionable text in the internet and add them to python dictionaries
 - search them using a ML based ranking that minimizes your search time
