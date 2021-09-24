@@ -1,11 +1,11 @@
 import setuptools
 
 setuptools.setup(
-    name="search_run",
-    version="0.01",
+    name="python-search",
+    version="0.02",
     author="Jean Carlo Machado",
     author_email="machado.c.jean@gmail.com",
-    description="Search and run",
+    description="Search over python dictionaries",
     long_description="",
     long_description_content_type="text/markdown",
     url="https://github.com/jeanCarloMachado/search_run",
@@ -15,5 +15,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.9",
 )

@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: python-search
+Version: 0.2
+Summary: Search over python dictionaries
+Home-page: https://github.com/jeanCarloMachado/search_run
+Author: Jean Carlo Machado
+Author-email: machado.c.jean@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+UNKNOWN
