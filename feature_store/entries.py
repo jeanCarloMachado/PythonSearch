@@ -1,6 +1,8 @@
 # This is an example feature definition file
+from datetime import timedelta
 
 from feast import Entity, Feature, FeatureView, FileSource, ValueType
+
 from search_run.data_paths import DataPaths
 
 entries = FileSource(
@@ -20,13 +22,13 @@ entry = Entity(
 # Our parquet files contain sample data that includes a driver_id column, timestamps and
 # three feature column. Here we define a Feature View that will allow us to serve this
 # data to our model online.
-driver_hourly_stats_view = FeatureView(
-    name="driver_hourly_stats",
+entries_snapshot = FeatureView(
+    name="entries_snapshot",
     entities=["key"],
     features=[
-        Feature(name="conv_rate", dtype=ValueType.FLOAT),
-        Feature(name="acc_rate", dtype=ValueType.FLOAT),
-        Feature(name="avg_daily_trips", dtype=ValueType.INT64),
+        Feature(name="position", dtype=ValueType.INT32),
+        Feature(name="key_lenght", dtype=ValueType.INT32),
     ],
     batch_source=entries,
+    ttl=timedelta(days=365),
 )
