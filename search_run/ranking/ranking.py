@@ -106,10 +106,19 @@ class Ranking:
         """
         Dump entries to be consumed into the feature store
         """
+        import datetime
+
+        from pyspark.sql import functions as F
         from pyspark.sql.session import SparkSession
 
         spark = SparkSession.builder.getOrCreate()
         df = self.load_entries_df(spark)
+
+        df = df.withColumn(
+            "event_timestamp",
+            F.lit(datetime.datetime.now().timestamp()).cast("timestamp"),
+        )
+        df = df.withColumnRenamed("key", "entry_key")
 
         df.repartition(1).write.mode("overwrite").parquet(DataPaths.entries_dump)
 
