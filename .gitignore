@@ -1,3 +1,5 @@
+*.egg_info
 .mypy_cache
 *mlruns/*
 */mlruns/*
+dist/*

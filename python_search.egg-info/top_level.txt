@@ -1,3 +1,0 @@
-examples
-search_run
-tests
