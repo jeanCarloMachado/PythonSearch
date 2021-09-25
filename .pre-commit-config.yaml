@@ -40,3 +40,12 @@ repos:
     hooks:
         - id: flake8
           stages: [commit, manual]
+
+-   repo: local
+    hooks:
+        - id: flakeFunctions
+          name: Check for the size of functions
+          entry: /usr/bin/flake8 --ignore F,E,W,CFQ002 --max-function-length=20
+          types: [python]
+          language: script
+          stages: [commit]

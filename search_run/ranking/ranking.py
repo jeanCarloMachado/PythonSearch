@@ -88,7 +88,6 @@ class Ranking:
         """
         entries = self.load_entries()
 
-        entries
         entries = [
             {"key": entry[0], "content": f"{entry[1]}", "position": position + 1}
             for position, entry in enumerate(entries.items())
@@ -112,7 +111,15 @@ class Ranking:
         spark = SparkSession.builder.getOrCreate()
         df = self.load_entries_df(spark)
 
-        df.repartition(1).write.mode("overwrite").json(DataPaths.entries_dump)
+        df.repartition(1).write.mode("overwrite").parquet(DataPaths.entries_dump)
+
+        import os
+        import pathlib
+
+        current_file_name = str(
+            list(pathlib.Path(DataPaths.entries_dump).glob("*.parquet"))[0]
+        )
+        os.rename(current_file_name, DataPaths.entries_dump + "/000.parquet")
 
     def load_entries(self):
         return self.configuration().commands

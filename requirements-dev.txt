@@ -1,0 +1,10 @@
+-r requirements.txt
+flake8
+flake8-functions
+mypy
+black
+flake8
+isort
+pre-commit
+pytest
+pytest-cov

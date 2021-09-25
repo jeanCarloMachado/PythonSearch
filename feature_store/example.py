@@ -1,23 +1,20 @@
 # This is an example feature definition file
 
 from feast import Entity, Feature, FeatureView, FileSource, ValueType
-from google.protobuf.duration_pb2 import Duration
+from search_run.data_paths import DataPaths
 
-# Read data from parquet files. Parquet is convenient for local development mode. For
-# production, you can use your favorite DWH, such as BigQuery. See Feast documentation
-# for more info.
-driver_hourly_stats = FileSource(
-    path="/home/jean/projects/search_run/feature_store/data/driver_stats.parquet",
+entries = FileSource(
+    path=DataPaths.entries_dump_file,
     event_timestamp_column="event_timestamp",
     created_timestamp_column="created",
 )
 
 # Define an entity for the driver. You can think of entity as a primary key used to
 # fetch features.
-driver = Entity(
-    name="driver_id",
-    value_type=ValueType.INT64,
-    description="driver id",
+entry = Entity(
+    name="key",
+    value_type=ValueType.STRING,
+    description="The name of the dictionary key in search run",
 )
 
 # Our parquet files contain sample data that includes a driver_id column, timestamps and
@@ -25,14 +22,11 @@ driver = Entity(
 # data to our model online.
 driver_hourly_stats_view = FeatureView(
     name="driver_hourly_stats",
-    entities=["driver_id"],
-    ttl=Duration(seconds=86400 * 1),
+    entities=["key"],
     features=[
         Feature(name="conv_rate", dtype=ValueType.FLOAT),
         Feature(name="acc_rate", dtype=ValueType.FLOAT),
         Feature(name="avg_daily_trips", dtype=ValueType.INT64),
     ],
-    online=True,
-    batch_source=driver_hourly_stats,
-    tags={},
+    batch_source=entries,
 )
