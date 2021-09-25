@@ -3,6 +3,7 @@ from typing import Any, List
 
 import pandas as pd
 
+from search_run.data_paths import DataPaths
 from search_run.logger import configure_logger
 
 logger = configure_logger()
@@ -18,7 +19,7 @@ class CiclicalPlacement:
 
         natural_position = self.compute_natural_position_scores(entries)
         used_items = self.compute_used_items_score(entries, commands_performed)
-        file_name = glob.glob("/data/search_run/predict_input_lenght/latest/*.csv")
+        file_name = glob.glob(DataPaths.prediction_batch_location + "/*.csv")
         input_lenght_df = pd.read_csv(file_name[0])
 
         result = []

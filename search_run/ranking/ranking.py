@@ -7,6 +7,7 @@ from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 from grimoire.search_run.entries.main import Configuration
 
+from search_run.data_paths import DataPaths
 from search_run.logger import configure_logger
 from search_run.ranking.ciclical import CiclicalPlacement
 
@@ -33,7 +34,6 @@ class Ranking:
 
         entries: dict = self.load_entries()
         commands_performed = self.load_commands_performed_df()
-
         result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
 
         return self._export_to_file(result)
@@ -42,12 +42,12 @@ class Ranking:
         """
         Returns a pandas datafarme with the commands performed
         """
-        with open("/data/grimoire/message_topics/run_key_command_performed") as f:
+        with open(DataPaths.commands_performed) as f:
             data = []
             for line in f.readlines():
                 try:
                     data.append(json.loads(line))
-                except Exception as e:
+                except BaseException:
                     logger.debug(f"Line broken: {line}")
         df = pd.DataFrame(data)
 
@@ -73,7 +73,7 @@ class Ranking:
             try:
                 content["key_name"] = name
                 content = json.dumps(content, default=tuple, ensure_ascii=True)
-            except:
+            except BaseException:
                 content = content
                 content = str(content)
 

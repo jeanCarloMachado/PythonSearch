@@ -1,10 +1,13 @@
+from search_run.data_paths import DataPaths
+
+
 class BaseConfiguration:
     """
     Main configuration of the application. Customers are supposed to pass their own
     """
 
     # the location of the dumped index
-    cached_filename: str = "/tmp/search_and_run_configuration_cached"
+    cached_filename: str = DataPaths.cached_configuration
     commands: dict = {}
 
     def __init__(self):
@@ -31,7 +34,7 @@ class BaseConfiguration:
 
         for key, command in self.commands.items():
             if type(command) is dict:
-                if not "tags" in command:
+                if "tags" not in command:
                     command["tags"] = [self.__class__.__name__]
                 else:
                     command["tags"].append(self.__class__.__name__)
