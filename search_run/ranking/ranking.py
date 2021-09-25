@@ -103,5 +103,16 @@ class Ranking:
 
         return entries_df
 
+    def dump_entries(self):
+        """
+        Dump entries to be consumed into the feature store
+        """
+        from pyspark.sql.session import SparkSession
+
+        spark = SparkSession.builder.getOrCreate()
+        df = self.load_entries_df(spark)
+
+        df.repartition(1).write.mode("overwrite").json(DataPaths.entries_dump)
+
     def load_entries(self):
         return self.configuration().commands
