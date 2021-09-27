@@ -5,6 +5,8 @@ import re
 from typing import List
 
 from ddtrace import tracer
+
+from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
 
@@ -13,6 +15,7 @@ from grimoire.search_run.entries.main import Configuration
 from grimoire.string import generate_identifier
 
 from search_run.context import Context
+from search_run.exceptions import RunException
 from search_run.interpreter.main import Interpreter
 
 
@@ -22,6 +25,7 @@ class Runner:
     def __init__(self):
         self.message_broker = MessageBroker("search_runs_executed")
 
+    @notify_exception_i3()
     @tracer.wrap("search_run.runner.run")
     def run(self, key: str, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         """
@@ -72,9 +76,3 @@ class Runner:
         return matching_keys
 
 
-class RunException(Exception):
-    @staticmethod
-    def key_does_not_match(key: str, matches: List[str]):
-        return RunException(
-            f"Does pattern does not match 1 key ({key}) and ({matches})"
-        )

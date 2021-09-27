@@ -1,3 +1,6 @@
+from typing import List
+
+
 class MenuException(Exception):
     config = {
         "disable_tray_message": True,
@@ -12,3 +15,11 @@ class MenuException(Exception):
 
 class CommandDoNotMatchException(Exception):
     pass
+
+
+class RunException(Exception):
+    @staticmethod
+    def key_does_not_match(key: str, matches: List[str]):
+        return RunException(
+            f"Does pattern does not match 1 key ({key}) and ({matches})"
+        )
