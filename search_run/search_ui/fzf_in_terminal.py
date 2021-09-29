@@ -17,7 +17,7 @@ class FzfInTerminal(SearchInterface):
     HEIGHT = 500
     WIDTH = 1100
 
-    def __init__(self, title="RunT: "):
+    def __init__(self, title="Run: "):
         self.title = title
 
     def run(self, cmd: str) -> (str, str):
@@ -27,7 +27,7 @@ class FzfInTerminal(SearchInterface):
         --title=launcher -o remember_window_size=n \
         -o initial_window_width={FzfInTerminal.WIDTH}  \
         -o  initial_window_height={FzfInTerminal.HEIGHT} \
-        -o font_size=13 \
+        -o font_size=12 \
         bash -c '{cmd} | \
         fzf \
             --cycle \
@@ -42,7 +42,7 @@ class FzfInTerminal(SearchInterface):
             --bind "ctrl-e:execute-silent:(nohup search_run edit_key {{}} & disown)" \
             --bind "ctrl-e:+execute-silent:(hide_launcher.sh)" \
             --bind "ctrl-k:execute-silent:(nohup search_run edit_key {{}} & disown)" \
-            --bind "ctrl-k:+execute-silent:(hide_launcher.sh)" \
+            --bind "ctrl-k:+execute-silent:(sleep 0.2 ; hide_launcher.sh)" \
             --bind "ctrl-d:abort" \
             --bind "esc:execute-silent:(hide_launcher.sh)" \
             --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
