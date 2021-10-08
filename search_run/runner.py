@@ -8,7 +8,7 @@ from ddtrace import tracer
 
 from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
-from grimoire.notification import send_notification
+from grimoire.notification import send_notification, notify_send
 
 # @todo inject rather than import
 from grimoire.search_run.entries.main import Configuration
@@ -47,10 +47,17 @@ class Runner:
         matches = self._matching_keys(key)
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
-        if len(matches) != 1:
-            raise RunException.key_does_not_match(key, matches)
 
-        return Interpreter.build_instance().default(matches[0])
+        match: str = matches[0]
+        if len(matches) > 1:
+            match = min(matches, key=len)
+            notify_send(f"Multiple matches for this key {matches} using the maller")
+
+        if not matches:
+            raise RunException.key_does_not_exist(key)
+
+
+        return Interpreter.build_instance().default(match)
 
     def hide_launcher(self):
         import os

@@ -11,6 +11,7 @@ class Shortcuts:
     ALT_SPACE = "Mod1+space"
     ALT_SHIFT_SPACE = "Mod1+Shift+space"
     ALT_SHIFT_D = "Mod1+Shift+d"
+    ALT_SHIFT_A = "Mod1+Shift+a"
     ALT_SHIFT_S = "Mod1+Shift+s"
     CTRL_B = "Control+b"
     CTRL_E = "Control+e"

@@ -19,7 +19,7 @@ class CommandDoNotMatchException(Exception):
 
 class RunException(Exception):
     @staticmethod
-    def key_does_not_match(key: str, matches: List[str]):
+    def key_does_not_exist(key: str, matches: List[str]):
         return RunException(
             f"Does pattern does not match 1 key ({key}) and ({matches})"
         )
