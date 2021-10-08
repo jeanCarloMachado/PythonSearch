@@ -48,13 +48,13 @@ class Runner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
+        if not matches:
+            raise RunException.key_does_not_exist(key)
+
         match: str = matches[0]
         if len(matches) > 1:
             match = min(matches, key=len)
             notify_send(f"Multiple matches for this key {matches} using the maller")
-
-        if not matches:
-            raise RunException.key_does_not_exist(key)
 
 
         return Interpreter.build_instance().default(match)
