@@ -87,6 +87,10 @@ class BaseInterpreter:
         return cmd
 
     def try_to_focus(self) -> bool:
+        """
+        Uses i3 infrastructure to focus on windows if they are already opened
+        :return:
+        """
 
         if "focus_match" not in self.cmd:
             return False
