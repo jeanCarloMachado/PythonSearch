@@ -32,8 +32,24 @@ class Ranking:
         Recomputes the rank and saves the results on the file to be read
         """
 
+        from pyspark.sql.session import SparkSession
+
+        spark = SparkSession.builder.getOrCreate()
         entries: dict = self.load_entries()
+        entries_df: dict = self.load_entries_df(spark)
         commands_performed = self.load_commands_performed_df()
+        commands_performed_df = self.load_commands_performed_dataframe(spark)
+        joined = (
+            entries_df.join(commands_performed_df, on="key", how="left")
+            .groupBy("key")
+            .agg(
+                F.first("key"),
+                F.first("created_at").alias("created_at"),
+                F.last("generated_date").alias("latest_executed"),
+            )
+        )
+        joined.show()
+        # breakpoint()
 
         result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
 
@@ -49,7 +65,7 @@ class Ranking:
                 try:
                     data.append(json.loads(line))
                 except BaseException:
-                    logger.debug(f"Line broken: {line}")
+                    logger.info(f"Line broken: {line}")
         df = pd.DataFrame(data)
 
         # revert the list (latest on top)
@@ -87,16 +103,23 @@ class Ranking:
         """
         loads a spark dataframe with the configuration entries
         """
-        entries = self.load_entries()
+        real_entries = self.load_entries()
 
-        entries = [
-            {"key": entry[0], "content": f"{entry[1]}", "position": position + 1}
-            for position, entry in enumerate(entries.items())
-        ]
-        # entries
+        entries = []
+
+        for position, entry in enumerate(real_entries.items()):
+            created_at = (
+                entry[1].get("created_at", "") if type(entry[1]) is dict else ""
+            )
+            transformed_entry = {
+                "key": entry[0],
+                "content": f"{entry[1]}",
+                "created_at": created_at,
+                "position": position + 1,
+            }
+            entries.append(transformed_entry)
 
         rdd = spark.sparkContext.parallelize(entries)
-
         entries_df = spark.read.json(rdd)
         entries_df = entries_df.drop("_corrupt_record")
         entries_df = entries_df.withColumn("key_lenght", F.length("key"))
