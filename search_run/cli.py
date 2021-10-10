@@ -47,7 +47,8 @@ class SearchAndRunCli:
 
     def clipboard_key(self, key):
         """
-        Copies the content to the clipboard of the dmenu option selected
+        Copies the content of the provided key to the clipboard.
+        Used by fzf to provide Ctrl-c functionality.
         """
         Interpreter.build_instance().clipboard(key)
 
@@ -95,6 +96,3 @@ class SearchAndRunCli:
         Shorter verion of run key for when lazy
         """
         return self.run_key(key)
-
-    def raise_error(self):
-        raise Exception("Test exception")

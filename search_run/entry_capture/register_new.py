@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 from typing import Tuple
 
 from grimoire import s
@@ -8,7 +9,13 @@ from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
+from grimoire.string import (
+    emptish,
+    quote_with,
+    remove_new_lines,
+    remove_special_chars,
+    surround_by_quote,
+)
 
 from search_run.config import MAIN_FILE
 from search_run.events import RegisterExecuted
@@ -29,7 +36,7 @@ class RegisterNew:
         """
         Create a new inferred entry based on the clipboard content
         """
-        clipboard_content, key = self._get_user_provided_data("Name your content")
+        clipboard_content, key = self._get_user_provided_data("Name your entry")
 
         clipboard_content = remove_new_lines(clipboard_content)
         clipboard_content = quote_with(clipboard_content, '"')
@@ -37,7 +44,10 @@ class RegisterNew:
         interpreter: BaseInterpreter = Interpreter.build_instance().get_interpreter(
             clipboard_content
         )
-        serialized = interpreter.serialize()
+        as_dict = interpreter.to_dict()
+        as_dict["created_at"] = datetime.datetime.now().isoformat()
+
+        serialized = str(as_dict)
         serialized = remove_new_lines(serialized)
 
         Replace().append_after_placeholder(
@@ -49,15 +59,20 @@ class RegisterNew:
         """
         Create a search run snippet entry based on the clipboard content
         """
-        snippet_content, key = self._get_user_provided_data("Name your snippet")
+        snippet_content, key = self._get_user_provided_data("Name your string snippet")
         if emptish(snippet_content):
             raise RegisterNewException.empty_content()
+
         snippet_content = snippet_content.replace("\n", " ")
         snippet_content = remove_special_chars(snippet_content, ALLOWED_SPECIAL_CHARS)
 
-        snippet_content = f"'''{snippet_content}'''"
-        row_entry = "{'snippet': " + snippet_content + "},"
-        line_to_add = f"        '{key}': {row_entry}"
+        as_dict = {
+            "snippet": snippet_content,
+            "created_at": datetime.datetime.now().isoformat(),
+        }
+
+        row_entry = str(as_dict)
+        line_to_add = f"        '{key}': {row_entry},"
         Replace().append_after_placeholder(
             MAIN_FILE, "# NEW_COMMANDS_HERE", line_to_add
         )

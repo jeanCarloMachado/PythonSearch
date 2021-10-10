@@ -13,7 +13,7 @@ from search_run.context import Context
 
 
 class BaseInterpreter:
-    """parent of all interpreters"""
+    """parent of all interpreters, Cannot instantiate directly"""
 
     def __init__(self, cmd, context: Context):
         self.cmd = cmd
@@ -75,14 +75,11 @@ class BaseInterpreter:
     def serialize(self):
         return str(self.cmd)
 
+    def to_dict(self):
+        return self.cmd
+
     def serialize_entry(self):
         return json.dumps(self.cmd)
-
-    def wrap_launch_on_i3(self, cmd):
-        # if "workspace" in self.cmd:
-        #     return f"i3 'workspace {self.cmd['workspace']}; exec {cmd}'"
-
-        return cmd
 
     def apply_directory(self, cmd):
         if "directory" in self.cmd:

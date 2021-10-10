@@ -57,9 +57,6 @@ class CmdInterpreter(BaseInterpreter):
             cmd = f"{cmd} ; tail -f /dev/null"
 
         cmd = self._try_to_wrap_in_terminal(cmd)
-        # todo see why wrapping stuff in 3 breaks the comands
-        if "tmux" not in self.cmd:
-            cmd = self.wrap_launch_on_i3(cmd)
 
         logging.info(f"Command to run: {cmd}")
         result = self._execute(cmd)

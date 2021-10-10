@@ -21,6 +21,11 @@ class Interpreter:
 
     @staticmethod
     def build_instance():
+        """
+        Singleton. Initializes a configuration a context and a interpreter
+
+        :return:
+        """
         if not Interpreter._instance:
             configuration = Configuration()
             context = Context.get_instance()
@@ -55,6 +60,7 @@ class Interpreter:
 
     def get_interpreter(self, given_input: str) -> BaseInterpreter:
         """
+        Given the content, returns the best matched interpreter.
         Returns the instance of the matched interpreter given an text input
         """
         self.context.set_input(given_input)
