@@ -9,13 +9,7 @@ from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import (
-    emptish,
-    quote_with,
-    remove_new_lines,
-    remove_special_chars,
-    surround_by_quote,
-)
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
 from search_run.config import MAIN_FILE
 from search_run.events import RegisterExecuted
