@@ -8,7 +8,6 @@ from ddtrace import tracer
 from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import notify_send, send_notification
-
 # @todo inject rather than import
 from grimoire.search_run.entries.main import Configuration
 from grimoire.string import generate_identifier
@@ -55,11 +54,6 @@ class Runner:
             notify_send(f"Multiple matches for this key {matches} using the maller")
 
         return Interpreter.build_instance().default(match)
-
-    def hide_launcher(self):
-        import os
-
-        os.system("i3-msg '[title=launcher] move scratchpad'")
 
     def _matching_keys(self, key: str) -> List[str]:
         """
