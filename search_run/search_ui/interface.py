@@ -1,8 +1,3 @@
-from typing import Optional
-
-from search_run.entities import SearchResult
-
-
 class SearchInterface:
-    def run(self, cmd: str) -> Optional[SearchResult]:
+    def run(self, cmd: str):
         raise Exception("Implement me")

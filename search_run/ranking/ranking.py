@@ -34,6 +34,7 @@ class Ranking:
 
         entries: dict = self.load_entries()
         commands_performed = self.load_commands_performed_df()
+
         result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
 
         return self._export_to_file(result)
