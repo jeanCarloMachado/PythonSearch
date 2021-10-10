@@ -26,7 +26,7 @@ from search_run.interpreter.main import Interpreter
 
 class RegisterNew:
     """
-    Responsible for registering new entries in search run
+    Responsible for registering new entries in your catalog
     """
 
     def __init__(self):
