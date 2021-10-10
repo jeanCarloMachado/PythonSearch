@@ -5,10 +5,9 @@ import re
 from typing import List
 
 from ddtrace import tracer
-
 from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
-from grimoire.notification import send_notification, notify_send
+from grimoire.notification import notify_send, send_notification
 
 # @todo inject rather than import
 from grimoire.search_run.entries.main import Configuration
@@ -36,7 +35,6 @@ class Runner:
         # usually the key from fzf, and our keys do not accept :
         if ":" in key:
             key = key.split(":")[0]
-            # self.hide_launcher()
 
         if from_shortcut:
             send_notification(f"{key}")
@@ -55,7 +53,6 @@ class Runner:
         if len(matches) > 1:
             match = min(matches, key=len)
             notify_send(f"Multiple matches for this key {matches} using the maller")
-
 
         return Interpreter.build_instance().default(match)
 
@@ -81,5 +78,3 @@ class Runner:
                 matching_keys.append(registered_key)
 
         return matching_keys
-
-

@@ -49,3 +49,11 @@ repos:
           types: [python]
           language: script
           stages: [commit]
+
+-   repo: local
+    hooks:
+        - id: run tests
+          name: run tests
+          entry: pytest
+          language: script
+          stages: [commit]
