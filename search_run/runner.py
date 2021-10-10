@@ -2,17 +2,19 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import List
+from typing import List, Optional
 
 from ddtrace import tracer
 from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import notify_send, send_notification
+
 # @todo inject rather than import
 from grimoire.search_run.entries.main import Configuration
 from grimoire.string import generate_identifier
 
 from search_run.context import Context
+from search_run.events import SearchPerformed
 from search_run.exceptions import RunException
 from search_run.interpreter.main import Interpreter
 
@@ -22,10 +24,18 @@ class Runner:
 
     def __init__(self):
         self.message_broker = MessageBroker("search_runs_executed")
+        self.message_broker_search = MessageBroker("run_key_command_performed")
 
     @notify_exception_i3()
     @tracer.wrap("search_run.runner.run")
-    def run(self, key: str, force_gui_mode=False, gui_mode=False, from_shortcut=False):
+    def run(
+        self,
+        key: str,
+        force_gui_mode=False,
+        gui_mode=False,
+        from_shortcut=False,
+        query_used: str = "",
+    ):
         """
         from_shortcut means that the key execution was triggered by a desktop shortcut
         """
@@ -40,6 +50,9 @@ class Runner:
 
         event = {"key": key, "from_shortcut": from_shortcut}
         self.message_broker.produce(event)
+        self.message_broker_search.produce(
+            SearchPerformed(key=key, given_input=query_used).__dict__
+        )
 
         matches = self._matching_keys(key)
         if force_gui_mode or gui_mode:

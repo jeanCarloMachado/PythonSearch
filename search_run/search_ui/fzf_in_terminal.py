@@ -15,7 +15,7 @@ class FzfInTerminal(SearchInterface):
     def __init__(self, title="Run: "):
         self.title = title
 
-    def run(self, cmd: str):
+    def run(self, cmd: str) -> None:
 
         launch_cmd = f"""
         ionice -n 3 nice -19 kitty \
@@ -48,6 +48,3 @@ class FzfInTerminal(SearchInterface):
             """
         logger.info(f"{launch_cmd}")
         os.system(launch_cmd)
-
-        return
-        # return SearchResult(result=result_lines[1], query=result_lines[0])
