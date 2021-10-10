@@ -9,9 +9,10 @@ from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
 from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
-from pydantic import BaseModel
 
 from search_run.config import MAIN_FILE
+from search_run.events import RegisterExecuted
+from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.main import Interpreter
 
@@ -76,11 +77,6 @@ class RegisterNew:
         return clipboard_content, key
 
 
-class RegisterExecuted(BaseModel):
-    key: str
-    content: str
-
-
 ClipboardContent = str
 EntryKey = str
 ALLOWED_SPECIAL_CHARS = [
@@ -107,15 +103,3 @@ ALLOWED_SPECIAL_CHARS = [
     "}",
     "?",
 ]
-
-
-class RegisterNewException(Exception):
-    config = {
-        "disable_tray_message": True,
-        "enable_notification": True,
-        "disable_sentry": True,
-    }
-
-    @staticmethod
-    def empty_content():
-        return RegisterNewException(f"Will not register as content looks too small")

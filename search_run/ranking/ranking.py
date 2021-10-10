@@ -8,8 +8,8 @@ from grimoire.file import write_file
 from grimoire.search_run.entries.main import Configuration
 
 from search_run.data_paths import DataPaths
-from search_run.logger import configure_logger
-from search_run.ranking.ciclical import CiclicalPlacement
+from search_run.observability.logger import configure_logger
+from search_run.ranking.ciclical_placement import CiclicalPlacement
 
 logger = configure_logger()
 
@@ -131,4 +131,5 @@ class Ranking:
         os.rename(current_file_name, DataPaths.entries_dump + "/000.parquet")
 
     def load_entries(self):
+        """ Loads the current state of the art of search run entries"""
         return self.configuration().commands

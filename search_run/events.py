@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 
+from pydantic import BaseModel
+
+""" Centralize all events definitions to help in the data discovery """
+
 
 @dataclass
 class SearchPerformed:
@@ -7,3 +11,8 @@ class SearchPerformed:
     given_input: str
     # name of the entry matched
     key: str
+
+
+class RegisterExecuted(BaseModel):
+    key: str
+    content: str

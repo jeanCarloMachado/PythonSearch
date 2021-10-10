@@ -1,6 +1,6 @@
 import os
 
-from search_run.logger import logger
+from search_run.observability.logger import logger
 
 
 def setup():

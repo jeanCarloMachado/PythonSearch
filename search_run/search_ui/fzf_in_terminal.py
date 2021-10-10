@@ -1,11 +1,6 @@
 import os
 
-from grimoire.shell import shell as s
-from grimoire.string import chomp, emptish
-
-from search_run.entities import SearchResult
-from search_run.exceptions import MenuException
-from search_run.logger import logger
+from search_run.observability.logger import logger
 from search_run.search_ui.interface import SearchInterface
 
 

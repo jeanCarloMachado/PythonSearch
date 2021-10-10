@@ -4,7 +4,7 @@ from typing import Any, List
 import pandas as pd
 
 from search_run.data_paths import DataPaths
-from search_run.logger import configure_logger
+from search_run.observability.logger import configure_logger
 
 logger = configure_logger()
 

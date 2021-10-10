@@ -2,11 +2,12 @@ import os
 
 
 class Context:
-    """the running context, captures information from teh enviroment to contextualize how to execute the command"""
+    """
+    the running context, captures information from the enviroment to contextualize how to execute the command
+    """
 
     _instance = None
-
-    _is_cli = False
+    _is_cli : bool = False
     _is_group_command = False
     _should_execute_sequentially = False
     _input = None

@@ -5,11 +5,11 @@ from grimoire.shell import shell
 
 from search_run.config import MAIN_FILE, PROJECT_ROOT
 from search_run.configuration import BaseConfiguration
+from search_run.entry_capture.register_new import RegisterNew
 from search_run.export_configuration import ConfigurationExporter
 from search_run.interpreter.main import Interpreter
 from search_run.observability.datadog import setup
 from search_run.ranking.ranking import Ranking
-from search_run.register_new import RegisterNew
 from search_run.runner import Runner
 from search_run.search import Search
 
