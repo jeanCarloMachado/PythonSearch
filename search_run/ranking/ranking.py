@@ -1,3 +1,4 @@
+import datetime
 import json
 from collections import namedtuple
 
@@ -32,28 +33,40 @@ class Ranking:
         Recomputes the rank and saves the results on the file to be read
         """
 
+        entries: dict = self.load_entries()
+        commands_performed = self.load_commands_performed_df()
+        result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
+
+        return self._export_to_file(result)
+
+    def compute_head(self):
         from pyspark.sql.session import SparkSession
 
         spark = SparkSession.builder.getOrCreate()
-        entries: dict = self.load_entries()
         entries_df: dict = self.load_entries_df(spark)
-        commands_performed = self.load_commands_performed_df()
         commands_performed_df = self.load_commands_performed_dataframe(spark)
         joined = (
             entries_df.join(commands_performed_df, on="key", how="left")
             .groupBy("key")
             .agg(
-                F.first("key"),
                 F.first("created_at").alias("created_at"),
                 F.last("generated_date").alias("latest_executed"),
             )
         )
-        joined.show()
-        # breakpoint()
+        joined = joined.withColumn(
+            "latest_event",
+            F.when(
+                joined.latest_executed is not None, joined.latest_executed
+            ).otherwise(joined.created_at),
+        )
+        joined = joined.filter("latest_event is not NULL")
+        breakpoint()
+        joined = joined.orderBy(joined.latest_event.desc())
+        joined = joined.select("key").limit(30)
+        result = joined.collect()
+        final_result = list(map(lambda x: x.key, result))
 
-        result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
-
-        return self._export_to_file(result)
+        return final_result
 
     def load_commands_performed_df(self):
         """
@@ -75,7 +88,7 @@ class Ranking:
 
     def load_commands_performed_dataframe(self, spark):
         dataset = Ranking().load_commands_performed_df()
-        schema = "`key` STRING,  `generated_date` STRING, `uuid` STRING, `given_input` STRING"
+        schema = "`key` STRING,  `generated_date` TIMESTAMP, `uuid` STRING, `given_input` STRING"
         original_df = spark.createDataFrame(dataset, schema=schema)
         performed_df = original_df.withColumn("input_lenght", F.length("given_input"))
         performed_df = performed_df.filter('given_input != "NaN"')
@@ -83,33 +96,20 @@ class Ranking:
 
         return performed_df
 
-    def _export_to_file(self, data):
-        fzf_lines = ""
-        for name, content in data:
-
-            try:
-                content["key_name"] = name
-                content = json.dumps(content, default=tuple, ensure_ascii=True)
-            except BaseException:
-                content = content
-                content = str(content)
-
-            fzf_lines += f"{name.lower()}: " + content + "\n"
-
-        fzf_lines = fzf_lines.replace("\\", "\\\\")
-        write_file(self.configuration.cached_filename, fzf_lines)
-
     def load_entries_df(self, spark):
         """
         loads a spark dataframe with the configuration entries
         """
         real_entries = self.load_entries()
-
         entries = []
+
+        default_created_at = datetime.datetime(2020, 1, 1, 00, 00)
 
         for position, entry in enumerate(real_entries.items()):
             created_at = (
-                entry[1].get("created_at", "") if type(entry[1]) is dict else ""
+                entry[1].get("created_at", default_created_at)
+                if type(entry[1]) is dict
+                else default_created_at
             )
             transformed_entry = {
                 "key": entry[0],
@@ -120,7 +120,8 @@ class Ranking:
             entries.append(transformed_entry)
 
         rdd = spark.sparkContext.parallelize(entries)
-        entries_df = spark.read.json(rdd)
+        schema = "`key` STRING,  `content` STRING, `created_at` TIMESTAMP, `position` INTEGER"
+        entries_df = spark.read.json(rdd, schema=schema)
         entries_df = entries_df.drop("_corrupt_record")
         entries_df = entries_df.withColumn("key_lenght", F.length("key"))
 
@@ -157,3 +158,19 @@ class Ranking:
     def load_entries(self):
         """ Loads the current state of the art of search run entries"""
         return self.configuration().commands
+
+    def _export_to_file(self, data):
+        fzf_lines = ""
+        for name, content in data:
+
+            try:
+                content["key_name"] = name
+                content = json.dumps(content, default=tuple, ensure_ascii=True)
+            except BaseException:
+                content = content
+                content = str(content)
+
+            fzf_lines += f"{name.lower()}: " + content + "\n"
+
+        fzf_lines = fzf_lines.replace("\\", "\\\\")
+        write_file(self.configuration.cached_filename, fzf_lines)
