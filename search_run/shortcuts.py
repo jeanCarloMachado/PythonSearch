@@ -34,6 +34,9 @@ class Shortcuts:
     CTRL_W = "Control+w"
     CTRL_SPACE = "Control+space"
     SUPER_SPACE = "Mod4+space"
+    # DO_NOT_USE used for setting up tabbed windows in i3
+    SUPER_W = "Mod4+w"
+    SUPER_SHIFT_W = "Mod4+Shift+w"
 
     CTRL_SHIFT_N = "Control+Shift+n"
     CTRL_SHIFT_9 = "Control+Shift+9"
