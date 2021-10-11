@@ -21,7 +21,12 @@ class SearchAndRunCli:
 
     SEARCH_LOG_FILE = "/tmp/search_and_run_log"
 
-    def __init__(self, configuration: Optional[BaseConfiguration] = None):
+    def __init__(self, configuration: Optional[BaseConfiguration] = None, entries=None):
+        """
+        :param configuration:
+        :param entries: the setted up entries
+        """
+
         self.configuration = configuration
         self.configuration_exporter = ConfigurationExporter(self.configuration)
         self.ranking = Ranking

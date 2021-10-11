@@ -22,7 +22,5 @@ data = {
             """,
     },
 }
-
-instance = SearchAndRunCli(application_name="test", data=data)
-
+instance = SearchAndRunCli(application_name="test", entries=data)
 Fire(instance)

@@ -1,6 +1,7 @@
 import datetime
 import json
 from collections import namedtuple
+from typing import List, Tuple
 
 import pandas as pd
 import pyspark.sql.functions as F
@@ -44,24 +45,30 @@ class Ranking:
 
         spark = SparkSession.builder.getOrCreate()
         entries_df: dict = self.load_entries_df(spark)
-        commands_performed_df = self.load_commands_performed_dataframe(spark)
+        performed_df = self.load_commands_performed_dataframe(spark)
         joined = (
-            entries_df.join(commands_performed_df, on="key", how="left")
-            .groupBy("key")
+            entries_df.join(
+                performed_df, performed_df.key == entries_df.key, how="left"
+            )
+            .groupBy(entries_df.key)
             .agg(
-                F.first("created_at").alias("created_at"),
-                F.last("generated_date").alias("latest_executed"),
+                F.first(entries_df.created_at).alias("created_at"),
+                F.last(performed_df.generated_date).alias("latest_executed"),
             )
         )
         joined = joined.withColumn(
             "latest_event",
             F.when(
-                joined.latest_executed is not None, joined.latest_executed
+                joined.latest_executed.isNotNull(), joined.latest_executed
             ).otherwise(joined.created_at),
         )
-        joined = joined.filter("latest_event is not NULL")
+        joined = (
+            joined.withColumn("unix", F.unix_timestamp("latest_event"))
+            .orderBy("unix", desc=True)
+            .show()
+        )
         breakpoint()
-        joined = joined.orderBy(joined.latest_event.desc())
+
         joined = joined.select("key").limit(30)
         result = joined.collect()
         final_result = list(map(lambda x: x.key, result))
@@ -76,7 +83,12 @@ class Ranking:
             data = []
             for line in f.readlines():
                 try:
-                    data.append(json.loads(line))
+                    data_entry = json.loads(line)
+                    dt = datetime.datetime.strptime(
+                        data_entry["generated_date"], "%Y-%m-%d %H:%M:%S"
+                    )
+                    data_entry["generated_date"] = dt
+                    data.append(data_entry)
                 except BaseException:
                     logger.info(f"Line broken: {line}")
         df = pd.DataFrame(data)
@@ -159,17 +171,19 @@ class Ranking:
         """ Loads the current state of the art of search run entries"""
         return self.configuration().commands
 
-    def _export_to_file(self, data):
+    def _export_to_file(self, data: List[Tuple[str, dict]]):
         fzf_lines = ""
+        position = 1
         for name, content in data:
-
             try:
                 content["key_name"] = name
+                content["rank_position"] = position
                 content = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException:
                 content = content
                 content = str(content)
 
+            position = position + 1
             fzf_lines += f"{name.lower()}: " + content + "\n"
 
         fzf_lines = fzf_lines.replace("\\", "\\\\")

@@ -1,5 +1,3 @@
-from typing import List
-
 """ Centralize all execptions definitions to help in the data discovery """
 
 
@@ -21,10 +19,8 @@ class CommandDoNotMatchException(Exception):
 
 class RunException(Exception):
     @staticmethod
-    def key_does_not_exist(key: str, matches: List[str]):
-        return RunException(
-            f"Does pattern does not match 1 key ({key}) and ({matches})"
-        )
+    def key_does_not_exist(key: str):
+        return RunException(f"Key does not exist: {key}")
 
 
 class RegisterNewException(Exception):
