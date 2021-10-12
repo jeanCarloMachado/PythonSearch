@@ -8,7 +8,6 @@ from ddtrace import tracer
 from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import notify_send, send_notification
-
 # @todo inject rather than import
 from grimoire.search_run.entries.main import Configuration
 from grimoire.string import generate_identifier
@@ -49,10 +48,6 @@ class Runner:
             send_notification(f"{key}")
 
         event = {"key": key, "from_shortcut": from_shortcut}
-        self.message_broker.produce(event)
-        self.message_broker_search.produce(
-            SearchPerformed(key=key, given_input=query_used).__dict__
-        )
 
         matches = self._matching_keys(key)
         if force_gui_mode or gui_mode:
@@ -61,12 +56,17 @@ class Runner:
         if not matches:
             raise RunException.key_does_not_exist(key)
 
-        match: str = matches[0]
+        real_key: str = matches[0]
         if len(matches) > 1:
-            match = min(matches, key=len)
+            real_key = min(matches, key=len)
             notify_send(f"Multiple matches for this key {matches} using the maller")
 
-        return Interpreter.build_instance().default(match)
+        self.message_broker.produce(event)
+        self.message_broker_search.produce(
+            SearchPerformed(key=key, given_input=query_used).__dict__
+        )
+
+        return Interpreter.build_instance().default(real_key)
 
     def _matching_keys(self, key: str) -> List[str]:
         """

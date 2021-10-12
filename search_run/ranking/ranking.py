@@ -51,12 +51,10 @@ class Ranking:
         spark = SparkSession.builder.getOrCreate()
         entries_df: dict = self.load_entries_df(spark)
         entries_df = entries_df.withColumnRenamed("key", "key_original")
-        entries_df = entries_df.withColumn(
-            "key_name", remove_spaces(entries_df.key_original)
-        )
+        entries_df = entries_df.withColumn("key_name", entries_df.key_original)
         performed_history_df = self.load_commands_performed_dataframe(spark)
         performed_history_df = performed_history_df.withColumn(
-            "key_name", remove_spaces(performed_history_df.key)
+            "key_name", performed_history_df.key
         )
 
         joined = (
@@ -69,9 +67,10 @@ class Ranking:
             .agg(
                 F.first(entries_df.key_original).alias("key_original"),
                 F.first(entries_df.created_at).alias("created_at"),
-                F.last(performed_history_df.generated_date).alias("latest_executed"),
+                F.max(performed_history_df.generated_date).alias("latest_executed"),
             )
         )
+        print(f"Number of entries: {entries_df.count()}")
         print(f"Number of joined items: {joined.count()}")
         joined = joined.withColumn(
             "latest_event",
@@ -87,10 +86,9 @@ class Ranking:
 
         entries_df.filter('key_name like "%journaling%"').show()
         performed_history_df.filter('key_name like "%journaling%"').show()
+        joined.filter('key_original like "%journaling%"').show()
 
         print(final_result)
-        breakpoint()
-
         return final_result
 
     def load_commands_performed_df(self):
