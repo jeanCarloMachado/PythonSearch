@@ -5,6 +5,7 @@ from typing import List, Tuple
 
 import pandas as pd
 import pyspark.sql.functions as F
+from dateutil.relativedelta import relativedelta
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 from grimoire.search_run.entries.main import Configuration
@@ -41,37 +42,54 @@ class Ranking:
         return self._export_to_file(result)
 
     def compute_head(self):
+        """computes the top rank based on the latest events either added or used"""
         from pyspark.sql.session import SparkSession
+
+        def remove_spaces(col):
+            return F.regexp_replace(col, " ", "")
 
         spark = SparkSession.builder.getOrCreate()
         entries_df: dict = self.load_entries_df(spark)
-        performed_df = self.load_commands_performed_dataframe(spark)
+        entries_df = entries_df.withColumnRenamed("key", "key_original")
+        entries_df = entries_df.withColumn(
+            "key_name", remove_spaces(entries_df.key_original)
+        )
+        performed_history_df = self.load_commands_performed_dataframe(spark)
+        performed_history_df = performed_history_df.withColumn(
+            "key_name", remove_spaces(performed_history_df.key)
+        )
+
         joined = (
             entries_df.join(
-                performed_df, performed_df.key == entries_df.key, how="left"
+                performed_history_df,
+                performed_history_df.key_name == entries_df.key_name,
+                how="left",
             )
-            .groupBy(entries_df.key)
+            .groupBy(entries_df.key_name)
             .agg(
+                F.first(entries_df.key_original).alias("key_original"),
                 F.first(entries_df.created_at).alias("created_at"),
-                F.last(performed_df.generated_date).alias("latest_executed"),
+                F.last(performed_history_df.generated_date).alias("latest_executed"),
             )
         )
+        print(f"Number of joined items: {joined.count()}")
         joined = joined.withColumn(
             "latest_event",
             F.when(
                 joined.latest_executed.isNotNull(), joined.latest_executed
             ).otherwise(joined.created_at),
         )
-        joined = (
-            joined.withColumn("unix", F.unix_timestamp("latest_event"))
-            .orderBy("unix", desc=True)
-            .show()
-        )
-        breakpoint()
+        joined = joined.orderBy(F.col("latest_event").desc())
 
-        joined = joined.select("key").limit(30)
-        result = joined.collect()
-        final_result = list(map(lambda x: x.key, result))
+        result_df = joined.select("key_original").limit(25)
+        result = result_df.collect()
+        final_result = list(map(lambda x: x.key_original, result))
+
+        entries_df.filter('key_name like "%journaling%"').show()
+        performed_history_df.filter('key_name like "%journaling%"').show()
+
+        print(final_result)
+        breakpoint()
 
         return final_result
 
@@ -115,14 +133,15 @@ class Ranking:
         real_entries = self.load_entries()
         entries = []
 
-        default_created_at = datetime.datetime(2020, 1, 1, 00, 00)
+        # default data created is 1 year aho
+        default_created_at = datetime.datetime.now() - relativedelta(years=1)
 
         for position, entry in enumerate(real_entries.items()):
-            created_at = (
-                entry[1].get("created_at", default_created_at)
-                if type(entry[1]) is dict
-                else default_created_at
-            )
+
+            created_at = default_created_at.isoformat()
+            if type(entry[1]) is dict and entry[1].get("created_at"):
+                created_at = entry[1].get("created_at")
+
             transformed_entry = {
                 "key": entry[0],
                 "content": f"{entry[1]}",

@@ -1,4 +1,4 @@
-""" Centralize all execptions definitions to help in the data discovery """
+""" Centralize all exceptions definitions to help in the data discovery """
 
 
 class MenuException(Exception):
