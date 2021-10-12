@@ -37,16 +37,17 @@ class Ranking:
 
         entries: dict = self.load_entries()
         commands_performed = self.load_commands_performed_df()
-        result = CiclicalPlacement().cyclical_placment(entries, commands_performed)
+        result = CiclicalPlacement().cyclical_placment(
+            entries=entries,
+            head_keys=self.compute_head(),
+            commands_performed=commands_performed,
+        )
 
         return self._export_to_file(result)
 
     def compute_head(self):
         """computes the top rank based on the latest events either added or used"""
         from pyspark.sql.session import SparkSession
-
-        def remove_spaces(col):
-            return F.regexp_replace(col, " ", "")
 
         spark = SparkSession.builder.getOrCreate()
         entries_df: dict = self.load_entries_df(spark)
@@ -80,15 +81,11 @@ class Ranking:
         )
         joined = joined.orderBy(F.col("latest_event").desc())
 
-        result_df = joined.select("key_original").limit(25)
+        result_df = joined.select("key_original").limit(30)
         result = result_df.collect()
         final_result = list(map(lambda x: x.key_original, result))
 
-        entries_df.filter('key_name like "%journaling%"').show()
-        performed_history_df.filter('key_name like "%journaling%"').show()
-        joined.filter('key_original like "%journaling%"').show()
-
-        print(final_result)
+        logger.info(f"Final dataset result: {final_result}")
         return final_result
 
     def load_commands_performed_df(self):

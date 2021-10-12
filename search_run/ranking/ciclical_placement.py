@@ -1,5 +1,6 @@
 import glob
-from typing import Any, List
+import logging
+from typing import Any, Dict, List
 
 import pandas as pd
 
@@ -14,53 +15,73 @@ class CiclicalPlacement:
     Joins multiple ranking methods and place them in clycles
     """
 
-    def cyclical_placment(self, entries, commands_performed) -> List[Any]:
+    def cyclical_placment(
+        self, entries: Dict, head_keys: List[str], commands_performed
+    ) -> List[Any]:
         """Put 1 result of natural rank after 1 result of visits"""
 
-        natural_position = self.compute_natural_position_scores(entries)
-        used_items = self.compute_used_items_score(entries, commands_performed)
-        file_name = glob.glob(DataPaths.prediction_batch_location + "/*.csv")
-        input_lenght_df = pd.read_csv(file_name[0])
+        self.head_keys = head_keys
+        # reverse the keys so on pop we get the first one
+        self.head_keys.reverse()
+        self.natural_position: List[str] = self.compute_natural_position_scores(entries)
+        self.used_items: List[str] = self.compute_used_items_score(
+            entries, commands_performed
+        )
+        model_key_lenght_prediction = glob.glob(
+            DataPaths.prediction_batch_location + "/*.csv"
+        )
+        self.input_lenght_df = pd.read_csv(model_key_lenght_prediction[0])
+        self.entries = entries
 
+        all_keys = list(entries.keys())
         result = []
-        used_keys = []
+        self.used_keys = []
         position = 0
 
         # make the first result be the last executed
-        key = used_items.pop(0)
-        result.append((key, entries[key]))
-
-        while len(natural_position) > 0:
-
-            if position % 2 == 0 and len(used_items) > 0:
-                key = used_items.pop(0)
-            if position % 3 == 0 and len(input_lenght_df) > 0:
-                while True and len(input_lenght_df):
-                    key = input_lenght_df.iloc[0]["key"]
-                    input_lenght_df = input_lenght_df.iloc[1:]
-
-                    if key in entries and key not in used_keys:
-                        logger.debug(
-                            f"Key from lodel found in entries or found in used_keys {key}"
-                        )
-                        break
-                    else:
-                        logger.debug(f"Key from lodel not found in entries {key}")
-            else:
-                key = natural_position.pop(0)
-
-            if key in used_keys:
-                continue
-
-            if key not in entries:
-                logger.info(f"key {key} not found in entries")
-                continue
-
-            result.append((key, entries[key]))
-            used_keys.append(key)
+        while all_keys:
+            key = self.get_next_key(position)
+            logger.debug(f"Add key {key}")
             position = position + 1
+            if key in self.used_keys:
+                logging.debug(f"Key {key} already in used items")
+                continue
+
+            if not key in entries:
+                logger.debug(f"Key not in entries {key}")
+                continue
+
+            entry_data = entries[key]
+            result.append((key, entry_data))
+
+            self.used_keys.append(key)
+            all_keys.remove(key)
 
         return result
+
+    def get_next_key(self, position):
+        while self.head_keys:
+
+            key = self.head_keys.pop()
+            logging.debug(f"popping head keys {key}")
+            return key
+
+        if position % 2 == 0 and len(self.used_items) > 0:
+            for key in self.natural_position[:]:
+                self.natural_position.remove(key)
+                if key not in self.used_keys:
+                    return key
+
+        if position % 3 == 0 and len(self.input_lenght_df) > 0:
+            while True and len(self.input_lenght_df):
+                key = self.input_lenght_df.iloc[0]["key"]
+                self.input_lenght_df = self.input_lenght_df.iloc[1:]
+                return key
+
+        for key in self.natural_position:
+            self.natural_position.remove(key)
+            if key not in self.used_keys[:]:
+                return key
 
     def compute_used_items_score(self, entries, commands_performed):
         # a list with the keys of used entries, separated by space
