@@ -1,4 +1,3 @@
-# This is an example feature definition file
 from datetime import timedelta
 
 from feast import Entity, Feature, FeatureView, FileSource, ValueType
@@ -10,17 +9,12 @@ entries = FileSource(
     event_timestamp_column="event_timestamp",
 )
 
-# Define an entity for the driver. You can think of entity as a primary key used to
-# fetch features.
 entry = Entity(
     name="entry_key",
     value_type=ValueType.STRING,
     description="The name of the dictionary key in search run",
 )
 
-# Our parquet files contain sample data that includes a driver_id column, timestamps and
-# three feature column. Here we define a Feature View that will allow us to serve this
-# data to our model online.
 entries_snapshot = FeatureView(
     name="entries_snapshot",
     entities=["entry_key"],

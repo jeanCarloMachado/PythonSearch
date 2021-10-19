@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pandas as pd
 from feast import FeatureStore
 
-# The entity dataframe is the dataframe we want to enrich with feature values
 entity_df = pd.DataFrame.from_dict(
     {
         "entry_key": ["spotify music player"],
