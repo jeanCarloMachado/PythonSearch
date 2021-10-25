@@ -9,7 +9,7 @@
 
 ## How to use:
 
-Create your own items, as you go:
+Create your own items and manage them as code:
 
 ```python
 from search_run.cli import SearchAndRunCli
