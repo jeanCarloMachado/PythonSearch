@@ -65,6 +65,7 @@ class Shortcuts:
     ALT_SHIFT_0 = "Mod1+Shift+0"
     ALT_SHIFT_Z = "Mod1+Shift+z"
     ALT_K = "Mod1+k"
+    ALT_O = "Mod1+o"
     ALT_T = "Mod1+t"
     ALT_SHIFT_K = "Mod1+Shift+k"
     ALT_D = "Mod1+d"
