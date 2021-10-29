@@ -13,6 +13,7 @@ class Shortcuts:
     ALT_SHIFT_D = "Mod1+Shift+d"
     ALT_SHIFT_A = "Mod1+Shift+a"
     ALT_SHIFT_S = "Mod1+Shift+s"
+    ALT_H = "Mod1+h"
     CTRL_B = "Control+b"
     CTRL_E = "Control+e"
     CTRL_P = "Control+p"
@@ -144,6 +145,7 @@ class Shortcuts:
 
     # jupyterlab
     SUPER_U = "Mod4+u"
+    SUPER_B = "Mod4+B"
     # used for i3 to toggle the split mode
     SUPER_E = "Mod4+e"
     SUPER_SHIFT_E = "Mod4+Shift+e"
