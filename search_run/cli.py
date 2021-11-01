@@ -85,7 +85,7 @@ class SearchAndRunCli:
     def _edit_config(self, file_name: str, line: Optional[int] = 30):
         """"edit a configuration file given the name and line """
         s.run(
-            f"MY_TITLE='GrimorieSearchRun' runFunction terminal_run 'vim {file_name} +{line}' ",
+            f"MY_TITLE='GrimorieSearchRun' runFunction terminal_run 'cd {PROJECT_ROOT} ; vim {file_name} +{line}' ",
         )
         s.run("search_run export_configuration")
 
