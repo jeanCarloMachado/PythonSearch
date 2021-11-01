@@ -1,4 +1,5 @@
 import logging
+import os
 
 from grimoire.decorators import notify_execution
 from grimoire.desktop.shortcut import Shortcut
@@ -20,27 +21,35 @@ class ConfigurationExporter:
         self.shortcut = Shortcut()
         self.generate_shortcuts = True
 
-    @notify_execution()
-    def export(self, generate_shortcuts=True):
-        self.generate_shortcuts = generate_shortcuts
-        self._write_to_file()
-
-    def get_cached_file_name(self):
+    def generate_and_get_cached_file_name(self):
         """singleton kind of method, will not initalize the configuration if it is already in cache"""
         if not file_exists(self.configuration.get_cached_filename()):
-            self._write_to_file()
-
-        return self.configuration.get_cached_filename()
-
-    def _write_to_file(self):
-        logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
-        Ranking().recompute_rank()
-        self.generate_i3_shortcuts()
+            self.export()
 
         return self.configuration.get_cached_filename()
 
     @notify_execution()
-    def generate_i3_shortcuts(self):
+    def export(self, generate_shortcuts=True, ignore_lock=False):
+
+        lock_file_name = "/tmp/search_run_export.lock"
+
+        if file_exists(lock_file_name) and not ignore_lock:
+            raise Exception("Export currently in progress will not start a new one")
+        else:
+            os.system(f"touch {lock_file_name}")
+
+        self.generate_shortcuts = generate_shortcuts
+
+        logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
+        Ranking().recompute_rank()
+        self._generate_i3_shortcuts()
+
+        os.system(f"rm {lock_file_name}")
+
+        return self.configuration.get_cached_filename()
+
+    @notify_execution()
+    def _generate_i3_shortcuts(self):
         if not self.generate_shortcuts:
             return
         result = self._generate_i3_shortcuts_string()
@@ -64,5 +73,3 @@ class ConfigurationExporter:
                 result = f"{result}bindsym {content['i3_shortcut']} exec {cmd}\n"
 
         return result
-
-

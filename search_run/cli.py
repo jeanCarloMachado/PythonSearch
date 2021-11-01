@@ -30,6 +30,8 @@ class SearchAndRunCli:
         self.configuration = configuration
         self.configuration_exporter = ConfigurationExporter(self.configuration)
         self.ranking = Ranking
+        self.export_configuration = self.configuration_exporter.export
+
         setup()
 
     def search(self):
@@ -38,7 +40,9 @@ class SearchAndRunCli:
         def _all_rows_cmd() -> str:
             """returns the shell command to perform to get all get_options_cmd
             and generates the side-effect of createing a new cache file if it does not exist"""
-            configuration_file_name = self.configuration_exporter.get_cached_file_name()
+            configuration_file_name = (
+                self.configuration.generate_and_get_cached_file_name()
+            )
             cmd = f' cat "{configuration_file_name}" '
             return cmd
 
@@ -46,9 +50,6 @@ class SearchAndRunCli:
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         return Runner().run(key, force_gui_mode, gui_mode, from_shortcut)
-
-    def export_configuration(self, shortcuts=True):
-        self.configuration_exporter.export(shortcuts)
 
     def clipboard_key(self, key):
         """
