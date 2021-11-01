@@ -33,12 +33,8 @@ class ConfigurationExporter:
         return self.configuration.get_cached_filename()
 
     def _write_to_file(self):
-        """
-        @todo cache this function
-        """
         logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
         Ranking().recompute_rank()
-        # self.generate_gnome_shortcuts()
         self.generate_i3_shortcuts()
 
         return self.configuration.get_cached_filename()
@@ -47,7 +43,7 @@ class ConfigurationExporter:
     def generate_i3_shortcuts(self):
         if not self.generate_shortcuts:
             return
-        result = self.generate_i3_shortcuts_string()
+        result = self._generate_i3_shortcuts_string()
 
         i3_config_path = "/home/jean/.config/i3"
         if not file_exists(f"{i3_config_path}/config_part1"):
@@ -58,7 +54,7 @@ class ConfigurationExporter:
         shell.run(f"cat {i3_config_path}/config_part1 > {i3_config_path}/config")
         shell.run(f"cat {i3_config_path}/config_part2 >> {i3_config_path}/config")
 
-    def generate_i3_shortcuts_string(self):
+    def _generate_i3_shortcuts_string(self):
         result = "#automatically generated from now on\n"
 
         for name, content in list(self.configuration.commands.items()):
@@ -69,22 +65,4 @@ class ConfigurationExporter:
 
         return result
 
-    def generate_gnome_shortcuts(self):
-        if not self.generate_shortcuts:
-            return
 
-        self.shortcut.reset()
-        for name, content in list(self.configuration.commands.items()):
-            if type(content) is dict and "shortcut" in content:
-                identifier = generate_identifier(name)
-                self.shortcut.register(
-                    f'search_run run_key "{identifier}" --force_gui_mode=1',
-                    content["shortcut"],
-                )
-
-    def export_configuration_to_file(self):
-        fzf_lines = ""
-        for name, content in list(self.configuration.commands.items()):
-            fzf_lines += f"{name.lower()}: {content}\n"
-
-        write_file(self.configuration.get_cached_filename(), fzf_lines)
