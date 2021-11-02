@@ -37,6 +37,7 @@ class Shortcuts:
     SUPER_SPACE = "Mod4+space"
     # DO_NOT_USE used for setting up tabbed windows in i3
     SUPER_W = "Mod4+w"
+    SUPER_P = "Mod4+P"
     SUPER_SHIFT_W = "Mod4+Shift+w"
 
     CTRL_SHIFT_N = "Control+Shift+n"
@@ -156,7 +157,6 @@ class Shortcuts:
     # anki
     SUPER_I = "Mod4+i"
     # Tado
-    SUPER_T = "Mod4+t"
     # used by i3 layout stacking
     SUPER_S = "Mod4+s"
     # clipboard manager selection
