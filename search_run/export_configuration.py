@@ -52,23 +52,24 @@ class ConfigurationExporter:
     def _generate_i3_shortcuts(self):
         if not self.generate_shortcuts:
             return
-        result = self._generate_i3_shortcuts_string()
+        shortcut_str = self._generate_i3_shortcuts_string()
 
         i3_config_path = "/home/jean/.config/i3"
         if not file_exists(f"{i3_config_path}/config_part1"):
             raise Exception("Cannot find part 1 of i3 configuration")
 
-        write_file(f"{i3_config_path}/config_part2", result)
+        write_file(f"{i3_config_path}/config_part2", shortcut_str)
 
         shell.run(f"cat {i3_config_path}/config_part1 > {i3_config_path}/config")
         shell.run(f"cat {i3_config_path}/config_part2 >> {i3_config_path}/config")
 
-    def _generate_i3_shortcuts_string(self):
+    def _generate_i3_shortcuts_string(self) -> str:
+        """Generates a single string with all exported shortcuts """
         result = "#automatically generated from now on\n"
 
-        for name, content in list(self.configuration.commands.items()):
+        for key, content in list(self.configuration.commands.items()):
             if type(content) is dict and "i3_shortcut" in content:
-                identifier = generate_identifier(name)
+                identifier = generate_identifier(key)
                 cmd = f'search_run run_key "{identifier}" --force_gui_mode=1 --from_shortcut=1'
                 result = f"{result}bindsym {content['i3_shortcut']} exec {cmd}\n"
 

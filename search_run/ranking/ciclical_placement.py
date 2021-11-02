@@ -35,7 +35,7 @@ class CiclicalPlacement:
 
         all_keys = list(entries.keys())
         result = []
-        self.used_keys = []
+        self.used_keys: List[str] = []
         position = 0
 
         # make the first result be the last executed
