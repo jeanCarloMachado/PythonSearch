@@ -14,7 +14,11 @@ class MenuException(Exception):
 
 
 class CommandDoNotMatchException(Exception):
-    pass
+    @staticmethod
+    def not_valid_command(entity, cmd):
+        return CommandDoNotMatchException(
+            f"Not Valid {entity.__class__.__name__} command {cmd}"
+        )
 
 
 class RunException(Exception):

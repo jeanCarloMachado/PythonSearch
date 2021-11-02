@@ -7,6 +7,16 @@ The entries of search run are simple python dictionaries.
 A shell command to run that should run in a new terminal window.
 
 
+## Window title
+
+The title that will be displayed in the new opened window
+
+Example:
+
+```py
+"window_title": "RandomTerminal",
+```
+
 ## focus_match
 
 Value: String

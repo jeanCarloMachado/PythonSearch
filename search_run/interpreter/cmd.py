@@ -34,9 +34,7 @@ class CmdInterpreter(BaseInterpreter):
             self.cmd = cmd
             return
 
-        raise CommandDoNotMatchException(
-            f"Not Valid {self.__class__.__name__} command {cmd}"
-        )
+        raise CommandDoNotMatchException.not_valid_command(self, cmd)
 
     def interpret_default(self):
         if self.try_to_focus():
@@ -51,7 +49,7 @@ class CmdInterpreter(BaseInterpreter):
             cmd = f'cd {self.cmd["directory"]} && {cmd}'
 
         if "tmux" in self.cmd:
-            cmd = f'tmux new -s "{self._get_safe_title()}" {cmd} '
+            cmd = f'tmux new -s "{self._get_window_title()}" {cmd} '
 
         if WRAP_IN_TERMINAL in self.cmd:
             cmd = f"{cmd} ; tail -f /dev/null"
@@ -69,7 +67,7 @@ class CmdInterpreter(BaseInterpreter):
 
             cmd = Terminal().start_new(
                 cmd,
-                title=self._get_safe_title(),
+                title=self._get_window_title(),
                 hold_terminal_open_on_end=True,
                 return_command=True,
             )
@@ -77,7 +75,11 @@ class CmdInterpreter(BaseInterpreter):
 
         return cmd
 
-    def _get_safe_title(self):
+    def _get_window_title(self):
+
+        if "window_title" in self.cmd:
+            return self.cmd["window_title"]
+
         title = self.cmd["cmd"]
         if "focus_match" in self.cmd:
             title = self.cmd["focus_match"]

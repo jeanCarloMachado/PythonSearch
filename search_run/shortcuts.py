@@ -149,6 +149,7 @@ class Shortcuts:
     # used for i3 to toggle the split mode
     SUPER_E = "Mod4+e"
     SUPER_SHIFT_E = "Mod4+Shift+e"
+    SUPER_SHIFT_T = "Mod4+Shift+t"
     # edit goals
     SUPER_G = "Mod4+g"
     SUPER_Y = "Mod4+y"
