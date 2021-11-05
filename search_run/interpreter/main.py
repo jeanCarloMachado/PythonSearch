@@ -1,7 +1,7 @@
 import re
 
 # @todo inject rather than import
-from grimoire.search_run.entries.main import Configuration
+from entries.main import Configuration
 from loguru import logger as logging
 
 from search_run.context import Context

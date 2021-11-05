@@ -6,9 +6,9 @@ from typing import List, Tuple
 import pandas as pd
 import pyspark.sql.functions as F
 from dateutil.relativedelta import relativedelta
+from entries.main import Configuration
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
-from grimoire.search_run.entries.main import Configuration
 
 from search_run.data_paths import DataPaths
 from search_run.observability.logger import configure_logger

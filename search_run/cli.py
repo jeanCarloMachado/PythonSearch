@@ -1,9 +1,10 @@
+import logging
 from typing import Optional
 
 from grimoire import s
 from grimoire.shell import shell
 
-from search_run.config import MAIN_FILE, PROJECT_ROOT
+from search_run.config import PROJECT_ROOT
 from search_run.configuration import BaseConfiguration
 from search_run.entry_capture.register_new import RegisterNew
 from search_run.export_configuration import ConfigurationExporter
@@ -62,6 +63,9 @@ class SearchAndRunCli:
         """
         Edits the configuration files by searching the text
         """
+        import inspect
+
+        MAIN_FILE = inspect.getfile(self.configuration.__class__)
 
         if not key:
             self._edit_config(MAIN_FILE)
@@ -76,7 +80,8 @@ class SearchAndRunCli:
         key = key[0]
         result_shell = shell.run_with_result(f"ack '{key}' {PROJECT_ROOT} || true")
         if not result_shell:
-            self.edit_config()
+            logging.info("Could not find match edit main file")
+            self._edit_config(MAIN_FILE)
             return
 
         file, line, *_ = result_shell.split(":")
