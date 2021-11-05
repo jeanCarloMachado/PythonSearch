@@ -1,4 +1,4 @@
-from search_run.configuration import BaseConfiguration
+from search_run.base_configuration import BaseConfiguration
 
 
 def build_config(given_commands):

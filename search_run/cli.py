@@ -4,8 +4,8 @@ from typing import Optional
 from grimoire import s
 from grimoire.shell import shell
 
+from search_run.base_configuration import BaseConfiguration
 from search_run.config import PROJECT_ROOT
-from search_run.configuration import BaseConfiguration
 from search_run.entry_capture.register_new import RegisterNew
 from search_run.export_configuration import ConfigurationExporter
 from search_run.interpreter.main import Interpreter

@@ -7,7 +7,7 @@ from grimoire.file import file_exists, write_file
 from grimoire.shell import shell
 from grimoire.string import generate_identifier
 
-from search_run.configuration import BaseConfiguration
+from search_run.base_configuration import BaseConfiguration
 from search_run.ranking.ranking import Ranking
 
 
