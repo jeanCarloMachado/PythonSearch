@@ -11,7 +11,7 @@ from grimoire.file import Replace
 from grimoire.notification import send_notification
 from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
-from search_run.config import MAIN_FILE
+from search_run.base_configuration import BaseConfiguration
 from search_run.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
@@ -23,8 +23,9 @@ class RegisterNew:
     Responsible for registering new entries in your catalog
     """
 
-    def __init__(self):
+    def __init__(self, configuration: BaseConfiguration):
         self.message_broker = MessageBroker("search_run_register_new")
+        self.configuration = configuration
 
     def infer_from_clipboard(self):
         """
@@ -45,7 +46,9 @@ class RegisterNew:
         serialized = remove_new_lines(serialized)
 
         Replace().append_after_placeholder(
-            MAIN_FILE, "# NEW_COMMANDS_HERE", f"        '{key}': {serialized},"
+            self.configuration.get_source_file(),
+            "# NEW_COMMANDS_HERE",
+            f"        '{key}': {serialized},",
         )
         s.run("search_run export_configuration")
 
@@ -68,7 +71,7 @@ class RegisterNew:
         row_entry = str(as_dict)
         line_to_add = f"        '{key}': {row_entry},"
         Replace().append_after_placeholder(
-            MAIN_FILE, "# NEW_COMMANDS_HERE", line_to_add
+            self.configuration.get_source_file(), "# NEW_COMMANDS_HERE", line_to_add
         )
         s.run("search_run export_configuration")
 

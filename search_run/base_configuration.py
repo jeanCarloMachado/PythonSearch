@@ -56,3 +56,16 @@ class BaseConfiguration:
 
     def get_cached_filename(self):
         return self.cached_filename
+
+    def get_source_file(self):
+        """Returns the path of the source code where the config is stored"""
+        import inspect
+
+        return inspect.getfile(self.__class__)
+
+    def get_project_root(self):
+        """
+        Returns the root of the project where the config is
+        @todo substitues PROJECT_ROOT with this
+        """
+        return "/home/jean/projects/grimoire/grimoire/search_run"
