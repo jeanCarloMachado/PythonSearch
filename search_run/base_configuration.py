@@ -1,3 +1,5 @@
+import os
+
 from search_run.data_paths import DataPaths
 
 
@@ -68,4 +70,9 @@ class BaseConfiguration:
         Returns the root of the project where the config is
         @todo substitues PROJECT_ROOT with this
         """
-        return "/home/jean/projects/grimoire/grimoire/search_run"
+        source = self.get_source_file()
+        path = os.path.dirname(source)
+        # always go 1 path up
+        path = f"{path}/.."
+
+        return path
