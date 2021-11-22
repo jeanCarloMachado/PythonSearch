@@ -5,6 +5,7 @@ import re
 from typing import List, Optional
 
 from ddtrace import tracer
+
 # @todo inject rather than import
 from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
