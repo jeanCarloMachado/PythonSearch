@@ -9,8 +9,7 @@ from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import (emptish, quote_with, remove_new_lines,
-                             remove_special_chars)
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
 from search_run.base_configuration import BaseConfiguration
 from search_run.events import RegisterExecuted
@@ -37,9 +36,9 @@ class RegisterNew:
         clipboard_content = remove_new_lines(clipboard_content)
         clipboard_content = quote_with(clipboard_content, '"')
 
-        interpreter: BaseInterpreter = Interpreter.build_instance().get_interpreter(
-            clipboard_content
-        )
+        interpreter: BaseInterpreter = Interpreter.build_instance(
+            self.configuration
+        ).get_interpreter(clipboard_content)
         as_dict = interpreter.to_dict()
         as_dict["created_at"] = datetime.datetime.now().isoformat()
 

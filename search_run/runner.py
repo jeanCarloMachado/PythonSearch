@@ -5,8 +5,8 @@ import re
 from typing import List, Optional
 
 from ddtrace import tracer
+
 # @todo inject rather than import
-from entries.main import Configuration
 from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import notify_send, send_notification
@@ -21,9 +21,10 @@ from search_run.interpreter.main import Interpreter
 class Runner:
     """Responsible to execute the entries matched"""
 
-    def __init__(self):
+    def __init__(self, configuration):
         self.message_broker = MessageBroker("search_runs_executed")
         self.message_broker_search = MessageBroker("run_key_command_performed")
+        self.configuration = configuration
 
     @notify_exception_i3()
     @tracer.wrap("search_run.runner.run")
@@ -66,7 +67,7 @@ class Runner:
             SearchPerformed(key=key, given_input=query_used).__dict__
         )
 
-        return Interpreter.build_instance().default(real_key)
+        return Interpreter.build_instance(self.configuration).default(real_key)
 
     def _matching_keys(self, key: str) -> List[str]:
         """
@@ -77,7 +78,7 @@ class Runner:
         key_regex = re.compile(key)
 
         matching_keys = []
-        for registered_key in Configuration().get_keys():
+        for registered_key in self.configuration.get_keys():
             encoded_registered_key = generate_identifier(registered_key)
             matches_kv_encoded = key_regex.search(encoded_registered_key)
             if matches_kv_encoded:

@@ -6,7 +6,6 @@ from typing import List, Tuple
 import pandas as pd
 import pyspark.sql.functions as F
 from dateutil.relativedelta import relativedelta
-from entries.main import Configuration
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 
@@ -25,9 +24,9 @@ class Ranking:
     ModelInfo = namedtuple("ModelInfo", "features label")
     model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
-    def __init__(self):
-        self.configuration = Configuration
-        self.cached_file = Configuration.cached_filename
+    def __init__(self, configuration):
+        self.configuration = configuration
+        self.cached_file = configuration.cached_filename
 
     @notify_execution()
     def recompute_rank(self):
@@ -112,7 +111,7 @@ class Ranking:
         return df
 
     def load_commands_performed_dataframe(self, spark):
-        dataset = Ranking().load_commands_performed_df()
+        dataset = self.load_commands_performed_df()
         schema = "`key` STRING,  `generated_date` TIMESTAMP, `uuid` STRING, `given_input` STRING"
         original_df = spark.createDataFrame(dataset, schema=schema)
         performed_df = original_df.withColumn("input_lenght", F.length("given_input"))
@@ -183,7 +182,7 @@ class Ranking:
 
     def load_entries(self):
         """ Loads the current state of the art of search run entries"""
-        return self.configuration().commands
+        return self.configuration.commands
 
     def _export_to_file(self, data: List[Tuple[str, dict]]):
         fzf_lines = ""

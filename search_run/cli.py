@@ -18,7 +18,7 @@ class SearchAndRunCli:
 
     SEARCH_LOG_FILE = "/tmp/search_and_run_log"
 
-    def __init__(self, configuration: Optional[BaseConfiguration] = None, entries=None):
+    def __init__(self, configuration: Optional[BaseConfiguration] = None):
         """
         :param configuration:
         :param entries: the setted up entries
@@ -26,7 +26,7 @@ class SearchAndRunCli:
 
         self.configuration = configuration
         self.configuration_exporter = ConfigurationExporter(self.configuration)
-        self.ranking = Ranking
+        self.ranking = Ranking(configuration)
         self.export_configuration = self.configuration_exporter.export
 
         setup()
@@ -46,14 +46,16 @@ class SearchAndRunCli:
         Search().run(_all_rows_cmd())
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
-        return Runner().run(key, force_gui_mode, gui_mode, from_shortcut)
+        return Runner(self.configuration).run(
+            key, force_gui_mode, gui_mode, from_shortcut
+        )
 
     def clipboard_key(self, key):
         """
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
         """
-        Interpreter.build_instance().clipboard(key)
+        Interpreter.build_instance(self.configuration).clipboard(key)
 
     def edit_key(self, key, dry_run=False):
         return EditKey(self.configuration).edit_key(key, dry_run=False)

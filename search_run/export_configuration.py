@@ -41,7 +41,7 @@ class ConfigurationExporter:
         self.generate_shortcuts = generate_shortcuts
 
         logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
-        Ranking().recompute_rank()
+        Ranking(self.configuration).recompute_rank()
         self._generate_i3_shortcuts()
 
         os.system(f"rm {lock_file_name}")

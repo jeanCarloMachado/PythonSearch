@@ -1,7 +1,5 @@
 import re
 
-# @todo inject rather than import
-from entries.main import Configuration
 from loguru import logger as logging
 
 from search_run.context import Context
@@ -20,21 +18,20 @@ class Interpreter:
     _instance = None
 
     @staticmethod
-    def build_instance():
+    def build_instance(configuration):
         """
         Singleton. Initializes a configuration a context and a interpreter
 
         :return:
         """
         if not Interpreter._instance:
-            configuration = Configuration()
             context = Context.get_instance()
             Interpreter._instance = Interpreter(configuration, context)
 
         return Interpreter._instance
 
     def __init__(self, configuration, context: Context):
-        self._configuration: Configuration = configuration
+        self._configuration = configuration
         self.context = context
         self.context.set_interpreter(self)
         self.interpreters = [
