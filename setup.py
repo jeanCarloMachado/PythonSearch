@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="python-search",
-    version="0.02",
+    version="0.03",
     author="Jean Carlo Machado",
     author_email="machado.c.jean@gmail.com",
     description="Search over python dictionaries",
