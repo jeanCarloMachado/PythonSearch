@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Optional
 
 from grimoire.decorators import notify_execution
 from grimoire.desktop.shortcut import Shortcut
@@ -8,7 +9,7 @@ from grimoire.shell import shell
 from grimoire.string import generate_identifier
 
 from search_run.base_configuration import BaseConfiguration
-from search_run.ranking.ranking import Ranking
+from search_run.ranking.ranking import Ranking, RankingMethods
 
 
 class ConfigurationExporter:
@@ -29,9 +30,22 @@ class ConfigurationExporter:
         return self.configuration.get_cached_filename()
 
     @notify_execution()
-    def export(self, generate_shortcuts=True, ignore_lock=False):
+    def export(
+        self,
+        generate_shortcuts=True,
+        ignore_lock=False,
+        ranking_method: Optional[RankingMethods] = None,
+    ):
 
         lock_file_name = "/tmp/search_run_export.lock"
+
+        default_ranking_method: RankingMethods = RankingMethods.LATEST_USED
+        if not file_exists(self.configuration.get_cached_filename()):
+            # if the cache is not there yet use the fastest method first
+            default_ranking_method = RankingMethods.DICT_ORDER
+
+        if not ranking_method:
+            ranking_method = default_ranking_method
 
         if file_exists(lock_file_name) and not ignore_lock:
             raise Exception("Export currently in progress will not start a new one")
@@ -41,7 +55,7 @@ class ConfigurationExporter:
         self.generate_shortcuts = generate_shortcuts
 
         logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
-        Ranking(self.configuration).recompute_rank()
+        Ranking(self.configuration).recompute_rank(method=ranking_method)
         self._generate_i3_shortcuts()
 
         os.system(f"rm {lock_file_name}")

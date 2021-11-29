@@ -1,6 +1,7 @@
 import datetime
 import json
 from collections import namedtuple
+from enum import Enum
 from typing import List, Tuple
 
 import pandas as pd
@@ -16,6 +17,13 @@ from search_run.ranking.ciclical_placement import CiclicalPlacement
 logger = configure_logger()
 
 
+class RankingMethods(Enum):
+    # the order of the dictionary on the page, fastest but not as optimized
+    DICT_ORDER = "dict_order"
+    # Order by the latest used
+    LATEST_USED = "latest_used"
+
+
 class Ranking:
     """
     Write to the file all the commands and generates shortcuts
@@ -29,18 +37,24 @@ class Ranking:
         self.cached_file = configuration.cached_filename
 
     @notify_execution()
-    def recompute_rank(self):
+    def recompute_rank(self, method: RankingMethods = RankingMethods.LATEST_USED):
         """
         Recomputes the rank and saves the results on the file to be read
         """
 
         entries: dict = self.load_entries()
-        commands_performed = self.load_commands_performed_df()
-        result = CiclicalPlacement().cyclical_placment(
-            entries=entries,
-            head_keys=self.compute_head(),
-            commands_performed=commands_performed,
-        )
+        if method == RankingMethods.DICT_ORDER:
+            result = []
+
+            for key in entries.keys():
+                result.append((key, entries[key]))
+        else:
+            commands_performed = self.load_commands_performed_df()
+            result = CiclicalPlacement().cyclical_placment(
+                entries=entries,
+                head_keys=self.compute_head(),
+                commands_performed=commands_performed,
+            )
 
         return self._export_to_file(result)
 
