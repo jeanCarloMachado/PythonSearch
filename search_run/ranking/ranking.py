@@ -23,6 +23,15 @@ class RankingMethods(Enum):
     # Order by the latest used
     LATEST_USED = "latest_used"
 
+    @staticmethod
+    def from_str(string: str) -> "RankingMethods":
+        if string == "dict_order":
+            return RankingMethods.DICT_ORDER
+        elif string == "LATEST_USED":
+            return RankingMethods.LATEST_USED
+
+        raise Exception(f"String: {string} does not match any ranking method")
+
 
 class Ranking:
     """
@@ -37,7 +46,7 @@ class Ranking:
         self.cached_file = configuration.cached_filename
 
     @notify_execution()
-    def recompute_rank(self, method: RankingMethods = RankingMethods.LATEST_USED):
+    def recompute_rank(self, method: RankingMethods = RankingMethods.DICT_ORDER):
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -48,13 +57,15 @@ class Ranking:
 
             for key in entries.keys():
                 result.append((key, entries[key]))
-        else:
+        elif method == RankingMethods.LATEST_USED:
             commands_performed = self.load_commands_performed_df()
             result = CiclicalPlacement().cyclical_placment(
                 entries=entries,
                 head_keys=self.compute_head(),
                 commands_performed=commands_performed,
             )
+        else:
+            raise Exception(f"Ranking method: {method} unknown")
 
         return self._export_to_file(result)
 

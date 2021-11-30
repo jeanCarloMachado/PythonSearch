@@ -34,8 +34,11 @@ class ConfigurationExporter:
         self,
         generate_shortcuts=True,
         ignore_lock=False,
-        ranking_method: Optional[RankingMethods] = None,
+        ranking_method_str: Optional[str] = None,
     ):
+        """
+        Export a new configuration.
+        """
 
         lock_file_name = "/tmp/search_run_export.lock"
 
@@ -44,7 +47,13 @@ class ConfigurationExporter:
             # if the cache is not there yet use the fastest method first
             default_ranking_method = RankingMethods.DICT_ORDER
 
-        if not ranking_method:
+        if ranking_method_str:
+            ranking_method = RankingMethods.from_str(ranking_method_str)
+            logging.info(f"User selected ranking method: {ranking_method}")
+        else:
+            logging.info(
+                f"Ranking method not specified using: {default_ranking_method}"
+            )
             ranking_method = default_ranking_method
 
         if file_exists(lock_file_name) and not ignore_lock:
