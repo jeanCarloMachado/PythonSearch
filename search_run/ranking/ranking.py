@@ -17,18 +17,18 @@ from search_run.ranking.ciclical_placement import CiclicalPlacement
 logger = configure_logger()
 
 
-class RankingMethods(Enum):
+class RankingAlgorithms(Enum):
     # the order of the dictionary on the page, fastest but not as optimized
     DICT_ORDER = "dict_order"
     # Order by the latest used
     LATEST_USED = "latest_used"
 
     @staticmethod
-    def from_str(string: str) -> "RankingMethods":
+    def from_str(string: str) -> "RankingAlgorithms":
         if string == "dict_order":
-            return RankingMethods.DICT_ORDER
+            return RankingAlgorithms.DICT_ORDER
         elif string == "LATEST_USED":
-            return RankingMethods.LATEST_USED
+            return RankingAlgorithms.LATEST_USED
 
         raise Exception(f"String: {string} does not match any ranking method")
 
@@ -46,18 +46,18 @@ class Ranking:
         self.cached_file = configuration.cached_filename
 
     @notify_execution()
-    def recompute_rank(self, method: RankingMethods = RankingMethods.DICT_ORDER):
+    def recompute_rank(self, method: RankingAlgorithms = RankingAlgorithms.DICT_ORDER):
         """
         Recomputes the rank and saves the results on the file to be read
         """
 
         entries: dict = self.load_entries()
-        if method == RankingMethods.DICT_ORDER:
+        if method == RankingAlgorithms.DICT_ORDER:
             result = []
 
             for key in entries.keys():
                 result.append((key, entries[key]))
-        elif method == RankingMethods.LATEST_USED:
+        elif method == RankingAlgorithms.LATEST_USED:
             commands_performed = self.load_commands_performed_df()
             result = CiclicalPlacement().cyclical_placment(
                 entries=entries,

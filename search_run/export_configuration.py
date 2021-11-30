@@ -1,15 +1,15 @@
 import logging
 import os
-from typing import Optional
+from typing import Literal, Optional
 
 from grimoire.decorators import notify_execution
 from grimoire.desktop.shortcut import Shortcut
-from grimoire.file import file_exists, write_file
+from grimoire.file import write_file
 from grimoire.shell import shell
 from grimoire.string import generate_identifier
 
 from search_run.base_configuration import BaseConfiguration
-from search_run.ranking.ranking import Ranking, RankingMethods
+from search_run.ranking.ranking import Ranking, RankingAlgorithms
 
 
 class ConfigurationExporter:
@@ -24,7 +24,7 @@ class ConfigurationExporter:
 
     def generate_and_get_cached_file_name(self):
         """singleton kind of method, will not initalize the configuration if it is already in cache"""
-        if not file_exists(self.configuration.get_cached_filename()):
+        if not os.path.exists(self.configuration.get_cached_filename()):
             self.export()
 
         return self.configuration.get_cached_filename()
@@ -34,29 +34,23 @@ class ConfigurationExporter:
         self,
         generate_shortcuts=True,
         ignore_lock=False,
-        ranking_method_str: Optional[str] = None,
+        ranking_method: Literal["fast", "complete"] = "fast",
     ):
         """
         Export a new configuration.
+
+        You can customize the method of ranking.
+        By default the ranking is just a projection of the data.
+        But if you want to have better ranking you can pass "complete"
+        the more expensive algorithm optimizing the ranking will be used.
         """
 
         lock_file_name = "/tmp/search_run_export.lock"
-
-        default_ranking_method: RankingMethods = RankingMethods.LATEST_USED
-        if not file_exists(self.configuration.get_cached_filename()):
-            # if the cache is not there yet use the fastest method first
-            default_ranking_method = RankingMethods.DICT_ORDER
-
-        if ranking_method_str:
-            ranking_method = RankingMethods.from_str(ranking_method_str)
-            logging.info(f"User selected ranking method: {ranking_method}")
-        else:
-            logging.info(
-                f"Ranking method not specified using: {default_ranking_method}"
-            )
-            ranking_method = default_ranking_method
-
-        if file_exists(lock_file_name) and not ignore_lock:
+        if (
+            ranking_method == "complete"
+            and os.path.exists(lock_file_name)
+            and not ignore_lock
+        ):
             raise Exception("Export currently in progress will not start a new one")
         else:
             os.system(f"touch {lock_file_name}")
@@ -64,6 +58,11 @@ class ConfigurationExporter:
         self.generate_shortcuts = generate_shortcuts
 
         logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
+        ranking_method = (
+            RankingAlgorithms.DICT_ORDER
+            if ranking_method is "fast"
+            else RankingAlgorithms.LATEST_USED
+        )
         Ranking(self.configuration).recompute_rank(method=ranking_method)
         self._generate_i3_shortcuts()
 
@@ -78,7 +77,7 @@ class ConfigurationExporter:
         shortcut_str = self._generate_i3_shortcuts_string()
 
         i3_config_path = "/home/jean/.config/i3"
-        if not file_exists(f"{i3_config_path}/config_part1"):
+        if not os.path.exists(f"{i3_config_path}/config_part1"):
             raise Exception("Cannot find part 1 of i3 configuration")
 
         write_file(f"{i3_config_path}/config_part2", shortcut_str)
