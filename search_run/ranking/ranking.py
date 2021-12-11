@@ -177,34 +177,6 @@ class Ranking:
 
         return entries_df
 
-    def dump_entries(self):
-        """
-        Dump entries to be consumed into the feature store
-        """
-        import datetime
-
-        from pyspark.sql import functions as F
-        from pyspark.sql.session import SparkSession
-
-        spark = SparkSession.builder.getOrCreate()
-        df = self.load_entries_df(spark)
-
-        df = df.withColumn(
-            "event_timestamp",
-            F.lit(datetime.datetime.now().timestamp()).cast("timestamp"),
-        )
-        df = df.withColumnRenamed("key", "entry_key")
-
-        df.repartition(1).write.mode("overwrite").parquet(DataPaths.entries_dump)
-
-        import os
-        import pathlib
-
-        current_file_name = str(
-            list(pathlib.Path(DataPaths.entries_dump).glob("*.parquet"))[0]
-        )
-        os.rename(current_file_name, DataPaths.entries_dump + "/000.parquet")
-
     def load_entries(self):
         """ Loads the current state of the art of search run entries"""
         return self.configuration.commands

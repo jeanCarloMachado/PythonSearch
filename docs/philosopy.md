@@ -2,7 +2,6 @@
 
 ## What is this app?
 
-
 Not sure, a place to record things and search them over again.
 
 ## Principles

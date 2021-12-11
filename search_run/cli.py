@@ -13,7 +13,8 @@ from search_run.search import Search
 
 class SearchAndRunCli:
     """
-    Entrypoint of the application
+    The command line application, entry point of the program.
+    Python Fire wraps this class.
     """
 
     SEARCH_LOG_FILE = "/tmp/search_and_run_log"
