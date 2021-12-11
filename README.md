@@ -7,9 +7,9 @@
 - add custom types and actions
 
 
-## How to use:
+## How to use
 
-A minimal running program can be found in the [examples folder](examples/minimal.py)
+Write a python script like this, and call it.
 
 ```py
 
@@ -49,7 +49,7 @@ Fire(SearchAndRunCli(Configuration()))
 
 ## Installation
 
-Installation instructions can be found in the [installation manual](docs/installation)
+Installation instructions can be found in the [installation manual](docs/installation.md)
 
 
 ## Legal
