@@ -26,37 +26,45 @@ class Entry:
         return f"{self.name} {self.value}"
 
 
-class Ranking:
-    """
-    Base class that stores entries ranked
-    Side effect-free
-    """
-
-    entries: List[str]
-
-
 class InvertedIndex:
     """
     The entity that gets persisted to disk
     Side effect-free
     """
 
-    ranked_entries: List[Entry]
+    entries: List[Entry]
+    has_embeddings = False
 
     @staticmethod
     def from_entries_dict(dict: dict) -> InvertedIndex:
         instance = InvertedIndex()
-        instance.ranked_entries = []
+        instance.entries = []
         for key, value in dict.items():
-            instance.ranked_entries.append(Entry(name=key, value=value))
+            instance.entries.append(Entry(name=key, value=value))
 
         return instance
 
     def serialize(self) -> str:
         pass
 
-    def get_ranking(self) -> Ranking:
-        pass
+
+def update_inverted_index_with_embeddings(
+    inverted_index: InvertedIndex,
+) -> InvertedIndex:
+    """ Add embeddings as properties for the inverted index """
+
+    entries = inverted_index.entries
+    embeddings = create_embeddings(
+        [entry.serialize() for entry in inverted_index.entries]
+    )
+    for i, value in enumerate(entries):
+
+        embedding = embeddings[i]
+        entries[i].embedding = embedding
+
+    inverted_index.entries = entries
+
+    return inverted_index
 
 
 def create_embeddings(entries: List[str]) -> ndarray:
@@ -67,31 +75,13 @@ def create_embeddings(entries: List[str]) -> ndarray:
     return text_embeddings
 
 
-def update_inverted_index_with_embeddings(
-    inverted_index: InvertedIndex,
-) -> InvertedIndex:
-
-    ranked_entries = inverted_index.ranked_entries
-    embeddings = create_embeddings(
-        [entry.serialize() for entry in inverted_index.ranked_entries]
-    )
-    for i, value in enumerate(ranked_entries):
-
-        embedding = embeddings[i]
-        ranked_entries[i].embedding = embedding
-
-    inverted_index.ranked_entries = ranked_entries
-
-    return inverted_index
-
-
 def create_ranking_for_text_query(text: str, index: InvertedIndex):
     pass
 
 
 def atest_happy_path_end_to_end_inverted_index_logic():
     """
-    from a set of documents and a queyr
+    from a set of documents and a query
     create their embeddings and rerank the entries based on their similarity
     """
     entries = {
@@ -105,16 +95,6 @@ def atest_happy_path_end_to_end_inverted_index_logic():
     assert result[1] == "def"
 
 
-def test_create_inverted_index_from_dict():
-    entries = {
-        "abc": {"snippet": "abc"},
-        "def": {"snippet": "def"},
-    }
-    index = InvertedIndex.from_entries_dict(entries)
-    assert index.ranked_entries[0].name == "abc"
-    assert index.ranked_entries[1].name == "def"
-
-
 def test_update_inverted_index_with_embeddings():
     """
     The function updates the inverted index sucessfully with embeddings
@@ -125,13 +105,24 @@ def test_update_inverted_index_with_embeddings():
     }
     index = InvertedIndex.from_entries_dict(entries)
 
-    assert index.ranked_entries[0].embedding is None
-    assert index.ranked_entries[1].embedding is None
+    assert index.entries[0].embedding is None
+    assert index.entries[1].embedding is None
 
     index = update_inverted_index_with_embeddings(index)
 
-    assert type(index.ranked_entries[0].embedding) is ndarray
-    assert type(index.ranked_entries[1].embedding) is ndarray
+    assert type(index.entries[0].embedding) is ndarray
+    assert type(index.entries[1].embedding) is ndarray
+
+
+def test_create_inverted_index_from_dict():
+    """ the inverted index is created from the entries as dictionaries """
+    entries = {
+        "abc": {"snippet": "abc"},
+        "def": {"snippet": "def"},
+    }
+    index = InvertedIndex.from_entries_dict(entries)
+    assert index.entries[0].name == "abc"
+    assert index.entries[1].name == "def"
 
 
 def test_embedding():
