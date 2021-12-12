@@ -45,6 +45,9 @@ class Ranking:
     def __init__(self, *, ranked_entries: List[Entry]):
         self.entries = ranked_entries
 
+    def get_only_names(self) -> List[str]:
+        return [entry.name for entry in self.entries]
+
 
 class InvertedIndex:
     """

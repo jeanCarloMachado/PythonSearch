@@ -11,8 +11,8 @@ from dateutil.relativedelta import relativedelta
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 
+from search_run.config import DataPaths
 from search_run.core_entities import RankingAlgorithms
-from search_run.data_paths import DataPaths
 from search_run.observability.logger import configure_logger
 from search_run.ranking.ciclical_placement import CiclicalPlacement
 
@@ -174,13 +174,13 @@ class Ranking:
             try:
                 content["key_name"] = name
                 content["rank_position"] = position
-                content = json.dumps(content, default=tuple, ensure_ascii=True)
+                content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException:
                 content = content
-                content = str(content)
+                content_str = str(content)
 
             position = position + 1
-            fzf_lines += f"{name.lower()}: " + content + "\n"
+            fzf_lines += f"{name.lower()}: " + content_str + "\n"
 
         fzf_lines = fzf_lines.replace("\\", "\\\\")
         write_file(self.configuration.cached_filename, fzf_lines)

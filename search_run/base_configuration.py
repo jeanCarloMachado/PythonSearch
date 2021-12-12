@@ -1,6 +1,6 @@
 import os
 
-from search_run.data_paths import DataPaths
+from search_run.config import DataPaths
 
 
 class BaseConfiguration:

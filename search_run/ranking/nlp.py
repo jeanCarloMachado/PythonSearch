@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import logging
+import pickle
 from typing import List
 
 from numpy import ndarray
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from search_run.config import config
 from search_run.core_entities import InvertedIndex, Ranking
 
 
@@ -21,8 +23,24 @@ class NlpRanking:
         inverted_index = InvertedIndex.from_entries_dict(entries)
 
         embedded_index = update_inverted_index_with_embeddings(inverted_index)
+        self._dump_embedded_index(embedded_index)
 
+    def rank_on_query(self, query):
+        inverted_index = self._load_embedded_index()
+        result = create_ranking_for_text_query(query, inverted_index)
+        return result.get_only_names()
 
+    def _dump_embedded_index(self, index: InvertedIndex):
+        f = open(config.NLP_PICKLED_EMBEDDINGS, "wb")
+        pickle.dump(index, f)
+        f.close()
+
+    def _load_embedded_index(self) -> InvertedIndex:
+        f = open(config.NLP_PICKLED_EMBEDDINGS, "rb")
+        result = pickle.load(f)
+        f.close()
+
+        return result
 
 
 def create_ranking_for_text_query(query: str, index: InvertedIndex) -> Ranking:
