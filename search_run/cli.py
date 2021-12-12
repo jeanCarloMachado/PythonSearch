@@ -6,6 +6,7 @@ from search_run.entry_capture.register_new import RegisterNew
 from search_run.export_configuration import ConfigurationExporter
 from search_run.interpreter.main import Interpreter
 from search_run.observability.datadog import setup
+from search_run.ranking.nlp import NlpRanking
 from search_run.ranking.ranking import Ranking
 from search_run.runner import Runner
 from search_run.search import Search
@@ -26,6 +27,7 @@ class SearchAndRunCli:
         self.configuration = configuration
         self.configuration_exporter = ConfigurationExporter(self.configuration)
         self.ranking = Ranking(configuration)
+        self.nlp_ranking = NlpRanking(configuration)
         self.export_configuration = self.configuration_exporter.export
 
         setup()

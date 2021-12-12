@@ -10,6 +10,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 from search_run.core_entities import InvertedIndex, Ranking
 
 
+class NlpRanking:
+    """Entrypoint for cli and other parts of the application to NLP actions"""
+
+    def __init__(self, configuration):
+        self.configuration = configuration
+
+    def compute_embeddings_all_entries(self):
+        entries = self.configuration.commands
+        inverted_index = InvertedIndex.from_entries_dict(entries)
+
+        embedded_index = update_inverted_index_with_embeddings(inverted_index)
+
+
+
+
 def create_ranking_for_text_query(query: str, index: InvertedIndex) -> Ranking:
     query_embeeding = create_embeddings([query])[0]
 

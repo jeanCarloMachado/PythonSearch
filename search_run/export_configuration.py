@@ -9,7 +9,8 @@ from grimoire.shell import shell
 from grimoire.string import generate_identifier
 
 from search_run.base_configuration import BaseConfiguration
-from search_run.ranking.ranking import Ranking, RankingAlgorithms
+from search_run.core_entities import RankingAlgorithms
+from search_run.ranking.ranking import Ranking
 
 
 class ConfigurationExporter:

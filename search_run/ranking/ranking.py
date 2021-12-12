@@ -3,7 +3,6 @@ from __future__ import annotations
 import datetime
 import json
 from collections import namedtuple
-from enum import Enum
 from typing import List, Tuple
 
 import pandas as pd
@@ -12,6 +11,7 @@ from dateutil.relativedelta import relativedelta
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 
+from search_run.core_entities import RankingAlgorithms
 from search_run.data_paths import DataPaths
 from search_run.observability.logger import configure_logger
 from search_run.ranking.ciclical_placement import CiclicalPlacement
@@ -184,19 +184,3 @@ class Ranking:
 
         fzf_lines = fzf_lines.replace("\\", "\\\\")
         write_file(self.configuration.cached_filename, fzf_lines)
-
-
-class RankingAlgorithms(Enum):
-    # the order of the dictionary on the page, fastest but not as optimized
-    DICT_ORDER = "dict_order"
-    # Order by the latest used
-    LATEST_USED = "latest_used"
-
-    @staticmethod
-    def from_str(string: str) -> "RankingAlgorithms":
-        if string == "dict_order":
-            return RankingAlgorithms.DICT_ORDER
-        elif string == "LATEST_USED":
-            return RankingAlgorithms.LATEST_USED
-
-        raise Exception(f"String: {string} does not match any ranking method")

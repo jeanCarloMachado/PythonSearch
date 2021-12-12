@@ -6,6 +6,7 @@ They should be side-effect free
 """
 from __future__ import annotations
 
+from enum import Enum
 from typing import List, NamedTuple, Optional
 
 from numpy import ndarray
@@ -63,3 +64,19 @@ class InvertedIndex:
 
     def serialize(self) -> str:
         pass
+
+
+class RankingAlgorithms(Enum):
+    # the order of the dictionary on the page, fastest but not as optimized
+    DICT_ORDER = "dict_order"
+    # Order by the latest used
+    LATEST_USED = "latest_used"
+
+    @staticmethod
+    def from_str(string: str) -> "RankingAlgorithms":
+        if string == "dict_order":
+            return RankingAlgorithms.DICT_ORDER
+        elif string == "LATEST_USED":
+            return RankingAlgorithms.LATEST_USED
+
+        raise Exception(f"String: {string} does not match any ranking method")
