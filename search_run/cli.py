@@ -17,8 +17,6 @@ class SearchAndRunCli:
     Python Fire wraps this class.
     """
 
-    SEARCH_LOG_FILE = "/tmp/search_and_run_log"
-
     def __init__(self, configuration: Optional[BaseConfiguration] = None):
         """
         :param configuration:

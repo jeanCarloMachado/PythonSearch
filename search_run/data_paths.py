@@ -1,3 +1,4 @@
+# @todo move this to a configuration file
 class DataPaths:
     # output of the model
     prediction_batch_location = "/data/python_search/predict_input_lenght/latest"

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import json
 from collections import namedtuple
@@ -15,22 +17,6 @@ from search_run.observability.logger import configure_logger
 from search_run.ranking.ciclical_placement import CiclicalPlacement
 
 logger = configure_logger()
-
-
-class RankingAlgorithms(Enum):
-    # the order of the dictionary on the page, fastest but not as optimized
-    DICT_ORDER = "dict_order"
-    # Order by the latest used
-    LATEST_USED = "latest_used"
-
-    @staticmethod
-    def from_str(string: str) -> "RankingAlgorithms":
-        if string == "dict_order":
-            return RankingAlgorithms.DICT_ORDER
-        elif string == "LATEST_USED":
-            return RankingAlgorithms.LATEST_USED
-
-        raise Exception(f"String: {string} does not match any ranking method")
 
 
 class Ranking:
@@ -198,3 +184,19 @@ class Ranking:
 
         fzf_lines = fzf_lines.replace("\\", "\\\\")
         write_file(self.configuration.cached_filename, fzf_lines)
+
+
+class RankingAlgorithms(Enum):
+    # the order of the dictionary on the page, fastest but not as optimized
+    DICT_ORDER = "dict_order"
+    # Order by the latest used
+    LATEST_USED = "latest_used"
+
+    @staticmethod
+    def from_str(string: str) -> "RankingAlgorithms":
+        if string == "dict_order":
+            return RankingAlgorithms.DICT_ORDER
+        elif string == "LATEST_USED":
+            return RankingAlgorithms.LATEST_USED
+
+        raise Exception(f"String: {string} does not match any ranking method")
