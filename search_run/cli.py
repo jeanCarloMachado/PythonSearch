@@ -9,7 +9,7 @@ from search_run.observability.datadog import setup
 from search_run.ranking.nlp import NlpRanking
 from search_run.ranking.ranking import Ranking
 from search_run.runner import Runner
-from search_run.search import Search
+from search_run.search_ui.search import Search
 
 
 class SearchAndRunCli:
@@ -34,17 +34,7 @@ class SearchAndRunCli:
 
     def search(self):
         """ Main entrypoint of the application """
-
-        def _all_rows_cmd() -> str:
-            """returns the shell command to perform to get all get_options_cmd
-            and generates the side-effect of createing a new cache file if it does not exist"""
-            configuration_file_name = (
-                self.configuration_exporter.generate_and_get_cached_file_name()
-            )
-            cmd = f' cat "{configuration_file_name}" '
-            return cmd
-
-        Search().run(_all_rows_cmd())
+        Search(self.configuration_exporter).run()
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         return Runner(self.configuration).run(

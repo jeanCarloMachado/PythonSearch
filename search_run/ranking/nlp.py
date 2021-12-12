@@ -28,7 +28,7 @@ class NlpRanking:
     def rank_on_query(self, query):
         inverted_index = self._load_embedded_index()
         result = create_ranking_for_text_query(query, inverted_index)
-        return result.get_only_names()
+        return result.get_only_names()[0:10]
 
     def _dump_embedded_index(self, index: InvertedIndex):
         f = open(config.NLP_PICKLED_EMBEDDINGS, "wb")

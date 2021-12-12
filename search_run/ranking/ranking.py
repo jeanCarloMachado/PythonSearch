@@ -11,6 +11,7 @@ from dateutil.relativedelta import relativedelta
 from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 
+from search_run.base_configuration import BaseConfiguration
 from search_run.config import DataPaths
 from search_run.core_entities import RankingAlgorithms
 from search_run.observability.logger import configure_logger
@@ -27,7 +28,7 @@ class Ranking:
     ModelInfo = namedtuple("ModelInfo", "features label")
     model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
-    def __init__(self, configuration):
+    def __init__(self, configuration: BaseConfiguration):
         self.configuration = configuration
         self.cached_file = configuration.cached_filename
 
