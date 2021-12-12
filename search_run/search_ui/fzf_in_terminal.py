@@ -39,6 +39,7 @@ class FzfInTerminal(SearchInterface):
         --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
         --bind "ctrl-r:reload:({cmd})" \
         --bind "ctrl-n:reload:(search_run nlp_ranking get_read_projection_rank_for_query {{q}})" \
+        --bind "ctrl-n:+clear-query" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
         --preview-window=right,60%,wrap \
@@ -55,4 +56,4 @@ class FzfInTerminal(SearchInterface):
         logger.info(f"Command performed:\n {internal_command}")
         result = os.system(launch_cmd)
         if result != 0:
-            raise Exception("Search run fzf projection failed" )
+            raise Exception("Search run fzf projection failed")

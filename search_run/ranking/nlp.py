@@ -26,7 +26,6 @@ class NlpRanking:
         embedded_index = update_inverted_index_with_embeddings(inverted_index)
         self._dump_embedded_index(embedded_index)
 
-
     @notify_execution()
     def get_read_projection_rank_for_query(self, query):
         inverted_index = self._load_embedded_index()
