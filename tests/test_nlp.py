@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import List
+from typing import List, Optional
 
 from numpy import ndarray
 from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 
@@ -14,16 +15,31 @@ class Entry:
     """ Side effect-free """
 
     name: str
-    value: dict
-    embedding: ndarray
+    value: Optional[dict]
+    embedding: Optional[ndarray]
+    similarity_score: Optional[float]
 
-    def __init__(self, *, name: str, value: dict, embedding=None):
+    def __init__(self, *, name: str, value: dict = None, embedding=None):
         self.name = name
         self.value = value
         self.embedding = embedding
 
+    def has_embedding(self) -> bool:
+        return self.embedding is not None
+
+    def get_similarity_score(self) -> float:
+        """ returns a score, if none will then return 0"""
+        return self.similarity_score if self.similarity_score else 0.0
+
     def serialize(self) -> str:
         return f"{self.name} {self.value}"
+
+
+class Ranking:
+    entries: List[Entry] = []
+
+    def __init__(self, *, ranked_entries: List[Entry]):
+        self.entries = ranked_entries
 
 
 class InvertedIndex:
@@ -33,7 +49,6 @@ class InvertedIndex:
     """
 
     entries: List[Entry]
-    has_embeddings = False
 
     @staticmethod
     def from_entries_dict(dict: dict) -> InvertedIndex:
@@ -75,11 +90,37 @@ def create_embeddings(entries: List[str]) -> ndarray:
     return text_embeddings
 
 
-def create_ranking_for_text_query(text: str, index: InvertedIndex):
-    pass
+def create_ranking_for_text_query(query: str, index: InvertedIndex) -> Ranking:
+    query_embeeding = create_embeddings([query])[0]
+
+    embeddings_from_documents = [
+        entry.embedding for entry in index.entries if entry.has_embedding()
+    ]
+
+    if not embeddings_from_documents:
+        raise Exception("No embeddings found in any document in the inverted index")
+
+    all_embeddings = [query_embeeding] + embeddings_from_documents
+    similarities = cosine_similarity(all_embeddings)
+
+    result = []
+    embeddings_index = 1
+    for entry in index.entries:
+        similarity_score = 0
+        if entry.has_embedding():
+            similarity_score = similarities[0][embeddings_index]
+            embeddings_index = 1 + embeddings_index
+        else:
+            logging.warning(f"Entry: {entry.name} nas no embedding")
+
+        entry.similarity_score = similarity_score
+        result.append(entry)
+
+    entries = sorted(result, key=lambda x: x.get_similarity_score(), reverse=True)
+    return Ranking(ranked_entries=entries)
 
 
-def atest_happy_path_end_to_end_inverted_index_logic():
+def test_happy_path_end_to_end_inverted_index_logic():
     """
     from a set of documents and a query
     create their embeddings and rerank the entries based on their similarity
@@ -89,10 +130,11 @@ def atest_happy_path_end_to_end_inverted_index_logic():
         "def": {"snippet": "def"},
     }
     index = InvertedIndex.from_entries_dict(entries)
+    index = update_inverted_index_with_embeddings(index)
 
-    result = create_ranking_for_text_query("abc 123", index)
-    assert result[0] == "abc"
-    assert result[1] == "def"
+    ranking = create_ranking_for_text_query("abc 123", index)
+    assert ranking.entries[0].name == "abc"
+    assert ranking.entries[1].name == "def"
 
 
 def test_update_inverted_index_with_embeddings():
