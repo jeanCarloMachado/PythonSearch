@@ -4,6 +4,7 @@ import logging
 import pickle
 from typing import List
 
+from grimoire.decorators import notify_execution
 from numpy import ndarray
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -25,10 +26,12 @@ class NlpRanking:
         embedded_index = update_inverted_index_with_embeddings(inverted_index)
         self._dump_embedded_index(embedded_index)
 
-    def rank_on_query(self, query):
+
+    @notify_execution()
+    def get_read_projection_rank_for_query(self, query):
         inverted_index = self._load_embedded_index()
         result = create_ranking_for_text_query(query, inverted_index)
-        return result.get_only_names()[0:10]
+        return result.get_only_names()
 
     def _dump_embedded_index(self, index: InvertedIndex):
         f = open(config.NLP_PICKLED_EMBEDDINGS, "wb")
