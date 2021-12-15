@@ -4,6 +4,8 @@ from typing import Optional
 from grimoire import s
 from grimoire.shell import shell
 
+from search_run.config import config
+
 
 class EditKey:
     def __init__(self, configuration):
@@ -41,7 +43,7 @@ class EditKey:
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' runFunction terminal_run 'cd"
             f" {self.configuration.get_project_root()} "
-            f"; vim {file_name} +{line}' "
+            f"; {config.EDITOR} {file_name} +{line}' "
         )
 
         if dry_run:

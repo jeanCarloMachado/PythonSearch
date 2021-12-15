@@ -8,10 +8,10 @@ def setup():
     Will only do something if th flag USE_DDTRACE is turned to ON
     """
     if os.getenv("USE_DDTRACE"):
-        logger.info("Using ddtrace")
+        logger.debug("Using ddtrace")
 
         from ddtrace import patch_all
 
         patch_all()
     else:
-        logger.info("Not using ddtrace")
+        logger.debug("Not using ddtrace")

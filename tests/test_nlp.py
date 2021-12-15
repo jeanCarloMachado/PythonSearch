@@ -1,3 +1,6 @@
+"""
+Tests related to using bert to provide vector similarity
+"""
 from __future__ import annotations
 
 import logging
@@ -6,9 +9,11 @@ import sys
 from numpy import ndarray
 
 from search_run.core_entities import InvertedIndex
-from search_run.ranking.nlp import (create_embeddings,
-                                    create_ranking_for_text_query,
-                                    update_inverted_index_with_embeddings)
+from search_run.ranking.nlp import (
+    create_embeddings,
+    create_ranking_for_text_query,
+    update_inverted_index_with_embeddings,
+)
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 

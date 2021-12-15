@@ -6,11 +6,10 @@ from typing import List
 
 from grimoire.decorators import notify_execution
 from numpy import ndarray
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
 
 from search_run.config import config
 from search_run.core_entities import InvertedIndex, Ranking
+from search_run.ranking.read_projection import create_read_projection
 
 
 class NlpRanking:
@@ -28,9 +27,19 @@ class NlpRanking:
 
     @notify_execution()
     def get_read_projection_rank_for_query(self, query):
+        import logging
+
+        logging.getLogger("suds").propagate = False
+        logging.config.dictConfig(
+            {
+                "version": 1,
+                "disable_existing_loggers": True,
+            }
+        )
+        logging.disable = True
         inverted_index = self._load_embedded_index()
         result = create_ranking_for_text_query(query, inverted_index)
-        return result.get_only_names()
+        return create_read_projection(result, extra={"query": query})
 
     def _dump_embedded_index(self, index: InvertedIndex):
         f = open(config.NLP_PICKLED_EMBEDDINGS, "wb")
@@ -56,6 +65,8 @@ def create_ranking_for_text_query(query: str, index: InvertedIndex) -> Ranking:
         raise Exception("No embeddings found in any document in the inverted index")
 
     all_embeddings = [query_embeeding] + embeddings_from_documents
+    from sklearn.metrics.pairwise import cosine_similarity
+
     similarities = cosine_similarity(all_embeddings)
 
     result = []
@@ -95,6 +106,8 @@ def update_inverted_index_with_embeddings(
 
 
 def create_embeddings(entries: List[str]) -> ndarray:
+    from sentence_transformers import SentenceTransformer
+
     model = SentenceTransformer("bert-base-nli-mean-tokens")
     text_embeddings = model.encode(entries, batch_size=8)
     logging.debug(f"Embeddings: {text_embeddings}")

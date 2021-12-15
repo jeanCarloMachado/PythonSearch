@@ -1,7 +1,5 @@
 import os
 
-import grimoire.decorators
-
 from search_run.observability.logger import logger
 from search_run.search_ui.interface import SearchInterface
 
@@ -39,12 +37,12 @@ class FzfInTerminal(SearchInterface):
         --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
         --bind "ctrl-r:reload:({cmd})" \
         --bind "ctrl-n:reload:(search_run nlp_ranking get_read_projection_rank_for_query {{q}})" \
-        --bind "ctrl-n:+clear-query" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
+        --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . -C " \
         --preview-window=right,60%,wrap \
         --reverse -i --exact --no-sort'
-            """
+        """
 
         launch_cmd = f"""ionice -n 3 nice -19 kitty \
         --title=launcher -o remember_window_size=n \

@@ -8,6 +8,8 @@ import os
 
 class SearchRunConfiguration:
     NLP_PICKLED_EMBEDDINGS: str = f"{os.getenv('HOME')}/.python_search_nlp_embeddings"
+    # editor used to edit the entries
+    EDITOR = "vim"
 
 
 class DataPaths:
