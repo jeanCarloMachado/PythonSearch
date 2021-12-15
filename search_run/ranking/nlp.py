@@ -27,7 +27,6 @@ class NlpRanking:
 
     @notify_execution()
     def get_read_projection_rank_for_query(self, query):
-        import logging
 
         logging.getLogger("suds").propagate = False
         logging.config.dictConfig(

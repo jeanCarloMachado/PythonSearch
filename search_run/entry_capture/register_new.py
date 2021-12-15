@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import datetime
+import logging
+import sys
 from typing import Tuple
 
 from grimoire import s
-from grimoire.ask_question import AskQuestion
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
@@ -12,10 +13,13 @@ from grimoire.notification import send_notification
 from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
 from search_run.base_configuration import BaseConfiguration
+from search_run.entry_capture.data_capture_ui import AskQuestion
 from search_run.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.main import Interpreter
+
+logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 
 
 class RegisterNew:
@@ -77,6 +81,7 @@ class RegisterNew:
 
     def _get_user_provided_data(self, title) -> Tuple[ClipboardContent, EntryKey]:
         clipboard_content = Clipboard().get_content()
+        logging.info(f"Current clipboard content '{clipboard_content}'")
         if emptish(clipboard_content):
             raise RegisterNewException.empty_content()
 
