@@ -1,16 +1,15 @@
 import logging
 
-from grimoire.desktop.terminal import Terminal
 from grimoire.notification import send_notification
 from grimoire.shell import shell
 from grimoire.string import remove_special_chars
 
+from search_run.terminal import Terminal
 from search_run.context import Context
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseInterpreter
 
 WRAP_IN_TERMINAL = "new-window-non-cli"
-
 
 class CmdInterpreter(BaseInterpreter):
     def __init__(self, cmd, context: Context):
