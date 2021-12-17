@@ -4,4 +4,6 @@ numpy
 pandas
 pyspark
 ddtrace
-
+build
+personal-grimoire=1.6
+pysearch
