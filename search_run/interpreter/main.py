@@ -1,6 +1,6 @@
 import re
 
-from loguru import logger as logging
+import logging
 
 from search_run.context import Context
 from search_run.exceptions import CommandDoNotMatchException

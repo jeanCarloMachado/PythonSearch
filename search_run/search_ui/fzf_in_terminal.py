@@ -9,7 +9,7 @@ class FzfInTerminal(SearchInterface):
     Renders the search ui using fzf + termite terminal
     """
 
-    HEIGHT = 500
+    HEIGHT = 300
     WIDTH = 1100
 
     def __init__(self, title="Run: "):
