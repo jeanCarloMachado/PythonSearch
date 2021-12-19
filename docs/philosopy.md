@@ -1,11 +1,4 @@
 # Philosophy of this app
 
-## What is this app?
 
-Not sure, a place to record things and search them over again.
-
-## Principles
-
-Some principles of this project.
-Declarative way of defining what you want rather than how.
-Locality is important.
+For a in-depth explanation of this app read [here](https://docs.google.com/document/d/12bke6_mx3kHGURoPPKY39eK_GBavA7q5HA-5cvjr21E/edit#heading=h.rxip5dhw9yay)

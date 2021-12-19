@@ -4,10 +4,10 @@ from grimoire.notification import send_notification
 from grimoire.shell import shell
 from grimoire.string import remove_special_chars
 
-from search_run.terminal import Terminal
 from search_run.context import Context
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseInterpreter
+from search_run.terminal import Terminal
 
 WRAP_IN_TERMINAL = "new-window-non-cli"
 
@@ -64,7 +64,7 @@ class CmdInterpreter(BaseInterpreter):
         if WRAP_IN_TERMINAL in self.cmd:
             logging.info("Running it in a new terminal")
 
-            cmd = Terminal().start_new(
+            cmd = Terminal().wrap_cmd_into_terminal(
                 cmd,
                 title=self._get_window_title(),
                 hold_terminal_open_on_end=True,

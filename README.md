@@ -46,7 +46,6 @@ Fire(SearchAndRunCli(Configuration()))
 
 ```
 
-
 ## Installation
 
 Installation instructions can be found in the [installation manual](docs/installation.md)
