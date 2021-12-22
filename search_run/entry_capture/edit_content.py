@@ -1,3 +1,4 @@
+""" Module responsible for the logic of editing entry files """
 import logging
 from typing import Optional
 

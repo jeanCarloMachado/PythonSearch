@@ -10,8 +10,7 @@ from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import (emptish, quote_with, remove_new_lines,
-                             remove_special_chars)
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
 from search_run.base_configuration import BaseConfiguration
 from search_run.entry_capture.data_capture_ui import AskQuestion
@@ -80,7 +79,7 @@ class RegisterNew:
         )
         s.run("search_run export_configuration")
 
-    def _get_user_provided_data(self, title) -> Tuple[ClipboardContent, EntryKey]:
+    def _get_user_provided_data(self, title) -> Tuple[str, str]:
         clipboard_content = Clipboard().get_content()
         logging.info(f"Current clipboard content '{clipboard_content}'")
         if emptish(clipboard_content):
@@ -95,8 +94,6 @@ class RegisterNew:
         return clipboard_content, key
 
 
-ClipboardContent = str
-EntryKey = str
 ALLOWED_SPECIAL_CHARS = [
     "@",
     "-",

@@ -1,10 +1,9 @@
 import os
 
 from search_run.observability.logger import logger
-from search_run.search_ui.interface import SearchInterface
 
 
-class FzfInTerminal(SearchInterface):
+class FzfInTerminal:
     """
     Renders the search ui using fzf + termite terminal
     """
@@ -12,7 +11,7 @@ class FzfInTerminal(SearchInterface):
     HEIGHT = 300
     WIDTH = 1100
 
-    def __init__(self, title="Run: "):
+    def __init__(self, title="Search and run: "):
         self.title = title
 
     def run(self, cmd: str) -> None:

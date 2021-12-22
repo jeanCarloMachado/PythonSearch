@@ -3,6 +3,12 @@ import os
 from search_run.config import DataPaths
 
 
+class BaseEntry(BaseConfiguration):
+    """defined as a replacement of base configuration for system entry classes"""
+
+    pass
+
+
 class BaseConfiguration:
     """
     Main configuration of the application. Customers are supposed to pass their own
@@ -76,9 +82,3 @@ class BaseConfiguration:
         path = f"{path}/.."
 
         return path
-
-
-class BaseEntry(BaseConfiguration):
-    """defined as a replacement of base configuration for system entry classes"""
-
-    pass

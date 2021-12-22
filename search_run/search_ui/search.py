@@ -1,6 +1,6 @@
 from ddtrace import tracer
 
-from search_run.search_ui.factory import UIFactory
+from search_run.search_ui.fzf_in_terminal import FzfInTerminal
 
 
 class Search:
@@ -21,5 +21,4 @@ class Search:
         )
         cmd = f'cat "{configuration_file_name}" '
 
-        ui = UIFactory.get_instance()
-        return ui.run(cmd)
+        return FzfInTerminal().run(cmd)
