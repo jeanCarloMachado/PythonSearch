@@ -21,4 +21,4 @@ class Search:
         )
         cmd = f'cat "{configuration_file_name}" '
 
-        return FzfInTerminal().run(cmd)
+        return FzfInTerminal.build_search_ui().run(cmd)
