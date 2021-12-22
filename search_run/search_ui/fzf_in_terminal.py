@@ -10,13 +10,17 @@ class FzfInTerminal:
 
     HEIGHT = 300
     WIDTH = 1100
+    FONT_SIZE = 14
+    PREVIEW_PERCENTAGE_SIZE = 50
 
     def __init__(self, title="Search and run: "):
         self.title = title
 
     def run(self, cmd: str) -> None:
 
-        internal_command = f""" bash -c '{cmd} | \
+        preview_cmd = "echo {} | cut -d \':\' -f1 --complement | jq . -C "
+
+        internal_cmd = f"""bash -c '{cmd} | \
         fzf \
         --cycle \
         --no-hscroll \
@@ -38,19 +42,24 @@ class FzfInTerminal:
         --bind "ctrl-n:reload:(search_run nlp_ranking get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
-        --preview "echo {{}} | cut -d \':\' -f1 --complement | jq . -C " \
-        --preview-window=right,60%,wrap \
+        --preview "{preview_cmd}" \
+        --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap \
         --reverse -i --exact --no-sort'
         """
+
+        self._launch_terminal(internal_cmd)
+
+    def _launch_terminal(self, internal_cmd):
 
         launch_cmd = f"""ionice -n 3 nice -19 kitty \
         --title=launcher -o remember_window_size=n \
         -o initial_window_width={FzfInTerminal.WIDTH}  \
         -o  initial_window_height={FzfInTerminal.HEIGHT} \
-        -o font_size=12 \
-         {internal_command}
+        -o font_size={FzfInTerminal.FONT_SIZE} \
+         {internal_cmd}
         """
-        logger.info(f"Command performed:\n {internal_command}")
+        logger.info(f"Command performed:\n {internal_cmd}")
         result = os.system(launch_cmd)
         if result != 0:
             raise Exception("Search run fzf projection failed")
+
