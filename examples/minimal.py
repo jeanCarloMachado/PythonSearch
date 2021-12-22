@@ -8,8 +8,7 @@ from search_run.cli import SearchAndRunCli
 
 class Configuration(BaseConfiguration):
     commands = {
-        # a browser url
-        "search browser": {"url": "https://google.com"},
+        "open browser": {"url": "https://google.com"},
         # snippets to the clipboard
         "date current today now copy": {
             # anything can be
@@ -28,4 +27,7 @@ class Configuration(BaseConfiguration):
 
 
 instance = SearchAndRunCli(Configuration())
-Fire(instance)
+
+
+if __name__ == "__main__":
+    Fire(instance)
