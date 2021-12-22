@@ -1,4 +1,3 @@
-
 class Terminal:
     """ Terminal abstraction for search run. """
 

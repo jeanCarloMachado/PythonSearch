@@ -11,6 +11,7 @@ from search_run.terminal import Terminal
 
 WRAP_IN_TERMINAL = "new-window-non-cli"
 
+
 class CmdInterpreter(BaseInterpreter):
     def __init__(self, cmd, context: Context):
         self.context = context

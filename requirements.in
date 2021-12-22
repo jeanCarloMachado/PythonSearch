@@ -4,6 +4,9 @@ numpy
 pandas
 pyspark
 ddtrace
-build
 personal-grimoire=1.6
 pysearch
+sentence-transformers
+#dev onlny
+flake8-functions
+build
