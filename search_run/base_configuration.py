@@ -1,12 +1,8 @@
+from __future__ import annotations
+
 import os
 
 from search_run.config import DataPaths
-
-
-class BaseEntry(BaseConfiguration):
-    """defined as a replacement of base configuration for system entry classes"""
-
-    pass
 
 
 class BaseConfiguration:
@@ -82,3 +78,9 @@ class BaseConfiguration:
         path = f"{path}/.."
 
         return path
+
+
+class BaseEntry(BaseConfiguration):
+    """defined as a replacement of base configuration for system entry classes"""
+
+    pass
