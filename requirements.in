@@ -4,9 +4,11 @@ numpy
 pandas
 pyspark
 ddtrace
-personal-grimoire=1.6
-pysearch
+personal-grimoire==1.6
 sentence-transformers
 #dev onlny
 flake8-functions
 build
+pytest
+apipkg #needed by pytest
+kafka-python
