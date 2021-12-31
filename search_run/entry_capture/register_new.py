@@ -5,12 +5,12 @@ import logging
 import sys
 from typing import Tuple
 
-from grimoire import s
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
+from grimoire.string import (emptish, quote_with, remove_new_lines,
+                             remove_special_chars)
 
 from search_run.base_configuration import BaseConfiguration
 from search_run.entry_capture.data_capture_ui import AskQuestion
@@ -18,6 +18,7 @@ from search_run.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.main import Interpreter
+from search_run.terminal import Terminal
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 
@@ -54,7 +55,7 @@ class RegisterNew:
             "# NEW_COMMANDS_HERE",
             f"        '{key}': {serialized},",
         )
-        s.run("search_run export_configuration")
+        Terminal.run_command("search_run export_configuration")
 
     def snippet_from_clipboard(self):
         """
@@ -77,7 +78,7 @@ class RegisterNew:
         Replace().append_after_placeholder(
             self.configuration.get_source_file(), "# NEW_COMMANDS_HERE", line_to_add
         )
-        s.run("search_run export_configuration")
+        Terminal.run_command("search_run export_configuration")
 
     def _get_user_provided_data(self, title) -> Tuple[str, str]:
         clipboard_content = Clipboard().get_content()

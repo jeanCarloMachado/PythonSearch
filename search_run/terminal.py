@@ -1,13 +1,29 @@
 class Terminal:
-    """ Terminal abstraction for search run. """
+    """ Terminal abstraction for search run """
 
     DEFAULT_TITLE = "SearchRunTerminal"
+
+    @staticmethod
+    def run_command(cmd) -> bool:
+        """ runs a shell command  raise an exception on failure """
+        message = f'=> Command to run: "{cmd}"'
+        logging.debug(message)
+
+        result = os.system(cmd)
+        success = result == 0
+
+        if not success and self.throw_exception_on_failure:
+            raise Exception(
+                f"Shell command failed with status code: ({result}) for command ('{cmd}')"
+            )
+
+        return succes
 
     def wrap_cmd_into_terminal(
         self, cmd, title=None, hold_terminal_open_on_end=True, return_command=False
     ) -> str:
         """
-        if return_command = True does not execute the command rather just return it.
+        wraps the command in a terminal but does not execute it
         """
         if hold_terminal_open_on_end:
             cmd = f" {cmd}"
