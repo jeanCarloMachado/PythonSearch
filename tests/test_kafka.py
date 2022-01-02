@@ -2,7 +2,6 @@ import os
 import unittest
 
 from kafka import KafkaConsumer, KafkaProducer
-from pyspark.sql.session import SparkSession
 
 default_port = "9092"
 host = f"localhost:{default_port}"
@@ -27,11 +26,19 @@ def test_consume_kafka():
 def test_consume_spark():
     """
     Depends that the test above succeeds
-    """
 
-    # spark_version = '3.2.0'
-    # os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:{}'.format(
-    # spark_version)
+    To trigger run the following:
+    spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 tests/test_kafka.py test_consume_spark
+    """
+    import findspark
+
+    findspark.init()
+    from pyspark.sql.session import SparkSession
+
+    spark_version = "3.0.1"
+    os.environ[
+        "PYSPARK_SUBMIT_ARGS"
+    ] = f"--packages org.apache.spark:spark-sql-kafka-0-10_2.12:{spark_version}"
     spark = SparkSession.builder.getOrCreate()
     df = (
         spark.readStream.format("kafka")
@@ -39,15 +46,13 @@ def test_consume_spark():
         .option("subscribe", topic_name)
         .load()
     )
+    print("JEANNNNNN")
     # process the data here
-    counts = df.count()
 
-    checkpointDir = "/tmp/kafka"
     streamingQuery = (
-        counts.writeStrem.format("console")
-        .outputMode("complete")
+        df.writeStream.format("console")
+        .outputMode("append")
         .trigger(processingTime="1 second")
-        .option("checkpointLocation", checkpointDir)
         .start()
     )
 

@@ -12,3 +12,4 @@ build
 pytest
 apipkg #needed by pytest
 kafka-python
+findspark
