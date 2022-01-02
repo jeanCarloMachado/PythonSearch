@@ -1,5 +1,4 @@
 import os
-import unittest
 
 from kafka import KafkaConsumer, KafkaProducer
 
@@ -11,7 +10,7 @@ topic_name = "mytopic"
 def test_produce():
     print("test")
     producer = KafkaProducer(bootstrap_servers=host)
-    producer.send(topic_name, b"messagebytes")
+    producer.send(topic_name, b"the message in bytes")
 
 
 def test_consume_kafka():
@@ -46,8 +45,8 @@ def test_consume_spark():
         .option("subscribe", topic_name)
         .load()
     )
-    print("JEANNNNNN")
     # process the data here
+    df = df.selectExpr("CAST(value as STRING)")
 
     streamingQuery = (
         df.writeStream.format("console")
