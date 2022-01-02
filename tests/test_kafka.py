@@ -1,3 +1,5 @@
+import datetime
+
 import pyspark.sql.functions as F
 from kafka import KafkaConsumer, KafkaProducer
 
@@ -7,9 +9,11 @@ topic_name = "mytopic"
 
 
 def test_produce():
-    print("test")
+    now = datetime.datetime.now().isoformat()
     producer = KafkaProducer(bootstrap_servers=host)
-    producer.send(topic_name, b'{"message": "the message", "query": "the query"}}')
+    producer.send(
+        topic_name, f'{{"message": "another message", "my_date": "{now}"}}'.encode()
+    )
 
 
 def test_consume_kafka():
@@ -40,17 +44,22 @@ def test_consume_spark():
         .option("subscribe", topic_name)
         .load()
     )
-    # process the data here
-    df = df.selectExpr("CAST(value as STRING) as value")
-    df = df.withColumn(
-        "json_version", F.from_json("value", "message String, query string")
-    )
     df.printSchema()
+    # process the data here
+    df = df.selectExpr("CAST(value as STRING) as value_decoded", "timestamp")
+    df = df.withColumn(
+        "value_as_json", F.from_json("value_decoded", "message String, query string")
+    )
+    df = df.select("value_as_json.*", "timestamp")
 
     streamingQuery = (
-        df.select("json_version.*")
-        .writeStream.format("console")
+        df.writeStream.format("parquet")
         .outputMode("append")
+        .option("path", f"/data/python_search/data_warehouse/dataframes/{topic_name}")
+        .option(
+            "checkpointLocation",
+            f"/data/python_search/data_warehouse/checkpoints/{topic_name}",
+        )  # write-ahead logs for
         .trigger(processingTime="1 second")
         .start()
     )
