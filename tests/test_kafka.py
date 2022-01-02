@@ -1,5 +1,4 @@
-import os
-
+import pyspark.sql.functions as F
 from kafka import KafkaConsumer, KafkaProducer
 
 default_port = "9092"
@@ -10,7 +9,7 @@ topic_name = "mytopic"
 def test_produce():
     print("test")
     producer = KafkaProducer(bootstrap_servers=host)
-    producer.send(topic_name, b"the message in bytes")
+    producer.send(topic_name, b'{"message": "the message", "query": "the query"}}')
 
 
 def test_consume_kafka():
@@ -34,10 +33,6 @@ def test_consume_spark():
     findspark.init()
     from pyspark.sql.session import SparkSession
 
-    spark_version = "3.0.1"
-    os.environ[
-        "PYSPARK_SUBMIT_ARGS"
-    ] = f"--packages org.apache.spark:spark-sql-kafka-0-10_2.12:{spark_version}"
     spark = SparkSession.builder.getOrCreate()
     df = (
         spark.readStream.format("kafka")
@@ -46,10 +41,15 @@ def test_consume_spark():
         .load()
     )
     # process the data here
-    df = df.selectExpr("CAST(value as STRING)")
+    df = df.selectExpr("CAST(value as STRING) as value")
+    df = df.withColumn(
+        "json_version", F.from_json("value", "message String, query string")
+    )
+    df.printSchema()
 
     streamingQuery = (
-        df.writeStream.format("console")
+        df.select("json_version.*")
+        .writeStream.format("console")
         .outputMode("append")
         .trigger(processingTime="1 second")
         .start()
