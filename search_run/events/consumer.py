@@ -2,8 +2,14 @@
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 
+from search_run.events.events import SearchRunPerformed
+
 default_port = "9092"
 host = f"localhost:{default_port}"
+
+
+def consume_search_run_performed():
+    EventConsumer().from_class(SearchRunPerformed)
 
 
 class EventConsumer:
@@ -13,7 +19,11 @@ class EventConsumer:
         # by defalt awaits termination
         self.await_termination = not disable_await_termination
 
-    def consume(self, topic_name):
+    def from_class(self, class_reference):
+        topic_name = class_reference.__name__
+        self.consume(topic_name, class_reference.get_schema())
+
+    def consume(self, topic_name, schema):
         """
         To trigger run the following:
         spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 /home/jean/projects/PythonSearch/search_run/events/consumer.py consume mytopic
@@ -31,7 +41,7 @@ class EventConsumer:
         df = df.selectExpr("CAST(value as STRING) as value_decoded", "timestamp")
         df = df.withColumn(
             "value_as_json",
-            F.from_json("value_decoded", "message String, query string"),
+            F.from_json("value_decoded", schema),
         )
         df = df.select("value_as_json.*", "timestamp")
 
@@ -56,4 +66,4 @@ class EventConsumer:
 if __name__ == "__main__":
     import fire
 
-    fire.Fire(EventConsumer)
+    fire.Fire()

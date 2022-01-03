@@ -5,11 +5,22 @@ from pydantic import BaseModel
 
 
 @dataclass
-class SearchPerformed:
-    # the query typed by the user
-    given_input: str
+class SearchRunPerformed:
+    """
+    Main event of the application.
+    Identifies a search being executed
+    """
+
     # name of the entry matched
     key: str
+    # for when a query was typed by the user
+    query_input: str
+    # for when it is started from a shortcut
+    shortcut: str
+
+    @staticmethod
+    def get_schema():
+        return "key string, query_input string, shortcut string"
 
 
 class RegisterExecuted(BaseModel):

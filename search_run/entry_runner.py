@@ -5,12 +5,12 @@ import re
 from typing import List
 
 # @todo inject rather than import
-from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import notify_send, send_notification
 from grimoire.string import generate_identifier
 
 from search_run.context import Context
-from search_run.events.events import SearchPerformed
+from search_run.events.events import SearchRunPerformed
+from search_run.events.producer import EventProducer
 from search_run.exceptions import RunException
 from search_run.interpreter.main import Interpreter
 
@@ -19,9 +19,8 @@ class Runner:
     """Responsible to execute the entries matched"""
 
     def __init__(self, configuration):
-        self.message_broker = MessageBroker("search_runs_executed")
-        self.message_broker_search = MessageBroker("run_key_command_performed")
         self.configuration = configuration
+        self.event_producer = EventProducer()
 
     def run(
         self,
@@ -43,8 +42,6 @@ class Runner:
         if from_shortcut:
             send_notification(f"{key}")
 
-        event = {"key": key, "from_shortcut": from_shortcut}
-
         matches = self._matching_keys(key)
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
@@ -57,9 +54,8 @@ class Runner:
             real_key = min(matches, key=len)
             notify_send(f"Multiple matches for this key {matches} using the maller")
 
-        self.message_broker.produce(event)
-        self.message_broker_search.produce(
-            SearchPerformed(key=key, given_input=query_used).__dict__
+        self.event_producer.send_object(
+            SearchRunPerformed(key=key, query_input=query_used, shortcut=from_shortcut)
         )
 
         return Interpreter.build_instance(self.configuration).default(real_key)

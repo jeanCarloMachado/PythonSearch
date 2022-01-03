@@ -1,11 +1,11 @@
 from search_run.events.consumer import EventConsumer
-from search_run.events.producer import Producer
+from search_run.events.producer import EventProducer
 
 topic_name = "mytopic"
 
 
 def test_produce():
-    Producer().send(topic_name, {"message": "another message"})
+    EventProducer().send(topic_name, {"message": "another message"})
 
 
 def test_consume_spark():

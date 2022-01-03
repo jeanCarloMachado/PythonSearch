@@ -19,7 +19,7 @@ class Terminal:
         return success
 
     def wrap_cmd_into_terminal(
-        self, cmd, title=None, hold_terminal_open_on_end=True, return_command=False
+        self, cmd, title=None, hold_terminal_open_on_end=True
     ) -> str:
         """
         wraps the command in a terminal but does not execute it

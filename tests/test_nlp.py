@@ -10,9 +10,11 @@ import pytest
 from numpy import ndarray
 
 from search_run.core_entities import InvertedIndex
-from search_run.ranking.nlp import (create_embeddings,
-                                    create_ranking_for_text_query,
-                                    update_inverted_index_with_embeddings)
+from search_run.ranking.nlp import (
+    create_embeddings,
+    create_ranking_for_text_query,
+    update_inverted_index_with_embeddings,
+)
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 
@@ -47,7 +49,7 @@ def test_happy_path_end_to_end_inverted_index_logic():
 )
 def test_update_inverted_index_with_embeddings():
     """
-    The function updates the inverted index sucessfully with embeddings
+    The function updates the inverted index successfully with embeddings
     """
     entries = {
         "abc": {"snippet": "abc"},
