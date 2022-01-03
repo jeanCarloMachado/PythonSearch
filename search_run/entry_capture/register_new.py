@@ -14,7 +14,7 @@ from grimoire.string import (emptish, quote_with, remove_new_lines,
 
 from search_run.base_configuration import BaseConfiguration
 from search_run.entry_capture.data_capture_ui import AskQuestion
-from search_run.events import RegisterExecuted
+from search_run.events.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.main import Interpreter
