@@ -69,7 +69,6 @@ class CmdInterpreter(BaseInterpreter):
                 cmd,
                 title=self._get_window_title(),
                 hold_terminal_open_on_end=True,
-                return_command=True,
             )
             logging.info(f"Command to run: {cmd}")
 

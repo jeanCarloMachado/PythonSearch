@@ -1,14 +1,10 @@
 from typing import Optional
 
 from search_run.base_configuration import BaseConfiguration
-from search_run.entry_capture.edit_content import EditKey
-from search_run.entry_capture.register_new import RegisterNew
-from search_run.entry_runner import Runner
 from search_run.export_configuration import ConfigurationExporter
 from search_run.interpreter.main import Interpreter
 from search_run.ranking.nlp import NlpRanking
 from search_run.ranking.ranking import Ranking
-from search_run.search_ui.search import Search
 
 
 class SearchAndRunCli:
@@ -31,9 +27,13 @@ class SearchAndRunCli:
 
     def search(self):
         """ Main entrypoint of the application """
+        from search_run.search_ui.search import Search
+
         Search(self.configuration_exporter).run()
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
+        from search_run.entry_runner import Runner
+
         return Runner(self.configuration).run(
             key, force_gui_mode, gui_mode, from_shortcut
         )
@@ -45,18 +45,17 @@ class SearchAndRunCli:
         """
         Interpreter.build_instance(self.configuration).clipboard(key)
 
-    def edit_key(self, key, dry_run=False):
+    def edit_key(self, key):
+        from search_run.entry_capture.edit_content import EditKey
+
         return EditKey(self.configuration).edit_key(key, dry_run=False)
 
     def register_clipboard(self):
+        from search_run.entry_capture.register_new import RegisterNew
+
         return RegisterNew(self.configuration).infer_from_clipboard()
 
     def register_snippet_clipboard(self):
-        return RegisterNew(self.configuration).snippet_from_clipboard()
+        from search_run.entry_capture.register_new import RegisterNew
 
-    def r(self, key):
-        """
-        DEPRECATED: use run instead and use an alias if you are so lazy
-        Shorter verion of run key for when lazy
-        """
-        return self.run_key(key)
+        return RegisterNew(self.configuration).snippet_from_clipboard()
