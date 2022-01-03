@@ -16,6 +16,7 @@ from search_run.ranking.nlp import (create_embeddings,
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 
+# if python version is bigger than 3.9
 is310 = sys.version_info[1] > 9
 
 

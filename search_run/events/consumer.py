@@ -10,12 +10,12 @@ class EventConsumer:
     """ Listen to kafka events and store then in the data-wharehouse """
 
     def __init__(self, disable_await_termination=False):
-        # by defualt awaits termination
+        # by defalt awaits termination
         self.await_termination = not disable_await_termination
 
     def consume(self, topic_name):
         """
-        To trigger run the followingxjujjj:
+        To trigger run the following:
         spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 /home/jean/projects/PythonSearch/search_run/events/consumer.py consume mytopic
         """
 
