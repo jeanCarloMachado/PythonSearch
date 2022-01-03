@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import List, Optional
+from typing import List
 
-from ddtrace import tracer
 # @todo inject rather than import
-from grimoire.decorators import notify_exception_i3
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import notify_send, send_notification
 from grimoire.string import generate_identifier
@@ -25,8 +23,6 @@ class Runner:
         self.message_broker_search = MessageBroker("run_key_command_performed")
         self.configuration = configuration
 
-    @notify_exception_i3()
-    @tracer.wrap("search_run.runner.run")
     def run(
         self,
         key: str,

@@ -1,3 +1,7 @@
+import logging
+import os
+
+
 class Terminal:
     """ Terminal abstraction for search run """
 
@@ -12,12 +16,7 @@ class Terminal:
         result = os.system(cmd)
         success = result == 0
 
-        if not success and self.throw_exception_on_failure:
-            raise Exception(
-                f"Shell command failed with status code: ({result}) for command ('{cmd}')"
-            )
-
-        return succes
+        return success
 
     def wrap_cmd_into_terminal(
         self, cmd, title=None, hold_terminal_open_on_end=True, return_command=False

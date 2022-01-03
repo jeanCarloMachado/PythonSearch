@@ -9,6 +9,10 @@ host = f"localhost:{default_port}"
 class EventConsumer:
     """ Listen to kafka events and store then in the data-wharehouse """
 
+    def __init__(self, disable_await_termination=False):
+        # by defualt awaits termination
+        self.await_termination = not disable_await_termination
+
     def consume(self, topic_name):
         """
         To trigger run the followingxjujjj:
@@ -45,7 +49,8 @@ class EventConsumer:
             .start()
         )
 
-        streamingQuery.awaitTermination()
+        if self.await_termination:
+            streamingQuery.awaitTermination()
 
 
 if __name__ == "__main__":

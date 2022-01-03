@@ -6,18 +6,23 @@ from __future__ import annotations
 import logging
 import sys
 
+import pytest
 from numpy import ndarray
 
 from search_run.core_entities import InvertedIndex
-from search_run.ranking.nlp import (
-    create_embeddings,
-    create_ranking_for_text_query,
-    update_inverted_index_with_embeddings,
-)
+from search_run.ranking.nlp import (create_embeddings,
+                                    create_ranking_for_text_query,
+                                    update_inverted_index_with_embeddings)
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 
+is310 = sys.version_info[1] > 9
 
+
+@pytest.mark.skipif(
+    is310,
+    reason="not available for 310",
+)
 def test_happy_path_end_to_end_inverted_index_logic():
     """
     from a set of documents and a query
@@ -35,6 +40,10 @@ def test_happy_path_end_to_end_inverted_index_logic():
     assert ranking.entries[1].name == "def"
 
 
+@pytest.mark.skipif(
+    is310,
+    reason="not available for 310",
+)
 def test_update_inverted_index_with_embeddings():
     """
     The function updates the inverted index sucessfully with embeddings
@@ -54,6 +63,10 @@ def test_update_inverted_index_with_embeddings():
     assert type(index.entries[1].embedding) is ndarray
 
 
+@pytest.mark.skipif(
+    is310,
+    reason="not available for 310",
+)
 def test_create_inverted_index_from_dict():
     """ the inverted index is created from the entries as dictionaries """
     entries = {
@@ -65,6 +78,10 @@ def test_create_inverted_index_from_dict():
     assert index.entries[1].name == "def"
 
 
+@pytest.mark.skipif(
+    is310,
+    reason="not available for 310",
+)
 def test_embedding():
     """ test that the create embedding function returns at least something :) """
     result = create_embeddings(["abc"])

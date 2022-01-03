@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Literal, Optional
+from typing import Literal
 
 from grimoire.decorators import notify_execution
 from grimoire.desktop.shortcut import Shortcut
