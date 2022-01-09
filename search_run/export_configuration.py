@@ -15,7 +15,12 @@ from search_run.ranking.ranking import Ranking
 
 class ConfigurationExporter:
     """
-    Write to the file all the commands and generates shortcuts
+    Responsible to apply all the side-effects of search-run entries
+    Called when we change search run or want to initailze it in the system.
+
+    Responsibilities include:
+    - generate shortcuts
+    - Generate new  read centric ranking projection
     """
 
     def __init__(self, configuration: BaseConfiguration):
