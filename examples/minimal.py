@@ -5,7 +5,6 @@ from fire import Fire
 from search_run.base_configuration import BaseConfiguration
 from search_run.cli import SearchAndRunCli
 
-
 class Configuration(BaseConfiguration):
     commands = {
         "open browser": {"url": "https://google.com"},
