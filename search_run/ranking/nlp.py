@@ -4,7 +4,6 @@ import logging
 import pickle
 from typing import List
 
-from grimoire.decorators import notify_execution
 from numpy import ndarray
 
 from search_run.config import config
@@ -25,7 +24,6 @@ class NlpRanking:
         embedded_index = update_inverted_index_with_embeddings(inverted_index)
         self._dump_embedded_index(embedded_index)
 
-    @notify_execution()
     def get_read_projection_rank_for_query(self, query):
 
         logging.getLogger("suds").propagate = False

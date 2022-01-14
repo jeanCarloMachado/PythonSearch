@@ -1,7 +1,7 @@
 from typing import Optional
 
 from search_run.base_configuration import BaseConfiguration
-from search_run.export_configuration import ConfigurationExporter
+from search_run.configuration_generator import ConfigurationGenerator
 from search_run.interpreter.main import Interpreter
 from search_run.ranking.nlp import NlpRanking
 from search_run.ranking.ranking import Ranking
@@ -20,7 +20,7 @@ class SearchAndRunCli:
         """
 
         self.configuration = configuration
-        self.configuration_exporter = ConfigurationExporter(self.configuration)
+        self.configuration_exporter = ConfigurationGenerator(self.configuration)
         self.ranking = Ranking(configuration)
         self.nlp_ranking = NlpRanking(configuration)
         self.export_configuration = self.configuration_exporter.export

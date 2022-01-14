@@ -2,7 +2,6 @@ import logging
 import os
 from typing import Literal
 
-from grimoire.decorators import notify_execution
 from grimoire.desktop.shortcut import Shortcut
 from grimoire.file import write_file
 from grimoire.shell import shell
@@ -13,7 +12,7 @@ from search_run.core_entities import RankingAlgorithms
 from search_run.ranking.ranking import Ranking
 
 
-class ConfigurationExporter:
+class ConfigurationGenerator:
     """
     Responsible to apply all the side-effects of search-run entries
     Called when we change search run or want to initailze it in the system.
@@ -35,7 +34,6 @@ class ConfigurationExporter:
 
         return self.configuration.get_cached_filename()
 
-    @notify_execution()
     def export(
         self,
         generate_shortcuts=True,
@@ -76,7 +74,6 @@ class ConfigurationExporter:
 
         return self.configuration.get_cached_filename()
 
-    @notify_execution()
     def _generate_i3_shortcuts(self):
         if not self.generate_shortcuts:
             return

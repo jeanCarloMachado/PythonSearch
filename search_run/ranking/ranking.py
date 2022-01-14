@@ -8,7 +8,6 @@ from typing import List, Tuple
 import pandas as pd
 import pyspark.sql.functions as F
 from dateutil.relativedelta import relativedelta
-from grimoire.decorators import notify_execution
 from grimoire.file import write_file
 
 from search_run.base_configuration import BaseConfiguration
@@ -32,7 +31,6 @@ class Ranking:
         self.configuration = configuration
         self.cached_file = configuration.cached_filename
 
-    @notify_execution()
     def recompute_rank(self, method: RankingAlgorithms = RankingAlgorithms.DICT_ORDER):
         """
         Recomputes the rank and saves the results on the file to be read
