@@ -7,7 +7,7 @@ They should be side-effect free
 from __future__ import annotations
 
 from enum import Enum
-from typing import List, NamedTuple, Optional
+from typing import List, Optional
 
 from numpy import ndarray
 

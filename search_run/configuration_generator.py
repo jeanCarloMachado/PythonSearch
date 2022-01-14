@@ -7,8 +7,6 @@ from grimoire.shell import shell
 from grimoire.string import generate_identifier
 
 from search_run.base_configuration import BaseConfiguration
-from search_run.core_entities import RankingAlgorithms
-from search_run.ranking.ranking import Ranking
 from search_run.shortcut.register import Shortcut
 
 
@@ -37,8 +35,6 @@ class ConfigurationGenerator:
     def export(
         self,
         generate_shortcuts=True,
-        ignore_lock=False,
-        ranking_method: Literal["fast", "complete"] = "fast",
     ):
         """
         Export a new configuration.
@@ -49,25 +45,8 @@ class ConfigurationGenerator:
         the more expensive algorithm optimizing the ranking will be used.
         """
 
-        lock_file_name = "/tmp/search_run_export.lock"
-        if (
-            ranking_method == "complete"
-            and os.path.exists(lock_file_name)
-            and not ignore_lock
-        ):
-            raise Exception("Export currently in progress will not start a new one")
-        else:
-            os.system(f"touch {lock_file_name}")
-
         self.generate_shortcuts = generate_shortcuts
-
-        logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
-        Ranking(self.configuration).recompute_rank()
         self._generate_i3_shortcuts()
-
-        os.system(f"rm {lock_file_name}")
-
-        return self.configuration.get_cached_filename()
 
     def _generate_i3_shortcuts(self):
         if not self.generate_shortcuts:
@@ -89,6 +68,7 @@ class ConfigurationGenerator:
 
         for key, content in list(self.configuration.commands.items()):
             if type(content) is dict and "i3_shortcut" in content:
+                logging.info(f"Generating shortcut for {key}")
                 identifier = generate_identifier(key)
                 cmd = f'search_run run_key "{identifier}" --force_gui_mode=1 --from_shortcut=1'
                 result = f"{result}bindsym {content['i3_shortcut']} exec {cmd}\n"
