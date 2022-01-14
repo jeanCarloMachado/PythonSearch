@@ -2,7 +2,6 @@ import logging
 import os
 from typing import Literal
 
-from grimoire.desktop.shortcut import Shortcut
 from grimoire.file import write_file
 from grimoire.shell import shell
 from grimoire.string import generate_identifier
@@ -10,6 +9,7 @@ from grimoire.string import generate_identifier
 from search_run.base_configuration import BaseConfiguration
 from search_run.core_entities import RankingAlgorithms
 from search_run.ranking.ranking import Ranking
+from search_run.shortcut.register import Shortcut
 
 
 class ConfigurationGenerator:
@@ -62,12 +62,7 @@ class ConfigurationGenerator:
         self.generate_shortcuts = generate_shortcuts
 
         logging.info(f"Writing to file: {self.configuration.get_cached_filename()}")
-        ranking_method = (
-            RankingAlgorithms.DICT_ORDER
-            if ranking_method is "fast"
-            else RankingAlgorithms.LATEST_USED
-        )
-        Ranking(self.configuration).recompute_rank(method=ranking_method)
+        Ranking(self.configuration).recompute_rank()
         self._generate_i3_shortcuts()
 
         os.system(f"rm {lock_file_name}")

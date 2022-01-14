@@ -14,7 +14,6 @@ from search_run.base_configuration import BaseConfiguration
 from search_run.config import DataPaths
 from search_run.core_entities import RankingAlgorithms
 from search_run.observability.logger import configure_logger
-from search_run.ranking.ciclical_placement import CiclicalPlacement
 
 logger = configure_logger()
 
@@ -31,26 +30,16 @@ class Ranking:
         self.configuration = configuration
         self.cached_file = configuration.cached_filename
 
-    def recompute_rank(self, method: RankingAlgorithms = RankingAlgorithms.DICT_ORDER):
+    def recompute_rank(self):
         """
         Recomputes the rank and saves the results on the file to be read
         """
 
         entries: dict = self.load_entries()
-        if method == RankingAlgorithms.DICT_ORDER:
-            result = []
+        result = []
 
-            for key in entries.keys():
-                result.append((key, entries[key]))
-        elif method == RankingAlgorithms.LATEST_USED:
-            commands_performed = self.load_commands_performed_df()
-            result = CiclicalPlacement().cyclical_placment(
-                entries=entries,
-                head_keys=self.compute_head(),
-                commands_performed=commands_performed,
-            )
-        else:
-            raise Exception(f"Ranking method: {method} unknown")
+        for key in entries.keys():
+            result.append((key, entries[key]))
 
         return self._export_to_file(result)
 
