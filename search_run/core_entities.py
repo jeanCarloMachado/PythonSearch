@@ -69,17 +69,3 @@ class InvertedIndex:
         pass
 
 
-class RankingAlgorithms(Enum):
-    # the order of the dictionary on the page, fastest but not as optimized
-    DICT_ORDER = "dict_order"
-    # Order by the latest used
-    LATEST_USED = "latest_used"
-
-    @staticmethod
-    def from_str(string: str) -> "RankingAlgorithms":
-        if string == "dict_order":
-            return RankingAlgorithms.DICT_ORDER
-        elif string == "LATEST_USED":
-            return RankingAlgorithms.LATEST_USED
-
-        raise Exception(f"String: {string} does not match any ranking method")

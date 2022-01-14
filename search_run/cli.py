@@ -3,8 +3,7 @@ from typing import Optional
 from search_run.base_configuration import BaseConfiguration
 from search_run.configuration_generator import ConfigurationGenerator
 from search_run.interpreter.main import Interpreter
-from search_run.ranking.nlp import NlpRanking
-from search_run.ranking.ranking import Ranking
+from search_run.ranking.ranking_generator import RankingGenerator
 
 
 class SearchAndRunCli:
@@ -21,8 +20,7 @@ class SearchAndRunCli:
 
         self.configuration = configuration
         self.configuration_exporter = ConfigurationGenerator(self.configuration)
-        self.ranking = Ranking(configuration)
-        self.nlp_ranking = NlpRanking(configuration)
+        self.ranking = RankingGenerator(configuration)
         self.export_configuration = self.configuration_exporter.export
 
     def search(self):
@@ -59,3 +57,9 @@ class SearchAndRunCli:
         from search_run.entry_capture.register_new import RegisterNew
 
         return RegisterNew(self.configuration).snippet_from_clipboard()
+
+
+def setup(config: BaseConfiguration):
+    instance = SearchAndRunCli(config)
+    import fire
+    fire.Fire(instance)

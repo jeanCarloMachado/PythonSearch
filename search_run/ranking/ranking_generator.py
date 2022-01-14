@@ -12,11 +12,9 @@ from grimoire.file import write_file
 
 from search_run.base_configuration import BaseConfiguration
 from search_run.config import DataPaths
-from search_run.core_entities import RankingAlgorithms
 from search_run.observability.logger import configure_logger
 
 logger = configure_logger()
-
 
 class RankingGenerator:
     """
@@ -30,7 +28,7 @@ class RankingGenerator:
         self.configuration = configuration
         self.cached_file = configuration.cached_filename
 
-    def recompute_rank(self):
+    def generate(self):
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -60,7 +58,7 @@ class RankingGenerator:
                 content_str = str(content)
 
             position = position + 1
-            fzf_lines += f"{name.lower()}: " + content_str + "\n"
 
-        fzf_lines = fzf_lines.replace("\\", "\\\\")
-        write_file(self.configuration.cached_filename, fzf_lines)
+            content = f"{name.lower()}: " + content_str
+            content = content.replace("\\", "\\\\")
+            print(content)

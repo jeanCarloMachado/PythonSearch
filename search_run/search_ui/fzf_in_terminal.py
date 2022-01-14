@@ -22,8 +22,8 @@ class FzfInTerminal:
         self.width = width
         self.preview_cmd = preview_cmd
 
-    def run(self, cmd: str) -> None:
-        internal_cmd = f"""bash -c '{cmd} | \
+    def run(self) -> None:
+        internal_cmd = f"""bash -c 'search_run ranking generate | \
         fzf \
         --cycle \
         --no-hscroll \
@@ -40,7 +40,7 @@ class FzfInTerminal:
         --bind "ctrl-k:+execute-silent:(sleep 0.2 ; hide_launcher.sh)" \
         --bind "esc:execute-silent:(hide_launcher.sh)" \
         --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
-        --bind "ctrl-r:reload:({cmd})" \
+        --bind "ctrl-r:reload:(search_run ranking generate)" \
         --bind "ctrl-n:reload:(search_run nlp_ranking get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
