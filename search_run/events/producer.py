@@ -1,18 +1,16 @@
-import datetime
 import json
 import logging
 
 from kafka import KafkaProducer
 
-default_port = "9092"
-host = f"localhost:{default_port}"
+from search_run.config import KafkaConfig
 
 
 class EventProducer:
     """ Produce kafka messages """
 
     def __init__(self):
-        self.producer = KafkaProducer(bootstrap_servers=host)
+        self.producer = KafkaProducer(bootstrap_servers=KafkaConfig.host)
 
     def send_object(self, event_object):
         topic_name = type(event_object).__name__

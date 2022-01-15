@@ -23,3 +23,13 @@ class DataPaths:
 
 
 config = SearchRunConfiguration()
+
+
+class KafkaConfig:
+    default_port: str = "9092"
+    host: str = f"localhost:{default_port}"
+
+
+class RedisConfig:
+    host = "localhost"
+    port = 6378

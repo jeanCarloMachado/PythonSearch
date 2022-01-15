@@ -9,10 +9,11 @@ host = f"localhost:{default_port}"
 
 
 def consume_search_run_performed():
-    EventConsumer().from_class(SearchRunPerformed)
+    """ Entrypoint for the consumer """
+    SparkEventConsumer().from_class(SearchRunPerformed)
 
 
-class EventConsumer:
+class SparkEventConsumer:
     """ Listen to kafka events and store then in the data-wharehouse """
 
     def __init__(self, disable_await_termination=False):
@@ -29,13 +30,14 @@ class EventConsumer:
 
         spark-submit \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
-        /home/jean/projects/PythonSearch/search_run/events/consumer.py consume mytopic
+        /home/jean/projects/PythonSearch/search_run/events/consumer.py consume_search_run_performed
         """
 
         spark = SparkSession.builder.getOrCreate()
         df = (
             spark.readStream.format("kafka")
             .option("kafka.bootstrap.servers", host)
+            .option("subscribe", topic_name)
             .option("subscribe", topic_name)
             .load()
         )

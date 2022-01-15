@@ -1,4 +1,5 @@
-from search_run.events.consumer import EventConsumer
+from search_run.events.consumer import SparkEventConsumer
+from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.events.producer import EventProducer
 
 topic_name = "mytopic"
@@ -12,7 +13,11 @@ def test_consume_spark():
     """
     Just tests if the class is callable as it depends of spark-submit to actually run
     """
-    assert callable(EventConsumer().consume)
+    assert callable(SparkEventConsumer().consume)
+
+
+def test_consume_kafka():
+    assert callable(LatestUsedEntries().consume)
 
 
 if __name__ == "__main__":
