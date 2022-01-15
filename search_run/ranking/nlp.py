@@ -8,7 +8,7 @@ from numpy import ndarray
 
 from search_run.config import config
 from search_run.core_entities import InvertedIndex, Ranking
-from search_run.ranking.read_projection import create_read_projection
+from search_run.ranking.read_projection import ReadProjection
 
 
 class NlpRanking:
@@ -36,7 +36,7 @@ class NlpRanking:
         logging.disable = True
         inverted_index = self._load_embedded_index()
         result = create_ranking_for_text_query(query, inverted_index)
-        return create_read_projection(result, extra={"query": query})
+        return ReadProjection().create(result, extra={"query": query})
 
     def _dump_embedded_index(self, index: InvertedIndex):
         f = open(config.NLP_PICKLED_EMBEDDINGS, "wb")
