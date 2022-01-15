@@ -2,7 +2,7 @@ import redis
 
 host = "localhost"
 port = 6378
-key_name = "last_consumed_keys"
+key_name = "test_last_consumed_keys"
 
 
 def get_redis_client():
