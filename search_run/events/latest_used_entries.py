@@ -1,4 +1,5 @@
 import json
+import logging
 
 import redis
 from kafka import KafkaConsumer
@@ -10,6 +11,7 @@ class LatestUsedEntries:
     """ Contains the logic to read and write the  latest used keys from redis """
 
     MAX_PERSISTED_ITEMS = 1000
+    NUMBER_OF_KEYS_TO_RETRIEVE = 100
 
     def __init__(self, key_name="latest_consumed_key"):
         self.redis_key_name = key_name
@@ -20,9 +22,15 @@ class LatestUsedEntries:
         return redis.StrictRedis(host=RedisConfig.host, port=RedisConfig.port)
 
     def get_latest_used_keys(self):
-        result = self.redis_client.lrange(LatestUsedEntries().redis_key_name, 0, 50)
+        result = self.redis_client.lrange(
+            LatestUsedEntries().redis_key_name,
+            0,
+            LatestUsedEntries.NUMBER_OF_KEYS_TO_RETRIEVE,
+        )
+
         result = [x.decode() for x in result]
-        # result = list(dict.fromkeys(result))
+        result = list(dict.fromkeys(result))
+        # result.reverse()
         return result
 
     def write_last_used_key(self, value: str):
@@ -41,5 +49,10 @@ class LatestUsedEntries:
 
         for message in consumer:
             key_executed = message.value["key"]
-            print(f"THE key: {key_executed} ")
-            self.write_last_used_key(key_executed)
+            if not message.value["shortcut"]:
+                logging.info(f"THE key: {key_executed} will be persisted in redis")
+                self.write_last_used_key(key_executed)
+            else:
+                logging.info(
+                    f"THE key: {key_executed} will be skipped as it is a shortcut"
+                )

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from collections import namedtuple
 from typing import List, Tuple
 
@@ -37,18 +38,20 @@ class RankingGenerator:
         for used_key in latest_used:
             if used_key not in entries or used_key in used_entries:
                 continue
-
             used_entries.append((used_key, entries[used_key]))
             del entries[used_key]
+        # reverse the list given taht we pop from the end
+        used_entries.reverse()
 
-        increment = 0
+        increment = 1
         for key in entries.keys():
+            increment += 1
             if increment % 2 == 0 and len(used_entries):
                 used_entry = used_entries.pop()
+                logging.debug(f"Increment: {increment}  with entry {used_entry}")
                 result.append(used_entry)
 
             result.append((key, entries[key]))
-            increment += 1
 
         return self._export_to_file(result)
 
