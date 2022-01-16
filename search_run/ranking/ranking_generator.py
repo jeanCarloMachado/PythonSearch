@@ -1,20 +1,14 @@
 from __future__ import annotations
 
-import datetime
 import json
 from collections import namedtuple
 from typing import List, Tuple
 
-import pandas as pd
-import pyspark.sql.functions as F
-from dateutil.relativedelta import relativedelta
-from grimoire.file import write_file
-
 from search_run.base_configuration import BaseConfiguration
-from search_run.config import DataPaths
 from search_run.observability.logger import configure_logger
 
 logger = configure_logger()
+
 
 class RankingGenerator:
     """
@@ -46,7 +40,6 @@ class RankingGenerator:
         return self.configuration.commands
 
     def _export_to_file(self, data: List[Tuple[str, dict]]):
-        fzf_lines = ""
         position = 1
         for name, content in data:
             try:
@@ -59,6 +52,6 @@ class RankingGenerator:
 
             position = position + 1
 
-            content = f"{name.lower()}: " + content_str
-            content = content.replace("\\", "\\\\")
-            print(content)
+            content_str = f"{name.lower()}: " + content_str
+            content_str = content_str.replace("\\", "\\\\")
+            print(content_str)

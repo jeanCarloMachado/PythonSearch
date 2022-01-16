@@ -1,33 +1,30 @@
 from typing import Optional
 
 from search_run.base_configuration import BaseConfiguration
-from search_run.configuration_generator import ConfigurationGenerator
-from search_run.interpreter.main import Interpreter
-from search_run.ranking.ranking_generator import RankingGenerator
 
 
 class SearchAndRunCli:
     """
     The command line application, entry point of the program.
     Python Fire wraps this class.
+
+    Try to avoid adding direct commands, prefer instead to add objects as parts of functions
     """
 
     def __init__(self, configuration: Optional[BaseConfiguration] = None):
         """
-        :param configuration:
-        :param entries: the setted up entries
+        Keep this constructor small and import depependenceis inside the functions
+        so they keep bieng fast
         """
-
         self.configuration = configuration
-        self.configuration_exporter = ConfigurationGenerator(self.configuration)
-        self.ranking = RankingGenerator(configuration)
-        self.export_configuration = self.configuration_exporter.export
 
     def search(self):
         """ Main entrypoint of the application """
+        from search_run.configuration_generator import ConfigurationGenerator
         from search_run.search_ui.search import Search
 
-        Search(self.configuration_exporter).run()
+        configuration_exporter = ConfigurationGenerator(self.configuration)
+        Search(configuration_exporter).run()
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         from search_run.entry_runner import Runner
@@ -41,6 +38,8 @@ class SearchAndRunCli:
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
         """
+        from search_run.interpreter.main import Interpreter
+
         Interpreter.build_instance(self.configuration).clipboard(key)
 
     def edit_key(self, key):
@@ -58,8 +57,17 @@ class SearchAndRunCli:
 
         return RegisterNew(self.configuration).snippet_from_clipboard()
 
+    def export_configuration(self):
+        self.export_configuration = self.configuration_exporter.export
+
+    def ranking(self):
+        from search_run.ranking.ranking_generator import RankingGenerator
+
+        return RankingGenerator(self.configuration)
+
 
 def setup(config: BaseConfiguration):
     instance = SearchAndRunCli(config)
     import fire
+
     fire.Fire(instance)
