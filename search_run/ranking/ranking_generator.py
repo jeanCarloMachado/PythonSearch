@@ -40,7 +40,7 @@ class RankingGenerator:
                 continue
             used_entries.append((used_key, entries[used_key]))
             del entries[used_key]
-        # reverse the list given taht we pop from the end
+        # reverse the list given that we pop from the end
         used_entries.reverse()
 
         increment = 1
