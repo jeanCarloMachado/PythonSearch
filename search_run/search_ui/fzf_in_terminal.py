@@ -10,12 +10,13 @@ class FzfInTerminal:
 
     FONT_SIZE = 14
     PREVIEW_PERCENTAGE_SIZE = 50
+    HEIGHT=330
 
     @staticmethod
     def build_search_ui():
         """ Assembles what is specific for the search ui exclusively"""
         preview_cmd = "echo {} | cut -d ':' -f1 --complement | jq . -C "
-        return FzfInTerminal(height=300, width=1100, preview_cmd=preview_cmd)
+        return FzfInTerminal(height=FzfInTerminal.HEIGHT, width=1100, preview_cmd=preview_cmd)
 
     def __init__(self, *, height, width, preview_cmd):
         self.height = height
