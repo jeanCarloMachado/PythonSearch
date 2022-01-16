@@ -5,6 +5,7 @@ from collections import namedtuple
 from typing import List, Tuple
 
 from search_run.base_configuration import BaseConfiguration
+from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.observability.logger import configure_logger
 
 logger = configure_logger()
@@ -30,8 +31,24 @@ class RankingGenerator:
         entries: dict = self.load_entries()
         result = []
 
+        latest_used = LatestUsedEntries().get_latest_used_keys()
+
+        used_entries = []
+        for used_key in latest_used:
+            if used_key not in entries or used_key in used_entries:
+                continue
+
+            used_entries.append((used_key, entries[used_key]))
+            del entries[used_key]
+
+        increment = 0
         for key in entries.keys():
+            if increment % 2 == 0 and len(used_entries):
+                used_entry = used_entries.pop()
+                result.append(used_entry)
+
             result.append((key, entries[key]))
+            increment += 1
 
         return self._export_to_file(result)
 

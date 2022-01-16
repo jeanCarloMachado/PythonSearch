@@ -10,8 +10,8 @@ def test_write_to_redis():
 
 
 def test_read_from_redis():
-    redis_client = LatestUsedEntries.get_redis_client()
-    result = redis_client.lrange(LatestUsedEntries().redis_key_name, 0, 10)
+    result = LatestUsedEntries().get_latest_used_keys()
+
     return result
 
 
