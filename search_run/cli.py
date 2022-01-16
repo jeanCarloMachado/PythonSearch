@@ -66,6 +66,7 @@ class SearchAndRunCli:
         return RankingGenerator(self.configuration)
 
     def consumers(self):
+        """ Provides access to the event consumers"""
         from search_run.events.latest_used_entries import LatestUsedEntries
 
         class Consumers:
