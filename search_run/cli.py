@@ -65,6 +65,15 @@ class SearchAndRunCli:
 
         return RankingGenerator(self.configuration)
 
+    def consumers(self):
+        from search_run.events.latest_used_entries import LatestUsedEntries
+
+        class Consumers:
+            def latest_used_entries(self):
+                LatestUsedEntries().consume()
+
+        return Consumers()
+
 
 def setup(config: BaseConfiguration):
     instance = SearchAndRunCli(config)
