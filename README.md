@@ -15,9 +15,8 @@ Write a python script like this, and call it.
 
 from datetime import datetime
 
-
 from search_run.base_configuration import BaseConfiguration
-from search_run.cli import SearchAndRunCli
+from search_run.cli import PythonSearchCli
 from fire import Fire
 
 
@@ -42,7 +41,7 @@ class Configuration(BaseConfiguration):
     }
 
 
-Fire(SearchAndRunCli(Configuration()))
+Fire(PythonSearchCli(Configuration()))
 
 ```
 

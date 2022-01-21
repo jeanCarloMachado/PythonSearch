@@ -3,13 +3,20 @@ from typing import Optional
 from search_run.base_configuration import BaseConfiguration
 
 
-class SearchAndRunCli:
+class PythonSearchCli:
     """
     The command line application, entry point of the program.
     Python Fire wraps this class.
 
     Try to avoid adding direct commands, prefer instead to add objects as parts of functions
     """
+
+    @staticmethod
+    def setup_from_config(config: BaseConfiguration):
+        instance = PythonSearchCli(config)
+        import fire
+
+        fire.Fire(instance)
 
     def __init__(self, configuration: Optional[BaseConfiguration] = None):
         """
@@ -74,10 +81,3 @@ class SearchAndRunCli:
                 LatestUsedEntries().consume()
 
         return Consumers()
-
-
-def setup(config: BaseConfiguration):
-    instance = SearchAndRunCli(config)
-    import fire
-
-    fire.Fire(instance)
