@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import os
-
-from search_run.config import DataPaths
+from typing import Optional
 
 
 class EntriesGroup:
@@ -11,11 +10,11 @@ class EntriesGroup:
     """
 
     # the location of the dumped index
-    cached_filename: str = DataPaths.cached_configuration
     commands: dict = {}
 
-    def __init__(self):
-        pass
+    def __init__(self, commands: Optional[dict] = None):
+        if commands:
+            self.commands = commands
 
     def get_command(self, given_key):
         """ Returns command value based on the key name, must match 11"""
@@ -58,9 +57,6 @@ class EntriesGroup:
 
             self.commands = {**self.commands, **cmd_items}
 
-    def get_cached_filename(self):
-        return self.cached_filename
-
     def get_source_file(self):
         """Returns the path of the source code where the config is stored"""
         import inspect
@@ -78,9 +74,3 @@ class EntriesGroup:
         path = f"{path}/.."
 
         return path
-
-
-class BaseEntry(EntriesGroup):
-    """defined as a replacement of base configuration for system entry classes"""
-
-    pass

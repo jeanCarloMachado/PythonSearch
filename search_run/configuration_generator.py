@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Literal
 
 from grimoire.file import write_file
 from grimoire.shell import shell
@@ -24,13 +23,6 @@ class ConfigurationGenerator:
         self.configuration = configuration
         self.shortcut = Shortcut()
         self.generate_shortcuts = True
-
-    def generate_and_get_cached_file_name(self):
-        """singleton kind of method, will not initalize the configuration if it is already in cache"""
-        if not os.path.exists(self.configuration.get_cached_filename()):
-            self.export()
-
-        return self.configuration.get_cached_filename()
 
     def export(
         self,

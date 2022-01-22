@@ -22,7 +22,6 @@ class RankingGenerator:
 
     def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration
-        self.cached_file = configuration.cached_filename
 
     def generate(self):
         """

@@ -21,17 +21,15 @@ class PythonSearchCli:
     def __init__(self, configuration: Optional[EntriesGroup] = None):
         """
         Keep this constructor small and import depependenceis inside the functions
-        so they keep bieng fast
+        so they keep being fast
         """
         self.configuration = configuration
 
     def search(self):
         """ Main entrypoint of the application """
-        from search_run.configuration_generator import ConfigurationGenerator
         from search_run.search_ui.search import Search
 
-        configuration_exporter = ConfigurationGenerator(self.configuration)
-        Search(configuration_exporter).run()
+        Search().run()
 
     def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
         from search_run.entry_runner import Runner
@@ -65,7 +63,10 @@ class PythonSearchCli:
         return RegisterNew(self.configuration).snippet_from_clipboard()
 
     def export_configuration(self):
-        self.export_configuration = self.configuration_exporter.export
+        from search_run.configuration_generator import ConfigurationGenerator
+
+        configuration_exporter = ConfigurationGenerator(self.configuration)
+        configuration_exporter.export()
 
     def ranking(self):
         from search_run.ranking.ranking_generator import RankingGenerator
