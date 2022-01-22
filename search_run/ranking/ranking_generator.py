@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 import json
-import logging
 from collections import namedtuple
 from typing import List, Tuple
 
 from search_run.base_configuration import EntriesGroup
 from search_run.events.latest_used_entries import LatestUsedEntries
-from search_run.observability.logger import configure_logger
-
-logger = configure_logger()
+from search_run.observability.logger import logging
 
 
 class RankingGenerator:

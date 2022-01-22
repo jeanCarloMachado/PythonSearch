@@ -17,9 +17,8 @@ from search_run.events.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.main import Interpreter
+from search_run.observability.logger import logging
 from search_run.terminal import Terminal
-
-logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
 
 
 class RegisterNew:
