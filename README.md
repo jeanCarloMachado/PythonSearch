@@ -28,6 +28,7 @@ class Configuration(EntriesGroup):
             "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
             "i3_shortcut": "Control+Shift+0",
         },
+        "matplotlib python import": {"snippet": "import matplotlib.pyplot as plt"},
         # a shell command
         "watch current cpu frequency": {
             "cli_cmd": """
@@ -35,10 +36,14 @@ class Configuration(EntriesGroup):
                      cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
                 """,
         },
+        # generate multiple entries based on different values
+        **{f"get pods for {env}": {"cli_cmd": f"kubectl --context {env} get pods"} for env in
+           ["production", "testing"]},
     }
 
 
-PythonSearchCli.setup_from_config(Configuration())
+if __name__ == "__main__":
+    PythonSearchCli.setup_from_config(Configuration())
 
 ```
 

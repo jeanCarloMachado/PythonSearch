@@ -21,6 +21,11 @@ class Configuration(EntriesGroup):
                      cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
                 """,
         },
+        # generate multiple entries based on different values
+        **{
+            f"get pods for {env}": {"cli_cmd": f"kubectl --context {env} get pods"}
+            for env in ["production", "testing"]
+        },
     }
 
 
