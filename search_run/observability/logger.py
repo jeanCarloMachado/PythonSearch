@@ -2,7 +2,7 @@ import logging
 import sys
 
 
-def configure_logger(name="SearchRun") -> logging.Logger:
+def configure_logger(name="PythonSearch") -> logging.Logger:
     logger = logging.getLogger(name)
     logger.addHandler(logging.StreamHandler(sys.stdout))
     logger.setLevel(logging.INFO)

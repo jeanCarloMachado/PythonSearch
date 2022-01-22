@@ -1,10 +1,10 @@
 import datetime
 
-from search_run.base_configuration import BaseConfiguration
+from search_run.base_configuration import EntriesGroup
 from search_run.cli import PythonSearchCli
 
 
-class Configuration(BaseConfiguration):
+class Configuration(EntriesGroup):
     commands = {
         "open browser": {"url": "https://google.com"},
         # snippets when executed copy the content to the clipboard
@@ -13,6 +13,7 @@ class Configuration(BaseConfiguration):
             "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
             "i3_shortcut": "Control+Shift+0",
         },
+        "matplotlib python import": {"snippet": "import matplotlib.pyplot as plt"},
         # a shell command
         "watch current cpu frequency": {
             "cli_cmd": """

@@ -5,7 +5,7 @@ import logging
 from collections import namedtuple
 from typing import List, Tuple
 
-from search_run.base_configuration import BaseConfiguration
+from search_run.base_configuration import EntriesGroup
 from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.observability.logger import configure_logger
 
@@ -20,7 +20,7 @@ class RankingGenerator:
     ModelInfo = namedtuple("ModelInfo", "features label")
     model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
-    def __init__(self, configuration: BaseConfiguration):
+    def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration
         self.cached_file = configuration.cached_filename
 

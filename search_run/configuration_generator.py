@@ -6,7 +6,7 @@ from grimoire.file import write_file
 from grimoire.shell import shell
 from grimoire.string import generate_identifier
 
-from search_run.base_configuration import BaseConfiguration
+from search_run.base_configuration import EntriesGroup
 from search_run.shortcut.register import Shortcut
 
 
@@ -20,7 +20,7 @@ class ConfigurationGenerator:
     - Generate new  read centric ranking projection
     """
 
-    def __init__(self, configuration: BaseConfiguration):
+    def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration
         self.shortcut = Shortcut()
         self.generate_shortcuts = True

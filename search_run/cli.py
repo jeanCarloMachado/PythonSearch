@@ -1,6 +1,6 @@
 from typing import Optional
 
-from search_run.base_configuration import BaseConfiguration
+from search_run.base_configuration import EntriesGroup
 
 
 class PythonSearchCli:
@@ -12,13 +12,13 @@ class PythonSearchCli:
     """
 
     @staticmethod
-    def setup_from_config(config: BaseConfiguration):
+    def setup_from_config(config: EntriesGroup):
         instance = PythonSearchCli(config)
         import fire
 
         fire.Fire(instance)
 
-    def __init__(self, configuration: Optional[BaseConfiguration] = None):
+    def __init__(self, configuration: Optional[EntriesGroup] = None):
         """
         Keep this constructor small and import depependenceis inside the functions
         so they keep bieng fast

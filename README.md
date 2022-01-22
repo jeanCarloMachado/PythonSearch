@@ -15,11 +15,11 @@ Write a python script like this, and call it.
 
 import datetime
 
-from search_run.base_configuration import BaseConfiguration
+from search_run.base_configuration import EntriesGroup
 from search_run.cli import PythonSearchCli
 
 
-class Configuration(BaseConfiguration):
+class Configuration(EntriesGroup):
     commands = {
         "open browser": {"url": "https://google.com"},
         # snippets when executed copy the content to the clipboard
@@ -36,6 +36,7 @@ class Configuration(BaseConfiguration):
                 """,
         },
     }
+
 
 PythonSearchCli.setup_from_config(Configuration())
 

@@ -5,7 +5,7 @@ import os
 from search_run.config import DataPaths
 
 
-class BaseConfiguration:
+class EntriesGroup:
     """
     Main configuration of the application. Customers are supposed to pass their own
     """
@@ -51,7 +51,7 @@ class BaseConfiguration:
         for class_i in commands_classes:
             instance = class_i()
 
-            if issubclass(class_i, BaseConfiguration):
+            if issubclass(class_i, EntriesGroup):
                 cmd_items = instance.get_hydrated_commands()
             else:
                 cmd_items = instance.commands
@@ -80,7 +80,7 @@ class BaseConfiguration:
         return path
 
 
-class BaseEntry(BaseConfiguration):
+class BaseEntry(EntriesGroup):
     """defined as a replacement of base configuration for system entry classes"""
 
     pass

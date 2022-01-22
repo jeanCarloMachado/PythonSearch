@@ -9,10 +9,9 @@ from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import (emptish, quote_with, remove_new_lines,
-                             remove_special_chars)
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
-from search_run.base_configuration import BaseConfiguration
+from search_run.base_configuration import EntriesGroup
 from search_run.entry_capture.data_capture_ui import AskQuestion
 from search_run.events.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
@@ -28,7 +27,7 @@ class RegisterNew:
     Responsible for registering new entries in your catalog
     """
 
-    def __init__(self, configuration: BaseConfiguration):
+    def __init__(self, configuration: EntriesGroup):
         self.message_broker = MessageBroker("search_run_register_new")
         self.configuration = configuration
 
