@@ -1,6 +1,6 @@
 import logging
 
-from search_run.terminal import Terminal
+from search_run.apps.terminal import Terminal
 
 
 class Shortcut:

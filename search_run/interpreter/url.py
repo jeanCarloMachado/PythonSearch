@@ -1,8 +1,8 @@
 import logging
 
-from grimoire.desktop.browser import Browser
 from grimoire.string import Url
 
+from search_run.apps.browser import Browser
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.cmd import CmdInterpreter

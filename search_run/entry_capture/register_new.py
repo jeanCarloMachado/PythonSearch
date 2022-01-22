@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import datetime
-import logging
-import sys
 from typing import Tuple
 
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
+from grimoire.string import (emptish, quote_with, remove_new_lines,
+                             remove_special_chars)
 
+from search_run.apps.terminal import Terminal
 from search_run.base_configuration import EntriesGroup
 from search_run.entry_capture.data_capture_ui import AskQuestion
 from search_run.events.events import RegisterExecuted
@@ -18,7 +18,6 @@ from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
 from search_run.interpreter.main import Interpreter
 from search_run.observability.logger import logging
-from search_run.terminal import Terminal
 
 
 class RegisterNew:

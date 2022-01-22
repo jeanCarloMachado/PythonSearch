@@ -9,6 +9,8 @@ from search_run.config import config
 
 
 class EditKey:
+    """ Set of commands to edit the entries """
+
     def __init__(self, configuration):
         self.configuration = configuration
 
