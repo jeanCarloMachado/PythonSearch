@@ -14,7 +14,6 @@ Write a python script like this, and call it.
 ```py
 import datetime
 
-from search_run.cli import PythonSearchCli
 
 entries = {
     "open browser": {"url": "https://google.com"},
@@ -40,11 +39,11 @@ entries = {
 }
 
 
-from search_run.base_configuration import PythonSearchConfiguration
-config = PythonSearchConfiguration(entries=entries)
 
-if __name__ == "__main__":
-    PythonSearchCli.setup_from_config(config)
+from search_run.base_configuration import PythonSearchConfiguration
+from search_run.cli import PythonSearchCli
+config = PythonSearchConfiguration(entries=entries)
+PythonSearchCli.setup_from_config(config)
 
 ```
 

@@ -1,7 +1,5 @@
 import datetime
 
-from search_run.cli import PythonSearchCli
-
 entries = {
     "open browser": {"url": "https://google.com"},
     # snippets when executed copy the content to the clipboard
@@ -31,4 +29,6 @@ from search_run.base_configuration import PythonSearchConfiguration
 config = PythonSearchConfiguration(entries=entries)
 
 if __name__ == "__main__":
+    from search_run.cli import PythonSearchCli
+
     PythonSearchCli.setup_from_config(config)

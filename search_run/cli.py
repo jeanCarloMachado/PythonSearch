@@ -6,7 +6,6 @@ from search_run.base_configuration import EntriesGroup, PythonSearchConfiguratio
 class PythonSearchCli:
     """
     The command line application, entry point of the program.
-    Python Fire wraps this class.
 
     Try to avoid adding direct commands, prefer instead to add objects as parts of functions
     """
