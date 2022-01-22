@@ -7,8 +7,7 @@ from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import (emptish, quote_with, remove_new_lines,
-                             remove_special_chars)
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 
 from search_run.apps.terminal import Terminal
 from search_run.base_configuration import EntriesGroup
@@ -56,7 +55,7 @@ class RegisterNew:
             raise RegisterNewException.empty_content()
 
         snippet_content = snippet_content.replace("\n", " ")
-        snippet_content = remove_special_chars(snippet_content, ALLOWED_SPECIAL_CHARS)
+        snippet_content = remove_special_chars(snippet_content, EntryInserter.ALLOWED_SPECIAL_CHARS)
 
         as_dict = {
             "snippet": snippet_content,

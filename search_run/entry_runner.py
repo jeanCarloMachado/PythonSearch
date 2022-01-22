@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-import logging
+
 import re
 from typing import List
 
-# @todo inject rather than import
 from grimoire.notification import notify_send, send_notification
 from grimoire.string import generate_identifier
 
+from search_run.observability.logger import initialize_systemd_logging, logging
 from search_run.context import Context
 from search_run.events.events import SearchRunPerformed
 from search_run.events.producer import EventProducer
 from search_run.exceptions import RunException
 from search_run.interpreter.main import Interpreter
-
 
 class Runner:
     """Responsible to execute the entries matched"""
@@ -43,6 +42,8 @@ class Runner:
             send_notification(f"{key}")
 
         matches = self._matching_keys(key)
+        logging = initialize_systemd_logging()
+        logging.info(f"Matches of key: {key}, matches: {matches}")
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
@@ -52,7 +53,7 @@ class Runner:
         real_key: str = matches[0]
         if len(matches) > 1:
             real_key = min(matches, key=len)
-            notify_send(f"Multiple matches for this key {matches} using the maller")
+            notify_send(f"Multiple matches for this key {matches} using the smaller")
 
         self.event_producer.send_object(
             SearchRunPerformed(key=key, query_input=query_used, shortcut=from_shortcut)
