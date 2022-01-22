@@ -115,9 +115,10 @@ class EntryInserter:
     def insert(self, key: str, entry: dict):
 
         row_entry = str(entry)
-        line_to_add = f"        '{key}': {row_entry},"
+        line_to_add = f"    '{key}': {row_entry},"
         Replace().append_after_placeholder(
-            self.configuration.get_source_file(),
+            # @todo make this not static
+            self.configuration.get_project_root() + "/entries/main.py",
             EntryInserter.NEW_ENTRIES_STRING,
             line_to_add,
         )

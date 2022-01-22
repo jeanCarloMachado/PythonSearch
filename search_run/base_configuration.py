@@ -64,11 +64,9 @@ class EntriesGroup:
         Returns the root of the project where the config is
         @todo substitues PROJECT_ROOT with this
         """
-        breakpoint()
         source = self.get_source_file()
         path = os.path.dirname(source)
         # always go 1 path up
-        path = f"{path}/.."
 
         return path
 

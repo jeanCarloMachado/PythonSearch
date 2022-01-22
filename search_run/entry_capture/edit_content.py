@@ -19,19 +19,20 @@ class EditKey:
         Edits the configuration files by searching the text
         """
         if not key:
-            self._edit_config(self.configuration.get_source_file(), dry_run)
+            self._edit_default()
             return
 
         key = key.split(":")
 
         if not len(key):
-            self._edit_config(self.configuration.get_source_file(), dry_run)
+            self._edit_default()
             return
 
         key = key[0]
-        result_shell = shell.run_with_result(
-            f"ack '{key}' {self.configuration.get_project_root()} || true"
-        )
+        cmd = f"ack '{key}' {self.configuration.get_project_root()} --py || true"
+
+        logging.info(f"Command: {cmd}")
+        result_shell = shell.run_with_result(cmd)
         if not result_shell:
             logging.info("Could not find match edit main file")
             self._edit_config(self.configuration.get_source_file(), dry_run)
@@ -40,6 +41,9 @@ class EditKey:
         file, line, *_ = result_shell.split(":")
 
         self._edit_config(file, line)
+
+    def _edit_default(self):
+        self._edit_config(self.configuration.get_source_file(), dry_run)
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
         """"edit a configuration file given the name and line """

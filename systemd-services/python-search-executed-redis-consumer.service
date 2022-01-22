@@ -4,7 +4,7 @@ Description=Consumer of python search entries events
 [Service]
 User=jean
 WorkingDirectory=/home/jean
-ExecStart=/home/jean/projects/dotfiles/scripts/search_run consumers latest_used_entries
+ExecStart=search_run consumers latest_used_entries
 
 Restart=always
 
