@@ -1,6 +1,6 @@
 from typing import Optional
 
-from search_run.base_configuration import EntriesGroup
+from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
 
 
 class PythonSearchCli:
@@ -12,7 +12,7 @@ class PythonSearchCli:
     """
 
     @staticmethod
-    def setup_from_config(config: EntriesGroup):
+    def setup_from_config(config: PythonSearchConfiguration):
         instance = PythonSearchCli(config)
         import fire
 

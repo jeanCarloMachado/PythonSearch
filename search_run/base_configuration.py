@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
+from typing import List, Optional
 
 
 class EntriesGroup:
@@ -11,10 +11,6 @@ class EntriesGroup:
 
     # the location of the dumped index
     commands: dict = {}
-
-    def __init__(self, commands: Optional[dict] = None):
-        if commands:
-            self.commands = commands
 
     def get_command(self, given_key):
         """ Returns command value based on the key name, must match 11"""
@@ -74,3 +70,19 @@ class EntriesGroup:
         path = f"{path}/.."
 
         return path
+
+
+class PythonSearchConfiguration(EntriesGroup):
+    """ The main configuration of Python Search"""
+
+    def __init__(
+        self,
+        *,
+        entries: Optional[dict] = None,
+        entries_groups: Optional[List[EntriesGroup]] = None,
+    ):
+        if entries:
+            self.commands = entries
+
+        if entries_groups:
+            self.aggregate_commands(entries_groups)
