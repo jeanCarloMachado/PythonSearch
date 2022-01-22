@@ -55,15 +55,16 @@ class EntriesGroup:
 
     def get_source_file(self):
         """Returns the path of the source code where the config is stored"""
-        import inspect
+        import sys
 
-        return inspect.getfile(self.__class__)
+        return sys.argv[0]
 
     def get_project_root(self):
         """
         Returns the root of the project where the config is
         @todo substitues PROJECT_ROOT with this
         """
+        breakpoint()
         source = self.get_source_file()
         path = os.path.dirname(source)
         # always go 1 path up

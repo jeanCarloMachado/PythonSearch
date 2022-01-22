@@ -50,7 +50,7 @@ class EditKey:
         )
 
         if dry_run:
-            logging.info(f"Comamnd to edit file: {cmd}")
+            logging.info(f"Command to edit file: {cmd}")
             return
 
         s.run(cmd)

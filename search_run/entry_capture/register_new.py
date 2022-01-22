@@ -28,6 +28,7 @@ class RegisterNew:
     def __init__(self, configuration: EntriesGroup):
         self.message_broker = MessageBroker("search_run_register_new")
         self.configuration = configuration
+        self.entry_inserter = EntryInserter(configuration)
 
     def infer_from_clipboard(self):
         """
@@ -44,19 +45,11 @@ class RegisterNew:
         as_dict = interpreter.to_dict()
         as_dict["created_at"] = datetime.datetime.now().isoformat()
 
-        serialized = str(as_dict)
-        serialized = remove_new_lines(serialized)
-
-        Replace().append_after_placeholder(
-            self.configuration.get_source_file(),
-            "# NEW_COMMANDS_HERE",
-            f"        '{key}': {serialized},",
-        )
-        Terminal.run_command("search_run export_configuration")
+        self.entry_inserter.insert(key, as_dict)
 
     def snippet_from_clipboard(self):
         """
-        Create a search run snippet entry based on the clipboard content
+        Create a snippet entry based on the clipboard content
         """
         snippet_content, key = self._get_user_provided_data("Name your string snippet")
         if emptish(snippet_content):
@@ -70,12 +63,7 @@ class RegisterNew:
             "created_at": datetime.datetime.now().isoformat(),
         }
 
-        row_entry = str(as_dict)
-        line_to_add = f"        '{key}': {row_entry},"
-        Replace().append_after_placeholder(
-            self.configuration.get_source_file(), "# NEW_COMMANDS_HERE", line_to_add
-        )
-        Terminal.run_command("search_run export_configuration")
+        self.entry_inserter.insert(key, as_dict)
 
     def _get_user_provided_data(self, title) -> Tuple[str, str]:
         clipboard_content = Clipboard().get_content()
@@ -92,27 +80,46 @@ class RegisterNew:
         return clipboard_content, key
 
 
-ALLOWED_SPECIAL_CHARS = [
-    "@",
-    "-",
-    "_",
-    "'",
-    "?",
-    "=",
-    ",",
-    ".",
-    " ",
-    "/",
-    "(",
-    ")",
-    ";",
-    '"',
-    "%",
-    " ",
-    ":",
-    "{",
-    "'",
-    '"',
-    "}",
-    "?",
-]
+class EntryInserter:
+    """ Add an entry to the repository """
+
+    ALLOWED_SPECIAL_CHARS = [
+        "@",
+        "-",
+        "_",
+        "'",
+        "?",
+        "=",
+        ",",
+        ".",
+        " ",
+        "/",
+        "(",
+        ")",
+        ";",
+        '"',
+        "%",
+        " ",
+        ":",
+        "{",
+        "'",
+        '"',
+        "}",
+        "?",
+    ]
+    NEW_ENTRIES_STRING = "# NEW_ENTRIES_HERE"
+
+    def __init__(self, configuration):
+        self.configuration = configuration
+
+    def insert(self, key: str, entry: dict):
+
+        row_entry = str(entry)
+        line_to_add = f"        '{key}': {row_entry},"
+        Replace().append_after_placeholder(
+            self.configuration.get_source_file(),
+            EntryInserter.NEW_ENTRIES_STRING,
+            line_to_add,
+        )
+        # refresh the configuration
+        Terminal.run_command("search_run export_configuration")
