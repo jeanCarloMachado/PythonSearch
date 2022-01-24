@@ -8,6 +8,7 @@ from grimoire.event_sourcing.message import MessageBroker
 from grimoire.file import Replace
 from grimoire.notification import send_notification
 from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
+from grimoire.translator.translator import Translator
 
 from search_run.apps.terminal import Terminal
 from search_run.base_configuration import EntriesGroup
@@ -46,6 +47,31 @@ class RegisterNew:
 
         self.entry_inserter.insert(key, as_dict)
 
+    def german_from_clipboard(self):
+        """ Register german workds you dont know by saving them to the clipboard and storing in python search """
+        key = Clipboard().get_content()
+
+        if emptish(key):
+            raise RegisterNewException.empty_content()
+
+        Translator().translator_clipboard()
+        import time
+
+        time.sleep(1)
+
+        meaning = AskQuestion().ask(f"Please type the meaning of ({key})")
+
+        if emptish(meaning):
+            raise RegisterNewException.empty_content()
+
+        as_dict = {
+            "snippet": meaning,
+            "language": "German",
+            "created_at": datetime.datetime.now().isoformat(),
+        }
+
+        self.entry_inserter.insert(key, as_dict)
+
     def snippet_from_clipboard(self):
         """
         Create a snippet entry based on the clipboard content
@@ -55,7 +81,9 @@ class RegisterNew:
             raise RegisterNewException.empty_content()
 
         snippet_content = snippet_content.replace("\n", " ")
-        snippet_content = remove_special_chars(snippet_content, EntryInserter.ALLOWED_SPECIAL_CHARS)
+        snippet_content = remove_special_chars(
+            snippet_content, EntryInserter.ALLOWED_SPECIAL_CHARS
+        )
 
         as_dict = {
             "snippet": snippet_content,
@@ -121,5 +149,7 @@ class EntryInserter:
             EntryInserter.NEW_ENTRIES_STRING,
             line_to_add,
         )
+
+        logging.info(f"Inserting line: '{line_to_add}'")
         # refresh the configuration
         Terminal.run_command("search_run export_configuration")

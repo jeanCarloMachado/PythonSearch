@@ -12,10 +12,17 @@ class PythonSearchCli:
 
     @staticmethod
     def setup_from_config(config: PythonSearchConfiguration):
-        instance = PythonSearchCli(config)
-        import fire
+        try:
+            instance = PythonSearchCli(config)
+            import fire
 
-        fire.Fire(instance)
+            fire.Fire(instance)
+        except BaseException as e:
+            from search_run.observability.logger import initialize_systemd_logging
+
+            logging = initialize_systemd_logging()
+            logging.info(f"Unhandled exception: {e}")
+            raise e
 
     def __init__(self, configuration: Optional[EntriesGroup] = None):
         """
@@ -60,6 +67,11 @@ class PythonSearchCli:
         from search_run.entry_capture.register_new import RegisterNew
 
         return RegisterNew(self.configuration).snippet_from_clipboard()
+
+    def register_new(self):
+        from search_run.entry_capture.register_new import RegisterNew
+
+        return RegisterNew(self.configuration)
 
     def export_configuration(self):
         from search_run.configuration_generator import ConfigurationGenerator
