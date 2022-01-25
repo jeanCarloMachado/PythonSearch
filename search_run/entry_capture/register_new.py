@@ -5,15 +5,12 @@ from typing import Tuple
 
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
-from grimoire.file import Replace
 from grimoire.notification import send_notification
-from grimoire.string import (emptish, quote_with, remove_new_lines,
-                             remove_special_chars)
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 from grimoire.translator.translator import Translator
 
-from search_run.apps.terminal import Terminal
-from search_run.base_configuration import EntriesGroup
 from search_run.entry_capture.data_capture_ui import AskQuestion
+from search_run.entry_capture.entry_inserter import EntryInserter
 from search_run.events.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseInterpreter
@@ -26,9 +23,9 @@ class RegisterNew:
     Responsible for registering new entries in your catalog
     """
 
-    def __init__(self, configuration: EntriesGroup):
-        self.message_broker = MessageBroker("search_run_register_new")
+    def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
+        self.message_broker = MessageBroker("search_run_register_new")
         self.entry_inserter = EntryInserter(configuration)
 
     def infer_from_clipboard(self):
@@ -102,55 +99,8 @@ class RegisterNew:
         send_notification(f"Content to store: {clipboard_content}")
         key = AskQuestion().ask(title)
 
-        event = RegisterExecuted(**{"key": key, "content": clipboard_content})
-        self.message_broker.produce(event.dict())
+        if self.configuration.supported_features.is_enabled("event_tracking"):
+            event = RegisterExecuted(**{"key": key, "content": clipboard_content})
+            self.message_broker.produce(event.dict())
 
         return clipboard_content, key
-
-
-class EntryInserter:
-    """ Add an entry to the repository """
-
-    ALLOWED_SPECIAL_CHARS = [
-        "@",
-        "-",
-        "_",
-        "'",
-        "?",
-        "=",
-        ",",
-        ".",
-        " ",
-        "/",
-        "(",
-        ")",
-        ";",
-        '"',
-        "%",
-        " ",
-        ":",
-        "{",
-        "'",
-        '"',
-        "}",
-        "?",
-    ]
-    NEW_ENTRIES_STRING = "# NEW_ENTRIES_HERE"
-
-    def __init__(self, configuration):
-        self.configuration = configuration
-
-    def insert(self, key: str, entry: dict):
-
-        row_entry = str(entry)
-        line_to_add = f"    '{key}': {row_entry},"
-        Replace().append_after_placeholder(
-            # @todo make this not static
-            self.configuration.get_project_root() + "/entries/main.py",
-            EntryInserter.NEW_ENTRIES_STRING,
-            line_to_add,
-        )
-
-        logging.info(f"Inserting line: '{line_to_add}'")
-        # refresh the configuration
-        Terminal.run_command("search_run export_configuration")
