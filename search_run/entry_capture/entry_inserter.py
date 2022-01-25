@@ -7,7 +7,7 @@ from search_run.observability.logger import logging
 
 
 class EntryInserter:
-    """ Add an entry to the repository """
+    """ Add an entry dict to the entries repository """
 
     ALLOWED_SPECIAL_CHARS = [
         "@",
