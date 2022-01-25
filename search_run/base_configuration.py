@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from typing import List, Optional
 
+from search_run.features import FeaturesSupport
+
 
 class EntriesGroup:
     """
@@ -79,9 +81,15 @@ class PythonSearchConfiguration(EntriesGroup):
         *,
         entries: Optional[dict] = None,
         entries_groups: Optional[List[EntriesGroup]] = None,
+        supported_features: Optional[FeaturesSupport] = None,
     ):
         if entries:
             self.commands = entries
 
         if entries_groups:
             self.aggregate_commands(entries_groups)
+
+        if supported_features:
+            self.supported_features = supported_features
+        else:
+            self.supported_features = FeaturesSupport.default()

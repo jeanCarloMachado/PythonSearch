@@ -4,7 +4,7 @@ import json
 from collections import namedtuple
 from typing import List, Tuple
 
-from search_run.base_configuration import EntriesGroup
+from search_run.base_configuration import PythonSearchConfiguration
 from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.observability.logger import logging
 
@@ -17,7 +17,7 @@ class RankingGenerator:
     ModelInfo = namedtuple("ModelInfo", "features label")
     model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
-    def __init__(self, configuration: EntriesGroup):
+    def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
 
     def generate(self):
@@ -27,17 +27,17 @@ class RankingGenerator:
 
         entries: dict = self.load_entries()
         result = []
-
-        latest_used = LatestUsedEntries().get_latest_used_keys()
-
         used_entries = []
-        for used_key in latest_used:
-            if used_key not in entries or used_key in used_entries:
-                continue
-            used_entries.append((used_key, entries[used_key]))
-            del entries[used_key]
-        # reverse the list given that we pop from the end
-        used_entries.reverse()
+
+        if self.configuration.supported_features.is_enabled("redis"):
+            latest_used = LatestUsedEntries().get_latest_used_keys()
+            for used_key in latest_used:
+                if used_key not in entries or used_key in used_entries:
+                    continue
+                used_entries.append((used_key, entries[used_key]))
+                del entries[used_key]
+            # reverse the list given that we pop from the end
+            used_entries.reverse()
 
         increment = 1
         for key in entries.keys():
