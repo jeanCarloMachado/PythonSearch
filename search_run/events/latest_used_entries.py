@@ -8,7 +8,10 @@ from search_run.config import KafkaConfig, RedisConfig
 
 
 class LatestUsedEntries:
-    """ Contains the logic to read and write the  latest used keys from redis """
+    """
+    Contains the logic to read and write the  latest used keys from redis
+    These entries are then applied to the ranking.
+    """
 
     MAX_PERSISTED_ITEMS = 1000
     NUMBER_OF_KEYS_TO_RETRIEVE = 100
@@ -30,7 +33,6 @@ class LatestUsedEntries:
 
         result = [x.decode() for x in result]
         result = list(dict.fromkeys(result))
-        # result.reverse()
         return result
 
     def write_last_used_key(self, value: str):

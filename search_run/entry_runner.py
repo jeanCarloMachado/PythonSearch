@@ -1,25 +1,25 @@
 from __future__ import annotations
 
-
 import re
 from typing import List
 
 from grimoire.notification import notify_send, send_notification
 from grimoire.string import generate_identifier
 
-from search_run.observability.logger import initialize_systemd_logging, logging
+from search_run.base_configuration import PythonSearchConfiguration
 from search_run.context import Context
 from search_run.events.events import SearchRunPerformed
 from search_run.events.producer import EventProducer
 from search_run.exceptions import RunException
 from search_run.interpreter.main import Interpreter
+from search_run.observability.logger import initialize_systemd_logging, logging
+
 
 class Runner:
     """Responsible to execute the entries matched"""
 
-    def __init__(self, configuration):
+    def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
-        self.event_producer = EventProducer()
 
     def run(
         self,
@@ -55,9 +55,12 @@ class Runner:
             real_key = min(matches, key=len)
             notify_send(f"Multiple matches for this key {matches} using the smaller")
 
-        self.event_producer.send_object(
-            SearchRunPerformed(key=key, query_input=query_used, shortcut=from_shortcut)
-        )
+        if self.configuration.supported_features.is_enabled("event_tracking"):
+            EventProducer().send_object(
+                SearchRunPerformed(
+                    key=key, query_input=query_used, shortcut=from_shortcut
+                )
+            )
 
         return Interpreter.build_instance(self.configuration).default(real_key)
 
