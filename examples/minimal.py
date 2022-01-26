@@ -21,7 +21,7 @@ entries = {
         for env in ["production", "testing", "local"]
     },
     # uses the application itself to register new entries from the clipboard
-    "resources monitoring": {
+    "register new entry programatically": {
         "cmd": "minimal.py register_clipboard",
     },
     # use search run to help you to learn language
