@@ -1,4 +1,5 @@
 import os
+import sys
 
 from search_run.observability.logger import logging
 
@@ -24,27 +25,28 @@ class FzfInTerminal:
         self.height = height
         self.width = width
         self.preview_cmd = preview_cmd
+        self.executable = sys.argv[0]
 
     def run(self) -> None:
-        internal_cmd = f"""bash -c 'search_run ranking generate | \
+        internal_cmd = f"""bash -c '{self.executable} ranking generate | \
         fzf \
         --cycle \
         --no-hscroll \
         --hscroll-off=0 \
-        --bind "alt-enter:execute-silent:(nohup search_run run_key {{}} & disown)" \
-        --bind "enter:execute-silent:(nohup search_run run_key {{}} & disown)" \
+        --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} & disown)" \
+        --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} & disown)" \
         --bind "enter:+execute-silent:(hide_launcher.sh)" \
         --bind "enter:+clear-query" \
         --bind "ctrl-l:clear-query" \
-        --bind "ctrl-c:execute-silent:(nohup search_run clipboard_key {{}} & disown)" \
-        --bind "ctrl-e:execute-silent:(nohup search_run edit_key {{}} & disown)" \
+        --bind "ctrl-c:execute-silent:(nohup {self.executable} clipboard_key {{}} & disown)" \
+        --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-e:+execute-silent:(hide_launcher.sh)" \
-        --bind "ctrl-k:execute-silent:(nohup search_run edit_key {{}} & disown)" \
+        --bind "ctrl-k:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-k:+execute-silent:(sleep 0.2 ; hide_launcher.sh)" \
         --bind "esc:execute-silent:(hide_launcher.sh)" \
         --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
-        --bind "ctrl-r:reload:(search_run ranking generate)" \
-        --bind "ctrl-n:reload:(search_run nlp_ranking get_read_projection_rank_for_query {{q}})" \
+        --bind "ctrl-r:reload:({self.executable} ranking generate)" \
+        --bind "ctrl-n:reload:({self.executable} nlp_ranking get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
         --bind "ctrl-d:abort" \

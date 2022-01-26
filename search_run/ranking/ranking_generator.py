@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 from search_run.base_configuration import PythonSearchConfiguration
 from search_run.events.latest_used_entries import LatestUsedEntries
-from search_run.observability.logger import logging
+from search_run.observability.logger import initialize_systemd_logging, logging
 
 
 class RankingGenerator:
@@ -18,6 +18,7 @@ class RankingGenerator:
     model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
     def __init__(self, configuration: PythonSearchConfiguration):
+        initialize_systemd_logging()
         self.configuration = configuration
 
     def generate(self):
@@ -25,7 +26,7 @@ class RankingGenerator:
         Recomputes the rank and saves the results on the file to be read
         """
 
-        entries: dict = self.load_entries()
+        entries: dict = self.configuration.commands
         result = []
         used_entries = []
 
@@ -50,10 +51,6 @@ class RankingGenerator:
             result.append((key, entries[key]))
 
         return self._export_to_file(result)
-
-    def load_entries(self):
-        """ Loads the current state of the art of search run entries"""
-        return self.configuration.commands
 
     def _export_to_file(self, data: List[Tuple[str, dict]]):
         position = 1
