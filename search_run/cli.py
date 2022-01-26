@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 from search_run.base_configuration import (EntriesGroup,
@@ -95,3 +96,13 @@ class PythonSearchCli:
                 LatestUsedEntries().consume()
 
         return Consumers()
+
+    def _utils(self):
+        """ Here commands that are small topics and dont fit the rest """
+
+        class Utils:
+            def hide_launcher(self):
+                """ hide the search launcher -i3 specific """
+                os.system('sleep 0.3; i3-msg "[title=launcher] move scratchpad"')
+
+        return Utils()

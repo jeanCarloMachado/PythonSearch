@@ -35,16 +35,16 @@ class FzfInTerminal:
         --hscroll-off=0 \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} & disown)" \
         --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} & disown)" \
-        --bind "enter:+execute-silent:(hide_launcher.sh)" \
+        --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "enter:+clear-query" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-c:execute-silent:(nohup {self.executable} clipboard_key {{}} & disown)" \
         --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
-        --bind "ctrl-e:+execute-silent:(hide_launcher.sh)" \
+        --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-k:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
-        --bind "ctrl-k:+execute-silent:(sleep 0.2 ; hide_launcher.sh)" \
-        --bind "esc:execute-silent:(hide_launcher.sh)" \
-        --bind "ctrl-h:execute-silent:(hide_launcher.sh)" \
+        --bind "ctrl-k:+execute-silent:({self.executable} _utils hide_launcher)" \
+        --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
+        --bind "ctrl-h:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-r:reload:({self.executable} ranking generate)" \
         --bind "ctrl-n:reload:({self.executable} nlp_ranking get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
