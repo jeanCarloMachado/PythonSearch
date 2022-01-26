@@ -1,8 +1,7 @@
 import os
 from typing import Optional
 
-from search_run.base_configuration import (EntriesGroup,
-                                           PythonSearchConfiguration)
+from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
 
 
 class PythonSearchCli:
@@ -20,8 +19,7 @@ class PythonSearchCli:
 
             fire.Fire(instance)
         except BaseException as e:
-            from search_run.observability.logger import \
-                initialize_systemd_logging
+            from search_run.observability.logger import initialize_systemd_logging
 
             logging = initialize_systemd_logging()
             logging.info(f"Unhandled exception: {e}")
