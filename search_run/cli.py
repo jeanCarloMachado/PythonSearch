@@ -101,6 +101,6 @@ class PythonSearchCli:
         class Utils:
             def hide_launcher(self):
                 """ hide the search launcher -i3 specific """
-                os.system('sleep 0.3; i3-msg "[title=launcher] move scratchpad"')
+                os.system('sleep 0.1; i3-msg "[title=launcher] move scratchpad"')
 
         return Utils()
