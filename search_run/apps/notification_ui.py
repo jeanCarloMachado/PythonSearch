@@ -1,4 +1,3 @@
-
 from search_run.apps.terminal import Terminal
 
 
