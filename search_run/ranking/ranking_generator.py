@@ -5,7 +5,6 @@ from collections import namedtuple
 from typing import List, Tuple
 
 from search_run.base_configuration import PythonSearchConfiguration
-from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.observability.logger import initialize_systemd_logging, logging
 
 
@@ -31,6 +30,7 @@ class RankingGenerator:
         used_entries = []
 
         if self.configuration.supported_features.is_enabled("redis"):
+            from search_run.events.latest_used_entries import LatestUsedEntries
             latest_used = LatestUsedEntries().get_latest_used_keys()
             for used_key in latest_used:
                 if used_key not in entries or used_key in used_entries:

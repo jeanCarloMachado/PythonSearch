@@ -1,5 +1,5 @@
 import logging
-
+import os
 from grimoire.string import Url
 
 from search_run.apps.browser import Browser
@@ -24,17 +24,15 @@ class UrlInterpreter(BaseInterpreter):
     def interpret_default(self):
         logging.info(f'Processing as url: {self.cmd["url"]}')
 
-        b = Browser()
-        app_mode = False
-        if "app_mode" in self.cmd:
-            app_mode = True
+        if 'app_mode' in self.cmd:
+            shell_cmd = f"{os.getenv('BROWSER')} --app='{self.cmd['url']}'"
+        else:
+            shell_cmd = f"{os.getenv('BROWSER')} '{self.cmd['url']}'"
 
-        cmd = b.open_get_command(self.cmd["url"], app_mode=app_mode)
-
-        logging.info(f"Final command={cmd}")
+        logging.info(f"Final command={shell_cmd}")
 
         final_cmd = self.cmd
-        final_cmd["cmd"] = cmd
+        final_cmd["cmd"] = shell_cmd
 
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 
