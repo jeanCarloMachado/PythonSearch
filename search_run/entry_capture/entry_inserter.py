@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from grimoire.file import Replace
 
+from search_run.apps.notification_ui import send_notification
 from search_run.apps.terminal import Terminal
-from search_run.observability.logger import logging
 
 
 class EntryInserter:
     """ Add an entry dict to the entries repository """
-
     ALLOWED_SPECIAL_CHARS = [
         "@",
         "-",
@@ -40,15 +39,19 @@ class EntryInserter:
 
     def insert(self, key: str, entry: dict):
 
-        row_entry = str(entry)
-        line_to_add = f"    '{key}': {row_entry},"
-        Replace().append_after_placeholder(
-            # @todo make this not static
-            self.configuration.get_project_root() + "/entries/main.py",
-            EntryInserter.NEW_ENTRIES_STRING,
-            line_to_add,
-        )
+        try:
+            row_entry = str(entry)
+            line_to_add = f"    '{key}': {row_entry},"
+            Replace().append_after_placeholder(
+                # @todo make this not static
+                self.configuration.get_project_root() + "/entries/main.py",
+                EntryInserter.NEW_ENTRIES_STRING,
+                line_to_add,
+            )
+        except Exception as e:
+            send_notification(f"Error while inserting entry: {e}")
 
-        logging.info(f"Inserting line: '{line_to_add}'")
+        send_notification(f"Entry {row_entry} inserted successfully")
+
         # refresh the configuration
         Terminal.run_command("search_run export_configuration")

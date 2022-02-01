@@ -6,7 +6,6 @@ They should be side-effect free
 """
 from __future__ import annotations
 
-from enum import Enum
 from typing import List, Optional
 
 from numpy import ndarray
@@ -67,5 +66,3 @@ class InvertedIndex:
 
     def serialize(self) -> str:
         pass
-
-
