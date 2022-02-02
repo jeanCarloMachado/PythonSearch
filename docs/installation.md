@@ -7,7 +7,8 @@ making it work for everybody. If you wanna install it please reach out that I ca
 
 - [kitty terminal](https://sw.kovidgoyal.net/kitty/) (if you need other termaials should be simple to support)
 - [fzf](https://github.com/junegunn/fzf#examples)
-- [jq]()
+- jq
+- xsell
 - tmux
 - Python >= 3.9
 
