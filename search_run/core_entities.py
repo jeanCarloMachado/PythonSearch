@@ -66,3 +66,4 @@ class InvertedIndex:
 
     def serialize(self) -> str:
         pass
+
