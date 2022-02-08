@@ -46,7 +46,7 @@ class FzfInTerminal:
         --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-h:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-r:reload:({self.executable} ranking generate)" \
-        --bind "ctrl-n:reload:({self.executable} nlp_ranking get_read_projection_rank_for_query {{q}})" \
+        --bind "ctrl-n:reload:({self.executable} nlp get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
         --bind "ctrl-d:abort" \
@@ -54,6 +54,7 @@ class FzfInTerminal:
         --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap \
         --reverse -i --exact --no-sort'
         """
+
 
         self._launch_terminal(internal_cmd)
 

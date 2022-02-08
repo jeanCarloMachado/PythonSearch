@@ -4,6 +4,16 @@ from typing import Optional
 from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
 
 
+def error_handler(e):
+    from search_run.observability.logger import initialize_systemd_logging
+    logging = initialize_systemd_logging()
+    import sys, traceback
+    exc_info = sys.exc_info()
+    logging.warning(f"Unhandled exception: {e}".join(traceback.format_exception(*exc_info)))
+
+    raise e
+
+
 class PythonSearchCli:
     """
     The command line application, entry point of the program.
@@ -19,11 +29,8 @@ class PythonSearchCli:
 
             fire.Fire(instance)
         except BaseException as e:
-            from search_run.observability.logger import initialize_systemd_logging
+            error_handler(e)
 
-            logging = initialize_systemd_logging()
-            logging.info(f"Unhandled exception: {e}")
-            raise e
 
     def __init__(self, configuration: Optional[EntriesGroup] = None):
         """
@@ -81,9 +88,14 @@ class PythonSearchCli:
         configuration_exporter.export()
 
     def ranking(self):
-        from search_run.ranking.ranking_generator import RankingGenerator
+        from search_run.ranking.ranking import RankingGenerator
 
         return RankingGenerator(self.configuration)
+
+    def nlp(self):
+        from search_run.ranking.nlp import NlpRanking
+
+        return NlpRanking(self.configuration)
 
     def consumers(self):
         """ Provides access to the event consumers"""

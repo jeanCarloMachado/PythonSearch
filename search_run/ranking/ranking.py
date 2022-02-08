@@ -50,9 +50,9 @@ class RankingGenerator:
 
             result.append((key, entries[key]))
 
-        return self._export_to_file(result)
+        return self.print_entries(result)
 
-    def _export_to_file(self, data: List[Tuple[str, dict]]):
+    def print_entries(self, data: List[Tuple[str, dict]]):
         position = 1
         for name, content in data:
             try:
