@@ -34,14 +34,41 @@ class RegisterNew:
         """
         clipboard_content, key = self._get_user_provided_data("Name your entry")
 
-        clipboard_content = remove_new_lines(clipboard_content)
-        clipboard_content = quote_with(clipboard_content, '"')
+        clipboard_content = self._sanitize(clipboard_content)
 
         interpreter: BaseInterpreter = Interpreter.build_instance(
             self.configuration
         ).get_interpreter(clipboard_content)
+
         as_dict = interpreter.to_dict()
         as_dict["created_at"] = datetime.datetime.now().isoformat()
+
+        self.entry_inserter.insert(key, as_dict)
+
+    def _sanitize(self, content):
+        """
+        Cleans all system inputs to be stored as dictionaries
+        """
+        content = content.replace("\n", " ")
+        content = content.replace("'", '"')
+        content = remove_special_chars(content, EntryInserter.ALLOWED_SPECIAL_CHARS)
+
+        return content
+
+    def snippet_from_clipboard(self):
+        """
+        Create a snippet entry based on the clipboard content
+        """
+        snippet_content, key = self._get_user_provided_data("Name your string snippet")
+        if emptish(snippet_content):
+            raise RegisterNewException.empty_content()
+
+        snippet_content = self._sanitize(snippet_content)
+
+        as_dict = {
+            "snippet": snippet_content,
+            "created_at": datetime.datetime.now().isoformat(),
+        }
 
         self.entry_inserter.insert(key, as_dict)
 
@@ -62,29 +89,11 @@ class RegisterNew:
         if emptish(meaning):
             raise RegisterNewException.empty_content()
 
+        meaning = self._sanitize(meaning)
+
         as_dict = {
             "snippet": meaning,
             "language": "German",
-            "created_at": datetime.datetime.now().isoformat(),
-        }
-
-        self.entry_inserter.insert(key, as_dict)
-
-    def snippet_from_clipboard(self):
-        """
-        Create a snippet entry based on the clipboard content
-        """
-        snippet_content, key = self._get_user_provided_data("Name your string snippet")
-        if emptish(snippet_content):
-            raise RegisterNewException.empty_content()
-
-        snippet_content = snippet_content.replace("\n", " ")
-        snippet_content = remove_special_chars(
-            snippet_content, EntryInserter.ALLOWED_SPECIAL_CHARS
-        )
-
-        as_dict = {
-            "snippet": snippet_content,
             "created_at": datetime.datetime.now().isoformat(),
         }
 
