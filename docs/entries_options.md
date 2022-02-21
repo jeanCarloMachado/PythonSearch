@@ -33,8 +33,16 @@ Type: Boolean, default False
 Type: Str
 An entry key to execute before.
 
+## Ask confirmation
+
+"ask_confirmation": True,
+
+To get a popup asking to continue before doing so.
+
+
 ## Other
 
 "file": """/home/jean/Desktop/books/StaffEng-Digital.pdf""",
 "call_before": "Staff engineering book notes",
 "disable_sequential_execution": True,
+

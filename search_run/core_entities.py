@@ -67,3 +67,8 @@ class InvertedIndex:
     def serialize(self) -> str:
         pass
 
+from typed_pyspark import Dataframe
+
+SearchRunPerformed = Dataframe(schema={'key': 'String', "query_input": 'String', 'shortcut': "Boolean",  "timestamp":
+    "Date"})
+SearchRunPerformedType = SearchRunPerformed.type_annotation()

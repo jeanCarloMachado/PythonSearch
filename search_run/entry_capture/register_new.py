@@ -6,7 +6,8 @@ from typing import Tuple
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
-from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
+from grimoire.string import (emptish, quote_with, remove_new_lines,
+                             remove_special_chars)
 from grimoire.translator.translator import Translator
 
 from search_run.entry_capture.data_capture_ui import AskQuestion
