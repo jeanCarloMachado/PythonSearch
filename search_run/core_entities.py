@@ -72,3 +72,7 @@ from typed_pyspark import Dataframe
 SearchRunPerformed = Dataframe(schema={'key': 'String', "query_input": 'String', 'shortcut': "Boolean",  "timestamp":
     "Date"})
 SearchRunPerformedType = SearchRunPerformed.type_annotation()
+
+
+Entries = Dataframe(schema={'key': 'String', "position": 'Integer'})
+EntriesType = Entries.type_annotation()
