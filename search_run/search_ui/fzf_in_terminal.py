@@ -56,7 +56,6 @@ class FzfInTerminal:
         --bind "ctrl-d:abort" '
         """
 
-
         self._launch_terminal(internal_cmd)
 
     def _launch_terminal(self, internal_cmd: str):

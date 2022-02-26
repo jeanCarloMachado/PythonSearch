@@ -1,18 +1,21 @@
 import os
 from typing import Optional
 
-from search_run.base_configuration import (EntriesGroup,
-                                           PythonSearchConfiguration)
+from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
 from search_run.entry_runner import EntryRunner
 
 
 def error_handler(e):
     from search_run.observability.logger import initialize_systemd_logging
+
     logging = initialize_systemd_logging()
     import sys
     import traceback
+
     exc_info = sys.exc_info()
-    logging.warning(f"Unhandled exception: {e}".join(traceback.format_exception(*exc_info)))
+    logging.warning(
+        f"Unhandled exception: {e}".join(traceback.format_exception(*exc_info))
+    )
 
     raise e
 
@@ -34,7 +37,6 @@ class PythonSearchCli:
         except BaseException as e:
             error_handler(e)
 
-
     def __init__(self, configuration: Optional[EntriesGroup] = None):
         """
         Keep this constructor small and import depependenceis inside the functions
@@ -55,6 +57,7 @@ class PythonSearchCli:
         Used by fzf to provide Ctrl-c functionality.
         """
         from search_run.interpreter.main import Interpreter
+
         Interpreter.build_instance(self.configuration).clipboard(key)
 
     def edit_key(self, key):
