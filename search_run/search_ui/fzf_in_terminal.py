@@ -33,12 +33,16 @@ class FzfInTerminal:
         --cycle \
         --no-hscroll \
         --hscroll-off=0 \
-        --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} & disown)" \
-        --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} & disown)" \
+        --preview "{self.preview_cmd}" \
+        --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap \
+        --reverse -i --exact --no-sort \
+        --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "enter:+clear-query" \
+        --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-c:execute-silent:(nohup {self.executable} clipboard_key {{}} & disown)" \
+        --bind "ctrl-c:+clear-query" \
         --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-k:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
@@ -49,10 +53,7 @@ class FzfInTerminal:
         --bind "ctrl-n:reload:({self.executable} nlp get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
-        --bind "ctrl-d:abort" \
-        --preview "{self.preview_cmd}" \
-        --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap \
-        --reverse -i --exact --no-sort'
+        --bind "ctrl-d:abort" '
         """
 
 

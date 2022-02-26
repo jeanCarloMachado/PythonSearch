@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import List
+from typing import List, Optional
 
 from grimoire.notification import notify_send, send_notification
 from grimoire.string import generate_identifier
@@ -15,19 +15,21 @@ from search_run.interpreter.main import Interpreter
 from search_run.observability.logger import initialize_systemd_logging, logging
 
 
-class Runner:
-    """Responsible to execute the entries matched"""
+class EntryRunner:
+    """
+    Responsible to execute the entries matched
+    """
 
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
 
-    def run(
+    def run_key(
         self,
         key: str,
+        query_used: str = "",
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
-        query_used: str = "",
     ):
         """
         from_shortcut means that the key execution was triggered by a desktop shortcut
@@ -44,6 +46,7 @@ class Runner:
         matches = self._matching_keys(key)
         logging = initialize_systemd_logging()
         logging.info(f"Matches of key: {key}, matches: {matches}")
+        logging.info(f"Query used: {query_used}")
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 

@@ -1,13 +1,16 @@
 import os
 from typing import Optional
 
-from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
+from search_run.base_configuration import (EntriesGroup,
+                                           PythonSearchConfiguration)
+from search_run.entry_runner import EntryRunner
 
 
 def error_handler(e):
     from search_run.observability.logger import initialize_systemd_logging
     logging = initialize_systemd_logging()
-    import sys, traceback
+    import sys
+    import traceback
     exc_info = sys.exc_info()
     logging.warning(f"Unhandled exception: {e}".join(traceback.format_exception(*exc_info)))
 
@@ -38,6 +41,7 @@ class PythonSearchCli:
         so they keep being fast
         """
         self.configuration = configuration
+        self.run_key = EntryRunner(configuration).run_key
 
     def search(self):
         """ Main entrypoint of the application """
@@ -45,20 +49,12 @@ class PythonSearchCli:
 
         Search().run()
 
-    def run_key(self, key, force_gui_mode=False, gui_mode=False, from_shortcut=False):
-        from search_run.entry_runner import Runner
-
-        return Runner(self.configuration).run(
-            key, force_gui_mode, gui_mode, from_shortcut
-        )
-
     def clipboard_key(self, key):
         """
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
         """
         from search_run.interpreter.main import Interpreter
-
         Interpreter.build_instance(self.configuration).clipboard(key)
 
     def edit_key(self, key):
