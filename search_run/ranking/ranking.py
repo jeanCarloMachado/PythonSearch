@@ -4,6 +4,7 @@ import json
 from collections import namedtuple
 from typing import List, Tuple
 
+from search_run.acronyms import generate_acronyms
 from search_run.base_configuration import PythonSearchConfiguration
 from search_run.observability.logger import initialize_systemd_logging, logging
 
@@ -31,6 +32,7 @@ class RankingGenerator:
 
         if self.configuration.supported_features.is_enabled("redis"):
             from search_run.events.latest_used_entries import LatestUsedEntries
+
             latest_used = LatestUsedEntries().get_latest_used_keys()
             for used_key in latest_used:
                 if used_key not in entries or used_key in used_entries:
@@ -58,8 +60,10 @@ class RankingGenerator:
             try:
                 content["key_name"] = name
                 content["rank_position"] = position
+                content["generated_acronyms"] = generate_acronyms(name)
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
-            except BaseException:
+            except BaseException as e:
+                logging.warning(e)
                 content = content
                 content_str = str(content)
 
