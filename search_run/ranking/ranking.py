@@ -63,7 +63,7 @@ class RankingGenerator:
                 content["generated_acronyms"] = generate_acronyms(name)
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
-                logging.warning(e)
+                logging.debug(e)
                 content = content
                 content_str = str(content)
 
