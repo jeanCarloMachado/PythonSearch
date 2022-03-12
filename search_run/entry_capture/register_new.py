@@ -7,7 +7,8 @@ from typing import Tuple
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
-from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
+from grimoire.string import (emptish, quote_with, remove_new_lines,
+                             remove_special_chars)
 from grimoire.translator.translator import Translator
 
 from search_run.entry_capture.data_capture_ui import AskQuestion
@@ -113,9 +114,12 @@ class RegisterNew:
 
     def _get_clipboard_content_and_ask_key(self, title) -> Tuple[str, str]:
         """
+        @todo find a better name here
         Get content from clipboard and from input
+        AND produces the event
         """
 
+        clipboard_content =  self._get_clippboard_content()
         send_notification(f"Content to store: {clipboard_content}")
         key = AskQuestion().ask(title)
 
@@ -123,7 +127,7 @@ class RegisterNew:
             event = RegisterExecuted(**{"key": key, "content": clipboard_content})
             self.message_broker.produce(event.dict())
 
-        return self._get_clippboard_content(), key
+        return key, clipboard_content
 
     def _get_clippboard_content(self) -> str:
         clipboard_content = Clipboard().get_content()

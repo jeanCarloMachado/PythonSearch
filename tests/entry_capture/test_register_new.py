@@ -1,4 +1,5 @@
-from search_run.entry_capture.register_new import transform_into_anonymous_entry
+from search_run.entry_capture.register_new import \
+    transform_into_anonymous_entry
 
 
 def test_only_value():
