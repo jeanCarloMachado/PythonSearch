@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import datetime
+import time
 from typing import Tuple
 
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
-from grimoire.string import (emptish, quote_with, remove_new_lines,
-                             remove_special_chars)
+from grimoire.string import emptish, quote_with, remove_new_lines, remove_special_chars
 from grimoire.translator.translator import Translator
 
 from search_run.entry_capture.data_capture_ui import AskQuestion
@@ -50,8 +50,8 @@ class RegisterNew:
         """
         Cleans all system inputs to be stored as dictionaries
         """
-        content = content.replace("\n", " ")
-        content = content.replace("'", '"')
+        content = content.replace("\n", "\\n")
+        content = content.replace("'", "'")
         content = remove_special_chars(content, EntryInserter.ALLOWED_SPECIAL_CHARS)
 
         return content
@@ -81,7 +81,6 @@ class RegisterNew:
             raise RegisterNewException.empty_content()
 
         Translator().translator_clipboard()
-        import time
 
         time.sleep(1)
 
