@@ -60,6 +60,7 @@ class RegisterNew:
         key, as_dict = transform_into_anonymous_entry(content)
         self.entry_inserter.insert(key, as_dict)
 
+
     def snippet_from_clipboard(self):
         """
         Create a snippet entry based on the clipboard content

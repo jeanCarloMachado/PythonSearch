@@ -56,8 +56,6 @@ class EntryInserter:
             )
         except Exception as e:
             send_notification(f"Error while inserting entry: {e}")
-
         send_notification(f"Entry {row_entry} inserted successfully")
-
         # refresh the configuration
         Terminal.run_command("search_run export_configuration")

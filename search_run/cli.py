@@ -67,7 +67,6 @@ class PythonSearchCli:
 
     def register_clipboard(self):
         from search_run.entry_capture.register_new import RegisterNew
-
         return RegisterNew(self.configuration).infer_from_clipboard()
 
     def register_snippet_clipboard(self):
