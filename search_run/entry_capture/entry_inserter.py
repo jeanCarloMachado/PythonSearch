@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 from grimoire.file import Replace
 
 from search_run.apps.notification_ui import send_notification
@@ -40,7 +42,10 @@ class EntryInserter:
 
     def insert(self, key: str, entry: dict):
 
+        entry["created_at"] = datetime.now().isoformat()
+
         try:
+
             row_entry = str(entry)
             line_to_add = f"    '{key}': {row_entry},"
             Replace().append_after_placeholder(
