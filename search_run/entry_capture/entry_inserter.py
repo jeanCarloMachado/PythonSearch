@@ -13,6 +13,7 @@ class EntryInserter:
 
     ALLOWED_SPECIAL_CHARS = [
         "@",
+        "#",
         "-",
         "_",
         "'",
