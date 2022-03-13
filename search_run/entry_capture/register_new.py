@@ -128,7 +128,7 @@ class RegisterNew:
             event = RegisterExecuted(**{"key": key, "content": clipboard_content})
             self.message_broker.produce(event.dict())
 
-        return key, clipboard_content
+        return clipboard_content, key
 
     def _get_clippboard_content(self) -> str:
         clipboard_content = Clipboard().get_content()
