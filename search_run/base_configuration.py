@@ -5,6 +5,8 @@ from typing import List, Optional
 
 from search_run.features import FeaturesSupport
 
+import inspect
+
 
 class EntriesGroup:
     """
@@ -45,10 +47,14 @@ class EntriesGroup:
         return result
 
     def aggregate_commands(self, commands_classes):
+        """
+        aggregates a list of classes or instances
+        """
         for class_i in commands_classes:
-            instance = class_i()
+            is_class = inspect.isclass(class_i)
+            instance = class_i() if is_class else class_i
 
-            if issubclass(class_i, EntriesGroup):
+            if isinstance(instance, EntriesGroup):
                 cmd_items = instance.get_hydrated_commands()
             else:
                 cmd_items = instance.commands
