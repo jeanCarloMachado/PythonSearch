@@ -22,6 +22,7 @@ class DataPaths:
     cached_configuration = "/tmp/search_and_run_configuration_cached"
 
 
+# @todo do not depend on this config directly rather depend on the base configuration
 config = SearchRunConfiguration()
 
 

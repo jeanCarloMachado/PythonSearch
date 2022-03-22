@@ -1,7 +1,6 @@
 import os
-from typing import Optional
 
-from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
+from search_run.base_configuration import PythonSearchConfiguration
 from search_run.entry_runner import EntryRunner
 
 
@@ -26,6 +25,7 @@ class PythonSearchCli:
 
     Try to avoid adding direct commands, prefer instead to add objects as parts of functions
     """
+    configuration: PythonSearchConfiguration
 
     @staticmethod
     def setup_from_config(config: PythonSearchConfiguration):
@@ -37,7 +37,7 @@ class PythonSearchCli:
         except BaseException as e:
             error_handler(e)
 
-    def __init__(self, configuration: Optional[EntriesGroup] = None):
+    def __init__(self, configuration: PythonSearchConfiguration = None):
         """
         Keep this constructor small and import depependenceis inside the functions
         so they keep being fast
@@ -49,7 +49,7 @@ class PythonSearchCli:
         """ Main entrypoint of the application """
         from search_run.search_ui.search import Search
 
-        Search().run()
+        Search(self.configuration).run()
 
     def clipboard_key(self, key):
         """
@@ -109,8 +109,10 @@ class PythonSearchCli:
         """ Here commands that are small topics and dont fit the rest """
 
         class Utils:
+            def __init__(self, configuration):
+                self.configuration = configuration
             def hide_launcher(self):
-                """ hide the search launcher -i3 specific """
-                os.system('sleep 0.1; i3-msg "[title=launcher] move scratchpad"')
+                """ hide the search launcher -i2 specific """
+                os.system(f'sleep 0.1; i3-msg "[title={self.configuration.APPLICATION_TITLE}] move scratchpad"')
 
-        return Utils()
+        return Utils(self.configuration)

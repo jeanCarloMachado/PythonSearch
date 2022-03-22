@@ -5,6 +5,8 @@ class Search:
     """
     Opens search with all entries
     """
+    def __init__(self, configuration):
+        self.configuration = configuration
 
     def run(self):
-        return FzfInTerminal.build_search_ui().run()
+        return FzfInTerminal.build_search_ui(self.configuration).run()

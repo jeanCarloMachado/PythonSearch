@@ -1,6 +1,7 @@
 import os
 import sys
 
+from search_run.base_configuration import PythonSearchConfiguration
 from search_run.observability.logger import logging
 
 
@@ -13,19 +14,22 @@ class FzfInTerminal:
     PREVIEW_PERCENTAGE_SIZE = 50
     HEIGHT = 330
 
+    configuration: PythonSearchConfiguration
+
     @staticmethod
-    def build_search_ui():
+    def build_search_ui(configuration):
         """ Assembles what is specific for the search ui exclusively"""
         preview_cmd = "echo {} | cut -d ':' -f1 --complement | jq . -C "
         return FzfInTerminal(
-            height=FzfInTerminal.HEIGHT, width=1100, preview_cmd=preview_cmd
+            configuration=configuration, height=FzfInTerminal.HEIGHT, width=1100, preview_cmd=preview_cmd
         )
 
-    def __init__(self, *, height, width, preview_cmd):
+    def __init__(self, *, configuration, height, width, preview_cmd):
         self.height = height
         self.width = width
         self.preview_cmd = preview_cmd
         self.executable = sys.argv[0]
+        self.configuration = configuration
 
     def run(self) -> None:
         internal_cmd = f"""bash -c '{self.executable} ranking generate | \
@@ -61,9 +65,9 @@ class FzfInTerminal:
     def _launch_terminal(self, internal_cmd: str):
 
         launch_cmd = f"""ionice -n 3 nice -19 kitty \
-        --title=launcher -o remember_window_size=n \
+        --title={self.configuration.APPLICATION_TITLE} -o remember_window_size=n \
         -o initial_window_width={self.width}  \
-        -o  initial_window_height={self.height} \
+        -o initial_window_height={self.height} \
         -o font_size={FzfInTerminal.FONT_SIZE} \
          {internal_cmd}
         """

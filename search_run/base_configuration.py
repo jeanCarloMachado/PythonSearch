@@ -82,6 +82,8 @@ class EntriesGroup:
 class PythonSearchConfiguration(EntriesGroup):
     """ The main configuration of Python Search"""
 
+    APPLICATION_TITLE= 'PythonSearchWindow'
+
     def __init__(
         self,
         *,
