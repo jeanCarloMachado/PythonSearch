@@ -19,7 +19,7 @@ Example:
 
 ## focus_match
 
-Value: String
+alue: String
 Tries to match the window and focusing on it before opening a new one.
 
 
@@ -27,11 +27,18 @@ Tries to match the window and focusing on it before opening a new one.
 
 Type: Boolean, default False
 
+## Before and after hooks
 
-## call_before
+### call_before
 
 Type: Str
 An entry key to execute before.
+
+
+### call_after
+
+Type: Str
+An entry key to execute after.
 
 ## Ask confirmation
 
