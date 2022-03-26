@@ -1,3 +1,5 @@
+from typing import List
+
 from mlflow.entities import RunInfo
 import json
 import numpy as np
@@ -19,7 +21,7 @@ def date_features(number_of_keys) -> np.ndarray:
     return np.concatenate((week_number, day_of_week), axis=1)
 
 
-def get_ranked_keys():
+def get_ranked_keys() -> List[str]:
     location = '/home/jean/projects/PySearchEntries/mlflow'
     experiment_name = 'baseline_rank_v0'
     mlflow.set_tracking_uri(f'file:{location}')
