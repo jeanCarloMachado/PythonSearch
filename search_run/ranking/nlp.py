@@ -12,7 +12,9 @@ from search_run.ranking.read_projection import ReadProjection
 
 
 class NlpRanking:
-    """Entrypoint for cli and other parts of the application to NLP actions"""
+    """
+    Entrypoint for cli and other parts of the application to NLP actions
+    """
 
     def __init__(self, configuration):
         self.configuration = configuration

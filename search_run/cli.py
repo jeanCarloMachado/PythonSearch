@@ -105,6 +105,11 @@ class PythonSearchCli:
 
         return Consumers()
 
+    def features(self):
+        from search_run.features import FeatureToggle
+
+        return FeatureToggle()
+
     def _utils(self):
         """ Here commands that are small topics and dont fit the rest """
 

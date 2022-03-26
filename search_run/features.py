@@ -1,3 +1,6 @@
+
+import os
+
 class FeaturesSupport:
     """
     Enables us to have the core behaviour working without the latest in development features.[
@@ -24,3 +27,20 @@ class FeaturesSupport:
             raise Exception(f"Feature {feature_name} not configured")
 
         return self.supported_config[feature_name]
+
+
+class FeatureToggle:
+    """
+    A simple feature toggle abstraction that allows one to turn on/off features.
+    """
+    def __init__(self):
+        self.BASE_PATH = f"{os.getenv('HOME')}/.PythonSearch/features"
+
+    def enable(self, feature_name: str):
+        os.system(f'touch {self.BASE_PATH}/{feature_name}')
+
+    def disable(self, feature_name: str):
+        os.system(f'rm {self.BASE_PATH}/{feature_name}')
+
+    def is_enabled(self, feature_name: str) -> bool:
+        return 0 == os.system(f' test -f {self.BASE_PATH}/{feature_name}')

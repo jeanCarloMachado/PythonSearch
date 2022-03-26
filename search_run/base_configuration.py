@@ -1,12 +1,8 @@
 from __future__ import annotations
-
 import os
 from typing import List, Optional
-
 from search_run.features import FeaturesSupport
-
 import inspect
-
 
 class EntriesGroup:
     """
@@ -15,6 +11,21 @@ class EntriesGroup:
 
     # the location of the dumped index
     commands: dict = {}
+
+    def aggregate_commands(self, commands_classes):
+        """
+        aggregates a list of classes or instances
+        """
+        for class_i in commands_classes:
+            is_class = inspect.isclass(class_i)
+            instance = class_i() if is_class else class_i
+
+            if isinstance(instance, EntriesGroup):
+                cmd_items = instance.get_hydrated_commands()
+            else:
+                cmd_items = instance.commands
+
+            self.commands = {**self.commands, **cmd_items}
 
     def get_command(self, given_key):
         """ Returns command value based on the key name, must match 11"""
@@ -46,20 +57,6 @@ class EntriesGroup:
 
         return result
 
-    def aggregate_commands(self, commands_classes):
-        """
-        aggregates a list of classes or instances
-        """
-        for class_i in commands_classes:
-            is_class = inspect.isclass(class_i)
-            instance = class_i() if is_class else class_i
-
-            if isinstance(instance, EntriesGroup):
-                cmd_items = instance.get_hydrated_commands()
-            else:
-                cmd_items = instance.commands
-
-            self.commands = {**self.commands, **cmd_items}
 
     def get_source_file(self):
         """Returns the path of the source code where the config is stored"""
@@ -78,18 +75,21 @@ class EntriesGroup:
 
         return path
 
-
 class PythonSearchConfiguration(EntriesGroup):
-    """ The main configuration of Python Search"""
+    """
+    The main configuration of Python Search
+    Everything to customize about the application should be tunneled through this class
+    """
 
-    APPLICATION_TITLE= 'PythonSearchWindow'
+    APPLICATION_TITLE = 'PythonSearchWindow'
+    commands: dict
 
     def __init__(
-        self,
-        *,
-        entries: Optional[dict] = None,
-        entries_groups: Optional[List[EntriesGroup]] = None,
-        supported_features: Optional[FeaturesSupport] = None,
+            self,
+            *,
+            entries: Optional[dict] = None,
+            entries_groups: Optional[List[EntriesGroup]] = None,
+            supported_features: Optional[FeaturesSupport] = None,
     ):
         if entries:
             self.commands = entries
@@ -101,3 +101,4 @@ class PythonSearchConfiguration(EntriesGroup):
             self.supported_features = supported_features
         else:
             self.supported_features = FeaturesSupport.default()
+
