@@ -5,7 +5,7 @@ from search_run.core_entities import Ranking
 
 class ReadProjection:
     def create(ranking: Ranking, extra: dict = None) -> str:
-        """ Froma  list of entries returns a string that is optimized for reading in fzf"""
+        """ From a  list of entries returns a string that is optimized for reading in fzf"""
         fzf_lines = ""
         position = 1
         for entry in ranking.entries:

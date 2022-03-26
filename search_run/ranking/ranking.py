@@ -6,6 +6,7 @@ from typing import List, Tuple
 
 from search_run.acronyms import generate_acronyms
 from search_run.base_configuration import PythonSearchConfiguration
+from search_run.features import FeatureToggle
 from search_run.observability.logger import initialize_systemd_logging, logging
 
 
@@ -20,6 +21,7 @@ class RankingGenerator:
     def __init__(self, configuration: PythonSearchConfiguration):
         initialize_systemd_logging()
         self.configuration = configuration
+        self.feature_toggle = FeatureToggle()
 
     def generate(self):
         """
@@ -27,6 +29,12 @@ class RankingGenerator:
         """
 
         entries: dict = self.configuration.commands
+        ranked_keys = entries.keys()
+
+        if self.feature_toggle.is_enabled("ranking_b"):
+            from search_run.ranking.ml_based import get_ranked_keys
+            ranked_keys = get_ranked_keys()
+
         result = []
         used_entries = []
 
@@ -34,13 +42,17 @@ class RankingGenerator:
            used_entries = self._get_used_entries_from_redis(entries)
 
         increment = 1
-        for key in entries.keys():
+        for key in ranked_keys:
             increment += 1
             # add used entry on the top on every second iteration
             if increment % 2 == 0 and len(used_entries):
                 used_entry = used_entries.pop()
                 logging.debug(f"Increment: {increment}  with entry {used_entry}")
                 result.append(used_entry)
+
+            if key not in entries:
+                #logging.info(f"Key {key} not found in entries")
+                continue
 
             result.append((key, entries[key]))
 
