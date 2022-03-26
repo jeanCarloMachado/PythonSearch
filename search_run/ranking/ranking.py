@@ -31,20 +31,12 @@ class RankingGenerator:
         used_entries = []
 
         if self.configuration.supported_features.is_enabled("redis"):
-            from search_run.events.latest_used_entries import LatestUsedEntries
-
-            latest_used = LatestUsedEntries().get_latest_used_keys()
-            for used_key in latest_used:
-                if used_key not in entries or used_key in used_entries:
-                    continue
-                used_entries.append((used_key, entries[used_key]))
-                del entries[used_key]
-            # reverse the list given that we pop from the end
-            used_entries.reverse()
+           used_entries = self._get_used_entries_from_redis(entries)
 
         increment = 1
         for key in entries.keys():
             increment += 1
+            # add used entry on the top on every second iteration
             if increment % 2 == 0 and len(used_entries):
                 used_entry = used_entries.pop()
                 logging.debug(f"Increment: {increment}  with entry {used_entry}")
@@ -53,6 +45,23 @@ class RankingGenerator:
             result.append((key, entries[key]))
 
         return self.print_entries(result)
+
+
+    def _get_used_entries_from_redis(self, entries):
+        """ returns a list of used entries to be placed on top of the ranking """
+        used_entries = []
+        from search_run.events.latest_used_entries import LatestUsedEntries
+
+        latest_used = LatestUsedEntries().get_latest_used_keys()
+        for used_key in latest_used:
+            if used_key not in entries or used_key in used_entries:
+                continue
+            used_entries.append((used_key, entries[used_key]))
+            del entries[used_key]
+        # reverse the list given that we pop from the end
+        used_entries.reverse()
+
+        return used_entries
 
     def print_entries(self, data: List[Tuple[str, dict]]):
         position = 1
