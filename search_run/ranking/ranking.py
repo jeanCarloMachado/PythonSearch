@@ -23,7 +23,7 @@ class RankingGenerator:
         self.configuration = configuration
         self.feature_toggle = FeatureToggle()
 
-    def generate(self):
+    def generate(self, recompute_ranking: bool = False):
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -33,8 +33,9 @@ class RankingGenerator:
 
         if self.feature_toggle.is_enabled("ranking_b"):
             from search_run.ranking.ml_based import get_ranked_keys
-            ranked_keys_b = get_ranked_keys()
 
+            # if we to recompute the rank we disable the cache
+            ranked_keys_b = get_ranked_keys(disable_cache=recompute_ranking)
 
             missing_from_rank = list(set(ranked_keys) - set(ranked_keys_b))
             ranked_keys = missing_from_rank + ranked_keys_b
