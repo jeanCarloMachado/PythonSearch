@@ -17,7 +17,7 @@ class SparkEventConsumer:
     """ Listen to kafka events and store then in the data-wharehouse """
 
     def __init__(self, disable_await_termination=False):
-        # by defalt awaits termination
+        # by default awaits termination
         self.await_termination = not disable_await_termination
 
     def from_class(self, class_reference):

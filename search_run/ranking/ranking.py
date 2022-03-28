@@ -34,8 +34,9 @@ class RankingGenerator:
         if self.feature_toggle.is_enabled("ranking_b"):
             from search_run.ranking.ml_based import get_ranked_keys
             ranked_keys_b = get_ranked_keys()
-            missing_from_rank = list(set(ranked_keys) - set(ranked_keys_b))
 
+
+            missing_from_rank = list(set(ranked_keys) - set(ranked_keys_b))
             ranked_keys = missing_from_rank + ranked_keys_b
 
         result = []
