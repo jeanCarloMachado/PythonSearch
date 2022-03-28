@@ -85,7 +85,6 @@ class RankingGenerator:
         position = 1
         for name, content in data:
             name_clean = name.lower()
-            name_clean = name_clean.rstrip(" ")
             try:
                 content["key_name"] = name_clean
                 content["position"] = position
@@ -93,7 +92,6 @@ class RankingGenerator:
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
                 logging.debug(e)
-                content = content
                 content_str = str(content)
 
             position = position + 1
