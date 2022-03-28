@@ -84,9 +84,11 @@ class RankingGenerator:
     def print_entries(self, data: List[Tuple[str, dict]]):
         position = 1
         for name, content in data:
+            name_clean = name.lower()
+            name_clean = name_clean.rstrip(" ")
             try:
-                content["key_name"] = name
-                content["rank_position"] = position
+                content["key_name"] = name_clean
+                content["position"] = position
                 content["generated_acronyms"] = generate_acronyms(name)
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
@@ -96,6 +98,9 @@ class RankingGenerator:
 
             position = position + 1
 
-            content_str = f"{name.lower()}: " + content_str
-            content_str = content_str.replace("\\", "\\\\")
+
+            content_str = f"{name_clean}:" + content_str
+            #  replaces all single quotes for double ones
+            #  otherwise the json does not get rendered
+            content_str = content_str.replace("'", '"')
             print(content_str)

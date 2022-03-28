@@ -19,7 +19,7 @@ class FzfInTerminal:
     @staticmethod
     def build_search_ui(configuration):
         """ Assembles what is specific for the search ui exclusively"""
-        preview_cmd = "echo {} | cut -d ':' -f1 --complement | jq . -C "
+        preview_cmd = "echo '{}' | cut -d ':' -f1 --complement | jq . -C "
         return FzfInTerminal(
             configuration=configuration, height=FzfInTerminal.HEIGHT, width=1100, preview_cmd=preview_cmd
         )
@@ -34,12 +34,16 @@ class FzfInTerminal:
     def run(self) -> None:
         internal_cmd = f"""bash -c '{self.executable} ranking generate | \
         fzf \
+        --tiebreak=length,begin,index \
         --cycle \
         --no-hscroll \
         --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
         --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap \
         --reverse -i --exact --no-sort \
+        --border=none \
+        --margin=0% \
+        --padding=0% \
         --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "enter:+clear-query" \
