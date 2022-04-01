@@ -46,10 +46,13 @@ An entry key to execute after.
 
 To get a popup asking to continue before doing so.
 
+# Before and After hooks
+
+"call_before": "Staff engineering book notes",
+"call_after": "restart i3",
 
 ## Other
 
 "file": """/home/jean/Desktop/books/StaffEng-Digital.pdf""",
-"call_before": "Staff engineering book notes",
 "disable_sequential_execution": True,
 
