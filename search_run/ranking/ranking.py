@@ -32,7 +32,7 @@ class RankingGenerator:
         ranked_keys = entries.keys()
 
         if self.feature_toggle.is_enabled("ranking_b"):
-            from search_run.ranking.ml_based import get_ranked_keys
+            from search_run.ranking.pipeline.ml_based import get_ranked_keys
 
             # if we to recompute the rank we disable the cache
             ranked_keys_b = get_ranked_keys(disable_cache=recompute_ranking)
