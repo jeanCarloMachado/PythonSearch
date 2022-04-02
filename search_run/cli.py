@@ -1,5 +1,6 @@
 import os
 
+from search_run.apps.window_manager import I3
 from search_run.base_configuration import PythonSearchConfiguration
 from search_run.entry_runner import EntryRunner
 
@@ -118,6 +119,6 @@ class PythonSearchCli:
                 self.configuration = configuration
             def hide_launcher(self):
                 """ hide the search launcher -i2 specific """
-                os.system(f'sleep 0.1; i3-msg "[title={self.configuration.APPLICATION_TITLE}] move scratchpad"')
+                I3().hide_window(self.configuration.APPLICATION_TITLE)
 
         return Utils(self.configuration)

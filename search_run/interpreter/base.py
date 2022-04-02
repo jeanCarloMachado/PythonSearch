@@ -4,11 +4,11 @@ import json
 
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.desktop.dmenu import Dmenu
-from grimoire.desktop.window import Window
 from grimoire.logging import logging
 from grimoire.notification import send_notification
 from grimoire.shell import shell
 
+from search_run.apps.window_manager import I3
 from search_run.context import Context
 
 
@@ -89,32 +89,9 @@ class BaseInterpreter:
     def try_to_focus(self) -> bool:
         """
         Uses i3 infrastructure to focus on windows if they are already opened
-        :return:
         """
 
         if "focus_match" not in self.cmd:
             return False
 
-        focus_identifier = self.cmd["focus_match"]
-
-        match_type = self.cmd["match_type"] if "match_type" in self.cmd else "title"
-
-        if "focus_match_only_class" in self.cmd:
-            match_type = "class"
-
-        if Window().focus(focus_identifier, match_type=match_type):
-            logging.info(
-                "No window after focusing? Maybe it is resized small, try to close the window after focusing."
-            )
-            if shell.run(
-                f"i3-msg '[{match_type}=\"{focus_identifier}\"] scratchpad show'"
-            ):
-                shell.run('sleep 0.5; i3-msg "floating disable; floating enable"')
-            else:
-                shell.run(
-                    f"i3-msg '[{match_type}=\"{focus_identifier}\"] scratchpad show'"
-                )
-
-            return True
-
-        return False
+        return I3().focus_on_window_with_title(self.cmd["focus_match"])
