@@ -49,6 +49,7 @@ class FzfInTerminal:
         --bind "enter:+clear-query" \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "ctrl-l:clear-query" \
+        --bind "ctrl-l:+first" \
         --bind "ctrl-c:execute-silent:(nohup {self.executable} clipboard_key {{}} & disown)" \
         --bind "ctrl-c:+clear-query" \
         --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
@@ -61,6 +62,7 @@ class FzfInTerminal:
         --bind "ctrl-n:reload:({self.executable} nlp get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send test)" \
         --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
+        --bind "ctrl-f:first" \
         --bind "ctrl-d:abort" '
         """
 
