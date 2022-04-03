@@ -1,6 +1,7 @@
 from typing import List
 
 
+
 def generate_acronyms(name: str) -> List[str]:
     return [generate_acronym(name)]
 

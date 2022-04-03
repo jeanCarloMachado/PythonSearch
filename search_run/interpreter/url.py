@@ -1,16 +1,14 @@
 import logging
 import os
+import re
 
-from grimoire.string import Url
-
-from search_run.apps.browser import Browser
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseEntry
 from search_run.interpreter.cmd import CmdEntry
 
 
-class UrlInterpreter(BaseEntry):
-    def __init__(self, cmd, context):
+class Url(BaseEntry):
+    def __init__(self, cmd, context=None):
         self.context = context
         if type(cmd) == str and Url.is_url(cmd):
             self.cmd = {"url": cmd}
@@ -39,3 +37,9 @@ class UrlInterpreter(BaseEntry):
 
     def copiable_part(self):
         return self.cmd["url"]
+
+    @staticmethod
+    def is_url(result) -> bool:
+        logging.info(f'Trying to match url: {result} "')
+        p2 = re.compile("^http.*")
+        return p2.search(result)

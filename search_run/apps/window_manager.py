@@ -2,7 +2,7 @@ import os
 
 class I3:
     """
-    Contain implementation of window manager necessary functions for i3
+    Contains implementation of window manager necessary functions for i3
     The same interfaces could be implemented for other window managers
     """
     def focus_on_window_with_title(self, title) -> bool:
@@ -27,4 +27,3 @@ class I3:
         return 0 == os.system(
             f'sleep 0.1; i3-msg "[title={title}] move scratchpad"'
         )
-

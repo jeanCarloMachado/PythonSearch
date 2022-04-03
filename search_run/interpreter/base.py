@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import json
+from typing import Optional
 
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.desktop.dmenu import Dmenu
 from grimoire.logging import logging
 from grimoire.notification import send_notification
-from grimoire.shell import shell
 
 from search_run.apps.window_manager import I3
 from search_run.context import Context
@@ -15,7 +15,7 @@ from search_run.context import Context
 class BaseEntry:
     """parent of all interpreters, Cannot instantiate directly"""
 
-    def __init__(self, cmd, context: Context):
+    def __init__(self, cmd, context: Optional[Context] = None):
         self.cmd = cmd
         self.context = context
 

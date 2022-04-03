@@ -5,7 +5,7 @@ from search_run.interpreter.cmd import CmdEntry
 from search_run.interpreter.file import FileInterpreter
 from search_run.interpreter.main import Interpreter
 from search_run.interpreter.snippet import SnippetInterpreter
-from search_run.interpreter.url import UrlInterpreter
+from search_run.interpreter.url import Url
 from tests.utils import build_config
 
 
@@ -20,7 +20,7 @@ class MatchingTestCase(unittest.TestCase):
         a_url = "https://app.circleci.com/pipelines/github/jeanCarloMachado"
         config = build_config({"foo": a_url})
         interpreter = Interpreter(config, Context()).get_interpreter("foo")
-        assert type(interpreter) is UrlInterpreter
+        assert type(interpreter) is Url
         assert a_url == interpreter.cmd["url"]
 
     def test_snippet(self):

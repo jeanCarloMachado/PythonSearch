@@ -13,6 +13,9 @@ WRAP_IN_TERMINAL = "new-window-non-cli"
 
 
 class CmdEntry(BaseEntry):
+    """
+    Represents a bash command entry
+    """
     def __init__(self, cmd, context: Context):
         self.context = context
 
@@ -75,7 +78,6 @@ class CmdEntry(BaseEntry):
         return cmd
 
     def _get_window_title(self):
-
         if "window_title" in self.cmd:
             return self.cmd["window_title"]
 

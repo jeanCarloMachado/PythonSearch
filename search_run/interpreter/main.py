@@ -8,11 +8,18 @@ from search_run.interpreter.cmd import CmdEntry
 from search_run.interpreter.file import FileInterpreter
 from search_run.interpreter.group import GroupInterpreter
 from search_run.interpreter.snippet import SnippetInterpreter
-from search_run.interpreter.url import UrlInterpreter
+from search_run.interpreter.url import Url
 
+INTERPETER_ORDER =[
+    Url,
+    FileInterpreter,
+    GroupInterpreter,
+    SnippetInterpreter,
+    CmdEntry,
+]
 
 class Interpreter:
-    """Matches a query to a processor"""
+    """Matches a query with a entry"""
 
     _instance = None
 
@@ -33,13 +40,7 @@ class Interpreter:
         self._configuration = configuration
         self.context = context
         self.context.set_interpreter(self)
-        self.interpreters = [
-            UrlInterpreter,
-            FileInterpreter,
-            GroupInterpreter,
-            SnippetInterpreter,
-            CmdEntry,
-        ]
+        self.interpreters = INTERPETER_ORDER
 
     def default(self, given_input: str):
         """
