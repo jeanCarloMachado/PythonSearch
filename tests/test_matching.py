@@ -3,7 +3,7 @@ import unittest
 from search_run.context import Context
 from search_run.interpreter.cmd import CmdEntry
 from search_run.interpreter.file import FileInterpreter
-from search_run.interpreter.main import Interpreter
+from search_run.interpreter.interpreter import Interpreter
 from search_run.interpreter.snippet import SnippetInterpreter
 from search_run.interpreter.url import Url
 from tests.utils import build_config

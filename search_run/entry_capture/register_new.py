@@ -7,8 +7,7 @@ from typing import Tuple
 from grimoire.desktop.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.notification import send_notification
-from grimoire.string import (emptish, quote_with, remove_new_lines,
-                             remove_special_chars)
+from grimoire.string import emptish, remove_special_chars
 from grimoire.translator.translator import Translator
 
 from search_run.entry_capture.data_capture_ui import AskQuestion
@@ -16,7 +15,7 @@ from search_run.entry_capture.entry_inserter import EntryInserter
 from search_run.events.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseEntry
-from search_run.interpreter.main import Interpreter
+from search_run.interpreter.interpreter import Interpreter
 from search_run.observability.logger import logging
 
 
@@ -25,7 +24,7 @@ class RegisterNew:
     Responsible for registering new entries in your catalog
     """
 
-    def __init__(self, configuration: PythonSearchConfiguration):
+    def __init__(self, configuration):
         self.configuration = configuration
         self.message_broker = MessageBroker("search_run_register_new")
         self.entry_inserter = EntryInserter(configuration)

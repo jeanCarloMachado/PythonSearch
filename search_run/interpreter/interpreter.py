@@ -76,7 +76,7 @@ class Interpreter:
         :param given_input:
         :return:
         """
-        key_value = re.compile("([A-Za-z0-9 _-]+): (.*)")
+        key_value = re.compile("([A-Za-z0-9 _-]+):(.*)")
         matches_kv = key_value.search(given_input)
         key = given_input
         if matches_kv:

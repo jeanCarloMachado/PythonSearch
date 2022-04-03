@@ -51,7 +51,7 @@ class FzfInTerminal:
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+first" \
         --bind "ctrl-c:execute-silent:(nohup {self.executable} clipboard_key {{}} & disown)" \
-        --bind "ctrl-c:+clear-query" \
+        --bind "ctrl-c:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-k:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \

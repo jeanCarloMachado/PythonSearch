@@ -1,5 +1,6 @@
 import os
 
+
 class I3:
     """
     Contains implementation of window manager necessary functions for i3

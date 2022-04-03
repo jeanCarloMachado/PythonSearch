@@ -11,7 +11,7 @@ from search_run.context import Context
 from search_run.events.events import SearchRunPerformed
 from search_run.events.producer import EventProducer
 from search_run.exceptions import RunException
-from search_run.interpreter.main import Interpreter
+from search_run.interpreter.interpreter import Interpreter
 from search_run.observability.logger import initialize_systemd_logging, logging
 
 
