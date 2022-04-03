@@ -72,9 +72,8 @@ class Interpreter:
 
     def get_key(self, given_input):
         """
-        @deprecated use it from searchresult instead
-        :param given_input:
-        :return:
+        @todo have a global way to match the keys and move the logic out of here
+        this already caused a bug on key contents not being able to be copied
         """
         key_value = re.compile("([A-Za-z0-9 _-]+):(.*)")
         matches_kv = key_value.search(given_input)
