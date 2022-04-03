@@ -3,11 +3,11 @@ from typing import Any
 
 from search_run.context import Context
 from search_run.exceptions import CommandDoNotMatchException
-from search_run.interpreter.base import BaseInterpreter
-from search_run.interpreter.cmd import CmdInterpreter
+from search_run.interpreter.base import BaseEntry
+from search_run.interpreter.cmd import CmdEntry
 
 
-class FileInterpreter(BaseInterpreter):
+class FileInterpreter(BaseEntry):
     def __init__(self, cmd: Any, context: Context):
         self.context = context
         self.cmd = {}
@@ -55,7 +55,7 @@ class FileInterpreter(BaseInterpreter):
         else:
             final_cmd["cmd"] = cmd
 
-        return CmdInterpreter(final_cmd, self.context).interpret_default()
+        return CmdEntry(final_cmd, self.context).interpret_default()
 
     def copiable_part(self):
         return self.cmd["file"]

@@ -1,11 +1,10 @@
-import re
-
 import logging
+import re
 
 from search_run.context import Context
 from search_run.exceptions import CommandDoNotMatchException
-from search_run.interpreter.base import BaseInterpreter
-from search_run.interpreter.cmd import CmdInterpreter
+from search_run.interpreter.base import BaseEntry
+from search_run.interpreter.cmd import CmdEntry
 from search_run.interpreter.file import FileInterpreter
 from search_run.interpreter.group import GroupInterpreter
 from search_run.interpreter.snippet import SnippetInterpreter
@@ -39,7 +38,7 @@ class Interpreter:
             FileInterpreter,
             GroupInterpreter,
             SnippetInterpreter,
-            CmdInterpreter,
+            CmdEntry,
         ]
 
     def default(self, given_input: str):
@@ -52,10 +51,10 @@ class Interpreter:
         return specific_interpreter.default()
 
     def clipboard(self, given_input: str):
-        specific_interpreter: BaseInterpreter = self.get_interpreter(given_input)
+        specific_interpreter: BaseEntry = self.get_interpreter(given_input)
         return specific_interpreter.interpret_clipboard()
 
-    def get_interpreter(self, given_input: str) -> BaseInterpreter:
+    def get_interpreter(self, given_input: str) -> BaseEntry:
         """
         Given the content, returns the best matched interpreter.
         Returns the instance of the matched interpreter given an text input

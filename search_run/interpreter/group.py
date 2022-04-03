@@ -1,9 +1,9 @@
 from search_run.context import Context
 from search_run.exceptions import CommandDoNotMatchException
-from search_run.interpreter.base import BaseInterpreter
+from search_run.interpreter.base import BaseEntry
 
 
-class GroupInterpreter(BaseInterpreter):
+class GroupInterpreter(BaseEntry):
     def __init__(self, cmd, context: Context):
         self.context = context
         self.cmd = {}

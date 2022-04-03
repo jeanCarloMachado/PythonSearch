@@ -12,7 +12,7 @@ from search_run.apps.window_manager import I3
 from search_run.context import Context
 
 
-class BaseInterpreter:
+class BaseEntry:
     """parent of all interpreters, Cannot instantiate directly"""
 
     def __init__(self, cmd, context: Context):

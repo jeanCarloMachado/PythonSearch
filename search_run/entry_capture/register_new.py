@@ -15,7 +15,7 @@ from search_run.entry_capture.data_capture_ui import AskQuestion
 from search_run.entry_capture.entry_inserter import EntryInserter
 from search_run.events.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
-from search_run.interpreter.base import BaseInterpreter
+from search_run.interpreter.base import BaseEntry
 from search_run.interpreter.main import Interpreter
 from search_run.observability.logger import logging
 
@@ -39,7 +39,7 @@ class RegisterNew:
         )
         clipboard_content = self._sanitize(clipboard_content)
 
-        interpreter: BaseInterpreter = Interpreter.build_instance(
+        interpreter: BaseEntry = Interpreter.build_instance(
             self.configuration
         ).get_interpreter(clipboard_content)
 

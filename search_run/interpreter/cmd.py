@@ -7,12 +7,12 @@ from grimoire.string import remove_special_chars
 from search_run.apps.terminal import Terminal
 from search_run.context import Context
 from search_run.exceptions import CommandDoNotMatchException
-from search_run.interpreter.base import BaseInterpreter
+from search_run.interpreter.base import BaseEntry
 
 WRAP_IN_TERMINAL = "new-window-non-cli"
 
 
-class CmdInterpreter(BaseInterpreter):
+class CmdEntry(BaseEntry):
     def __init__(self, cmd, context: Context):
         self.context = context
 

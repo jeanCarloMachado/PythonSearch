@@ -2,10 +2,10 @@ from grimoire.desktop.clipboard import Clipboard
 from grimoire.shell import shell
 
 from search_run.exceptions import CommandDoNotMatchException
-from search_run.interpreter.base import BaseInterpreter
+from search_run.interpreter.base import BaseEntry
 
 
-class SnippetInterpreter(BaseInterpreter):
+class SnippetInterpreter(BaseEntry):
     def __init__(self, cmd, context):
         self.context = context
 

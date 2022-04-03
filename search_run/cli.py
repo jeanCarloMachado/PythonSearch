@@ -1,5 +1,3 @@
-import os
-
 from search_run.apps.window_manager import I3
 from search_run.base_configuration import PythonSearchConfiguration
 from search_run.entry_runner import EntryRunner
