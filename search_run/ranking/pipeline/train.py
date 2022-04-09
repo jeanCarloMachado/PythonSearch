@@ -1,14 +1,15 @@
-from sentence_transformers import SentenceTransformer
 from typing import List
+
+import mlflow
 import pyspark.sql.functions as F
+import xgboost
+from pyspark.sql.session import SparkSession
+from sentence_transformers import SentenceTransformer
 #%%
 from xgboost import XGBRegressor
-import xgboost
 
-from pyspark.sql.session import SparkSession
 from search_run.core_entities import SearchRunPerformedType
-import xgboost
-import mlflow
+
 
 def create_embeddings(keys: List[str]):
     transformer = SentenceTransformer('nreimers/MiniLM-L6-H384-uncased')
