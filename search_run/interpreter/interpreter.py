@@ -10,13 +10,14 @@ from search_run.interpreter.group import GroupInterpreter
 from search_run.interpreter.snippet import SnippetInterpreter
 from search_run.interpreter.url import Url
 
-INTERPETER_ORDER =[
+INTERPETER_ORDER = [
     Url,
     FileInterpreter,
     GroupInterpreter,
     SnippetInterpreter,
     CmdEntry,
 ]
+
 
 class Interpreter:
     """Matches a query with a entry"""
@@ -70,18 +71,6 @@ class Interpreter:
 
         return self._match_interpreter(given_input)
 
-    def get_key(self, given_input):
-        """
-        @todo have a global way to match the keys and move the logic out of here
-        this already caused a bug on key contents not being able to be copied
-        """
-        key_value = re.compile("([A-Za-z0-9 _-]+):(.*)")
-        matches_kv = key_value.search(given_input)
-        key = given_input
-        if matches_kv:
-            key = matches_kv.group(1)
-        return key
-
     def _match_interpreter(self, cmd):
         for interpreter in self.interpreters:
             try:
@@ -93,3 +82,15 @@ class Interpreter:
                 pass
 
         raise Exception("Received a dict but did not match any type")
+
+    def get_key(self, given_input):
+        """
+        @todo have a global way to match the keys and move the logic out of here
+        this already caused a bug on key contents not being able to be copied
+        """
+        key_value = re.compile("([A-Za-z0-9 _-]+):(.*)")
+        matches_kv = key_value.search(given_input)
+        key = given_input
+        if matches_kv:
+            key = matches_kv.group(1)
+        return key

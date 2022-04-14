@@ -18,7 +18,7 @@ class MatchingTestCase(unittest.TestCase):
 
     def test_url(self):
         a_url = "https://app.circleci.com/pipelines/github/jeanCarloMachado"
-        config = build_config({"foo": a_url})
+        config = build_config({"foo": {"url": a_url}})
         interpreter = Interpreter(config, Context()).get_interpreter("foo")
         assert type(interpreter) is Url
         assert a_url == interpreter.cmd["url"]

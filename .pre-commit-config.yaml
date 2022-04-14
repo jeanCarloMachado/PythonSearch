@@ -24,7 +24,7 @@ repos:
         - id: isort
           stages: [commit]
 -   repo: https://github.com/ambv/black
-    rev: 20.8b1
+    rev: HEAD
     hooks:
     -   id: black
         language_version: python3.10

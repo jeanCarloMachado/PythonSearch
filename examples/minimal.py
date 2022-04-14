@@ -28,13 +28,13 @@ entries = {
     "letter ending viele grusse": {
         "snippet": "Viele Grüße",
     },
-    'zeigt': {'snippet': 'indicates / show / demonstrate', 'language': 'German',
-              'created_at': '2022-01-24T13:02:43.959548'},
+    "zeigt": {"snippet": "indicates / show / demonstrate", "language": "German"},
 }
 
 
 # this configuration file contains all customizeable options for search run
 from search_run.base_configuration import PythonSearchConfiguration
+
 config = PythonSearchConfiguration(entries=entries)
 
 if __name__ == "__main__":
