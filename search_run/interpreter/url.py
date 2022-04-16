@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseEntry
@@ -10,6 +9,10 @@ from search_run.interpreter.cmd import CmdEntry
 class Url(BaseEntry):
     def __init__(self, cmd, context=None):
         self.context = context
+
+        if type(cmd) == str and Url.is_url(cmd):
+            self.cmd = {"url": cmd}
+            return
 
         if type(cmd) is dict and "url" in cmd:
             self.cmd = cmd

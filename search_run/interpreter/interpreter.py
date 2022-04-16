@@ -83,7 +83,7 @@ class Interpreter:
 
         raise Exception("Received a dict but did not match any type")
 
-    def get_key(self, given_input):
+    def get_key(self, given_input) -> str:
         """
         @todo have a global way to match the keys and move the logic out of here
         this already caused a bug on key contents not being able to be copied

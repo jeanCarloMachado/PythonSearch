@@ -36,11 +36,14 @@ class RegisterNew:
         clipboard_content, key = self._get_clipboard_content_and_ask_key(
             "Name your entry"
         )
-        clipboard_content = self._sanitize(clipboard_content)
+        self.infer_content(clipboard_content, key)
+
+    def infer_content(self, content, key):
+        content = self._sanitize(content)
 
         interpreter: BaseEntry = Interpreter.build_instance(
             self.configuration
-        ).get_interpreter(clipboard_content)
+        ).get_interpreter(content)
 
         as_dict = interpreter.to_dict()
 
@@ -58,7 +61,6 @@ class RegisterNew:
 
         key, as_dict = transform_into_anonymous_entry(content)
         self.entry_inserter.insert(key, as_dict)
-
 
     def snippet_from_clipboard(self):
         """
@@ -79,7 +81,7 @@ class RegisterNew:
         self.entry_inserter.insert(key, as_dict)
 
     def german_from_clipboard(self):
-        """ Register german workds you dont know by saving them to the clipboard and storing in python search """
+        """Register german workds you dont know by saving them to the clipboard and storing in python search"""
         key = Clipboard().get_content()
 
         if emptish(key):
@@ -119,7 +121,7 @@ class RegisterNew:
         AND produces the event
         """
 
-        clipboard_content =  self._get_clippboard_content()
+        clipboard_content = self._get_clippboard_content()
         send_notification(f"Content to store: {clipboard_content}")
         key = AskQuestion().ask(title)
 
