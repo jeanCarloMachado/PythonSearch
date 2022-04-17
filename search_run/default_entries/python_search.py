@@ -16,9 +16,6 @@ class PythonSearch(EntriesGroup):
             "cmd": "nice -19 search_run search",
             "i3_shortcut": "Mod3+space",
         },
-        "register snippet search run": {
-            "cmd": "search_run register_snippet_clipboard",
-        },
         "recompute rank search run cleaning the cache regenerate": {
             "new-window-non-cli": True,
             "cmd": "search_run ranking generate --recompute_ranking=True",
