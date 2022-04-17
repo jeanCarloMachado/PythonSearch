@@ -34,12 +34,11 @@ def date_features(number_of_keys, day_of_week=None, week_number=None) -> np.ndar
 def get_ranked_keys(
     disable_cache=False, day_of_week=None, week_number=None
 ) -> List[str]:
-    redis = get_redis_client()
-    rank = redis.get("cached_rank")
-
+    rank_cache = RankCache()
+    rank = rank_cache.get_rank()
     if rank and not disable_cache:
         # logging.info('Using cached rank')
-        return json.loads(rank)
+        return rank
 
     model = load_trained_model()
 
@@ -57,7 +56,7 @@ def get_ranked_keys(
     sorted_list = sorted(result_with_key, key=lambda x: x[1], reverse=True)
     ranked_list = [x[0] for x in sorted_list]
 
-    redis.set("cached_rank", json.dumps(ranked_list))
+    rank_cache.update_cache(ranked_list)
 
     return ranked_list
 
@@ -88,5 +87,20 @@ def get_latest_run() -> RunInfo:
     logging.debug(f"Experiment id: {experiment.experiment_id}")
     runs = client.list_run_infos(experiment_id=experiment.experiment_id)
 
-    # @todo this is the one before the last, should change
-    return runs[1]
+    return runs[0]
+
+
+class RankCache:
+    def __init__(self):
+        self.redis = get_redis_client()
+
+    def clear(self):
+        return self.redis.delete("cached_rank")
+
+    def get_rank(self):
+        result = self.redis.get("cached_rank")
+        if result:
+            return json.loads(result)
+
+    def update_cache(self, ranked_list):
+        self.redis.set("cached_rank", json.dumps(ranked_list))

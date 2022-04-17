@@ -2,35 +2,46 @@
 import logging
 import sys
 
-from search_run.ranking.pipeline.train import validate_latest_model_ranks
+import pandas as pd
+
+from search_run.ranking.pipeline.ml_based import RankCache
+from search_run.ranking.pipeline.train import (
+    aggregate_searches,
+    compute_embeddings_current_keys,
+    create_dataset,
+    create_Y,
+    load_searches,
+    perform_train_and_log,
+    validate_latest_model_ranks,
+)
 
 logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)]),
 
 
 class EndToEnd:
     def run(self):
-        from sklearn.model_selection import train_test_split
+        X, Y = self.create_dataset()
+        keys_embeddings = compute_embeddings_current_keys()
 
-        from search_run.ranking.pipeline.train import (
-            aggregate_searches, compute_embeddings_current_keys,
-            create_dataset, create_Y, load_searches, perform_train_and_log)
+        perform_train_and_log(keys_embeddings, X, Y)
+        self.validate()
+        self.clear_cache()
 
+    def create_dataset(self):
         searches_df = load_searches()
         aggreagted_df = aggregate_searches(searches_df)
         X = create_dataset(aggreagted_df)
         Y = create_Y(aggreagted_df)
+        print(X)
 
-        keys_embeddings = compute_embeddings_current_keys()
+        return X, Y
 
-        # Splitting
-        train_X, test_X, train_y, test_y = train_test_split(
-            X, Y, test_size=0.2, random_state=223
-        )
-
-        perform_train_and_log(keys_embeddings, train_X, train_y, test_X, test_y)
+    def clear_cache(self):
+        RankCache().clear()
 
     def validate(self):
-        return validate_latest_model_ranks()
+        result: pd.DataFrame = validate_latest_model_ranks()
+        print(result.head(n=30))
 
 
 if __name__ == "__main__":

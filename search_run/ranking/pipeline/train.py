@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 from typing import List
 
@@ -9,9 +10,11 @@ import xgboost
 from pyspark.sql.session import SparkSession
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics import mean_squared_error as MSE
+from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 
 from search_run.core_entities import SearchRunPerformedType
+from search_run.ranking.pipeline.ml_based import get_latest_run, get_ranked_keys
 
 home = os.getenv("HOME")
 path = "/data/python_search/data_warehouse/dataframes/SearchRunPerformed"
@@ -61,7 +64,7 @@ def create_Y(aggregated_df):
     return Y
 
 
-def perform_train_and_log(keys_embeddings, train_X, train_y, test_X, test_y):
+def perform_train_and_log(keys_embeddings, X, Y):
     mlflow.set_tracking_uri(f"file:{location}")
     # this creates a new experiment
     mlflow.set_experiment(experiment_name)
@@ -69,9 +72,23 @@ def perform_train_and_log(keys_embeddings, train_X, train_y, test_X, test_y):
     import logging
 
     with mlflow.start_run():
+        # Splitting
+        test_size = 0.1
+        train_X, test_X, train_y, test_y = train_test_split(
+            X, Y, test_size=test_size, random_state=223
+        )
+
         # train model
-        mlflow.log_params({"X_size": len(train_X)})
-        model: XGBRegressor = train(train_X, train_y)
+        mlflow.log_params({"dataset_size": len(X), "test_size_percentage": test_size})
+
+        xgboost.set_config(verbosity=2)
+        # eta  = learning rate
+        # max_depth = controls overfitting default=6
+        # n_estimators: 100 if the size of your data is high, 1000 is if it is medium-low
+        model: XGBRegressor = XGBRegressor(
+            n_estimators=100, max_depth=7, eta=0.1, subsample=0.7, colsample_bytree=0.8
+        )
+        model.fit(train_X, train_y, verbose=True)
         mlflow.xgboost.log_model(xgb_model=model, artifact_path="model")
 
         logging.info("Fitting is over")
@@ -79,27 +96,21 @@ def perform_train_and_log(keys_embeddings, train_X, train_y, test_X, test_y):
         pred_train = model.predict(train_X)
         pred_validation = model.predict(test_X)
         # RMSE Computation
-        rmse_train = {"rmse_validation": np.sqrt(MSE(train_y, pred_train))}
-        rmse_validation = {"rmse_validation": np.sqrt(MSE(test_y, pred_validation))}
-        print(rmse_train, rmse_validation)
-        mlflow.log_params(rmse_validation)
+        rmse = {
+            "rmse_train": np.sqrt(MSE(train_y, pred_train)),
+            "rmse_validation": np.sqrt(MSE(test_y, pred_validation)),
+        }
+        print(rmse)
+
+        mlflow.log_params(rmse)
 
         # precompute the current keys embeddings and save them in mlflow
-        # so we can laod them later to produce the predictions without hurtingg performance
+        # so we can load them later to produce the predictions without hurting performance
 
         mlflow.log_dict(keys_embeddings, "keys_embeddings.json")
         mlflow.end_run()
 
     print(f"End at {datetime.datetime.now().isoformat()}")
-
-
-def train(X, Y):
-    xgboost.set_config(verbosity=2)
-    model: XGBRegressor = XGBRegressor(
-        n_estimators=1000, max_depth=7, eta=0.1, subsample=0.7, colsample_bytree=0.8
-    )
-    model.fit(X, Y, verbose=True)
-    return model
 
 
 def compute_embeddings_current_keys():
@@ -127,8 +138,11 @@ def create_embeddings(keys: List[str]):
 def validate_latest_model_ranks():
     import pandas as pd
 
-    from search_run.ranking.pipeline.ml_based import get_ranked_keys
-
+    run = get_latest_run()
+    trained_time = datetime.datetime.fromtimestamp(run.start_time / 1000).strftime(
+        "%Y-%m-%d %H:%M:%S.%f"
+    )
+    logging.info(f"Run id: {run.run_id}, trained: {trained_time}")
     next_week = datetime.datetime.today().isocalendar()[1] + 1
 
     monday = get_ranked_keys(disable_cache=True, week_number=next_week, day_of_week=1)
