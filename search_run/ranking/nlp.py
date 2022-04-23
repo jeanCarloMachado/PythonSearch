@@ -105,6 +105,8 @@ def update_inverted_index_with_embeddings(
 
 
 def create_embeddings(entries: List[str]) -> ndarray:
+    logging.info(f"Starting number of keys: {len(entries)}" )
+
     from sentence_transformers import SentenceTransformer
 
     model = SentenceTransformer("bert-base-nli-mean-tokens")
