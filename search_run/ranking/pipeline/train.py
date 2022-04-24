@@ -7,6 +7,7 @@ import mlflow
 import numpy as np
 import pyspark.sql.functions as F
 import xgboost
+from numpy import ndarray
 from pyspark.sql.session import SparkSession
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics import mean_squared_error as MSE
@@ -130,7 +131,7 @@ def create_historical_embeddings(aggregated_df):
     return create_embeddings(historical_train_keys)
 
 
-def create_embeddings(keys: List[str]):
+def create_embeddings(keys: List[str]) -> ndarray:
     transformer = SentenceTransformer("nreimers/MiniLM-L6-H384-uncased")
     return transformer.encode(keys, batch_size=8, show_progress_bar=True)
 

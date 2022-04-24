@@ -1,5 +1,3 @@
-
-
 class SearchesPerformed:
     def __init__(self, spark):
         self.spark = spark

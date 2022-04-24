@@ -4,6 +4,7 @@ import logging
 import pickle
 from typing import List
 
+import deprecation
 from numpy import ndarray
 
 from search_run.config import config
@@ -88,7 +89,7 @@ def create_ranking_for_text_query(query: str, index: InvertedIndex) -> Ranking:
 def update_inverted_index_with_embeddings(
     inverted_index: InvertedIndex,
 ) -> InvertedIndex:
-    """ Add embeddings as properties for the inverted index """
+    """Add embeddings as properties for the inverted index"""
 
     entries = inverted_index.entries
     embeddings = create_embeddings(
@@ -104,8 +105,11 @@ def update_inverted_index_with_embeddings(
     return inverted_index
 
 
+@deprecation.deprecated(
+    details="Use the  nreimers/MiniLM-L6-H384-uncased embeddings produced in train.py"
+)
 def create_embeddings(entries: List[str]) -> ndarray:
-    logging.info(f"Starting number of keys: {len(entries)}" )
+    logging.info(f"Starting number of keys: {len(entries)}")
 
     from sentence_transformers import SentenceTransformer
 
