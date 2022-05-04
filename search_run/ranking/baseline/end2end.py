@@ -4,6 +4,7 @@ import sys
 
 import pandas as pd
 
+from search_run.observability.logger import initialize_logging
 from search_run.ranking.baseline.serve import RankCache
 from search_run.ranking.baseline.train import (
     aggregate_searches,
@@ -15,7 +16,7 @@ from search_run.ranking.baseline.train import (
     validate_latest_model_ranks,
 )
 
-logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)]),
+initialize_logging()
 
 
 class EndToEnd:
