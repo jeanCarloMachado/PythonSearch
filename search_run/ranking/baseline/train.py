@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 
 from search_run.core_entities import SearchRunPerformedType
-from search_run.ranking.pipeline.ml_based import get_latest_run, get_ranked_keys
+from search_run.ranking.baseline.ml_based import get_latest_run, get_ranked_keys
 
 home = os.getenv("HOME")
 path = "/data/python_search/data_warehouse/dataframes/SearchRunPerformed"

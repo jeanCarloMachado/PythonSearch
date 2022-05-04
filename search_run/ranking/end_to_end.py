@@ -4,8 +4,8 @@ import sys
 
 import pandas as pd
 
-from search_run.ranking.pipeline.ml_based import RankCache
-from search_run.ranking.pipeline.train import (
+from search_run.ranking.baseline.ml_based import RankCache
+from search_run.ranking.baseline.train import (
     aggregate_searches,
     compute_embeddings_current_keys,
     create_dataset,

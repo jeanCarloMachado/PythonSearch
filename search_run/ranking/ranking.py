@@ -8,6 +8,7 @@ from search_run.acronyms import generate_acronyms
 from search_run.base_configuration import PythonSearchConfiguration
 from search_run.features import FeatureToggle
 from search_run.observability.logger import initialize_systemd_logging, logging
+from search_run.ranking.baseline.serve import get_ranked_keys
 
 
 class RankingGenerator:
@@ -32,7 +33,7 @@ class RankingGenerator:
         ranked_keys = entries.keys()
 
         if self.feature_toggle.is_enabled("ranking_b"):
-            from search_run.ranking.pipeline.ml_based import get_ranked_keys
+            from search_run.ranking.baseline.serve import get_ranked_keys
 
             # if we to recompute the rank we disable the cache
             ranked_keys_b = get_ranked_keys(disable_cache=recompute_ranking)
@@ -44,7 +45,7 @@ class RankingGenerator:
         used_entries = []
 
         if self.configuration.supported_features.is_enabled("redis"):
-           used_entries = self._get_used_entries_from_redis(entries)
+            used_entries = self._get_used_entries_from_redis(entries)
 
         increment = 1
         for key in ranked_keys:
@@ -57,16 +58,15 @@ class RankingGenerator:
 
             if key not in entries:
 
-                #logging.info(f"Key {key} not found in entries")
+                # logging.info(f"Key {key} not found in entries")
                 continue
 
             result.append((key, entries[key]))
 
         return self.print_entries(result)
 
-
     def _get_used_entries_from_redis(self, entries):
-        """ returns a list of used entries to be placed on top of the ranking """
+        """returns a list of used entries to be placed on top of the ranking"""
         used_entries = []
         from search_run.events.latest_used_entries import LatestUsedEntries
 
@@ -95,7 +95,6 @@ class RankingGenerator:
                 content_str = str(content)
 
             position = position + 1
-
 
             content_str = f"{name_clean}:" + content_str
             #  replaces all single quotes for double ones

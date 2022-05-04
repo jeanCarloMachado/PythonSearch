@@ -24,6 +24,7 @@ class PythonSearchCli:
 
     Try to avoid adding direct commands, prefer instead to add objects as parts of functions
     """
+
     configuration: PythonSearchConfiguration
 
     @staticmethod
@@ -45,7 +46,7 @@ class PythonSearchCli:
         self.run_key = EntryRunner(configuration).run_key
 
     def search(self):
-        """ Main entrypoint of the application """
+        """Main entrypoint of the application"""
         from search_run.search_ui.search import Search
 
         Search(self.configuration).run()
@@ -66,6 +67,7 @@ class PythonSearchCli:
 
     def register_clipboard(self):
         from search_run.entry_capture.register_new import RegisterNew
+
         return RegisterNew(self.configuration).infer_from_clipboard()
 
     def register_snippet_clipboard(self):
@@ -89,13 +91,8 @@ class PythonSearchCli:
 
         return RankingGenerator(self.configuration)
 
-    def nlp(self):
-        from search_run.ranking.nlp import NlpRanking
-
-        return NlpRanking(self.configuration)
-
     def consumers(self):
-        """ Provides access to the event consumers"""
+        """Provides access to the event consumers"""
         from search_run.events.latest_used_entries import LatestUsedEntries
 
         class Consumers:
@@ -110,13 +107,14 @@ class PythonSearchCli:
         return FeatureToggle()
 
     def _utils(self):
-        """ Here commands that are small topics and dont fit the rest """
+        """Here commands that are small topics and dont fit the rest"""
 
         class Utils:
             def __init__(self, configuration):
                 self.configuration = configuration
+
             def hide_launcher(self):
-                """ hide the search launcher -i2 specific """
+                """hide the search launcher -i2 specific"""
                 I3().hide_window(self.configuration.APPLICATION_TITLE)
 
         return Utils(self.configuration)
