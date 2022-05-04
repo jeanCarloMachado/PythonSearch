@@ -4,7 +4,7 @@ import sys
 
 import pandas as pd
 
-from search_run.ranking.baseline.ml_based import RankCache
+from search_run.ranking.baseline.serve import RankCache
 from search_run.ranking.baseline.train import (
     aggregate_searches,
     compute_embeddings_current_keys,

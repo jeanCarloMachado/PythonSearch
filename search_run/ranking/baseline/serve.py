@@ -13,24 +13,6 @@ from search_run.infrastructure.redis import get_redis_client
 location = "/home/jean/projects/PySearchEntries/mlflow"
 
 
-def date_features(number_of_keys, day_of_week=None, week_number=None) -> np.ndarray:
-    """
-    generate the remaining date related features artifically, to be concatenated in teh final dataset for prediction
-
-    """
-    day_of_week = (
-        day_of_week if day_of_week else datetime.datetime.today().isocalendar()[2]
-    )
-    week_number = (
-        week_number if week_number else datetime.datetime.today().isocalendar()[1]
-    )
-
-    day_of_week_vec = np.full((number_of_keys, 1), day_of_week)
-    week_number_vec = np.full((number_of_keys, 1), week_number)
-
-    return np.concatenate((week_number_vec, day_of_week_vec), axis=1)
-
-
 def get_ranked_keys(
     disable_cache=False, day_of_week=None, week_number=None
 ) -> List[str]:
@@ -59,6 +41,24 @@ def get_ranked_keys(
     rank_cache.update_cache(ranked_list)
 
     return ranked_list
+
+
+def date_features(number_of_keys, day_of_week=None, week_number=None) -> np.ndarray:
+    """
+    generate the remaining date related features artifically, to be concatenated in teh final dataset for prediction
+
+    """
+    day_of_week = (
+        day_of_week if day_of_week else datetime.datetime.today().isocalendar()[2]
+    )
+    week_number = (
+        week_number if week_number else datetime.datetime.today().isocalendar()[1]
+    )
+
+    day_of_week_vec = np.full((number_of_keys, 1), day_of_week)
+    week_number_vec = np.full((number_of_keys, 1), week_number)
+
+    return np.concatenate((week_number_vec, day_of_week_vec), axis=1)
 
 
 def load_trained_model():
