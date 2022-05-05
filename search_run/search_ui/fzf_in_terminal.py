@@ -17,11 +17,14 @@ class FzfInTerminal:
     configuration: PythonSearchConfiguration
 
     @staticmethod
-    def build_search_ui(configuration) -> 'FzfInTerminal':
-        """ Assembles what is specific for the search ui exclusively"""
+    def build_search_ui(configuration) -> "FzfInTerminal":
+        """Assembles what is specific for the search ui exclusively"""
         preview_cmd = "(echo '{}' | cut -d ':' -f1 --complement | jq . -C 2>/dev/null ) || echo {}"
         return FzfInTerminal(
-            configuration=configuration, height=FzfInTerminal.HEIGHT, width=1100, preview_cmd=preview_cmd
+            configuration=configuration,
+            height=FzfInTerminal.HEIGHT,
+            width=1100,
+            preview_cmd=preview_cmd,
         )
 
     def __init__(self, *, configuration, height, width, preview_cmd):
