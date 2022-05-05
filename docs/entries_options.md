@@ -29,16 +29,15 @@ Type: Boolean, default False
 
 ## Before and after hooks
 
-### call_before
+
+### call_after and call_before
 
 Type: Str
-An entry key to execute before.
-
-
-### call_after
-
-Type: Str
-An entry key to execute after.
+An entry key to execute before or after running the current key.
+Example:
+```py
+    "call_after": "search_run run_key 'localhost 5000'",
+```
 
 ## Ask confirmation
 
@@ -55,4 +54,3 @@ To get a popup asking to continue before doing so.
 
 "file": """/home/jean/Desktop/books/StaffEng-Digital.pdf""",
 "disable_sequential_execution": True,
-

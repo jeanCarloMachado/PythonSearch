@@ -10,14 +10,14 @@ class FzfInTerminal:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE = 14
+    FONT_SIZE = 13
     PREVIEW_PERCENTAGE_SIZE = 50
     HEIGHT = 330
 
     configuration: PythonSearchConfiguration
 
     @staticmethod
-    def build_search_ui(configuration):
+    def build_search_ui(configuration) -> 'FzfInTerminal':
         """ Assembles what is specific for the search ui exclusively"""
         preview_cmd = "(echo '{}' | cut -d ':' -f1 --complement | jq . -C 2>/dev/null ) || echo {}"
         return FzfInTerminal(
@@ -75,6 +75,7 @@ class FzfInTerminal:
         --title={self.configuration.APPLICATION_TITLE} -o remember_window_size=n \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
+        -o font_family="FontAwesome" \
         -o font_size={FzfInTerminal.FONT_SIZE} \
          {internal_cmd}
         """
