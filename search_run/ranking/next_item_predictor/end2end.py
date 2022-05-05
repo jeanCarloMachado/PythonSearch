@@ -3,6 +3,7 @@ import logging
 import sys
 
 from pyspark.sql.session import SparkSession
+
 from search_run.observability.logger import initialize_logging
 
 initialize_logging()
@@ -20,8 +21,8 @@ class EndToEnd:
 
         # build pair dataset with label
 
-        from pyspark.sql.window import Window
         import pyspark.sql.functions as F
+        from pyspark.sql.window import Window
 
         ## add literal column
         df = df.withColumn('tmp', F.lit('toremove'))
@@ -50,7 +51,6 @@ class EndToEnd:
         from sklearn.metrics import mean_squared_error
 
         # apply only to the  ones with the same name in input and output
-
         # complete dataset 8k, with the same name in input and output 150
         naive = dataset.filter('key == previous_key').select('key', 'label').withColumn('baseline', F.lit(1))
         pd_naive = naive.select('label', 'baseline').toPandas()

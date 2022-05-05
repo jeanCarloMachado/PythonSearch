@@ -1,4 +1,5 @@
-from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
+from search_run.base_configuration import (EntriesGroup,
+                                           PythonSearchConfiguration)
 
 
 class PythonSearch(EntriesGroup):

@@ -1,8 +1,11 @@
 from __future__ import annotations
+
+import inspect
 import os
 from typing import List, Optional
+
 from search_run.features import FeaturesSupport
-import inspect
+
 
 class EntriesGroup:
     """
