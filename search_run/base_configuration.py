@@ -75,13 +75,14 @@ class EntriesGroup:
 
         return path
 
+
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search
-    Everything to customize about the application should be tunneled through this class
+    Everything to customize about the application should be tunneled through this clas
     """
 
-    APPLICATION_TITLE = 'PythonSearchWindow'
+    APPLICATION_TITLE = 'PythonSearch - Search'
     commands: dict
 
     def __init__(
@@ -101,4 +102,3 @@ class PythonSearchConfiguration(EntriesGroup):
             self.supported_features = supported_features
         else:
             self.supported_features = FeaturesSupport.default()
-

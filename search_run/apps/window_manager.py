@@ -26,5 +26,5 @@ class I3:
 
     def hide_window(self, title) -> bool:
         return 0 == os.system(
-            f'sleep 0.1; i3-msg "[title={title}] move scratchpad"'
+            f"sleep 0.1; i3-msg '[title=\"{title}\"]  move scratchpad'"
         )

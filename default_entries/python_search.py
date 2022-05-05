@@ -1,4 +1,4 @@
-from search_run.base_configuration import EntriesGroup
+from search_run.base_configuration import EntriesGroup, PythonSearchConfiguration
 
 
 class PythonSearch(EntriesGroup):
@@ -8,7 +8,7 @@ class PythonSearch(EntriesGroup):
 
     commands = {
         "search run search focus or open": {
-            "focus_match": "PythonSearchWindow",
+            "focus_match": PythonSearchConfiguration.APPLICATION_TITLE,
             "cmd": "nice -19 search_run search",
         },
         "start search run search capslock": {
