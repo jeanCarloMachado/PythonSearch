@@ -30,6 +30,7 @@ class DataConfig:
     cached_configuration = "/tmp/search_and_run_configuration_cached"
     MLFLOW_MODELS_PATH = f"{os.environ['HOME']}/projects/PySearchEntries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
+    NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v0"
 
 
 # @todo do not depend on this config directly rather depend on the base configuration

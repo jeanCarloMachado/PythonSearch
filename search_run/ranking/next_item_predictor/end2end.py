@@ -3,10 +3,12 @@ import logging
 import sys
 from typing import List, Tuple
 
+import mlflow
 import numpy as np
 import pyspark.sql.functions as F
 from pyspark.sql.session import SparkSession
 
+from search_run.config import DataConfig
 from search_run.observability.logger import initialize_logging
 from search_run.ranking.baseline.train import create_embeddings
 
@@ -126,27 +128,43 @@ class EndToEnd:
         return X, Y
 
     def train(self, dataset):
+        mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
+        # this creates a new experiment
+        mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
+        mlflow.autolog()
 
-        X, Y = self.create_XY(dataset)
+        with mlflow.start_run():
 
-        from sklearn.model_selection import train_test_split
+            X, Y = self.create_XY(dataset)
 
-        X_train, X_test, Y_train, Y_test = train_test_split(
-            X, Y, test_size=0.20, random_state=42
-        )
+            from sklearn.model_selection import train_test_split
 
-        from keras import layers
-        from keras.models import Sequential
+            X_train, X_test, Y_train, Y_test = train_test_split(
+                X, Y, test_size=0.20, random_state=42
+            )
 
-        model = Sequential()
-        model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
-        model.add(layers.Dense(1))
-        model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
-        model.fit(X_train, Y_train, epochs=10, batch_size=32)
-        mse, mae = model.evaluate(X_train, Y_train)
-        print("train mse and mae: ", mse, mae)
-        mse, mae = model.evaluate(X_test, Y_test)
-        print("test mse and mae: ", mse, mae)
+            from keras import layers
+            from keras.models import Sequential
+
+            model = Sequential()
+            model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
+            model.add(layers.Dense(1))
+            model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
+            model.fit(X_train, Y_train, epochs=10, batch_size=32)
+
+            train_mse, train_mae = model.evaluate(X_train, Y_train)
+
+            test_mse, test_mae = model.evaluate(X_test, Y_test)
+
+            metrics = {
+                "train_mse": train_mse,
+                "train_mae": train_mae,
+                "test_mse": test_mse,
+                "test_mae": test_mae,
+            }
+            print(metrics)
+
+            mlflow.log_params(metrics)
 
         return model
 

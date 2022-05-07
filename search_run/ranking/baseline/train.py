@@ -69,7 +69,6 @@ def perform_train_and_log(keys_embeddings, X, Y):
     # this creates a new experiment
     mlflow.set_experiment(DataConfig.BASELINE_EXPERIMENT_NAME)
     mlflow.autolog()
-    import logging
 
     with mlflow.start_run():
         # Splitting
@@ -101,7 +100,6 @@ def perform_train_and_log(keys_embeddings, X, Y):
             "rmse_validation": np.sqrt(MSE(test_y, pred_validation)),
         }
         print(rmse)
-
         mlflow.log_params(rmse)
 
         # precompute the current keys embeddings and save them in mlflow
