@@ -14,13 +14,12 @@ from sklearn.metrics import mean_squared_error as MSE
 from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
 
+from search_run.config import DataConfig
 from search_run.core_entities import SearchRunPerformedType
 from search_run.ranking.baseline.serve import get_latest_run, get_ranked_keys
 
 home = os.getenv("HOME")
 path = "/data/python_search/data_warehouse/dataframes/SearchRunPerformed"
-location = f"{home}/projects/PySearchEntries/mlflow"
-experiment_name = "baseline_rank_v0"
 
 
 def load_searches():
@@ -66,9 +65,9 @@ def create_Y(aggregated_df):
 
 
 def perform_train_and_log(keys_embeddings, X, Y):
-    mlflow.set_tracking_uri(f"file:{location}")
+    mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
     # this creates a new experiment
-    mlflow.set_experiment(experiment_name)
+    mlflow.set_experiment(DataConfig.BASELINE_EXPERIMENT_NAME)
     mlflow.autolog()
     import logging
 
