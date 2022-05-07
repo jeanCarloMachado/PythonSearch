@@ -25,6 +25,16 @@ def create_indexed_embeddings(keys):
 class EndToEnd:
     """Exposes the whole ML pipeline, the run function does it end-2-end"""
 
+    def run(self):
+        logging.info("End to end ranking")
+        dataset = self.build_dataset()
+        print("MSE baseline: ", self.baseline_mse(dataset))
+        dataset.show(n=10)
+
+        model = self.train(dataset)
+
+        Evaluate(model).evaluate()
+
     def build_dataset(self):
         from search_run.datasets.searchesperformed import SearchesPerformed
 
@@ -167,16 +177,6 @@ class EndToEnd:
             mlflow.log_params(metrics)
 
         return model
-
-    def run(self):
-        logging.info("End to end ranking")
-        dataset = self.build_dataset()
-        print("MSE baseline: ", self.baseline_mse(dataset))
-        dataset.show(n=10)
-
-        model = self.train(dataset)
-
-        Evaluate(model).evaluate()
 
 
 class Evaluate:

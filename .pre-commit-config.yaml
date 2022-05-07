@@ -14,10 +14,6 @@ repos:
           stages: [commit, manual]
         - id: check-docstring-first
           stages: [commit, manual]
-        # you can enable the following checks if you disable them from drone
-        # as drone has credentials in place
-        # - id: detect-aws-credentials
-        # - id: detect-private-key
 -   repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.6.4
     hooks:
