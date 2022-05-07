@@ -1,4 +1,4 @@
-from search_run.base_configuration import EntriesGroup
+from search_run.entries_group import EntriesGroup
 
 
 def build_config(given_commands):

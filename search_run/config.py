@@ -4,6 +4,10 @@ the class should only be used for type annotation.
 This way we can have multiple configs depending of the enviroment.
 """
 import os
+from typing import List, Optional
+
+from search_run.entries_group import EntriesGroup
+from search_run.features import FeaturesSupport
 
 
 class SearchRunConfiguration:
@@ -34,3 +38,31 @@ class KafkaConfig:
 class RedisConfig:
     host = "localhost"
     port = 6378
+
+
+class PythonSearchConfiguration(EntriesGroup):
+    """
+    The main configuration of Python Search
+    Everything to customize about the application should be tunneled through this clas
+    """
+
+    APPLICATION_TITLE = "PythonSearch - Search"
+    commands: dict
+
+    def __init__(
+        self,
+        *,
+        entries: Optional[dict] = None,
+        entries_groups: Optional[List[EntriesGroup]] = None,
+        supported_features: Optional[FeaturesSupport] = None,
+    ):
+        if entries:
+            self.commands = entries
+
+        if entries_groups:
+            self.aggregate_commands(entries_groups)
+
+        if supported_features:
+            self.supported_features = supported_features
+        else:
+            self.supported_features = FeaturesSupport.default()

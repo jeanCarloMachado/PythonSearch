@@ -5,7 +5,7 @@ from grimoire.file import write_file
 from grimoire.shell import shell
 from grimoire.string import generate_identifier
 
-from search_run.base_configuration import EntriesGroup
+from search_run.entries_group import EntriesGroup
 from search_run.shortcut.register import Shortcut
 
 
@@ -55,7 +55,7 @@ class ConfigurationGenerator:
         shell.run(f"cat {i3_config_path}/config_part2 >> {i3_config_path}/config")
 
     def _generate_i3_shortcuts_string(self) -> str:
-        """Generates a single string with all exported shortcuts """
+        """Generates a single string with all exported shortcuts"""
         result = "#automatically generated from now on\n"
 
         for key, content in list(self.configuration.commands.items()):

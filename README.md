@@ -14,7 +14,6 @@ Write a python script like this, and call it.
 ```py
 import datetime
 
-
 entries = {
     "open browser": {"url": "https://google.com"},
     # snippets when executed copy the content to the clipboard
@@ -38,10 +37,9 @@ entries = {
     },
 }
 
-
-
-from search_run.base_configuration import PythonSearchConfiguration
+from search_run.config import PythonSearchConfiguration
 from search_run.cli import PythonSearchCli
+
 config = PythonSearchConfiguration(entries=entries)
 PythonSearchCli.setup_from_config(config)
 

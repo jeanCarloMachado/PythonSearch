@@ -2,9 +2,6 @@ from __future__ import annotations
 
 import inspect
 import os
-from typing import List, Optional
-
-from search_run.features import FeaturesSupport
 
 
 class EntriesGroup:
@@ -76,31 +73,3 @@ class EntriesGroup:
         # always go 1 path up
 
         return path
-
-
-class PythonSearchConfiguration(EntriesGroup):
-    """
-    The main configuration of Python Search
-    Everything to customize about the application should be tunneled through this clas
-    """
-
-    APPLICATION_TITLE = "PythonSearch - Search"
-    commands: dict
-
-    def __init__(
-        self,
-        *,
-        entries: Optional[dict] = None,
-        entries_groups: Optional[List[EntriesGroup]] = None,
-        supported_features: Optional[FeaturesSupport] = None,
-    ):
-        if entries:
-            self.commands = entries
-
-        if entries_groups:
-            self.aggregate_commands(entries_groups)
-
-        if supported_features:
-            self.supported_features = supported_features
-        else:
-            self.supported_features = FeaturesSupport.default()

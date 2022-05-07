@@ -1,7 +1,7 @@
 import os
 import sys
 
-from search_run.base_configuration import PythonSearchConfiguration
+from search_run.config import PythonSearchConfiguration
 from search_run.observability.logger import logging
 
 

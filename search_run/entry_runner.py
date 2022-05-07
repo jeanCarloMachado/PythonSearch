@@ -6,7 +6,7 @@ from typing import List, Optional
 from grimoire.notification import notify_send, send_notification
 from grimoire.string import generate_identifier
 
-from search_run.base_configuration import PythonSearchConfiguration
+from search_run.config import PythonSearchConfiguration
 from search_run.context import Context
 from search_run.events.events import SearchRunPerformed
 from search_run.events.producer import EventProducer
