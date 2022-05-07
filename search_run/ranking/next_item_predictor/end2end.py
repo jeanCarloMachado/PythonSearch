@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import logging
 import sys
-from typing import List, Tuple
 
 import mlflow
 import numpy as np
@@ -10,16 +9,10 @@ from pyspark.sql.session import SparkSession
 
 from search_run.config import DataConfig
 from search_run.observability.logger import initialize_logging
-from search_run.ranking.baseline.train import create_embeddings
+from search_run.ranking.entry_embeddings import create_indexed_embeddings
+from search_run.ranking.next_item_predictor.evaluator import Evaluate
 
 initialize_logging()
-
-
-def create_indexed_embeddings(keys):
-    unique_keys = list(set(keys))
-    embeddings = create_embeddings(unique_keys)
-    embeddings_keys = dict(zip(unique_keys, embeddings))
-    return embeddings_keys
 
 
 class EndToEnd:
@@ -177,58 +170,6 @@ class EndToEnd:
             mlflow.log_params(metrics)
 
         return model
-
-
-class Evaluate:
-    def __init__(self, model):
-        self.model = model
-
-    def evaluate(self):
-        logging.info("Evaluate model")
-        self.all_latest_keys = self.load_all_keys()
-        self.embeddings_keys_latest = create_indexed_embeddings(self.all_latest_keys)
-
-        keys_to_test = [
-            "my beat81 bookings",
-            "set current project as reco",
-            "days quality tracking life good day",
-        ]
-
-        result = {key: self.get_rank_for_key(key)[0:20] for key in keys_to_test}
-        import pandas as pd
-
-        pd.set_option("display.max_rows", None, "display.max_columns", None)
-
-        df = pd.DataFrame.from_dict(result)
-        print(df)
-
-    def load_all_keys(self) -> List[str]:
-        from entries.main import config
-
-        return list(config.commands.keys())
-
-    def get_rank_for_key(self, selected_key) -> List[Tuple[str, float]]:
-        """
-        Looks what should be next if the current key is the one passed, look for all current existing keys
-        """
-
-        X_validation = np.zeros([len(self.all_latest_keys), 2 * 384])
-        X_key = []
-        for i, key in enumerate(self.all_latest_keys):
-            X_validation[i] = np.concatenate(
-                (
-                    self.embeddings_keys_latest[selected_key],
-                    self.embeddings_keys_latest[key],
-                )
-            )
-            X_key.append(key)
-
-        X_validation.shape
-        Y_pred = self.model.predict(X_validation)
-        result = list(zip(X_key, Y_pred))
-        result.sort(key=lambda x: x[1], reverse=True)
-
-        return result
 
 
 if __name__ == "__main__":
