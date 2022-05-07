@@ -31,7 +31,7 @@ class EntriesGroup:
             self.commands = {**self.commands, **cmd_items}
 
     def get_command(self, given_key):
-        """ Returns command value based on the key name, must match 11"""
+        """Returns command value based on the key name, must match 11"""
         given_key = given_key.lower()
         for key, value in self.commands.items():
             if key.lower() == given_key:
@@ -60,7 +60,6 @@ class EntriesGroup:
 
         return result
 
-
     def get_source_file(self):
         """Returns the path of the source code where the config is stored"""
         import sys
@@ -85,15 +84,15 @@ class PythonSearchConfiguration(EntriesGroup):
     Everything to customize about the application should be tunneled through this clas
     """
 
-    APPLICATION_TITLE = 'PythonSearch - Search'
+    APPLICATION_TITLE = "PythonSearch - Search"
     commands: dict
 
     def __init__(
-            self,
-            *,
-            entries: Optional[dict] = None,
-            entries_groups: Optional[List[EntriesGroup]] = None,
-            supported_features: Optional[FeaturesSupport] = None,
+        self,
+        *,
+        entries: Optional[dict] = None,
+        entries_groups: Optional[List[EntriesGroup]] = None,
+        supported_features: Optional[FeaturesSupport] = None,
     ):
         if entries:
             self.commands = entries
