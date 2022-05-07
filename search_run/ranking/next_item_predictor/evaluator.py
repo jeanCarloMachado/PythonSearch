@@ -4,8 +4,7 @@ from typing import List, Tuple
 import numpy as np
 
 from search_run.ranking.entries_loader import EntriesLoader
-from search_run.ranking.entry_embeddings import (EntryEmbeddings,
-                                                 create_indexed_embeddings)
+from search_run.ranking.entry_embeddings import EntryEmbeddings
 
 
 class Evaluate:

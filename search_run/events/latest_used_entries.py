@@ -1,10 +1,10 @@
 import json
 import logging
 
-import redis
 from kafka import KafkaConsumer
 
-from search_run.config import KafkaConfig, RedisConfig
+from search_run.config import KafkaConfig
+from search_run.infrastructure.redis import PythonSearchRedis
 
 
 class LatestUsedEntries:
@@ -22,7 +22,7 @@ class LatestUsedEntries:
 
     @staticmethod
     def get_redis_client():
-        return redis.StrictRedis(host=RedisConfig.host, port=RedisConfig.port)
+        return PythonSearchRedis.get_client()
 
     def get_latest_used_keys(self):
         result = self.redis_client.lrange(

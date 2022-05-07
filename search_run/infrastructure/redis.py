@@ -1,6 +1,8 @@
+class PythonSearchRedis:
+    @staticmethod
+    def get_client():
+        import redis
 
+        from search_run.config import RedisConfig
 
-def get_redis_client():
-    from search_run.config import RedisConfig
-    import redis
-    return redis.StrictRedis(host=RedisConfig.host, port=RedisConfig.port)
+        return redis.StrictRedis(host=RedisConfig.host, port=RedisConfig.port)

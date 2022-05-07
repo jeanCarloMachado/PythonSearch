@@ -8,9 +8,8 @@ import numpy as np
 from mlflow.entities import RunInfo
 from mlflow.tracking import MlflowClient
 
-from search_run.infrastructure.redis import get_redis_client
-
-location = "/home/jean/projects/PySearchEntries/mlflow"
+from search_run.config import DataConfig
+from search_run.infrastructure.redis import PythonSearchRedis
 
 
 def get_ranked_keys(
@@ -80,7 +79,7 @@ def load_precomputed_keys_embeddings():
 
 def get_latest_run() -> RunInfo:
     experiment_name = "baseline_rank_v0"
-    mlflow.set_tracking_uri(f"file:{location}")
+    mlflow.set_tracking_uri(f"file:{DataConfig.mlflow_tracking_uri}")
 
     client: MlflowClient = MlflowClient()
     experiment = client.get_experiment_by_name(experiment_name)
@@ -92,7 +91,7 @@ def get_latest_run() -> RunInfo:
 
 class RankCache:
     def __init__(self):
-        self.redis = get_redis_client()
+        self.redis = PythonSearchRedis.get_client()
 
     def clear(self):
         return self.redis.delete("cached_rank")
