@@ -1,10 +1,43 @@
 # !/usr/bin/env python
+import msgpack_numpy as m
+import numpy as np
 
+from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.ranking.baseline.train import create_embeddings
 from search_run.ranking.entries_loader import EntriesLoader
 
 
 class EntryEmbeddings:
+    def __init__(self):
+        self.client = PythonSearchRedis.get_client()
+
+    def sync_to_redis(self):
+        """ "
+        Write embeddings of keys not present in redis
+        """
+        embeddings = self.create_for_current_entries()
+        for key, embedding in embeddings.items():
+            self.write_embedding(key, embedding)
+
+    def test_end_to_end_are_equal(self):
+        """
+        @todo move this to the tests folder
+        """
+        embedding = np.zeros((1, 1))
+        self.write_embedding("abc", embedding)
+
+        result_embedding = self.read_embedding("abc")
+        print(embedding, result_embedding)
+
+        np.testing.assert_array_equal(embedding, result_embedding)
+
+    def write_embedding(self, key: str, embedding: np.ndarray):
+        packed = m.packb(embedding)
+        self.client.hset(f"k_{key}", "embedding", packed)
+
+    def read_embedding(self, key):
+        return m.unpackb(self.client.hget(key, "embedding"))
+
     def create_for_current_entries(self):
         """
         Generate embeddings for all currently existing entries
@@ -13,9 +46,6 @@ class EntryEmbeddings:
         embeddings = create_indexed_embeddings(keys)
 
         return embeddings
-
-    def sync(self):
-        pass
 
 
 def create_indexed_embeddings(keys):
