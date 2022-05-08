@@ -34,7 +34,10 @@ class RankingGenerator:
         self.ranked_keys = entries.keys()
 
         if self.feature_toggle.is_enabled("ranking_next"):
-            self.get_ranking_next()
+            try:
+                self.ranked_keys = self.get_ranking_next()
+            except BaseException as e:
+                logging.info(f"Failed to get the ranking next with error: {e}")
         elif self.feature_toggle.is_enabled("ranking_b"):
             self.ranked_keys = self.get_ranking_b(recompute_ranking)
 
@@ -61,23 +64,76 @@ class RankingGenerator:
 
         return self.print_entries(result)
 
-    def get_ranking_next(self):
+    def get_ranking_next(self, verbose=False) -> List[str]:
+
+        if not verbose:
+            import os
+
+            # disable tensorflow warnings
+            os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+            # disable system warnings
+            import warnings
+
+            warnings.filterwarnings("ignore")
+
+        import numpy as np
+
         from search_run.events.latest_used_entries import LatestUsedEntries
         from search_run.ranking.entry_embeddings import EmbeddingSerialization
+        from search_run.ranking.models import PythonSearchMLFlow
 
         all_keys = self.configuration.commands.keys()
         previous_key = LatestUsedEntries().get_latest_used_keys()[0]
+        if verbose:
+            print(f"KEY Previous: '{previous_key}'")
 
         client = LatestUsedEntries.get_redis_client()
         pipe = client.pipeline()
-        pipe.hget(f"k_{previous_key}", "embedding")
 
         for key in all_keys:
             pipe.hget(f"k_{previous_key}", "embedding")
 
-        everything = pipe.execute()
+        all_embeddings = pipe.execute()
 
-    def get_ranking_b(self, recompute_ranking):
+        if len(all_embeddings) != len(all_keys):
+            raise Exception("Could not find all embeddings")
+
+        embedding_mapping = dict(zip(all_keys, all_embeddings))
+        if previous_key not in embedding_mapping or not embedding_mapping[previous_key]:
+            raise Exception(
+                f"Could not find embedding for key {previous_key}, value: "
+                f"{embedding_mapping.get(previous_key)}"
+            )
+
+        previous_key_embedding = EmbeddingSerialization.read(
+            embedding_mapping[previous_key]
+        )
+
+        X = np.zeros([len(all_keys), 2 * 384])
+        for i, (key, embedding) in enumerate(embedding_mapping.items()):
+            if embedding is None:
+                logging.warning(f"No content for key {key}")
+                continue
+            X[i] = np.concatenate(
+                (
+                    previous_key_embedding,
+                    EmbeddingSerialization.read(embedding),
+                )
+            )
+
+        model = PythonSearchMLFlow().get_latest_next_predictor_model()
+        Y = model.predict(X)
+
+        result = list(zip(all_keys, Y))
+        result.sort(key=lambda x: x[1], reverse=True)
+
+        if verbose:
+            # only return the top 20 for debugging
+            return result[0:20]
+
+        return [entry[0] for entry in result]
+
+    def get_ranking_b(self, recompute_ranking) -> List[str]:
         from search_run.ranking.baseline.serve import get_ranked_keys
 
         # if we to recompute the rank we disable the cache

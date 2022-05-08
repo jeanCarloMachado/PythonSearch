@@ -135,6 +135,7 @@ class EndToEnd:
         # this creates a new experiment
         mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
         mlflow.autolog()
+        # try mlflow.keras.autolog()
 
         with mlflow.start_run():
 

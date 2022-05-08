@@ -78,8 +78,11 @@ def load_precomputed_keys_embeddings():
 
 
 def get_latest_run() -> RunInfo:
+    """
+    @todo use models/PythoSearchMlFlow abstraction instead
+    """
     experiment_name = "baseline_rank_v0"
-    mlflow.set_tracking_uri(f"file:{DataConfig.mlflow_tracking_uri}")
+    mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
 
     client: MlflowClient = MlflowClient()
     experiment = client.get_experiment_by_name(experiment_name)
