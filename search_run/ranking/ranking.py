@@ -30,25 +30,22 @@ class RankingGenerator:
         """
 
         entries: dict = self.configuration.commands
-        ranked_keys = entries.keys()
+        # by default the rank is just in the order they are persisted in the file
+        self.ranked_keys = entries.keys()
 
-        if self.feature_toggle.is_enabled("ranking_b"):
-            from search_run.ranking.baseline.serve import get_ranked_keys
-
-            # if we to recompute the rank we disable the cache
-            ranked_keys_b = get_ranked_keys(disable_cache=recompute_ranking)
-
-            missing_from_rank = list(set(ranked_keys) - set(ranked_keys_b))
-            ranked_keys = missing_from_rank + ranked_keys_b
+        if self.feature_toggle.is_enabled("ranking_next"):
+            raise Exception("Not implemented")
+        elif self.feature_toggle.is_enabled("ranking_b"):
+            self.ranked_keys = self.get_ranking_b(recompute_ranking)
 
         result = []
         used_entries = []
 
         if self.configuration.supported_features.is_enabled("redis"):
-            used_entries = self._get_used_entries_from_redis(entries)
+            used_entries = self.get_used_entries_from_redis(entries)
 
         increment = 1
-        for key in ranked_keys:
+        for key in self.ranked_keys:
             increment += 1
             # add used entry on the top on every second iteration
             if increment % 2 == 0 and len(used_entries):
@@ -57,15 +54,23 @@ class RankingGenerator:
                 result.append(used_entry)
 
             if key not in entries:
-
-                # logging.info(f"Key {key} not found in entries")
+                # key not found in entries
                 continue
 
             result.append((key, entries[key]))
 
         return self.print_entries(result)
 
-    def _get_used_entries_from_redis(self, entries):
+    def get_ranking_b(self, recompute_ranking):
+        from search_run.ranking.baseline.serve import get_ranked_keys
+
+        # if we to recompute the rank we disable the cache
+        ranked_keys_b = get_ranked_keys(disable_cache=recompute_ranking)
+
+        missing_from_rank = list(set(self.ranked_keys) - set(ranked_keys_b))
+        return missing_from_rank + ranked_keys_b
+
+    def get_used_entries_from_redis(self, entries) -> List[str]:
         """returns a list of used entries to be placed on top of the ranking"""
         used_entries = []
         from search_run.events.latest_used_entries import LatestUsedEntries

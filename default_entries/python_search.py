@@ -34,8 +34,4 @@ class PythonSearch(EntriesGroup):
             "cmd": "search_run register_snippet_clipboard",
             "i3_shortcut": Shortcuts.SUPER_SHIFT_R,
         },
-        "register snippet search run": {
-            "cmd": "search_run register_snippet_clipboard",
-            "i3_shortcut": Shortcuts.SUPER_SHIFT_R,
-        },
     }
