@@ -32,11 +32,12 @@ class EntryEmbeddings:
         np.testing.assert_array_equal(embedding, result_embedding)
 
     def write_embedding(self, key: str, embedding: np.ndarray):
-        packed = m.packb(embedding)
-        self.client.hset(f"k_{key}", "embedding", packed)
+        self.client.hset(
+            f"k_{key}", "embedding", EmbeddingSerialization.serialize(embedding)
+        )
 
     def read_embedding(self, key):
-        return m.unpackb(self.client.hget(key, "embedding"))
+        return EmbeddingSerialization.read(self.client.hget(key, "embedding"))
 
     def create_for_current_entries(self):
         """
@@ -46,6 +47,16 @@ class EntryEmbeddings:
         embeddings = create_indexed_embeddings(keys)
 
         return embeddings
+
+
+class EmbeddingSerialization:
+    @staticmethod
+    def read(embedding):
+        return m.unpackb(embedding)
+
+    @staticmethod
+    def serialize(embedding):
+        return m.packb(embedding)
 
 
 def create_indexed_embeddings(keys):

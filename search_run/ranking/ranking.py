@@ -34,7 +34,7 @@ class RankingGenerator:
         self.ranked_keys = entries.keys()
 
         if self.feature_toggle.is_enabled("ranking_next"):
-            raise Exception("Not implemented")
+            self.get_ranking_next()
         elif self.feature_toggle.is_enabled("ranking_b"):
             self.ranked_keys = self.get_ranking_b(recompute_ranking)
 
@@ -60,6 +60,22 @@ class RankingGenerator:
             result.append((key, entries[key]))
 
         return self.print_entries(result)
+
+    def get_ranking_next(self):
+        from search_run.events.latest_used_entries import LatestUsedEntries
+        from search_run.ranking.entry_embeddings import EmbeddingSerialization
+
+        all_keys = self.configuration.commands.keys()
+        previous_key = LatestUsedEntries().get_latest_used_keys()[0]
+
+        client = LatestUsedEntries.get_redis_client()
+        pipe = client.pipeline()
+        pipe.hget(f"k_{previous_key}", "embedding")
+
+        for key in all_keys:
+            pipe.hget(f"k_{previous_key}", "embedding")
+
+        everything = pipe.execute()
 
     def get_ranking_b(self, recompute_ranking):
         from search_run.ranking.baseline.serve import get_ranked_keys
