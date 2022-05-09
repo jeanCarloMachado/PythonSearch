@@ -1,15 +1,19 @@
 #!/usr/bin/env python
 import logging
+import os.path
 import sys
+from typing import Dict, List
 
 import mlflow
 import numpy as np
 import pyspark.sql.functions as F
 from pyspark.sql.session import SparkSession
+from pyspark.sql.window import Window
 
 from search_run.config import DataConfig
 from search_run.observability.logger import initialize_logging
 from search_run.ranking.entry_embeddings import create_indexed_embeddings
+from search_run.ranking.models import PythonSearchMLFlow
 from search_run.ranking.next_item_predictor.evaluator import Evaluate
 
 initialize_logging()
@@ -18,32 +22,35 @@ initialize_logging()
 class EndToEnd:
     """Exposes the whole ML pipeline, the run function does it end-2-end"""
 
+    def __init__(self):
+        self._spark = None
+
     def run(self):
         logging.info("End to end ranking")
-        dataset = self.build_dataset()
+        dataset = self.build_dataset(use_cache=True)
         print("MSE baseline: ", self.baseline_mse(dataset))
-        dataset.show(n=10)
-
+        breakpoint()
         model = self.train(dataset)
-
         Evaluate(model).evaluate()
 
-    def build_dataset(self):
+    def build_dataset(self, use_cache=False):
+        self._spark = SparkSession.builder.getOrCreate()
+
+        if use_cache and os.path.exists("/tmp/dataset"):
+            print("Reading cache dataset")
+            return self._spark.read.parquet("/tmp/dataset")
+
         from search_run.datasets.searchesperformed import SearchesPerformed
 
         logging.basicConfig(
             level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)]
         ),
 
-        spark = SparkSession.builder.getOrCreate()
-        df = SearchesPerformed(spark).load()
+        df = SearchesPerformed(self._spark).load()
 
         df.sort("timestamp", ascending=False).show()
 
         # build pair dataset with label
-
-        import pyspark.sql.functions as F
-        from pyspark.sql.window import Window
 
         # add literal column
         df = df.withColumn("tmp", F.lit("toremove"))
@@ -72,41 +79,54 @@ class EndToEnd:
         dataset = dataset.select("key", "previous_key", "label")
         dataset = dataset.filter("LENGTH(key) > 1")
 
+        if use_cache:
+            print("Writing cache dataset to disk")
+            dataset.write.parquet("/tmp/dataset")
+
         return dataset
 
-    def baseline_mse(self, dataset):
-        # naive approach of setting the same as input and output, used as baseline to measure the real model against
-        from sklearn.metrics import mean_squared_error
+    def train(self, dataset):
+        mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
+        # this creates a new experiment
+        mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
+        mlflow.autolog()
+        # try mlflow.keras.autolog()
 
-        # apply only to the  ones with the same name in input and output
-        # complete dataset 8k, with the same name in input and output 150
-        naive = (
-            dataset.filter("key == previous_key")
-            .select("key", "label")
-            .withColumn("baseline", F.lit(1))
-        )
-        pd_naive = naive.select("label", "baseline").toPandas()
-        return mean_squared_error(pd_naive.label, pd_naive.baseline)
+        with mlflow.start_run():
+            epochs = 50
+            print("Epochs:", epochs)
+            X, Y = self.create_XY(dataset)
 
-    def create_embeddings_historical_keys(self, dataset):
-        # create embeddings for all historical keys
-        from typing import List
+            from sklearn.model_selection import train_test_split
 
-        # add embeddings to the dataset
+            X_train, X_test, Y_train, Y_test = train_test_split(
+                X, Y, test_size=0.20, random_state=42
+            )
 
-        def all_keys_dataset(dataset) -> List[str]:
-            collected_keys = dataset.select("key", "previous_key").collect()
+            from keras import layers
+            from keras.models import Sequential
 
-            keys = []
-            for collected_keys in collected_keys:
-                keys.append(collected_keys.key)
-                keys.append(collected_keys.previous_key)
+            model = Sequential()
+            model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
+            model.add(layers.Dense(1))
+            model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
+            model.fit(X_train, Y_train, epochs=epochs, batch_size=32)
 
-            return keys
+            train_mse, train_mae = model.evaluate(X_train, Y_train)
 
-        all_keys = all_keys_dataset(dataset)
+            test_mse, test_mae = model.evaluate(X_test, Y_test)
 
-        return create_indexed_embeddings(all_keys)
+            metrics = {
+                "train_mse": train_mse,
+                "train_mae": train_mae,
+                "test_mse": test_mse,
+                "test_mae": test_mae,
+            }
+            print(metrics)
+
+            mlflow.log_params(metrics)
+
+        return model
 
     def create_XY(self, dataset):
 
@@ -130,47 +150,41 @@ class EndToEnd:
 
         return X, Y
 
-    def train(self, dataset):
-        mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
-        # this creates a new experiment
-        mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
-        mlflow.autolog()
-        # try mlflow.keras.autolog()
+    def create_embeddings_historical_keys(self, dataset) -> Dict[str, np.ndarray]:
+        """create embeddings for all historical keys"""
 
-        with mlflow.start_run():
+        # add embeddings to the dataset
+        all_keys = self._get_all_keys_dataset(dataset)
 
-            X, Y = self.create_XY(dataset)
+        return create_indexed_embeddings(all_keys)
 
-            from sklearn.model_selection import train_test_split
+    def _get_all_keys_dataset(self, dataset) -> List[str]:
+        collected_keys = dataset.select("key", "previous_key").collect()
 
-            X_train, X_test, Y_train, Y_test = train_test_split(
-                X, Y, test_size=0.20, random_state=42
-            )
+        keys = []
+        for collected_keys in collected_keys:
+            keys.append(collected_keys.key)
+            keys.append(collected_keys.previous_key)
 
-            from keras import layers
-            from keras.models import Sequential
+        return keys
 
-            model = Sequential()
-            model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
-            model.add(layers.Dense(1))
-            model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
-            model.fit(X_train, Y_train, epochs=10, batch_size=32)
+    def evaluate_latest(self):
+        model = PythonSearchMLFlow().get_latest_next_predictor_model()
+        return Evaluate(model).evaluate()
 
-            train_mse, train_mae = model.evaluate(X_train, Y_train)
+    def baseline_mse(self, dataset):
+        # naive approach of setting the same as input and output, used as baseline to measure the real model against
+        from sklearn.metrics import mean_squared_error
 
-            test_mse, test_mae = model.evaluate(X_test, Y_test)
-
-            metrics = {
-                "train_mse": train_mse,
-                "train_mae": train_mae,
-                "test_mse": test_mse,
-                "test_mae": test_mae,
-            }
-            print(metrics)
-
-            mlflow.log_params(metrics)
-
-        return model
+        # apply only to the  ones with the same name in input and output
+        # complete dataset 8k, with the same name in input and output 150
+        naive = (
+            dataset.filter("key == previous_key")
+            .select("key", "label")
+            .withColumn("baseline", F.lit(1))
+        )
+        pd_naive = naive.select("label", "baseline").toPandas()
+        return mean_squared_error(pd_naive.label, pd_naive.baseline)
 
 
 if __name__ == "__main__":

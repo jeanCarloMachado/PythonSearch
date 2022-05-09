@@ -14,7 +14,7 @@ class Evaluate:
     def evaluate(self):
         logging.info("Evaluate model")
         self.all_latest_keys = EntriesLoader.load_all_keys()
-        self.embeddings_keys_latest = EntryEmbeddings.create_for_current_entries()
+        self.embeddings_keys_latest = EntryEmbeddings().create_for_current_entries()
         keys_to_test = [
             "my beat81 bookings",
             "set current project as reco",

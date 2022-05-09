@@ -24,7 +24,7 @@ class RankingGenerator:
         self.configuration = configuration
         self.feature_toggle = FeatureToggle()
 
-    def generate(self, recompute_ranking: bool = False):
+    def generate(self, recompute_ranking: bool = False, disable_recent_used=True):
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -44,7 +44,10 @@ class RankingGenerator:
         result = []
         used_entries: List[Tuple[str, dict]] = []
 
-        if self.configuration.supported_features.is_enabled("redis"):
+        if (
+            self.configuration.supported_features.is_enabled("redis")
+            and not disable_recent_used
+        ):
             used_entries = self.get_used_entries_from_redis(entries)
 
         increment = 0
