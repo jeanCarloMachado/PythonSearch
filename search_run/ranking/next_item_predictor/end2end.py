@@ -25,12 +25,17 @@ class EndToEnd:
     def __init__(self):
         self._spark = None
 
-    def run(self):
+    def run(self, disable_mlflow=False, use_cached_dataset=True):
         logging.info("End to end ranking")
-        dataset = self.build_dataset(use_cache=True)
+        dataset = self.build_dataset(use_cache=use_cached_dataset)
         print("MSE baseline: ", self.baseline_mse(dataset))
-        breakpoint()
-        model = self.train(dataset)
+
+        if not disable_mlflow:
+            model = self.train_and_log(dataset)
+        else:
+            print("MLFLow disabled")
+            model = self.train(dataset)
+
         Evaluate(model).evaluate()
 
     def build_dataset(self, use_cache=False):
@@ -85,7 +90,8 @@ class EndToEnd:
 
         return dataset
 
-    def train(self, dataset):
+    def train_and_log(self, dataset):
+        """train the model and log it to MLFlow"""
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         # this creates a new experiment
         mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
@@ -93,40 +99,67 @@ class EndToEnd:
         # try mlflow.keras.autolog()
 
         with mlflow.start_run():
-            epochs = 50
-            print("Epochs:", epochs)
-            X, Y = self.create_XY(dataset)
-
-            from sklearn.model_selection import train_test_split
-
-            X_train, X_test, Y_train, Y_test = train_test_split(
-                X, Y, test_size=0.20, random_state=42
-            )
-
-            from keras import layers
-            from keras.models import Sequential
-
-            model = Sequential()
-            model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
-            model.add(layers.Dense(1))
-            model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
-            model.fit(X_train, Y_train, epochs=epochs, batch_size=32)
-
-            train_mse, train_mae = model.evaluate(X_train, Y_train)
-
-            test_mse, test_mae = model.evaluate(X_test, Y_test)
-
-            metrics = {
-                "train_mse": train_mse,
-                "train_mae": train_mae,
-                "test_mse": test_mse,
-                "test_mae": test_mae,
-            }
-            print(metrics)
-
+            model, metrics = self.train(dataset)
             mlflow.log_params(metrics)
 
         return model
+
+    def train(self, dataset, plot_history=False):
+        # 20 epochs looks like the ideal in the current architecture
+        epochs = 20
+        print("Epochs:", epochs)
+        X, Y = self.create_XY(dataset)
+
+        from sklearn.model_selection import train_test_split
+
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            X, Y, test_size=0.20, random_state=42
+        )
+
+        from keras import layers
+        from keras.models import Sequential
+
+        model = Sequential()
+        model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
+        model.add(layers.Dense(1))
+        model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
+
+        history = model.fit(
+            X_train,
+            Y_train,
+            epochs=epochs,
+            batch_size=32,
+            validation_data=(X_test, Y_test),
+        )
+
+        if plot_history:
+            import matplotlib.pyplot as plt
+
+            loss = history.history["loss"]
+            val_loss = history.history["val_loss"]
+
+            epochs_range = range(1, epochs + 1)
+            plt.plot(epochs_range, loss, "bo", label="Training Loss")
+            plt.plot(epochs_range, val_loss, "b", label="Validation Loss")
+            plt.title("Training and validation loss")
+            plt.xlabel("Epochs")
+            plt.ylabel("Loss")
+            plt.legend()
+            plt.show()
+            return
+
+        train_mse, train_mae = model.evaluate(X_train, Y_train)
+        test_mse, test_mae = model.evaluate(X_test, Y_test)
+
+        metrics = {
+            "train_mse": train_mse,
+            "train_mae": train_mae,
+            "test_mse": test_mse,
+            "test_mae": test_mae,
+        }
+        print(metrics)
+        # breakpoint()
+        return model, metrics
 
     def create_XY(self, dataset):
 
