@@ -20,7 +20,7 @@ class RankingGenerator:
     model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
     def __init__(self, configuration: PythonSearchConfiguration):
-        initialize_systemd_logging()
+        # initialize_systemd_logging()
         self.configuration = configuration
         self.feature_toggle = FeatureToggle()
 
@@ -42,31 +42,35 @@ class RankingGenerator:
             self.ranked_keys = self.get_ranking_b(recompute_ranking)
 
         result = []
-        used_entries = []
+        used_entries: List[Tuple[str, dict]] = []
 
         if self.configuration.supported_features.is_enabled("redis"):
             used_entries = self.get_used_entries_from_redis(entries)
 
-        increment = 1
+        increment = 0
         for key in self.ranked_keys:
-            increment += 1
             # add used entry on the top on every second iteration
             if increment % 2 == 0 and len(used_entries):
                 used_entry = used_entries.pop()
                 logging.debug(f"Increment: {increment}  with entry {used_entry}")
-                result.append(used_entry)
+                result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
+                increment += 1
 
             if key not in entries:
                 # key not found in entries
                 continue
 
             result.append((key, entries[key]))
+            increment += 1
 
         return self.print_entries(result)
 
-    def get_ranking_next(self, verbose=False) -> List[str]:
+    def get_ranking_next(self, debug=False, top_n=-1) -> List[str]:
+        """
+        Gets the ranking from the next item model
+        """
 
-        if not verbose:
+        if not debug:
             import os
 
             # disable tensorflow warnings
@@ -75,6 +79,10 @@ class RankingGenerator:
             import warnings
 
             warnings.filterwarnings("ignore")
+            import logging
+
+            logger = logging.getLogger()
+            logger.disabled = True
 
         import numpy as np
 
@@ -84,26 +92,36 @@ class RankingGenerator:
 
         all_keys = self.configuration.commands.keys()
         previous_key = LatestUsedEntries().get_latest_used_keys()[0]
-        if verbose:
-            print(f"KEY Previous: '{previous_key}'")
+        if debug:
+            print(f"Key Previous: '{previous_key}'")
 
         client = LatestUsedEntries.get_redis_client()
         pipe = client.pipeline()
 
         for key in all_keys:
-            pipe.hget(f"k_{previous_key}", "embedding")
+            pipe.hget(f"k_{key}", "embedding")
 
         all_embeddings = pipe.execute()
 
         if len(all_embeddings) != len(all_keys):
-            raise Exception("Could not find all embeddings")
+            raise Exception(
+                "Number of keys returned from redis does not match the number of embeddings found"
+            )
 
         embedding_mapping = dict(zip(all_keys, all_embeddings))
-        if previous_key not in embedding_mapping or not embedding_mapping[previous_key]:
-            raise Exception(
-                f"Could not find embedding for key {previous_key}, value: "
-                f"{embedding_mapping.get(previous_key)}"
-            )
+
+        for previous_key in LatestUsedEntries().get_latest_used_keys():
+            if previous_key in embedding_mapping and embedding_mapping[previous_key]:
+                # exits the loop as soon as we find an existing previous key
+                logging.info(f"Picked previous key: {previous_key}")
+                break
+            else:
+                logging.warning(
+                    f"Could not find embedding for previous key {previous_key}, value: "
+                    f"{embedding_mapping.get(previous_key)}"
+                )
+
+        logging.info(f"Previous key: {previous_key}")
 
         previous_key_embedding = EmbeddingSerialization.read(
             embedding_mapping[previous_key]
@@ -127,11 +145,16 @@ class RankingGenerator:
         result = list(zip(all_keys, Y))
         result.sort(key=lambda x: x[1], reverse=True)
 
-        if verbose:
+        if debug:
             # only return the top 20 for debugging
             return result[0:20]
 
-        return [entry[0] for entry in result]
+        only_keys = [entry[0] for entry in result]
+
+        if top_n > 0:
+            only_keys = only_keys[0:top_n]
+
+        return only_keys
 
     def get_ranking_b(self, recompute_ranking) -> List[str]:
         from search_run.ranking.baseline.serve import get_ranked_keys
@@ -142,8 +165,10 @@ class RankingGenerator:
         missing_from_rank = list(set(self.ranked_keys) - set(ranked_keys_b))
         return missing_from_rank + ranked_keys_b
 
-    def get_used_entries_from_redis(self, entries) -> List[str]:
-        """returns a list of used entries to be placed on top of the ranking"""
+    def get_used_entries_from_redis(self, entries) -> List[Tuple[str, dict]]:
+        """
+        returns a list of used entries to be placed on top of the ranking
+        """
         used_entries = []
         from search_run.events.latest_used_entries import LatestUsedEntries
 
@@ -155,7 +180,6 @@ class RankingGenerator:
             del entries[used_key]
         # reverse the list given that we pop from the end
         used_entries.reverse()
-
         return used_entries
 
     def print_entries(self, data: List[Tuple[str, dict]]):
@@ -178,3 +202,9 @@ class RankingGenerator:
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')
             print(content_str)
+
+
+if __name__ == "__main__":
+    import fire
+
+    fire.Fire()

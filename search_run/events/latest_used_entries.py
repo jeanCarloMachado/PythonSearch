@@ -25,6 +25,10 @@ class LatestUsedEntries:
         return PythonSearchRedis.get_client()
 
     def get_latest_used_keys(self):
+        """
+        return a list of unike used keys ordered by the last time they were used
+        the most recent in the top.
+        """
         result = self.redis_client.lrange(
             LatestUsedEntries().redis_key_name,
             0,
@@ -58,3 +62,9 @@ class LatestUsedEntries:
                 logging.info(
                     f"THE key: {key_executed} will be skipped as it is a shortcut"
                 )
+
+
+if __name__ == "__main__":
+    import fire
+
+    fire.Fire(LatestUsedEntries)

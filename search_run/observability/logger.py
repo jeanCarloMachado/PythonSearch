@@ -26,4 +26,5 @@ def initialize_systemd_logging():
     return log
 
 
-logging = initialize_logging()
+# undid the initailization as this is an uncontrollable side effect
+# logging = initialize_logging()
