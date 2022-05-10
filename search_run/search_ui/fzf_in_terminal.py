@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 
@@ -75,7 +76,8 @@ class FzfInTerminal:
     def _launch_terminal(self, internal_cmd: str):
 
         launch_cmd = f"""ionice -n 3 nice -19 kitty \
-        --title="{self.configuration.APPLICATION_TITLE}" -o remember_window_size=n \
+        --title="{self.configuration.APPLICATION_TITLE} {datetime.datetime.now().isoformat()}"\
+         -o remember_window_size=n \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
         -o font_family="FontAwesome" \
