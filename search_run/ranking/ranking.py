@@ -33,7 +33,13 @@ class RankingGenerator:
 
         self.used_entries: List[Tuple[str, dict]] = []
 
-    def generate(self, recompute_ranking: bool = False):
+    def generate_with_caching(self):
+        """
+        Uses cached rank if available and only add new keys on top
+        """
+        self.generate(recompute_ranking=False)
+
+    def generate(self, recompute_ranking: bool = True):
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -41,23 +47,27 @@ class RankingGenerator:
         self.entries: dict = self.configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self.ranked_keys: List[str] = self.entries.keys()
-        self._build_rank()
 
-        result = self._merge_and_build_result()
+        self._build_rank(recompute_ranking)
+        result, final_list = self._merge_and_build_result()
+
+        if self.is_redis_supported and recompute_ranking:
+            encoded_list = "|".join(final_list)
+            # breakpoint()
+            self.redis_client.set("cache_ranking_result", encoded_list)
 
         return self.print_entries(result)
 
-    def _build_rank(self):
+    def _build_rank(self, recompute_ranking):
         """Mutate self.ranked keys with teh results, supports caching"""
-        if self.is_redis_supported:
+        if self.is_redis_supported and not recompute_ranking:
             keys = self.redis_client.get("cache_ranking_result")
-            if keys:
-                keys = keys.decode("utf-8").split("|")
+            keys = keys.decode("utf-8").split("|")
 
-                missing_keys = set(self.ranked_keys) - set(keys)
-                self.ranked_keys = list(missing_keys) + keys
+            missing_keys = set(self.ranked_keys) - set(keys)
+            self.ranked_keys = keys + list(missing_keys)
 
-            return keys
+            return
 
         try:
             if self.feature_toggle.is_enabled("ranking_next"):
@@ -67,17 +77,7 @@ class RankingGenerator:
         except BaseException as e:
             logging.info(f"Failed to get the ranking next with error: {e}")
 
-        if self.is_redis_supported:
-            self.redis_client.set("cache_ranking_result", "|".join(self.ranked_keys))
-
         self._fetch_latest_entries()
-
-    def _fetch_latest_entries(self):
-        self.used_entries: List[Tuple[str, dict]] = []
-        if self.configuration.supported_features.is_enabled(
-            "redis"
-        ) and self.feature_toggle.is_enabled("ranking_latest_used"):
-            self.used_entries = self.get_used_entries_from_redis(self.entries)
 
     def _merge_and_build_result(self) -> List[Tuble[str, dict]]:
         """ "
@@ -85,11 +85,13 @@ class RankingGenerator:
         """
         result = []
         increment = 0
+        final_key_list = []
         for key in self.ranked_keys:
             # add used entry on the top on every second iteration
             if increment % 2 == 0 and len(self.used_entries):
                 used_entry = self.used_entries.pop()
                 logging.debug(f"Increment: {increment}  with entry {used_entry}")
+                final_key_list.append(used_entry[0])
                 result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
                 increment += 1
 
@@ -98,9 +100,17 @@ class RankingGenerator:
                 continue
 
             result.append((key, self.entries[key]))
+            final_key_list.append(key)
             increment += 1
 
-        return result
+        return result, final_key_list
+
+    def _fetch_latest_entries(self):
+        self.used_entries: List[Tuple[str, dict]] = []
+        if self.configuration.supported_features.is_enabled(
+            "redis"
+        ) and self.feature_toggle.is_enabled("ranking_latest_used"):
+            self.used_entries = self.get_used_entries_from_redis(self.entries)
 
     def get_ranking_next(self, debug=False, top_n=-1) -> List[str]:
         """
