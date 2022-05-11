@@ -7,6 +7,7 @@ from typing import List, Tuple
 from search_run.acronyms import generate_acronyms
 from search_run.config import PythonSearchConfiguration
 from search_run.features import FeatureToggle
+from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.observability.logger import initialize_systemd_logging, logging
 from search_run.ranking.baseline.serve import get_ranked_keys
 
@@ -23,6 +24,14 @@ class RankingGenerator:
         # initialize_systemd_logging()
         self.configuration = configuration
         self.feature_toggle = FeatureToggle()
+        self.is_redis_supported = self.configuration.supported_features.is_enabled(
+            "redis"
+        )
+
+        if self.is_redis_supported:
+            self.redis_client = PythonSearchRedis.get_client()
+
+        self.used_entries: List[Tuple[str, dict]] = []
 
     def generate(self, recompute_ranking: bool = False):
         """
@@ -32,6 +41,23 @@ class RankingGenerator:
         self.entries: dict = self.configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self.ranked_keys: List[str] = self.entries.keys()
+        self._build_rank()
+
+        result = self._merge_and_build_result()
+
+        return self.print_entries(result)
+
+    def _build_rank(self):
+        """Mutate self.ranked keys with teh results, supports caching"""
+        if self.is_redis_supported:
+            keys = self.redis_client.get("cache_ranking_result")
+            if keys:
+                keys = keys.decode("utf-8").split("|")
+
+                missing_keys = set(self.ranked_keys) - set(keys)
+                self.ranked_keys = list(missing_keys) + keys
+
+            return keys
 
         try:
             if self.feature_toggle.is_enabled("ranking_next"):
@@ -41,10 +67,10 @@ class RankingGenerator:
         except BaseException as e:
             logging.info(f"Failed to get the ranking next with error: {e}")
 
-        self._fetch_latest_entries()
-        result = self._merge_and_build_result()
+        if self.is_redis_supported:
+            self.redis_client.set("cache_ranking_result", "|".join(self.ranked_keys))
 
-        return self.print_entries(result)
+        self._fetch_latest_entries()
 
     def _fetch_latest_entries(self):
         self.used_entries: List[Tuple[str, dict]] = []
