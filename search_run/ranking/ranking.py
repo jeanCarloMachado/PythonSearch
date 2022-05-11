@@ -24,50 +24,57 @@ class RankingGenerator:
         self.configuration = configuration
         self.feature_toggle = FeatureToggle()
 
-    def generate(self, recompute_ranking: bool = False, disable_recent_used=False):
+    def generate(self, recompute_ranking: bool = False):
         """
         Recomputes the rank and saves the results on the file to be read
         """
 
-        entries: dict = self.configuration.commands
+        self.entries: dict = self.configuration.commands
         # by default the rank is just in the order they are persisted in the file
-        self.ranked_keys = entries.keys()
+        self.ranked_keys = self.entries.keys()
 
-        if self.feature_toggle.is_enabled("ranking_next"):
-            try:
+        try:
+            if self.feature_toggle.is_enabled("ranking_next"):
                 self.ranked_keys = self.get_ranking_next()
-            except BaseException as e:
-                logging.info(f"Failed to get the ranking next with error: {e}")
-        elif self.feature_toggle.is_enabled("ranking_b"):
-            self.ranked_keys = self.get_ranking_b(recompute_ranking)
+            elif self.feature_toggle.is_enabled("ranking_b"):
+                self.ranked_keys = self.get_ranking_b(recompute_ranking)
+        except BaseException as e:
+            logging.info(f"Failed to get the ranking next with error: {e}")
 
+        self._build_latest_entries()
+        result = self._build_result()
+
+        return self.print_entries(result)
+
+    def _build_latest_entries(self):
+        self.used_entries: List[Tuple[str, dict]] = []
+        if self.configuration.supported_features.is_enabled(
+            "redis"
+        ) and self.feature_toggle.is_enabled("ranking_latest_used"):
+            self.used_entries = self.get_used_entries_from_redis(self.entries)
+
+    def _build_result(self):
+        """ "
+        Merge the ranking with teh latest entries and make it ready to be printed
+        """
         result = []
-        used_entries: List[Tuple[str, dict]] = []
-
-        if (
-            self.configuration.supported_features.is_enabled("redis")
-            and not disable_recent_used
-            and self.feature_toggle.is_enabled("ranking_latest_used")
-        ):
-            used_entries = self.get_used_entries_from_redis(entries)
-
         increment = 0
         for key in self.ranked_keys:
             # add used entry on the top on every second iteration
-            if increment % 2 == 0 and len(used_entries):
-                used_entry = used_entries.pop()
+            if increment % 2 == 0 and len(self.used_entries):
+                used_entry = self.used_entries.pop()
                 logging.debug(f"Increment: {increment}  with entry {used_entry}")
                 result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
                 increment += 1
 
-            if key not in entries:
+            if key not in self.entries:
                 # key not found in entries
                 continue
 
-            result.append((key, entries[key]))
+            result.append((key, self.entries[key]))
             increment += 1
 
-        return self.print_entries(result)
+        return result
 
     def get_ranking_next(self, debug=False, top_n=-1) -> List[str]:
         """
