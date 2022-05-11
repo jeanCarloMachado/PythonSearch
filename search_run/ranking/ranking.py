@@ -31,7 +31,7 @@ class RankingGenerator:
 
         self.entries: dict = self.configuration.commands
         # by default the rank is just in the order they are persisted in the file
-        self.ranked_keys = self.entries.keys()
+        self.ranked_keys: List[str] = self.entries.keys()
 
         try:
             if self.feature_toggle.is_enabled("ranking_next"):
@@ -41,19 +41,19 @@ class RankingGenerator:
         except BaseException as e:
             logging.info(f"Failed to get the ranking next with error: {e}")
 
-        self._build_latest_entries()
-        result = self._build_result()
+        self._fetch_latest_entries()
+        result = self._merge_and_build_result()
 
         return self.print_entries(result)
 
-    def _build_latest_entries(self):
+    def _fetch_latest_entries(self):
         self.used_entries: List[Tuple[str, dict]] = []
         if self.configuration.supported_features.is_enabled(
             "redis"
         ) and self.feature_toggle.is_enabled("ranking_latest_used"):
             self.used_entries = self.get_used_entries_from_redis(self.entries)
 
-    def _build_result(self):
+    def _merge_and_build_result(self) -> List[Tuble[str, dict]]:
         """ "
         Merge the ranking with teh latest entries and make it ready to be printed
         """
