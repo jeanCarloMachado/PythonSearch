@@ -174,6 +174,8 @@ class RankingGenerator:
             embedding_mapping[previous_key]
         )
 
+        week_number = datetime.datetime.today().isocalendar()[2]
+
         X = np.zeros([len(all_keys), 2 * 384])
         for i, (key, embedding) in enumerate(embedding_mapping.items()):
             if embedding is None:
@@ -183,6 +185,7 @@ class RankingGenerator:
                 (
                     previous_key_embedding,
                     EmbeddingSerialization.read(embedding),
+                    np.asarray([week_number]),
                 )
             )
 

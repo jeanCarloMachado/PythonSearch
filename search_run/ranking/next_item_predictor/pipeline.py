@@ -7,8 +7,7 @@ from search_run.observability.logger import initialize_logging
 from search_run.ranking.models import PythonSearchMLFlow
 from search_run.ranking.next_item_predictor.evaluator import Evaluate
 from search_run.ranking.next_item_predictor.train import Train
-from search_run.ranking.next_item_predictor.training_dataset import \
-    TrainingDataset
+from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
 
 initialize_logging()
 
@@ -55,7 +54,7 @@ class Pipeline:
 
     def evaluate_latest(self):
         model = PythonSearchMLFlow().get_latest_next_predictor_model()
-        return Evaluate(model).evaluate()
+        return Evaluate().evaluate(model)
 
 
 if __name__ == "__main__":

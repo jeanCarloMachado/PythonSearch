@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import List, Tuple
 
@@ -8,6 +9,10 @@ from search_run.ranking.entry_embeddings import EntryEmbeddings
 
 
 class Evaluate:
+    """
+    Central place to evaluate the quality of the model
+    """
+
     def evaluate(self, model):
         self.model = model
         logging.info("Evaluate model")
@@ -20,17 +25,23 @@ class Evaluate:
         ]
 
         result = {key: self.get_rank_for_key(key)[0:20] for key in keys_to_test}
-        import pandas as pd
+        for key in keys_to_test:
+            result = self.get_rank_for_key(key)
+            print(f"Key: {key}")
 
-        pd.set_option("display.max_rows", None, "display.max_columns", None)
+            print(f"Top")
+            for i in result[0:10]:
+                print(f"    {i}")
 
-        df = pd.DataFrame.from_dict(result)
-        print(df)
+            print(f"Bottom")
+            for i in result[-5:]:
+                print(f"    {i}")
 
     def get_rank_for_key(self, selected_key) -> List[Tuple[str, float]]:
         """
         Looks what should be next if the current key is the one passed, look for all current existing keys
         """
+        week_number = datetime.datetime.today().isocalendar()[2]
 
         X_validation = np.zeros([len(self.all_latest_keys), 2 * 384 + 1])
         X_key = []
@@ -39,6 +50,7 @@ class Evaluate:
                 (
                     self.embeddings_keys_latest[selected_key],
                     self.embeddings_keys_latest[key],
+                    np.asarray([week_number]),
                 )
             )
             X_key.append(key)
