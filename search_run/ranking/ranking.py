@@ -21,7 +21,6 @@ class RankingGenerator:
     model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
     def __init__(self, configuration: PythonSearchConfiguration):
-        # initialize_systemd_logging()
         self.configuration = configuration
         self.feature_toggle = FeatureToggle()
         self.is_redis_supported = self.configuration.supported_features.is_enabled(
@@ -53,7 +52,6 @@ class RankingGenerator:
 
         if self.is_redis_supported and recompute_ranking:
             encoded_list = "|".join(final_list)
-            # breakpoint()
             self.redis_client.set("cache_ranking_result", encoded_list)
 
         return self.print_entries(result)
