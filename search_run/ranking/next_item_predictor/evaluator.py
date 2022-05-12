@@ -8,10 +8,8 @@ from search_run.ranking.entry_embeddings import EntryEmbeddings
 
 
 class Evaluate:
-    def __init__(self, model):
+    def evaluate(self, model):
         self.model = model
-
-    def evaluate(self):
         logging.info("Evaluate model")
         self.all_latest_keys = EntriesLoader.load_all_keys()
         self.embeddings_keys_latest = EntryEmbeddings().create_for_current_entries()
@@ -34,7 +32,7 @@ class Evaluate:
         Looks what should be next if the current key is the one passed, look for all current existing keys
         """
 
-        X_validation = np.zeros([len(self.all_latest_keys), 2 * 384])
+        X_validation = np.zeros([len(self.all_latest_keys), 2 * 384 + 1])
         X_key = []
         for i, key in enumerate(self.all_latest_keys):
             X_validation[i] = np.concatenate(
