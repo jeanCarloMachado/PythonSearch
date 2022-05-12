@@ -65,7 +65,7 @@ class RankingGenerator:
             keys = keys.decode("utf-8").split("|")
 
             missing_keys = set(self.ranked_keys) - set(keys)
-            self.ranked_keys = keys + list(missing_keys)
+            self.ranked_keys = list(missing_keys) + keys
 
             return
 
@@ -79,7 +79,7 @@ class RankingGenerator:
 
         self._fetch_latest_entries()
 
-    def _merge_and_build_result(self) -> List[Tuble[str, dict]]:
+    def _merge_and_build_result(self) -> List[Tuple[str, dict]]:
         """ "
         Merge the ranking with teh latest entries and make it ready to be printed
         """

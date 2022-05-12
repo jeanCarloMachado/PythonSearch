@@ -1,19 +1,17 @@
 #!/usr/bin/env python
 import logging
-import os.path
-import sys
 from typing import Dict, List
 
 import mlflow
 import numpy as np
 import pyspark.sql.functions as F
 from pyspark.sql.session import SparkSession
-from pyspark.sql.window import Window
 
 from search_run.config import DataConfig
 from search_run.observability.logger import initialize_logging
 from search_run.ranking.entry_embeddings import create_indexed_embeddings
 from search_run.ranking.models import PythonSearchMLFlow
+from search_run.ranking.next_item_predictor.dataset import Dataset
 from search_run.ranking.next_item_predictor.evaluator import Evaluate
 
 initialize_logging()
@@ -39,56 +37,10 @@ class EndToEnd:
         Evaluate(model).evaluate()
 
     def build_dataset(self, use_cache=False):
-        self._spark = SparkSession.builder.getOrCreate()
-
-        if use_cache and os.path.exists("/tmp/dataset"):
-            print("Reading cache dataset")
-            return self._spark.read.parquet("/tmp/dataset")
-
-        from search_run.datasets.searchesperformed import SearchesPerformed
-
-        logging.basicConfig(
-            level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)]
-        ),
-
-        df = SearchesPerformed(self._spark).load()
-
-        df.sort("timestamp", ascending=False).show()
-
-        # build pair dataset with label
-
-        # add literal column
-        df = df.withColumn("tmp", F.lit("toremove"))
-        window = Window.partitionBy("tmp").orderBy("timestamp")
-
-        df = df.withColumn("row_number", F.row_number().over(window)).sort(
-            "timestamp", ascending=False
-        )
-        df = df.withColumn("previous_key", F.lag("key", 1, None).over(window)).sort(
-            "timestamp", ascending=False
-        )
-
-        pair = df.select("key", "previous_key", "timestamp")
-
-        grouped = (
-            pair.groupBy("key", "previous_key")
-            .agg(F.count("previous_key").alias("times"))
-            .sort("key", "times")
-        )
-        grouped.cache()
-        grouped.count()
-        # add the label
-        dataset = grouped.withColumn(
-            "label", F.col("times") / F.sum("times").over(Window.partitionBy("key"))
-        ).orderBy("key")
-        dataset = dataset.select("key", "previous_key", "label")
-        dataset = dataset.filter("LENGTH(key) > 1")
-
-        if use_cache:
-            print("Writing cache dataset to disk")
-            dataset.write.parquet("/tmp/dataset")
-
-        return dataset
+        """
+        Builds the dataset ready for training
+        """
+        return Dataset(self._spark).build(use_cache)
 
     def train_and_log(self, dataset):
         """train the model and log it to MLFlow"""
