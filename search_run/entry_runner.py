@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from typing import List
 
@@ -31,23 +32,31 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
-        rank_position=None,
     ):
         """
         from_shortcut means that the key execution was triggered by a desktop shortcut
 
-        Parameters
+        Parameters:
+            key: As it comes from FZF they is a str pair of key_name : {metadata}
             entry_rank_position: accounts for where the entry was when it was executed, if passed it will be used for
-            tracking
         """
 
         # if there are : in the line just take all before it as it is
         # usually the key from fzf, and our keys do not accept :
+        metadata = ""
         if ":" in key:
-            key = key.split(":")[0]
+            key, metadata = key.split(":", 1)
+            self.logging.info(f"metadata: {metadata}")
 
         if from_shortcut:
             send_notification(f"{key}")
+
+        rank_position = None
+        try:
+            matadata_dict = json.loads(metadata)
+            rank_position = matadata_dict.get("position")
+        except BaseException as e:
+            self.logging.warning(f"Could not decode metadata: {e}")
 
         matches = self._matching_keys(key)
 

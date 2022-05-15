@@ -1,4 +1,4 @@
-from search_run.apps.window_manager import I3
+from search_run.apps.window_manager import WindowManager
 from search_run.config import PythonSearchConfiguration
 from search_run.entry_runner import EntryRunner
 
@@ -39,17 +39,19 @@ class PythonSearchCli:
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
-        Keep this constructor small and import depependenceis inside the functions
+        Keep this constructor small and import dependencies inside the functions
         so they keep being fast
         """
         self.configuration = configuration
-        self.run_key = EntryRunner(configuration).run_key
 
     def search(self):
         """Main entrypoint of the application"""
         from search_run.search_ui.search import Search
 
         Search(self.configuration).run()
+
+    def run_key(self):
+        return EntryRunner(self.configuration).run_key
 
     def clipboard_key(self, key):
         """
@@ -115,6 +117,8 @@ class PythonSearchCli:
 
             def hide_launcher(self):
                 """hide the search launcher -i2 specific"""
-                I3().hide_window(self.configuration.APPLICATION_TITLE)
+                WindowManager.load_from_environment().hide_window(
+                    self.configuration.APPLICATION_TITLE
+                )
 
         return Utils(self.configuration)
