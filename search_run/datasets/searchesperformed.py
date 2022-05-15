@@ -1,8 +1,13 @@
+from search_run.config import DataConfig
+
+
 class SearchesPerformed:
     """
     Poit of acess for the searches performed
     This is the place to keep the source of truth for the schema as well
     """
+
+    columns = ["key", "query_input", "shortcut", "timestamp"]
 
     def __init__(self, spark=None):
         from pyspark.sql.session import SparkSession
@@ -11,5 +16,5 @@ class SearchesPerformed:
 
     def load(self):
         return self.spark.read.format("parquet").load(
-            f"/data/python_search/data_warehouse/dataframes/SearchRunPerformed"
+            DataConfig.SEARCH_RUNS_PERFORMED_FOLDER
         )

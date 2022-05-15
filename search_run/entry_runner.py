@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import List, Optional
+from typing import List
 
 from grimoire.notification import notify_send, send_notification
 from grimoire.string import generate_identifier
@@ -22,6 +22,7 @@ class EntryRunner:
 
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
+        self.logging = initialize_systemd_logging()
 
     def run_key(
         self,
@@ -30,9 +31,14 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
+        rank_position=None,
     ):
         """
         from_shortcut means that the key execution was triggered by a desktop shortcut
+
+        Parameters
+            entry_rank_position: accounts for where the entry was when it was executed, if passed it will be used for
+            tracking
         """
 
         # if there are : in the line just take all before it as it is
@@ -44,9 +50,16 @@ class EntryRunner:
             send_notification(f"{key}")
 
         matches = self._matching_keys(key)
-        logging = initialize_systemd_logging()
-        logging.info(f"Matches of key: {key}, matches: {matches}")
-        logging.info(f"Query used: {query_used}")
+
+        self.logging.info(
+            f"""
+            Matches of key: {key}
+            matches: {matches}
+            Query used: {query_used}
+            Rank Position: {rank_position}
+        """
+        )
+
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
