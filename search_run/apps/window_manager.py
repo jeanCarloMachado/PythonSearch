@@ -14,12 +14,12 @@ class WindowManager:
         return Gnome()
 
     @staticmethod
-    def is_ubuntu():
-        return not WindowManager.is_s3()
+    def is_i3():
+        return not WindowManager.is_gnome()
 
     @staticmethod
-    def is_i3():
-        return 0 == os.system("ps -uax | grep -i i3 ")
+    def is_gnome():
+        return 0 == os.system("wmctrl -m | grep -i gnome ")
 
     def hide_window(self, title):
         raise Exception("Not implemented")
@@ -45,7 +45,9 @@ class I3(WindowManager):
         return result
 
     def show_window(self, title) -> bool:
-        return 0 == os.system(f"i3-msg '[title=\"{title}\"] scratchpad show'")
+        return 0 == os.system(
+            f"unset I3SOCK ; i3-msg '[title=\"{title}\"] scratchpad show'"
+        )
 
     def hide_window(self, title) -> bool:
         return 0 == os.system(
@@ -60,4 +62,4 @@ class Gnome:
     """
 
     def hide_window(self, title) -> bool:
-        return 0 == os.system(f"xdotool search --name {title} windowminimize")
+        return 0 == os.system(f"xdotool search --name '{title}' windowminimize")
