@@ -2,7 +2,7 @@ from typing import List
 
 
 class EntriesLoader:
-    """Class to acccess the current existing key"""
+    """Class to access the current existing key"""
 
     @staticmethod
     def load_all_keys() -> List[str]:
