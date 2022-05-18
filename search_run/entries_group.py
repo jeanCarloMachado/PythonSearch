@@ -58,7 +58,9 @@ class EntriesGroup:
         return result
 
     def get_source_file(self):
-        """Returns the path of the source code where the config is stored"""
+        """
+        Returns the path of the source code where the config is stored
+        """
         import sys
 
         return sys.argv[0]

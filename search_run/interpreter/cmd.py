@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from grimoire.notification import send_notification
 from grimoire.shell import shell
@@ -14,9 +15,11 @@ WRAP_IN_TERMINAL = "new-window-non-cli"
 
 class CmdEntry(BaseEntry):
     """
-    Represents a bash command entry
+    Represents a bash command entry. It can be used anywhere to run bash commends.
     """
-    def __init__(self, cmd, context: Context):
+
+    def __init__(self, cmd, context: Optional[Context] = None):
+        """ """
         self.context = context
 
         if type(cmd) == str:
@@ -90,12 +93,13 @@ class CmdEntry(BaseEntry):
     def _execute(self, cmd):
         logging.info(f"Command to run: {cmd}")
         if (
-            self.context.is_group_command()
+            self.context
+            and self.context.is_group_command()
             and not self.context.should_execute_sequentially()
         ):
             return shell.run_command_no_wait(cmd)
 
-        if self.context.should_execute_sequentially():
+        if self.context and self.context.should_execute_sequentially():
             return shell.run_with_result(cmd)
 
         return shell.run(cmd)

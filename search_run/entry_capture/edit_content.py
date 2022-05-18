@@ -6,10 +6,11 @@ from grimoire import s
 from grimoire.shell import shell
 
 from search_run.config import config
+from search_run.interpreter.cmd import CmdEntry
 
 
 class EditKey:
-    """ Set of commands to edit the entries """
+    """Set of commands to edit the entries"""
 
     def __init__(self, configuration):
         self.configuration = configuration
@@ -25,11 +26,12 @@ class EditKey:
         key = key.split(":")
 
         if not len(key):
-            self._edit_default()
+            self.edit_default()
             return
 
         key = key[0]
-        cmd = f"ack '{key}' {self.configuration.get_project_root()} --py || true"
+        # needs to be case insensitive search
+        cmd = f"ack -i '{key}' {self.configuration.get_project_root()} --py || true"
 
         logging.info(f"Command: {cmd}")
         result_shell = shell.run_with_result(cmd)
@@ -42,11 +44,19 @@ class EditKey:
 
         self._edit_config(file, line)
 
-    def _edit_default(self):
-        self._edit_config(self.configuration.get_source_file(), dry_run)
+    def search_entries_directory(self, key=None):
+        entry = {
+            "cli_cmd": f"fzf_directory.sh {self.configuration.get_project_root()}",
+            "directory": self.configuration.get_project_root(),
+        }
+
+        CmdEntry(entry).interpret_default()
+
+    def edit_default(self):
+        self._edit_config(self.configuration.get_project_root() + "/entries/main.py")
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
-        """"edit a configuration file given the name and line """
+        """ "edit a configuration file given the name and line"""
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' runFunction terminal_run 'cd"
             f" {self.configuration.get_project_root()} "

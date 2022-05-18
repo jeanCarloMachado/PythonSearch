@@ -67,6 +67,17 @@ class PythonSearchCli:
 
         return EditKey(self.configuration).edit_key(key, dry_run=False)
 
+    def search_edit(self, key=None):
+        from search_run.entry_capture.edit_content import EditKey
+
+        return EditKey(self.configuration).search_entries_directory(key)
+
+    def edit_main(self, key=None):
+        """Edit the main script"""
+        from search_run.entry_capture.edit_content import EditKey
+
+        return EditKey(self.configuration).edit_default()
+
     def register_clipboard(self):
         from search_run.entry_capture.register_new import RegisterNew
 
@@ -94,7 +105,9 @@ class PythonSearchCli:
         return RankingGenerator(self.configuration)
 
     def consumers(self):
-        """Provides access to the event consumers"""
+        """
+        Provides access to the event consumers
+        """
         from search_run.events.latest_used_entries import LatestUsedEntries
 
         class Consumers:

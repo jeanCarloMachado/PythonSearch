@@ -59,6 +59,10 @@ class FzfInTerminal:
         --bind "ctrl-c:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
+        --bind "ctrl-s:execute-silent:(nohup {self.executable} search_edit {{}} & disown)" \
+        --bind "ctrl-s:+execute-silent:({self.executable} _utils hide_launcher)" \
+        --bind "alt-m:execute-silent:(nohup {self.executable} edit_main {{}} & disown)" \
+        --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-k:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-k:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
