@@ -69,7 +69,6 @@ class InvertedIndex:
         pass
 
 
-
 SearchRunPerformed = Dataframe(
     schema={
         "key": "String",

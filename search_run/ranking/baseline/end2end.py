@@ -4,12 +4,15 @@ import pandas as pd
 
 from search_run.observability.logger import initialize_logging
 from search_run.ranking.baseline.serve import RankCache
-from search_run.ranking.baseline.train import (aggregate_searches,
-                                               compute_embeddings_current_keys,
-                                               create_dataset, create_Y,
-                                               load_searches,
-                                               perform_train_and_log,
-                                               validate_latest_model_ranks)
+from search_run.ranking.baseline.train import (
+    aggregate_searches,
+    compute_embeddings_current_keys,
+    create_dataset,
+    create_Y,
+    load_searches,
+    perform_train_and_log,
+    validate_latest_model_ranks,
+)
 
 initialize_logging()
 

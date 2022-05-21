@@ -7,8 +7,7 @@ import pyspark.sql.functions as F
 from search_run.config import DataConfig
 from search_run.ranking.entry_embeddings import create_indexed_embeddings
 from search_run.ranking.models import PythonSearchMLFlow
-from search_run.ranking.next_item_predictor.training_dataset import \
-    TrainingDataset
+from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
 
 
 class Train:
