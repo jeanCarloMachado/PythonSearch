@@ -8,8 +8,7 @@ from search_run.acronyms import generate_acronyms
 from search_run.config import PythonSearchConfiguration
 from search_run.features import FeatureToggle
 from search_run.infrastructure.redis import PythonSearchRedis
-from search_run.observability.logger import initialize_systemd_logging, logging
-from search_run.ranking.baseline.serve import get_ranked_keys
+from search_run.observability.logger import logging
 
 
 class RankingGenerator:

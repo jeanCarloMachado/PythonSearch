@@ -10,6 +10,7 @@ class PythonSearch(EntriesGroup):
 
     commands = {
         "search run search focus or open": {
+            "description": "Starts python search only once and reuse the same session",
             "focus_match": PythonSearchConfiguration.APPLICATION_TITLE,
             "cmd": "nice -19 search_run search",
         },

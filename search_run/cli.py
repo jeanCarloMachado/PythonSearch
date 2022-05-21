@@ -94,7 +94,7 @@ class PythonSearchCli:
         return RegisterNew(self.configuration)
 
     def export_configuration(self):
-        from search_run.configuration_generator import ConfigurationGenerator
+        from search_run.shortcut.i3_shortcut_generator import ConfigurationGenerator
 
         configuration_exporter = ConfigurationGenerator(self.configuration)
         configuration_exporter.export()
