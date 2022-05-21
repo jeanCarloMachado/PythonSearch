@@ -3,7 +3,9 @@ import os
 
 
 class Terminal:
-    """Terminal abstraction for search run"""
+    """
+    Terminal abstraction for search run
+    """
 
     DEFAULT_TITLE = "SearchRunTerminal"
 

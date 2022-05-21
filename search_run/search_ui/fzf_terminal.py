@@ -1,6 +1,5 @@
 import datetime
 import os
-import sys
 
 from search_run.config import PythonSearchConfiguration
 from search_run.observability.logger import logging
@@ -14,30 +13,29 @@ class FzfInTerminal:
     FONT_SIZE = 13
     PREVIEW_PERCENTAGE_SIZE = 50
     HEIGHT = 330
+    WIDTH = 1100
 
     configuration: PythonSearchConfiguration
 
     @staticmethod
     def build_search_ui(configuration) -> "FzfInTerminal":
         """Assembles what is specific for the search ui exclusively"""
-        preview_cmd = "(echo '{}' | cut -d ':' -f1 --complement | jq . -C 2>/dev/null ) || echo {}"
-        return FzfInTerminal(
-            configuration=configuration,
-            height=FzfInTerminal.HEIGHT,
-            width=1100,
-            preview_cmd=preview_cmd,
-        )
 
-    def __init__(self, *, configuration, height, width, preview_cmd):
-        self.height = height
-        self.width = width
-        self.preview_cmd = preview_cmd
-        self.executable = sys.argv[0]
-        self.configuration = configuration
+        return FzfInTerminal(title=configuration.APPLICATION_TITLE)
+
+    def __init__(self, *, title=""):
+        self.height = FzfInTerminal.HEIGHT
+        self.width = FzfInTerminal.WIDTH
+        self.preview_cmd = "(echo '{}' | cut -d ':' -f1 --complement | jq . -C 2>/dev/null ) || echo {}"
+        self.executable = "search_run"
+        self.title = title
 
     def run(self) -> None:
-        internal_cmd = f"""bash -c '{self.executable} ranking generate | \
-        fzf \
+        self._launch_terminal(self.internal_cmd())
+
+    def internal_cmd(self):
+        return f"""bash -c '{self.executable} ranking generate | \
+                fzf \
         --tiebreak=length,begin,index \
         --cycle \
         --no-hscroll \
@@ -52,7 +50,10 @@ class FzfInTerminal:
         --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "enter:+reload:({self.executable} ranking generate)" \
         --bind "enter:+clear-query" \
+        --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
+        --bind "alt-m:execute-silent:(nohup {self.executable} edit_main {{}} & disown)" \
+        --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+first" \
         --bind "ctrl-c:execute-silent:(nohup {self.executable} clipboard_key {{}} & disown)" \
@@ -61,26 +62,22 @@ class FzfInTerminal:
         --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-s:execute-silent:(nohup {self.executable} search_edit {{}} & disown)" \
         --bind "ctrl-s:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "alt-m:execute-silent:(nohup {self.executable} edit_main {{}} & disown)" \
-        --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-k:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-k:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-h:reload:({self.executable} ranking generate)" \
         --bind "ctrl-r:reload:({self.executable} ranking generate_with_caching)" \
         --bind "ctrl-n:reload:({self.executable} nlp get_read_projection_rank_for_query {{q}})" \
-        --bind "ctrl-t:execute-silent:(notify-send test)" \
-        --bind "ctrl-q:execute-silent:(notify-send {{q}})" \
+        --bind "ctrl-t:execute-silent:(notify-send testjean)" \
+        --bind "ctrl-g:execute-silent:( {self.executable} google_it {{q}} )" \
+        --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-f:first" \
         --bind "ctrl-d:abort" '
         """
 
-        self._launch_terminal(internal_cmd)
-
     def _launch_terminal(self, internal_cmd: str):
 
         launch_cmd = f"""ionice -n 3 nice -19 kitty \
-        --title="{self.configuration.APPLICATION_TITLE} {datetime.datetime.now().isoformat()}"\
+        --title="{self.title} {datetime.datetime.now().isoformat()}"\
          -o remember_window_size=n \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
@@ -92,3 +89,9 @@ class FzfInTerminal:
         result = os.system(launch_cmd)
         if result != 0:
             raise Exception("Search run fzf projection failed")
+
+
+if __name__ == "__main__":
+    import fire
+
+    fire.Fire()

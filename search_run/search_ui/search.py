@@ -1,4 +1,4 @@
-from search_run.search_ui.fzf_in_terminal import FzfInTerminal
+from search_run.search_ui.fzf_terminal import FzfInTerminal
 
 
 class Search:

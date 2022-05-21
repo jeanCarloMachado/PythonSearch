@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import json
 from collections import namedtuple
 from typing import List, Tuple
@@ -9,7 +10,6 @@ from search_run.config import PythonSearchConfiguration
 from search_run.features import FeatureToggle
 from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.observability.logger import logging
-import datetime
 
 
 class RankingGenerator:

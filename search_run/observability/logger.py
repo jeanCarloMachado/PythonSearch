@@ -24,7 +24,3 @@ def initialize_systemd_logging():
     log.addHandler(JournalHandler(SYSLOG_IDENTIFIER=SYSLOG_IDENTIFIER))
     log.setLevel(logging.INFO)
     return log
-
-
-# undid the initailization as this is an uncontrollable side effect
-# logging = initialize_logging()

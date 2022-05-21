@@ -135,3 +135,12 @@ class PythonSearchCli:
                 )
 
         return Utils(self.configuration)
+
+    def google_it(self, query):
+        from search_run.interpreter.url import Url
+
+        Url(
+            {
+                "url": f"http://www.google.com/search?q={query}",
+            }
+        ).interpret_default()
