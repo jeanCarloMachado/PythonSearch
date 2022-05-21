@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from cmd import Cmd
 from typing import List
 
 from grimoire.notification import notify_send, send_notification
@@ -12,6 +13,7 @@ from search_run.context import Context
 from search_run.events.events import SearchRunPerformed
 from search_run.events.producer import EventProducer
 from search_run.exceptions import RunException
+from search_run.interpreter.cmd import CmdEntry
 from search_run.interpreter.interpreter import Interpreter
 from search_run.observability.logger import initialize_systemd_logging, logging
 
@@ -58,6 +60,11 @@ class EntryRunner:
         except BaseException as e:
             self.logging.warning(f"Could not decode metadata: {e}")
 
+        # when there are no matches we actually will use the query and interpret it
+        if not key and query_used:
+            CmdEntry({"cli_cmd": query_used}).interpret_default()
+            return
+
         matches = self._matching_keys(key)
 
         self.logging.info(
@@ -72,20 +79,18 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-        if not matches:
-            raise RunException.key_does_not_exist(key)
-
-        real_key: str = matches[0]
-        if len(matches) > 1:
-            real_key = min(matches, key=len)
-            notify_send(f"Multiple matches for this key {matches} using the smaller")
-
         if self.configuration.supported_features.is_enabled("event_tracking"):
             EventProducer().send_object(
                 SearchRunPerformed(
                     key=key, query_input=query_used, shortcut=from_shortcut
                 )
             )
+
+        real_key: str = matches[0]
+
+        if len(matches) > 1:
+            real_key = min(matches, key=len)
+            notify_send(f"Multiple matches for this key {matches} using the smaller")
 
         return Interpreter.build_instance(self.configuration).default(real_key)
 
