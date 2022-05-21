@@ -27,10 +27,10 @@ class Pipeline:
         dataset = self.build_dataset(use_cache=use_cached_dataset)
 
         if not disable_mlflow:
-            model = self.train_and_log(dataset)
+            model, _ = self.train_and_log(dataset)
         else:
             print("MLFLow disabled")
-            model = self.train(dataset)
+            model, _ = self.train(dataset)
 
         Evaluate().evaluate(model)
 
@@ -67,7 +67,7 @@ class Pipeline:
         if not dataset:
             dataset = self.build_dataset(use_cache=True)
 
-        Train().train_and_log(dataset)
+        return Train().train_and_log(dataset)
 
     def evaluate(self):
         """Evaluate the latest dataset"""

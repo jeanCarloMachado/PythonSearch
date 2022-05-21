@@ -23,5 +23,5 @@ class PythonSearchMLFlow:
         import mlflow
 
         run = self.get_latest_next_predictor_run()
-        logging.debug(f"RUn id: {run.run_id}")
+        logging.debug(f"Run id: {run.run_id}")
         return mlflow.keras.load_model(f"runs:/{run.run_id}/model")

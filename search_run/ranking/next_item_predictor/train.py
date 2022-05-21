@@ -30,7 +30,7 @@ class Train:
             model, metrics = self.train(dataset)
             mlflow.log_params(metrics)
 
-        return model
+        return model, metrics
 
     def train(self, dataset: TrainingDataset, plot_history=False):
 
