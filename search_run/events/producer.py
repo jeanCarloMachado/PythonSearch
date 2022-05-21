@@ -7,7 +7,7 @@ from search_run.config import KafkaConfig
 
 
 class EventProducer:
-    """ Produce kafka messages """
+    """Produce kafka messages"""
 
     def __init__(self):
         try:

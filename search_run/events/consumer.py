@@ -9,12 +9,12 @@ host = f"localhost:{default_port}"
 
 
 def consume_search_run_performed():
-    """ Entrypoint for the consumer """
+    """Entrypoint for the consumer"""
     SparkEventConsumer().from_class(SearchRunPerformed)
 
 
 class SparkEventConsumer:
-    """ Listen to kafka events and store then in the data-wharehouse """
+    """Listen to kafka events and store then in the data-wharehouse"""
 
     def __init__(self, disable_await_termination=False):
         # by default awaits termination

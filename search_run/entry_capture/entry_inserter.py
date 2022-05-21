@@ -9,7 +9,7 @@ from search_run.apps.terminal import Terminal
 
 
 class EntryInserter:
-    """ Add an entry dict to the entries repository """
+    """Add an entry dict to the entries repository"""
 
     ALLOWED_SPECIAL_CHARS = [
         "@",

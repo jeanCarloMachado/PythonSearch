@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import List, Optional
 
 from numpy import ndarray
+from typed_pyspark import Dataframe
 
 
 class Entry:
@@ -31,7 +32,7 @@ class Entry:
         return self.embedding is not None
 
     def get_similarity_score(self) -> float:
-        """ returns a score, if none will then return 0"""
+        """returns a score, if none will then return 0"""
         return self.similarity_score if self.similarity_score else 0.0
 
     def serialize(self) -> str:
@@ -67,12 +68,18 @@ class InvertedIndex:
     def serialize(self) -> str:
         pass
 
-from typed_pyspark import Dataframe
 
-SearchRunPerformed = Dataframe(schema={'key': 'String', "query_input": 'String', 'shortcut': "Boolean",  "timestamp":
-    "Date"})
+
+SearchRunPerformed = Dataframe(
+    schema={
+        "key": "String",
+        "query_input": "String",
+        "shortcut": "Boolean",
+        "timestamp": "Date",
+    }
+)
 SearchRunPerformedType = SearchRunPerformed.type_annotation()
 
 
-Entries = Dataframe(schema={'key': 'String', "position": 'Integer'})
+Entries = Dataframe(schema={"key": "String", "position": "Integer"})
 EntriesType = Entries.type_annotation()

@@ -1,5 +1,5 @@
-
 import os
+
 
 class FeaturesSupport:
     """
@@ -33,14 +33,15 @@ class FeatureToggle:
     """
     A simple feature toggle abstraction that allows one to turn on/off features.
     """
+
     def __init__(self):
         self.BASE_PATH = f"{os.getenv('HOME')}/.PythonSearch/features"
 
     def enable(self, feature_name: str):
-        os.system(f'touch {self.BASE_PATH}/{feature_name}')
+        os.system(f"touch {self.BASE_PATH}/{feature_name}")
 
     def disable(self, feature_name: str):
-        os.system(f'rm {self.BASE_PATH}/{feature_name}')
+        os.system(f"rm {self.BASE_PATH}/{feature_name}")
 
     def is_enabled(self, feature_name: str) -> bool:
-        return 0 == os.system(f' test -f {self.BASE_PATH}/{feature_name}')
+        return 0 == os.system(f" test -f {self.BASE_PATH}/{feature_name}")

@@ -5,6 +5,7 @@ class Search:
     """
     Opens search with all entries
     """
+
     def __init__(self, configuration):
         self.configuration = configuration
 

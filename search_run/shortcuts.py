@@ -1,6 +1,7 @@
 class Shortcuts:
 
     CTRL_W = "Control+w"
+    CTRL_V = "Control+v"
     CTRL_SPACE = "Control+space"
     SUPER_SPACE = "Mod4+space"
     SUPER_A = "Mod4+A"
@@ -181,6 +182,7 @@ class Shortcuts:
 
     ALT_R = "Mod1+r"
     ALT_SHIFT_R = "Mod1+Shift+r"
+    ALT_SHIFT_V = "Mod1+Shift+v"
 
     @staticmethod
     @property

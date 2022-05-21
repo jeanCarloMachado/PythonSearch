@@ -10,6 +10,7 @@ class SnippetInterpreter(BaseEntry):
     Snippet handler
     @todo rename to entry.Snippet
     """
+
     def __init__(self, cmd, context):
         self.context = context
 

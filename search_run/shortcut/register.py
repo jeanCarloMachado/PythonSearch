@@ -5,7 +5,7 @@ from search_run.apps.terminal import Terminal
 
 class Shortcut:
     def reset(self):
-        """ reset existing shortcuts, necesary only for gnome"""
+        """reset existing shortcuts, necesary only for gnome"""
         Terminal.run_command(
             "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
         )

@@ -3,13 +3,13 @@ import os
 
 
 class Terminal:
-    """ Terminal abstraction for search run """
+    """Terminal abstraction for search run"""
 
     DEFAULT_TITLE = "SearchRunTerminal"
 
     @staticmethod
     def run_command(cmd) -> bool:
-        """ runs a shell command  raise an exception on failure """
+        """runs a shell command  raise an exception on failure"""
         message = f'=> Command to run: "{cmd}"'
         logging.debug(message)
 
