@@ -2,15 +2,21 @@ from typing import Dict, List
 
 import mlflow
 import numpy as np
-import pyspark.sql.functions as F
 
 from search_run.config import DataConfig
 from search_run.ranking.entry_embeddings import create_indexed_embeddings
-from search_run.ranking.models import PythonSearchMLFlow
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
 
 
 class Train:
+    # 20 epochs looks like the ideal in the current architectur
+    EPOCHS = 20
+
+    def __init__(self, epochs=None):
+        if not epochs:
+            epochs = Train.EPOCHS
+        self.epochs = epochs
+
     def train_and_log(self, dataset):
         """train the model and log it to MLFlow"""
 
@@ -26,7 +32,7 @@ class Train:
 
         return model
 
-    def train(self, dataset, plot_history=False):
+    def train(self, dataset: TrainingDataset, plot_history=False):
 
         X, Y = self.create_XY(dataset)
 
@@ -39,9 +45,7 @@ class Train:
         from keras import layers
         from keras.models import Sequential
 
-        # 20 epochs looks like the ideal in the current architectur
-        epochs = 20
-        print("Epochs:", epochs)
+        print("Starting train with N epochs, N= ", self.epochs)
         model = Sequential()
         model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
         model.add(layers.Dense(1))
@@ -50,7 +54,7 @@ class Train:
         history = model.fit(
             X_train,
             Y_train,
-            epochs=epochs,
+            epochs=self.epochs,
             batch_size=32,
             validation_data=(X_test, Y_test),
         )
@@ -61,7 +65,7 @@ class Train:
             loss = history.history["loss"]
             val_loss = history.history["val_loss"]
 
-            epochs_range = range(1, epochs + 1)
+            epochs_range = range(1, self.epochs + 1)
             plt.plot(epochs_range, loss, "bo", label="Training Loss")
             plt.plot(epochs_range, val_loss, "b", label="Validation Loss")
             plt.title("Training and validation loss")
@@ -69,7 +73,6 @@ class Train:
             plt.ylabel("Loss")
             plt.legend()
             plt.show()
-            return
 
         train_mse, train_mae = model.evaluate(X_train, Y_train)
         test_mse, test_mae = model.evaluate(X_test, Y_test)
@@ -80,7 +83,9 @@ class Train:
             "test_mse": test_mse,
             "test_mae": test_mae,
         }
-        print(metrics)
+        import pprint
+
+        pprint.pprint(metrics)
         return model, metrics
 
     def create_XY(self, dataset):
@@ -88,7 +93,7 @@ class Train:
         Transform the dataset into X and Y
         """
 
-        embeddings_keys = self.create_embeddings_historical_keys(dataset)
+        embeddings_keys = self.create_embeddings_training_dataset(dataset)
 
         # + 1 is for the week number
         X = np.zeros([dataset.count(), 2 * 384 + 1])
@@ -110,15 +115,19 @@ class Train:
 
         return X, Y
 
-    def create_embeddings_historical_keys(self, dataset) -> Dict[str, np.ndarray]:
-        """create embeddings for all historical keys"""
+    def create_embeddings_training_dataset(
+        self, dataset: TrainingDataset
+    ) -> Dict[str, np.ndarray]:
+        """
+        create embeddings for
+        """
 
         # add embeddings to the dataset
         all_keys = self._get_all_keys_dataset(dataset)
 
         return create_indexed_embeddings(all_keys)
 
-    def _get_all_keys_dataset(self, dataset) -> List[str]:
+    def _get_all_keys_dataset(self, dataset: TrainingDataset) -> List[str]:
         collected_keys = dataset.select("key", "previous_key").collect()
 
         keys = []
@@ -127,17 +136,3 @@ class Train:
             keys.append(collected_keys.previous_key)
 
         return keys
-
-    def baseline_mse(self, dataset):
-        # naive approach of setting the same as input and output, used as baseline to measure the real model against
-        from sklearn.metrics import mean_squared_error
-
-        # apply only to the  ones with the same name in input and output
-        # complete dataset 8k, with the same name in input and output 150
-        naive = (
-            dataset.filter("key == previous_key")
-            .select("key", "label")
-            .withColumn("baseline", F.lit(1))
-        )
-        pd_naive = naive.select("label", "baseline").toPandas()
-        return mean_squared_error(pd_naive.label, pd_naive.baseline)

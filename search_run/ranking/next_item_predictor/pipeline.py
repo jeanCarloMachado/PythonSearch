@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+# using ipython interfers with fire arguments passing
 import logging
+from typing import Optional
 
 from pyspark.sql import SparkSession
 
@@ -17,16 +19,12 @@ class Pipeline:
     Exposes the whole ML pipeline, the runs everything
     """
 
-    def __init__(self):
-        self._spark = SparkSession.builder.getOrCreate()
-
     def run(self, disable_mlflow=False, use_cached_dataset=True):
         """
         Runs the whole pipeline
         """
         logging.info("End to end ranking")
         dataset = self.build_dataset(use_cache=use_cached_dataset)
-        print("MSE baseline: ", self.baseline_mse(dataset))
 
         if not disable_mlflow:
             model = self.train_and_log(dataset)
@@ -34,13 +32,32 @@ class Pipeline:
             print("MLFLow disabled")
             model = self.train(dataset)
 
-        Evaluate(model).evaluate()
+        Evaluate().evaluate(model)
 
-    def build_dataset(self, use_cache=False):
+    def build_dataset(self, use_cache=False, view_only=False):
         """
         Builds the dataset ready for training
         """
-        return TrainingDataset().build(use_cache)
+        dataset = TrainingDataset().build(use_cache)
+
+        print("Training dataset is ready", dataset.sample(0.1).show(n=10))
+
+        if view_only:
+            print("View only enabled will early return")
+            return
+
+        return dataset
+
+    def train(
+        self, *, dataset: Optional[TrainingDataset] = None, epochs=None, use_cache=True
+    ):
+        if not dataset:
+            print(f"Using data with cache: {use_cache} type: {type(use_cache)}")
+            dataset = self.build_dataset(use_cache=use_cache)
+
+        print(f"Custom epochs {epochs}")
+        model, metrics = Train(epochs).train(dataset, plot_history=True)
+        print(metrics)
 
     def train_and_log(self, dataset=None):
         """
@@ -52,9 +69,33 @@ class Pipeline:
 
         Train().train_and_log(dataset)
 
-    def evaluate_latest(self):
+    def evaluate(self):
+        """Evaluate the latest dataset"""
         model = PythonSearchMLFlow().get_latest_next_predictor_model()
         return Evaluate().evaluate(model)
+
+    def baseline_mse(self, dataset=None):
+        """
+        naive approach of setting the same as input and output, used as baseline to measure the real model against
+        """
+        import pyspark.sql.functions as F
+        from sklearn.metrics import mean_squared_error
+
+        if not dataset:
+            dataset = self.build_dataset(use_cache=True)
+
+        # apply only to the  ones with the same name in input and output
+        # complete dataset 8k, with the same name in input and output 150
+        naive = (
+            dataset.filter("key == previous_key")
+            .select("key", "label")
+            .withColumn("baseline", F.lit(1))
+        )
+        pd_naive = naive.select("label", "baseline").toPandas()
+        return {"baseline_mse": mean_squared_error(pd_naive.label, pd_naive.baseline)}
+
+    def _spark(self):
+        return SparkSession.builder.getOrCreate()
 
 
 if __name__ == "__main__":

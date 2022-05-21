@@ -144,3 +144,8 @@ class PythonSearchCli:
                 "url": f"http://www.google.com/search?q={query}",
             }
         ).interpret_default()
+
+    def next_item_pipeline(self):
+        from search_run.ranking.next_item_predictor.pipeline import Pipeline
+
+        return Pipeline
