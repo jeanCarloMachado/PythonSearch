@@ -14,17 +14,6 @@ repos:
           stages: [commit, manual]
         - id: check-docstring-first
           stages: [commit, manual]
--   repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.6.4
-    hooks:
-        - id: isort
-          stages: [commit]
--   repo: https://github.com/ambv/black
-    rev: HEAD
-    hooks:
-    -   id: black
-        language_version: python3.10
-        stages: [commit]
 -   repo: local
     hooks:
       - id: compile
