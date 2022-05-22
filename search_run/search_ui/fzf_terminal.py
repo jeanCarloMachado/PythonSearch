@@ -74,7 +74,7 @@ class FzfInTerminal:
         --bind "ctrl-d:abort" '
         """
 
-    def _launch_terminal(self, internal_cmd: str):
+    def _launch_terminal(self, internal_cmd: str) -> None:
         launch_cmd = f"""ionice -n 3 nice -19 kitty \
         --title="{self.title} {datetime.datetime.now().isoformat()}"\
          -o remember_window_size=n \
