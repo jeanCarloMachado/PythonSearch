@@ -45,7 +45,7 @@ class Rofi:
         self, get_options_cmd: Optional[str] = None, accept_empty: Optional[bool] = None
     ) -> str:
 
-        if accept_empty != None:
+        if accept_empty is not None:
             self.accept_empty = accept_empty
 
         entries_cmd = ""
