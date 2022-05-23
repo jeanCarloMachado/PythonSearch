@@ -1,6 +1,7 @@
 import datetime
 import logging
 from typing import List, Tuple
+import sys
 
 import numpy as np
 
@@ -13,8 +14,16 @@ class Evaluate:
     Central place to evaluate the quality of the model
     """
 
-    def evaluate(self, model):
-        self.model = model
+    def __init__(self):
+        self.month = datetime.datetime.now().month
+        self.NUM_OF_TOP_RESULTS = 9
+        self.NUM_OF_BOTTOM_RESULTS = 4
+        logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
+        from search_run.ranking.models import PythonSearchMLFlow
+
+        self.model = PythonSearchMLFlow().get_latest_next_predictor_model(debug_info=True)
+
+    def evaluate(self):
         logging.info("Evaluate model")
         self.all_latest_keys = EntriesLoader.load_all_keys()
         self.embeddings_keys_latest = EmbeddingsReader().load(self.all_latest_keys)
@@ -24,8 +33,8 @@ class Evaluate:
             "set current project as reco",
             "days quality tracking life good day",
         ]
-        NUM_OF_TOP_RESULTS = 9
-        NUM_OF_BOTTOM_RESULTS = 4
+
+        print({"params_used": {"month": self.month}})
 
         result = {key: self.get_rank_for_key(key)[0:20] for key in keys_to_test}
         for key in keys_to_test:
@@ -33,18 +42,17 @@ class Evaluate:
             print(f"Key: {key}")
 
             print(f"Top")
-            for i in result[0:NUM_OF_TOP_RESULTS]:
+            for i in result[0:self.NUM_OF_TOP_RESULTS]:
                 print(f"    {i}")
 
             print(f"Bottom")
-            for i in result[-NUM_OF_BOTTOM_RESULTS:]:
+            for i in result[-self.NUM_OF_BOTTOM_RESULTS:]:
                 print(f"    {i}")
 
     def get_rank_for_key(self, selected_key) -> List[Tuple[str, float]]:
         """
         Looks what should be next if the current key is the one passed, look for all current existing keys
         """
-        month = datetime.datetime.now().month
 
         X_validation = np.zeros([len(self.all_latest_keys), 2 * 384 + 1])
         X_key = []
@@ -54,7 +62,7 @@ class Evaluate:
                 (
                     selected_key_embedding,
                     EmbeddingSerialization.read(self.embeddings_keys_latest[key]),
-                    np.asarray([month]),
+                    np.asarray([self.month]),
                 )
             )
             X_key.append(key)

@@ -1,10 +1,9 @@
-import logging
 
 from mlflow.entities import RunInfo
 
 
 class PythonSearchMLFlow:
-    def get_latest_next_predictor_run(self) -> RunInfo:
+    def get_latest_next_predictor_run(self, debug_info=False) -> RunInfo:
         import mlflow
         from mlflow.tracking import MlflowClient
 
@@ -15,13 +14,15 @@ class PythonSearchMLFlow:
 
         client: MlflowClient = MlflowClient()
         experiment = client.get_experiment_by_name(experiment_name)
-        logging.debug(f"Experiment id: {experiment.experiment_id}")
+        if debug_info:
+            print(f"Experiment id: {experiment.experiment_id}")
         runs = client.list_run_infos(experiment_id=experiment.experiment_id)
         return runs[0]
 
-    def get_latest_next_predictor_model(self):
+    def get_latest_next_predictor_model(self, debug_info=False):
         import mlflow
 
         run = self.get_latest_next_predictor_run()
-        logging.debug(f"Run id: {run.run_id}")
+        if debug_info:
+            print(f"Run id: {run.run_id}")
         return mlflow.keras.load_model(f"runs:/{run.run_id}/model")

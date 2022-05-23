@@ -6,7 +6,6 @@ from typing import Optional
 from pyspark.sql import SparkSession
 
 from search_run.observability.logger import initialize_logging
-from search_run.ranking.models import PythonSearchMLFlow
 from search_run.ranking.next_item_predictor.evaluator import Evaluate
 from search_run.ranking.next_item_predictor.train import Train
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
@@ -73,8 +72,7 @@ class Pipeline:
         """
         Evaluate the latest dataset
         """
-        model = PythonSearchMLFlow().get_latest_next_predictor_model()
-        return Evaluate().evaluate(model)
+        return Evaluate().evaluate()
 
     def baseline_mse(self, dataset=None):
         """
