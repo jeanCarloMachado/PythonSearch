@@ -39,11 +39,11 @@ class TrainingDataset:
 
         df_with_previous = self._join_with_previous(search_performed_df_filtered)
 
+        logging.info("Group by month")
         df_by_month = df_with_previous.withColumn("month", F.month("timestamp"))
 
-        logging.info("Columns added")
 
-        # keep only necessary columns
+        # keep only the necessary columns
         pair = df_by_month.select("month", "key", "previous_key", "timestamp")
 
         logging.info("Adding number of times the pair was executed together")
