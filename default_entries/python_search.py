@@ -23,16 +23,19 @@ class PythonSearch(EntriesGroup):
             "new-window-non-cli": True,
             "cmd": "search_run ranking generate --recompute_ranking=True",
         },
-        "compute rerank search run": {
-            "new-window-non-cli": True,
-            "cmd": "search_run ranking recompute_rank",
-        },
-        "save clipboard transform clipboard and register to grimoire": {
+
+        "save entry from clipboard inferring type": {
+            "description": "Register to search run a string snippet",
             "cmd": "search_run register_clipboard",
             "i3_shortcut": Shortcuts.SUPER_R,
         },
         "register snippet search run": {
+            "description": "Register to search run a string snippet",
             "cmd": "search_run register_snippet_clipboard",
             "i3_shortcut": Shortcuts.SUPER_SHIFT_R,
+        },
+        "compute rerank search run": {
+            "new-window-non-cli": True,
+            "cmd": "search_run ranking recompute_rank",
         },
     }
