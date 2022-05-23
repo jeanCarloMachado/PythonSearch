@@ -26,13 +26,9 @@ class TrainingDataset:
     def build(self, use_cache=False, write_cache=True):
         """When cache is enabled, writes a parquet in a temporary file"""
         if use_cache:
-            if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
-                print("Reading cache dataset")
-                return self._spark.read.parquet()
-            else:
-                print("Cache does not exist, creating dataset")
+            return self._read_cache()
 
-        search_performed_df = SearchesPerformed(self._spark).load(TrainingDataset.DATASET_CACHE_FILE)
+        search_performed_df = SearchesPerformed().load()
 
         # filter out too common keys
         excluded_keys = ["startsearchrunsearch", "search run search focus or open", ""]
@@ -41,33 +37,14 @@ class TrainingDataset:
         )
         logging.info("Loading searches performed")
 
-        # build pair dataset with label
-        # add literal column
-        search_performed_df_tmpcol = search_performed_df_filtered.withColumn(
-            "tmp", F.lit("toremove")
-        )
-        window = Window.partitionBy("tmp").orderBy("timestamp")
+        df_with_previous = self._join_with_previous(search_performed_df_filtered)
 
-        # add row number to the dataset
-        search_performed_df_row_number = search_performed_df_tmpcol.withColumn(
-            "row_number", F.row_number().over(window)
-        ).sort("timestamp", ascending=False)
-
-        # add previous key to the dataset
-        search_performed_df_with_previous = search_performed_df_row_number.withColumn(
-            "previous_key", F.lag("key", 1, None).over(window)
-        ).sort("timestamp", ascending=False)
-
-        search_performed_df_with_week = search_performed_df_with_previous.withColumn(
-            "week", F.weekofyear("timestamp")
-        )
+        df_by_week = df_with_previous.withColumn("week", F.weekofyear("timestamp"))
 
         logging.info("Columns added")
 
         # keep only necessary columns
-        pair = search_performed_df_with_week.select(
-            "week", "key", "previous_key", "timestamp"
-        )
+        pair = df_by_week.select("week", "key", "previous_key", "timestamp")
 
         logging.info("Adding number of times the pair was executed together")
         grouped = (
@@ -80,25 +57,59 @@ class TrainingDataset:
         grouped.count()
 
         logging.info("Adding label")
+
         # add the label
-        dataset = grouped.withColumn(
-            "label",
-            F.col("times") / F.sum("times").over(Window.partitionBy("week", "key")),
-        ).orderBy("week", "key", "label")
-        dataset = dataset.select(*self.columns)
+        dataset = self._add_label(grouped)
 
         logging.info("TrainingDataset ready, writing it to disk")
         if write_cache:
-            print("Writing cache dataset to disk")
-            if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
-                import shutil
-
-                shutil.rmtree(TrainingDataset.DATASET_CACHE_FILE)
-            dataset.write.parquet(TrainingDataset.DATASET_CACHE_FILE)
+            self._write_cache(dataset)
 
         logging.info("Printing a sample of the dataset")
         dataset.show(10)
         return dataset
+
+    def _join_with_previous(self, df):
+        """Adds the previou_key as an entry"""
+        # build pair dataset with label
+        # add literal column
+        search_performed_df_tmpcol = df.withColumn("tmp", F.lit("toremove"))
+        window = Window.partitionBy("tmp").orderBy("timestamp")
+
+        # add row number to the dataset
+        search_performed_df_row_number = search_performed_df_tmpcol.withColumn(
+            "row_number", F.row_number().over(window)
+        ).sort("timestamp", ascending=False)
+
+        # add previous key to the dataset
+        search_performed_df_with_previous = search_performed_df_row_number.withColumn(
+            "previous_key", F.lag("key", 1, None).over(window)
+        ).sort("timestamp", ascending=False)
+
+        return search_performed_df_with_previous
+
+    def _write_cache(self, dataset) -> None:
+        print("Writing cache dataset to disk")
+        if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
+            import shutil
+
+            shutil.rmtree(TrainingDataset.DATASET_CACHE_FILE)
+
+        dataset.write.parquet(TrainingDataset.DATASET_CACHE_FILE)
+
+    def _add_label(self, grouped):
+        dataset = grouped.withColumn(
+            "label",
+            F.col("times") / F.sum("times").over(Window.partitionBy("week", "key")),
+        ).orderBy("week", "key", "label")
+        return dataset.select(*self.columns)
+
+    def _read_cache(self):
+        if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
+            print("Reading cache dataset")
+            return self._spark.read.parquet()
+        else:
+            print("Cache does not exist, creating dataset")
 
 
 if __name__ == "__main__":
