@@ -15,6 +15,7 @@ class TrainingDataset:
     """
 
     columns = "key", "previous_key", "week", "label"
+    DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
         self._spark = SparkSession.builder.getOrCreate()
@@ -25,13 +26,13 @@ class TrainingDataset:
     def build(self, use_cache=False, write_cache=True):
         """When cache is enabled, writes a parquet in a temporary file"""
         if use_cache:
-            if os.path.exists("/tmp/dataset"):
+            if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
                 print("Reading cache dataset")
-                return self._spark.read.parquet("/tmp/dataset")
+                return self._spark.read.parquet()
             else:
                 print("Cache does not exist, creating dataset")
 
-        search_performed_df = SearchesPerformed(self._spark).load()
+        search_performed_df = SearchesPerformed(self._spark).load(TrainingDataset.DATASET_CACHE_FILE)
 
         # filter out too common keys
         excluded_keys = ["startsearchrunsearch", "search run search focus or open", ""]
@@ -89,11 +90,11 @@ class TrainingDataset:
         logging.info("TrainingDataset ready, writing it to disk")
         if write_cache:
             print("Writing cache dataset to disk")
-            if os.path.exists("/tmp/dataset"):
+            if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
                 import shutil
 
-                shutil.rmtree("/tmp/dataset")
-            dataset.write.parquet("/tmp/dataset")
+                shutil.rmtree(TrainingDataset.DATASET_CACHE_FILE)
+            dataset.write.parquet(TrainingDataset.DATASET_CACHE_FILE)
 
         logging.info("Printing a sample of the dataset")
         dataset.show(10)

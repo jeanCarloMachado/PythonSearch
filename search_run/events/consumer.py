@@ -14,7 +14,9 @@ def consume_search_run_performed():
 
 
 class SparkEventConsumer:
-    """Listen to kafka events and store then in the data-wharehouse"""
+    """
+    Listen to kafka events and store then in the data-wharehouse
+    """
 
     def __init__(self, disable_await_termination=False):
         # by default awaits termination
