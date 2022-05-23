@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import mlflow
 import numpy as np
@@ -9,8 +9,8 @@ from search_run.ranking.next_item_predictor.training_dataset import TrainingData
 
 
 class Train:
-    # 20 epochs looks like the ideal in the current architectur
-    EPOCHS = 20
+    # looks like the ideal in the current architecture
+    EPOCHS = 10
 
     def __init__(self, epochs=None):
         if not epochs:
@@ -88,14 +88,15 @@ class Train:
         pprint.pprint(metrics)
         return model, metrics
 
-    def create_XY(self, dataset):
+    def create_XY(self, dataset: TrainingDataset) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y
+        Returns a pair with X, Y
         """
 
         embeddings_keys = self.create_embeddings_training_dataset(dataset)
 
-        # + 1 is for the week number
+        # + 1 is for the month number
         X = np.zeros([dataset.count(), 2 * 384 + 1])
         Y = np.empty(dataset.count())
 
@@ -108,7 +109,7 @@ class Train:
                 [
                     embeddings_keys[collected_key.key],
                     embeddings_keys[collected_key.previous_key],
-                    np.asarray([collected_key.week]),
+                    np.asarray([collected_key.month]),
                 ]
             )
             Y[i] = collected_key.label
@@ -119,7 +120,7 @@ class Train:
         self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
-        create embeddings for
+        create embeddings
         """
 
         # add embeddings to the dataset

@@ -70,7 +70,9 @@ class Pipeline:
         return Train().train_and_log(dataset)
 
     def evaluate(self):
-        """Evaluate the latest dataset"""
+        """
+        Evaluate the latest dataset
+        """
         model = PythonSearchMLFlow().get_latest_next_predictor_model()
         return Evaluate().evaluate(model)
 

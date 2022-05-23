@@ -106,7 +106,7 @@ class RankingGenerator:
     def _fetch_latest_entries(self):
         self.used_entries: List[Tuple[str, dict]] = []
         if self.configuration.supported_features.is_enabled(
-            "redis"
+                "redis"
         ) and self.feature_toggle.is_enabled("ranking_latest_used"):
             self.used_entries = self.get_used_entries_from_redis(self.entries)
 
@@ -116,44 +116,19 @@ class RankingGenerator:
         """
 
         if not debug:
-            import os
-
-            # disable tensorflow warnings
-            os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-            # disable system warnings
-            import warnings
-
-            warnings.filterwarnings("ignore")
-            import logging
-
-            logger = logging.getLogger()
-            logger.disabled = True
+            self._disable_debug()
 
         import numpy as np
-
         from search_run.events.latest_used_entries import LatestUsedEntries
-        from search_run.ranking.entry_embeddings import EmbeddingSerialization
+        from search_run.ranking.entry_embeddings import EmbeddingsReader, EmbeddingSerialization
         from search_run.ranking.models import PythonSearchMLFlow
 
         all_keys = self.configuration.commands.keys()
+        embedding_mapping = EmbeddingsReader().load(all_keys)
+
         previous_key = LatestUsedEntries().get_latest_used_keys()[0]
         if debug:
             print(f"Key Previous: '{previous_key}'")
-
-        client = LatestUsedEntries.get_redis_client()
-        pipe = client.pipeline()
-
-        for key in all_keys:
-            pipe.hget(f"k_{key}", "embedding")
-
-        all_embeddings = pipe.execute()
-
-        if len(all_embeddings) != len(all_keys):
-            raise Exception(
-                "Number of keys returned from redis does not match the number of embeddings found"
-            )
-
-        embedding_mapping = dict(zip(all_keys, all_embeddings))
 
         for previous_key in LatestUsedEntries().get_latest_used_keys():
             if previous_key in embedding_mapping and embedding_mapping[previous_key]:
@@ -172,9 +147,9 @@ class RankingGenerator:
             embedding_mapping[previous_key]
         )
 
-        week_number = datetime.datetime.today().isocalendar()[2]
+        month = datetime.datetime.now().month
 
-        X = np.zeros([len(all_keys), 2 * 384])
+        X = np.zeros([len(all_keys), 2 * 384 + 1])
         for i, (key, embedding) in enumerate(embedding_mapping.items()):
             if embedding is None:
                 logging.warning(f"No content for key {key}")
@@ -183,7 +158,7 @@ class RankingGenerator:
                 (
                     previous_key_embedding,
                     EmbeddingSerialization.read(embedding),
-                    np.asarray([week_number]),
+                    np.asarray([month]),
                 )
             )
 
@@ -203,6 +178,20 @@ class RankingGenerator:
             only_keys = only_keys[0:top_n]
 
         return only_keys
+
+    def _disable_debug(self):
+        import os
+
+        # disable tensorflow warnings
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+        # disable system warnings
+        import warnings
+
+        warnings.filterwarnings("ignore")
+        import logging
+
+        logger = logging.getLogger()
+        logger.disabled = True
 
     def get_ranking_b(self, recompute_ranking) -> List[str]:
         from search_run.ranking.baseline.serve import get_ranked_keys

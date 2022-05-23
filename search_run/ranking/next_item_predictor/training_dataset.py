@@ -14,7 +14,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = "key", "previous_key", "week", "label"
+    columns = "key", "previous_key", "month", "label"
     DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -39,16 +39,16 @@ class TrainingDataset:
 
         df_with_previous = self._join_with_previous(search_performed_df_filtered)
 
-        df_by_week = df_with_previous.withColumn("week", F.weekofyear("timestamp"))
+        df_by_month = df_with_previous.withColumn("month", F.month("timestamp"))
 
         logging.info("Columns added")
 
         # keep only necessary columns
-        pair = df_by_week.select("week", "key", "previous_key", "timestamp")
+        pair = df_by_month.select("month", "key", "previous_key", "timestamp")
 
         logging.info("Adding number of times the pair was executed together")
         grouped = (
-            pair.groupBy("week", "key", "previous_key")
+            pair.groupBy("month", "key", "previous_key")
             .agg(F.count("previous_key").alias("times"))
             .sort("key", "times")
         )
@@ -100,14 +100,14 @@ class TrainingDataset:
     def _add_label(self, grouped):
         dataset = grouped.withColumn(
             "label",
-            F.col("times") / F.sum("times").over(Window.partitionBy("week", "key")),
-        ).orderBy("week", "key", "label")
+            F.col("times") / F.sum("times").over(Window.partitionBy("month", "key")),
+        ).orderBy("month", "key", "label")
         return dataset.select(*self.columns)
 
     def _read_cache(self):
         if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
             print("Reading cache dataset")
-            return self._spark.read.parquet()
+            return self._spark.read.parquet(TrainingDataset.DATASET_CACHE_FILE)
         else:
             print("Cache does not exist, creating dataset")
 
