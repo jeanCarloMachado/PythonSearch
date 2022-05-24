@@ -12,7 +12,6 @@ from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.observability.logger import logging
 import numpy as np
 from search_run.events.latest_used_entries import LatestUsedEntries
-from search_run.ranking.entry_embeddings import EmbeddingsReader, EmbeddingSerialization
 from search_run.ranking.models import PythonSearchMLFlow
 
 
@@ -122,6 +121,8 @@ class RankingGenerator:
         if not debug:
             self._disable_debug()
 
+        from search_run.ranking.entry_embeddings import EmbeddingsReader, EmbeddingSerialization
+
         all_keys = self.configuration.commands.keys()
         self.embedding_mapping = EmbeddingsReader().load(all_keys)
 
@@ -161,6 +162,7 @@ class RankingGenerator:
         return only_keys
 
     def _get_previous_key_embedding(self):
+        from search_run.ranking.entry_embeddings import EmbeddingSerialization
         for previous_key in LatestUsedEntries().get_latest_used_keys():
             if previous_key in self.embedding_mapping and self.embedding_mapping[previous_key]:
                 # exits the loop as soon as we find an existing previous key
