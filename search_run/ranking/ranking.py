@@ -10,6 +10,10 @@ from search_run.config import PythonSearchConfiguration
 from search_run.features import FeatureToggle
 from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.observability.logger import logging
+import numpy as np
+from search_run.events.latest_used_entries import LatestUsedEntries
+from search_run.ranking.entry_embeddings import EmbeddingsReader, EmbeddingSerialization
+from search_run.ranking.models import PythonSearchMLFlow
 
 
 class RankingGenerator:
@@ -118,39 +122,15 @@ class RankingGenerator:
         if not debug:
             self._disable_debug()
 
-        import numpy as np
-        from search_run.events.latest_used_entries import LatestUsedEntries
-        from search_run.ranking.entry_embeddings import EmbeddingsReader, EmbeddingSerialization
-        from search_run.ranking.models import PythonSearchMLFlow
-
         all_keys = self.configuration.commands.keys()
-        embedding_mapping = EmbeddingsReader().load(all_keys)
+        self.embedding_mapping = EmbeddingsReader().load(all_keys)
 
-        previous_key = LatestUsedEntries().get_latest_used_keys()[0]
-        if debug:
-            print(f"Key Previous: '{previous_key}'")
-
-        for previous_key in LatestUsedEntries().get_latest_used_keys():
-            if previous_key in embedding_mapping and embedding_mapping[previous_key]:
-                # exits the loop as soon as we find an existing previous key
-                logging.info(f"Picked previous key: {previous_key}")
-                break
-            else:
-                logging.warning(
-                    f"Could not find embedding for previous key {previous_key}, value: "
-                    f"{embedding_mapping.get(previous_key)}"
-                )
-
-        logging.info(f"Previous key: {previous_key}")
-
-        previous_key_embedding = EmbeddingSerialization.read(
-            embedding_mapping[previous_key]
-        )
+        previous_key_embedding = self._get_previous_key_embedding()
 
         month = datetime.datetime.now().month
 
         X = np.zeros([len(all_keys), 2 * 384 + 1])
-        for i, (key, embedding) in enumerate(embedding_mapping.items()):
+        for i, (key, embedding) in enumerate(self.embedding_mapping.items()):
             if embedding is None:
                 logging.warning(f"No content for key {key}")
                 continue
@@ -163,6 +143,7 @@ class RankingGenerator:
             )
 
         model = PythonSearchMLFlow().get_latest_next_predictor_model()
+
         Y = model.predict(X)
 
         result = list(zip(all_keys, Y))
@@ -178,6 +159,24 @@ class RankingGenerator:
             only_keys = only_keys[0:top_n]
 
         return only_keys
+
+    def _get_previous_key_embedding(self):
+        for previous_key in LatestUsedEntries().get_latest_used_keys():
+            if previous_key in self.embedding_mapping and self.embedding_mapping[previous_key]:
+                # exits the loop as soon as we find an existing previous key
+                logging.info(f"Picked previous key: {previous_key}")
+                break
+            else:
+                logging.warning(
+                    f"Could not find embedding for previous key {previous_key}, value: "
+                    f"{self.embedding_mapping.get(previous_key)}"
+                )
+
+        logging.info(f"Previous key: {previous_key}")
+
+        return EmbeddingSerialization.read(
+            self.embedding_mapping[previous_key]
+        )
 
     def _disable_debug(self):
         import os

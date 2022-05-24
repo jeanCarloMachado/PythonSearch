@@ -36,7 +36,6 @@ class Evaluate:
 
         print({"params_used": {"month": self.month}})
 
-        result = {key: self.get_rank_for_key(key)[0:20] for key in keys_to_test}
         for key in keys_to_test:
             result = self.get_rank_for_key(key)
             print(f"Key: {key}")
@@ -67,7 +66,6 @@ class Evaluate:
             )
             X_key.append(key)
 
-        X_validation.shape
         Y_pred = self.model.predict(X_validation)
         result = list(zip(X_key, Y_pred))
         result.sort(key=lambda x: x[1], reverse=True)

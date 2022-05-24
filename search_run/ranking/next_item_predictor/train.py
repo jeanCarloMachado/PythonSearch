@@ -10,7 +10,7 @@ from search_run.ranking.next_item_predictor.training_dataset import TrainingData
 
 class Train:
     # looks like the ideal in the current architecture
-    EPOCHS = 10
+    EPOCHS = 22
 
     def __init__(self, epochs=None):
         if not epochs:
@@ -42,12 +42,22 @@ class Train:
             X, Y, test_size=0.20, random_state=42
         )
 
+        # normalize
+        mean = X_train.mean(axis=0)
+        X_train -= mean
+        std = X_train.std(axis=0)
+        X_train /= std
+
+        X_test -= mean
+        X_test /= std
+
         from keras import layers
         from keras.models import Sequential
 
         print("Starting train with N epochs, N= ", self.epochs)
         model = Sequential()
-        model.add(layers.Dense(32, activation="relu", input_shape=X[1].shape))
+        model.add(layers.Dense(100, activation="relu", input_shape=X[1].shape))
+        model.add(layers.Dropout(0.5))
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
 
@@ -58,6 +68,19 @@ class Train:
             batch_size=32,
             validation_data=(X_test, Y_test),
         )
+
+        train_mse, train_mae = model.evaluate(X_train, Y_train)
+        test_mse, test_mae = model.evaluate(X_test, Y_test)
+
+        metrics = {
+            "train_mse": train_mse,
+            "train_mae": train_mae,
+            "test_mse": test_mse,
+            "test_mae": test_mae,
+        }
+        import pprint
+
+        pprint.pprint(metrics)
 
         if plot_history:
             import matplotlib.pyplot as plt
@@ -74,18 +97,6 @@ class Train:
             plt.legend()
             plt.show()
 
-        train_mse, train_mae = model.evaluate(X_train, Y_train)
-        test_mse, test_mae = model.evaluate(X_test, Y_test)
-
-        metrics = {
-            "train_mse": train_mse,
-            "train_mae": train_mae,
-            "test_mse": test_mse,
-            "test_mae": test_mae,
-        }
-        import pprint
-
-        pprint.pprint(metrics)
         return model, metrics
 
     def create_XY(self, dataset: TrainingDataset) -> Tuple[np.ndarray, np.ndarray]:
@@ -117,7 +128,7 @@ class Train:
         return X, Y
 
     def create_embeddings_training_dataset(
-        self, dataset: TrainingDataset
+            self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
         create embeddings
