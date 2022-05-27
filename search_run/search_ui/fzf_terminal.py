@@ -71,6 +71,7 @@ class FzfInTerminal:
         --bind "ctrl-g:execute-silent:( {self.executable} google_it {{q}} )" \
         --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-f:first" \
+        --bind "shift-up:first" \
         --bind "ctrl-d:abort" '
         """
 

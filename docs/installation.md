@@ -4,12 +4,12 @@
 making it work for everybody. If you wanna install it please reach out that I can help you out - Jean**
 
 
-
 - [kitty terminal](https://sw.kovidgoyal.net/kitty/) (if you need other termaials should be simple to support)
 - [fzf](https://github.com/junegunn/fzf#examples)
 - jq
 - xsell
 - tmux
+- rofi
 - Python >= 3.9
 
 # Installation
