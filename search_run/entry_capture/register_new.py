@@ -38,7 +38,8 @@ class RegisterNew:
         )
         self.infer_content(clipboard_content, key)
 
-    def infer_content(self, content, key):
+    def infer_content(self, content: str, key: str):
+        """ Add an entry inferring the type """
         content = self._sanitize(content)
 
         interpreter: BaseEntry = Interpreter.build_instance(
