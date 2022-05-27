@@ -32,6 +32,13 @@ class EntryInserter:
             Terminal.run_command("search_run generate_shortcuts")
 
     def _append_entry(self, line_to_add: str):
+        """
+        This script does the following:
+            Copies the main file,
+            add the new entry to it
+            Compile to see if it is still valid python
+            If so, then replaces it
+        """
         copy_file = self.file_to_append + "cpy"
 
         shutil.copyfile(self.file_to_append, copy_file)
