@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from datetime import datetime
 
 from search_run.apps.notification_ui import send_notification
@@ -9,56 +10,45 @@ from search_run.apps.terminal import Terminal
 class EntryInserter:
     """Add an entry dict to the entries repository"""
 
-    ALLOWED_SPECIAL_CHARS = [
-        "@",
-        "#",
-        "-",
-        "_",
-        "'",
-        "?",
-        "=",
-        ",",
-        ".",
-        " ",
-        "/",
-        "(",
-        ")",
-        ";",
-        '"',
-        "%",
-        " ",
-        ":",
-        "{",
-        "'",
-        '"',
-        "}",
-        "?",
-    ]
     NEW_ENTRIES_STRING = "# NEW_ENTRIES_HERE"
 
     def __init__(self, configuration):
         self.configuration = configuration
         self.file_to_append = self.configuration.get_project_root() + "/entries/main.py"
 
-    def insert(self, key: str, entry: dict):
+    def insert(self, key: str, entry: dict, enable_shortcuts_generation=False):
 
         entry["created_at"] = datetime.now().isoformat()
 
-        try:
+        row_entry = str(entry)
+        line_to_add = f"    '{key}': {row_entry},"
+        self._append_entry(line_to_add)
 
-            row_entry = str(entry)
-            line_to_add = f"    '{key}': {row_entry},"
-            self.append_entry(line_to_add)
-        except Exception as e:
-            send_notification(f"Error while inserting entry: {e}")
+
         send_notification(f"Entry {row_entry} inserted successfully")
-        # refresh the configuration
-        Terminal.run_command("search_run export_configuration")
 
-    def append_entry(self, line_to_add: str):
-        with open(self.file_to_append, 'w') as out, open(self.file_to_append) as f:
-            for line in f:
+        # refresh the configuration
+        if enable_shortcuts_generation:
+            Terminal.run_command("search_run generate_shortcuts")
+
+    def _append_entry(self, line_to_add: str):
+        copy_file = self.file_to_append + "cpy"
+
+        shutil.copyfile(self.file_to_append, copy_file)
+
+        with open(copy_file, 'w') as out, open(self.file_to_append) as source_file:
+            for line in source_file:
                 out.write(line)
                 if self.NEW_ENTRIES_STRING in line:
                     # insert text.
-                    out.write('\n'.join(line_to_add) + '\n')
+                    print(f"Writing line: {line_to_add}")
+                    out.write(line_to_add + '\n')
+
+        # compile and make sure the file is a valid python
+        import os
+        if os.system(f'python -m compileall -q {copy_file}') != 0:
+            message = "Copy of file does not compile so wont proceed replacing!"
+            send_notification(message)
+            raise Exception(message)
+
+        shutil.move(copy_file, self.file_to_append)

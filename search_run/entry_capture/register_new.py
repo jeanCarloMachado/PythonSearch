@@ -38,10 +38,9 @@ class RegisterNew:
         )
         self.infer_content(clipboard_content, key)
 
+
     def infer_content(self, content: str, key: str):
         """ Add an entry inferring the type """
-        content = self._sanitize(content)
-
         interpreter: BaseEntry = Interpreter.build_instance(
             self.configuration
         ).get_interpreter(content)
@@ -58,7 +57,6 @@ class RegisterNew:
         if emptish(content):
             raise RegisterNewException.empty_content()
 
-        snippet_content = self._sanitize(content)
 
         key, as_dict = transform_into_anonymous_entry(content)
         self.entry_inserter.insert(key, as_dict)
@@ -70,14 +68,19 @@ class RegisterNew:
         snippet_content, key = self._get_clipboard_content_and_ask_key(
             "Name your string snippet"
         )
-        if emptish(snippet_content):
+
+        self.register_snippet(snippet_content, key)
+
+
+    def register_snippet(self, content, key):
+        if emptish(content):
             raise RegisterNewException.empty_content()
 
-        snippet_content = self._sanitize(snippet_content)
-
         as_dict = {
-            "snippet": snippet_content,
+            "snippet": content,
         }
+
+        print(f"Dict: {as_dict}")
 
         self.entry_inserter.insert(key, as_dict)
 
@@ -96,24 +99,12 @@ class RegisterNew:
         if emptish(meaning):
             raise RegisterNewException.empty_content()
 
-        meaning = self._sanitize(meaning)
-
         as_dict = {
             "snippet": meaning,
             "language": "German",
         }
 
         self.entry_inserter.insert(key, as_dict)
-
-    def _sanitize(self, content):
-        """
-        Cleans all input incomming from outside before using it further down in the system
-        """
-        content = content.replace("\n", "\\n")
-        content = content.replace("'", "'")
-        content = remove_special_chars(content, EntryInserter.ALLOWED_SPECIAL_CHARS)
-
-        return content
 
     def _get_clipboard_content_and_ask_key(self, title) -> Tuple[str, str]:
         """
