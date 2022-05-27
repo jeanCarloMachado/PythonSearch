@@ -93,11 +93,11 @@ class PythonSearchCli:
 
         return RegisterNew(self.configuration)
 
-    def export_configuration(self):
-        from search_run.shortcut.i3_shortcut_generator import ConfigurationGenerator
+    def generate_shortcuts(self):
+        from search_run.shortcut.generator import ShortcutGenerator
 
-        configuration_exporter = ConfigurationGenerator(self.configuration)
-        configuration_exporter.export()
+        configuration_exporter = ShortcutGenerator(self.configuration)
+        configuration_exporter.generate()
 
     def ranking(self):
         from search_run.ranking.ranking import RankingGenerator
