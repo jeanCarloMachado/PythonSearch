@@ -6,13 +6,10 @@ from typing import List
 import mlflow
 import numpy as np
 import pyspark.sql.functions as F
-import xgboost
 from numpy import ndarray
 from pyspark.sql.session import SparkSession
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics import mean_squared_error as MSE
 from sklearn.model_selection import train_test_split
-from xgboost import XGBRegressor
 
 from search_run.config import DataConfig
 from search_run.core_entities import SearchRunPerformedType
@@ -65,6 +62,9 @@ def create_Y(aggregated_df):
 
 
 def perform_train_and_log(keys_embeddings, X, Y):
+    from xgboost import XGBRegressor
+    import xgboost
+
     mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
     # this creates a new experiment
     mlflow.set_experiment(DataConfig.BASELINE_EXPERIMENT_NAME)
@@ -129,6 +129,8 @@ def create_historical_embeddings(aggregated_df):
 
 
 def create_embeddings(keys: List[str]) -> ndarray:
+    from sentence_transformers import SentenceTransformer
+
     transformer = SentenceTransformer("nreimers/MiniLM-L6-H384-uncased")
     return transformer.encode(keys, batch_size=8, show_progress_bar=True)
 

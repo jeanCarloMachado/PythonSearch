@@ -2,30 +2,45 @@
 import msgpack_numpy as m
 import numpy as np
 
-from search_run.events.latest_used_entries import LatestUsedEntries
+from search_run.infrastructure.performance import timeit
 from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.ranking.baseline.train import create_embeddings
 from search_run.ranking.entries_loader import EntriesLoader
 
 
 class EmbeddingsReader:
-    """ Responsible for quickly reading the embeddings from redis """
+    """
+    Responsible for quickly reading the embeddings from redis
+    """
+    def __init__(self):
+        self.client = PythonSearchRedis.get_client()
 
-    def load(self, all_keys):
-        client = LatestUsedEntries.get_redis_client()
-        pipe = client.pipeline()
+    def load_all_existing_entries(self):
+        """
+        Not used anywhere besides for testing in the cli
+        """
+        keys = EntriesLoader.load_all_keys()
+        return self.load(keys)
 
-        for key in all_keys:
+
+    @timeit
+    def load(self, keys) -> dict[str, bytes]:
+        """
+        Returns a dictionary with the key being the embedding key and the value being the bytes of the value
+        """
+        pipe = self.client.pipeline()
+
+        for key in keys:
             pipe.hget(f"k_{key}", "embedding")
 
         all_embeddings = pipe.execute()
 
-        if len(all_embeddings) != len(all_keys):
+        if len(all_embeddings) != len(keys):
             raise Exception(
                 "Number of keys returned from redis does not match the number of embeddings found"
             )
 
-        embedding_mapping = dict(zip(all_keys, all_embeddings))
+        embedding_mapping = dict(zip(keys, all_embeddings))
         return embedding_mapping
 
 
@@ -97,4 +112,4 @@ def create_indexed_embeddings(keys):
 if __name__ == "__main__":
     import fire
 
-    fire.Fire(EntryEmbeddings)
+    fire.Fire()

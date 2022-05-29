@@ -1,3 +1,4 @@
+from search_run.apps.window_manager import WindowManager
 from search_run.entries_group import EntriesGroup
 from search_run.shortcut.gnome import Gnome
 from search_run.shortcut.i3 import I3
@@ -23,5 +24,8 @@ class ShortcutGenerator:
         the more expensive algorithm optimizing the ranking will be used.
         """
 
-        I3(self.configuration).generate()
-        Gnome(self.configuration).generate()
+        if WindowManager.is_i3():
+            I3(self.configuration).generate()
+
+        if WindowManager.is_gnome():
+            Gnome(self.configuration).generate()
