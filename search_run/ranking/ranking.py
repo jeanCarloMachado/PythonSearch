@@ -136,6 +136,7 @@ class RankingGenerator:
         previous_key_embedding = self._get_embedding_previous_key()
 
         X = self._build_dataset(previous_key_embedding)
+        self._load_mlflow_model()
         Y = self._predict(X)
 
         result = list(zip(self.all_keys, Y))
@@ -168,9 +169,11 @@ class RankingGenerator:
 
     @timeit
     def _predict(self, X):
-        self.model = PythonSearchMLFlow().get_latest_next_predictor_model()
-
         return self.model.predict(X)
+
+    @timeit
+    def _load_mlflow_model(self):
+        self.model = PythonSearchMLFlow().get_latest_next_predictor_model()
 
     @timeit
     def _load_all_keys_embeddings(self):
