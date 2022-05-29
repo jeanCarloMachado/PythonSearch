@@ -32,6 +32,7 @@ class RankingGenerator:
             "redis"
         )
         self.model = None
+        self.debug = os.getenv("DEBUG", False)
 
         if self.is_redis_supported:
             self.redis_client = PythonSearchRedis.get_client()
@@ -74,14 +75,9 @@ class RankingGenerator:
 
             return
 
-        try:
-            if self.feature_toggle.is_enabled("ranking_next"):
-                self.ranked_keys = self.get_ranking_next()
-            elif self.feature_toggle.is_enabled("ranking_b"):
-                self.ranked_keys = self.get_ranking_b(recompute_ranking)
-        except BaseException as e:
-            logging.info(f"Failed to get the ranking next with error: {e}")
-            raise e
+        if self.feature_toggle.is_enabled("ranking_next"):
+            self.ranked_keys = self.get_ranking_next()
+
 
         self._fetch_latest_entries()
 
@@ -116,11 +112,37 @@ class RankingGenerator:
         return result, final_key_list
 
     def _fetch_latest_entries(self):
+        """ Populate the variable used_entries  with the results from redis """
         self.used_entries: List[Tuple[str, dict]] = []
-        if self.configuration.supported_features.is_enabled(
+        if not self.configuration.supported_features.is_enabled(
                 "redis"
-        ) and self.feature_toggle.is_enabled("ranking_latest_used"):
-            self.used_entries = self.get_used_entries_from_redis(self.entries)
+        ) or not self.feature_toggle.is_enabled("ranking_latest_used"):
+            return
+
+
+        self.used_entries = self.get_used_entries_from_redis(self.entries)
+
+        if self.debug:
+            print(f"Used entries: {self.used_entries}")
+
+
+    def get_used_entries_from_redis(self, entries) -> List[Tuple[str, dict]]:
+        """
+        returns a list of used entries to be placed on top of the ranking
+        """
+        used_entries = []
+        from search_run.events.latest_used_entries import LatestUsedEntries
+
+        latest_used = LatestUsedEntries().get_latest_used_keys()
+        for used_key in latest_used:
+            if used_key not in entries or used_key in used_entries:
+                continue
+            used_entries.append((used_key, entries[used_key]))
+            del entries[used_key]
+        # reverse the list given that we pop from the end
+        used_entries.reverse()
+        return used_entries
+
 
     @timeit
     def get_ranking_next(self, top_n=-1) -> List[str]:
@@ -128,8 +150,7 @@ class RankingGenerator:
         Gets the ranking from the next item model
         """
 
-        debug = os.getenv("DEBUG")
-        if not debug:
+        if not self.debug:
             self._disable_debug()
 
         self._load_all_keys_embeddings()
@@ -220,31 +241,6 @@ class RankingGenerator:
         logger = logging.getLogger()
         logger.disabled = True
 
-    def get_ranking_b(self, recompute_ranking) -> List[str]:
-        from search_run.ranking.baseline.serve import get_ranked_keys
-
-        # if we to recompute the rank we disable the cache
-        ranked_keys_b = get_ranked_keys(disable_cache=recompute_ranking)
-
-        missing_from_rank = list(set(self.ranked_keys) - set(ranked_keys_b))
-        return missing_from_rank + ranked_keys_b
-
-    def get_used_entries_from_redis(self, entries) -> List[Tuple[str, dict]]:
-        """
-        returns a list of used entries to be placed on top of the ranking
-        """
-        used_entries = []
-        from search_run.events.latest_used_entries import LatestUsedEntries
-
-        latest_used = LatestUsedEntries().get_latest_used_keys()
-        for used_key in latest_used:
-            if used_key not in entries or used_key in used_entries:
-                continue
-            used_entries.append((used_key, entries[used_key]))
-            del entries[used_key]
-        # reverse the list given that we pop from the end
-        used_entries.reverse()
-        return used_entries
 
     @timeit
     def print_entries(self, data: List[Tuple[str, dict]]):
