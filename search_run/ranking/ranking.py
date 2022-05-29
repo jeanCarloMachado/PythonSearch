@@ -4,6 +4,7 @@ import datetime
 import json
 from collections import namedtuple
 from typing import List, Tuple
+import os
 
 from search_run.acronyms import generate_acronyms
 from search_run.config import PythonSearchConfiguration
@@ -13,6 +14,7 @@ from search_run.observability.logger import logging
 import numpy as np
 from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.ranking.models import PythonSearchMLFlow
+from search_run.infrastructure.performance import timeit
 
 
 class RankingGenerator:
@@ -29,6 +31,7 @@ class RankingGenerator:
         self.is_redis_supported = self.configuration.supported_features.is_enabled(
             "redis"
         )
+        self.model = None
 
         if self.is_redis_supported:
             self.redis_client = PythonSearchRedis.get_client()
@@ -41,6 +44,7 @@ class RankingGenerator:
         """
         self.generate(recompute_ranking=False)
 
+    @timeit
     def generate(self, recompute_ranking: bool = True):
         """
         Recomputes the rank and saves the results on the file to be read
@@ -77,12 +81,13 @@ class RankingGenerator:
                 self.ranked_keys = self.get_ranking_b(recompute_ranking)
         except BaseException as e:
             logging.info(f"Failed to get the ranking next with error: {e}")
+            raise e
 
         self._fetch_latest_entries()
 
     def _merge_and_build_result(self) -> List[Tuple[str, dict]]:
         """ "
-        Merge the ranking with teh latest entries and make it ready to be printed
+        Merge the ranking with the latest entries and make it ready to be printed
         """
         result = []
         increment = 0
@@ -91,6 +96,10 @@ class RankingGenerator:
             # add used entry on the top on every second iteration
             if increment % 2 == 0 and len(self.used_entries):
                 used_entry = self.used_entries.pop()
+                # sometimes there can be a bug of saving somethign other than dicts as entries
+                if type(used_entry[1]) != dict:
+                    logging.warning(f"Entry is not a dict {used_entry[1]}")
+                    continue
                 logging.debug(f"Increment: {increment}  with entry {used_entry}")
                 final_key_list.append(used_entry[0])
                 result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
@@ -113,24 +122,37 @@ class RankingGenerator:
         ) and self.feature_toggle.is_enabled("ranking_latest_used"):
             self.used_entries = self.get_used_entries_from_redis(self.entries)
 
-    def get_ranking_next(self, debug=False, top_n=-1) -> List[str]:
+    @timeit
+    def get_ranking_next(self, top_n=-1) -> List[str]:
         """
         Gets the ranking from the next item model
         """
 
+        debug = os.getenv("DEBUG")
         if not debug:
             self._disable_debug()
 
-        from search_run.ranking.entry_embeddings import EmbeddingsReader, EmbeddingSerialization
+        self._load_all_keys_embeddings()
+        previous_key_embedding = self._get_embedding_previous_key()
 
-        all_keys = self.configuration.commands.keys()
-        self.embedding_mapping = EmbeddingsReader().load(all_keys)
+        X = self._build_dataset(previous_key_embedding)
+        Y = self._predict(X)
 
-        previous_key_embedding = self._get_previous_key_embedding()
+        result = list(zip(self.all_keys, Y))
+        result.sort(key=lambda x: x[1], reverse=True)
+
+        only_keys = [entry[0] for entry in result]
+
+        if top_n > 0:
+            only_keys = only_keys[0:top_n]
+
+        return only_keys
+
+    def _build_dataset(self, previous_key_embedding):
+        from search_run.ranking.entry_embeddings import EmbeddingSerialization
 
         month = datetime.datetime.now().month
-
-        X = np.zeros([len(all_keys), 2 * 384 + 1])
+        X = np.zeros([len(self.all_keys), 2 * 384 + 1])
         for i, (key, embedding) in enumerate(self.embedding_mapping.items()):
             if embedding is None:
                 logging.warning(f"No content for key {key}")
@@ -142,26 +164,27 @@ class RankingGenerator:
                     np.asarray([month]),
                 )
             )
+        return X
 
-        model = PythonSearchMLFlow().get_latest_next_predictor_model()
+    @timeit
+    def _predict(self, X):
+        self.model = PythonSearchMLFlow().get_latest_next_predictor_model()
 
-        Y = model.predict(X)
+        return self.model.predict(X)
 
-        result = list(zip(all_keys, Y))
-        result.sort(key=lambda x: x[1], reverse=True)
+    @timeit
+    def _load_all_keys_embeddings(self):
+        from search_run.ranking.entry_embeddings import EmbeddingsReader
 
-        if debug:
-            # only return the top 20 for debugging
-            return result[0:20]
+        self.embedding_mapping = EmbeddingsReader().load(self._load_all_keys())
 
-        only_keys = [entry[0] for entry in result]
+    @timeit
+    def _load_all_keys(self):
+        self.all_keys = self.configuration.commands.keys()
+        return self.all_keys
 
-        if top_n > 0:
-            only_keys = only_keys[0:top_n]
-
-        return only_keys
-
-    def _get_previous_key_embedding(self):
+    @timeit
+    def _get_embedding_previous_key(self):
         from search_run.ranking.entry_embeddings import EmbeddingSerialization
         for previous_key in LatestUsedEntries().get_latest_used_keys():
             if previous_key in self.embedding_mapping and self.embedding_mapping[previous_key]:
@@ -220,6 +243,7 @@ class RankingGenerator:
         used_entries.reverse()
         return used_entries
 
+    @timeit
     def print_entries(self, data: List[Tuple[str, dict]]):
         position = 1
         for name, content in data:
@@ -239,6 +263,9 @@ class RankingGenerator:
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')
+            if os.getenv('ENABLE_TIME_IT'):
+                # do not print if enable timeit is on
+                continue
             print(content_str)
 
 
