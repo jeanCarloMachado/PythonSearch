@@ -59,25 +59,31 @@ class RankingGenerator:
         result, final_list = self._merge_and_build_result()
 
         if self.is_redis_supported and recompute_ranking:
-            encoded_list = "|".join(final_list)
-            self.redis_client.set("cache_ranking_result", encoded_list)
-
+            self._save_ranking_order_in_cache(final_list)
         return self.print_entries(result)
+
+    def _save_ranking_order_in_cache(self, ranking: List[str]):
+        encoded_list = "|".join(ranking)
+        self.redis_client.set("cache_ranking_result", encoded_list)
 
     def _build_rank(self, recompute_ranking):
         """Mutate self.ranked keys with teh results, supports caching"""
         if self.is_redis_supported and not recompute_ranking:
+            if self.debug:
+                print('Results being loaded from cache')
+
             keys = self.redis_client.get("cache_ranking_result")
             keys = keys.decode("utf-8").split("|")
 
             missing_keys = set(self.ranked_keys) - set(keys)
             self.ranked_keys = list(missing_keys) + keys
-
             return
+
+        if self.debug:
+            print("Results not being loadded from cache")
 
         if self.feature_toggle.is_enabled("ranking_next"):
             self.ranked_keys = self.get_ranking_next()
-
 
         self._fetch_latest_entries()
 
@@ -119,12 +125,10 @@ class RankingGenerator:
         ) or not self.feature_toggle.is_enabled("ranking_latest_used"):
             return
 
-
         self.used_entries = self.get_used_entries_from_redis(self.entries)
 
         if self.debug:
             print(f"Used entries: {self.used_entries}")
-
 
     def get_used_entries_from_redis(self, entries) -> List[Tuple[str, dict]]:
         """
@@ -142,7 +146,6 @@ class RankingGenerator:
         # reverse the list given that we pop from the end
         used_entries.reverse()
         return used_entries
-
 
     @timeit
     def get_ranking_next(self, top_n=-1) -> List[str]:
@@ -241,9 +244,9 @@ class RankingGenerator:
         logger = logging.getLogger()
         logger.disabled = True
 
-
     @timeit
     def print_entries(self, data: List[Tuple[str, dict]]):
+        """ Print results """
         position = 1
         for name, content in data:
             name_clean = name.lower()
