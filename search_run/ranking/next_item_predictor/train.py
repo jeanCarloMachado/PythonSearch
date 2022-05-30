@@ -1,3 +1,4 @@
+import os
 from typing import Dict, List, Tuple
 
 import mlflow
@@ -9,13 +10,15 @@ from search_run.ranking.next_item_predictor.training_dataset import TrainingData
 
 
 class Train:
-    # looks like the ideal in the current architecture
-    EPOCHS = 25
+    EPOCHS = 40
+    TEST_SPLIT_SIZE = 0.10
 
     def __init__(self, epochs=None):
         if not epochs:
             epochs = Train.EPOCHS
         self.epochs = epochs
+        # enable the profiling scafolding
+        os.environ['TIME_IT'] = '1'
 
     def train_and_log(self, dataset):
         """train the model and log it to MLFlow"""
@@ -39,27 +42,34 @@ class Train:
         from sklearn.model_selection import train_test_split
 
         X_train, X_test, Y_train, Y_test = train_test_split(
-            X, Y, test_size=0.20, random_state=42
+            X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
         )
 
-        # normalize
-        mean = X_train.mean(axis=0)
-        X_train -= mean
-        std = X_train.std(axis=0)
-        X_train /= std
+        def normalize(X_train, X_test):
+            # normalize
+            mean = X_train.mean(axis=0)
+            X_train -= mean
+            std = X_train.std(axis=0)
+            X_train /= std
 
-        X_test -= mean
-        X_test /= std
+            X_test -= mean
+            X_test /= std
+
+            return X_train, X_test
+
+        X_train, X_test = normalize(X_train, X_test)
 
         from keras import layers
         from keras.models import Sequential
 
-        print("Starting train with N epochs, N= ", self.epochs)
+        print("Starting train with N epochs, N=", self.epochs)
         model = Sequential()
-        model.add(layers.Dense(100, activation="relu", input_shape=X[1].shape))
+        model.add(layers.Dense(256, activation="relu", input_shape=X[1].shape))
+        model.add(layers.Dropout(0.5))
+        model.add(layers.Dense(128, activation="relu"))
         model.add(layers.Dropout(0.5))
         model.add(layers.Dense(1))
-        model.compile(optimizer="rmsprop", loss="mse", metrics=["mae"])
+        model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", 'mse'])
 
         history = model.fit(
             X_train,
@@ -69,8 +79,8 @@ class Train:
             validation_data=(X_test, Y_test),
         )
 
-        train_mse, train_mae = model.evaluate(X_train, Y_train)
-        test_mse, test_mae = model.evaluate(X_test, Y_test)
+        train_mse, train_mae, train_mse2 = model.evaluate(X_train, Y_train)
+        test_mse, test_mae, test_mse2 = model.evaluate(X_test, Y_test)
 
         metrics = {
             "train_mse": train_mse,
@@ -78,9 +88,8 @@ class Train:
             "test_mse": test_mse,
             "test_mae": test_mae,
         }
-        import pprint
 
-        pprint.pprint(metrics)
+        print("Metrics:", metrics)
 
         if plot_history:
             import matplotlib.pyplot as plt
@@ -108,10 +117,12 @@ class Train:
         embeddings_keys = self.create_embeddings_training_dataset(dataset)
 
         # + 1 is for the month number
-        X = np.zeros([dataset.count(), 2 * 384 + 1])
+        dimensions_X = 2 * 384 + 1 + 1
+        print(f"Dimensions of dataset = {dimensions_X}")
+        X = np.zeros([dataset.count(), dimensions_X])
         Y = np.empty(dataset.count())
 
-        X.shape
+        print("X shape:", X.shape)
 
         collected_keys = dataset.select(*TrainingDataset.columns).collect()
 
@@ -121,9 +132,11 @@ class Train:
                     embeddings_keys[collected_key.key],
                     embeddings_keys[collected_key.previous_key],
                     np.asarray([collected_key.month]),
+                    np.asarray([collected_key.hour]),
                 ]
             )
             Y[i] = collected_key.label
+        print("Sample dataset:", X[0])
 
         return X, Y
 

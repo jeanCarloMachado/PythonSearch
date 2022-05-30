@@ -7,6 +7,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.window import Window
 
 from search_run.datasets.searchesperformed import SearchesPerformed
+from search_run.infrastructure.performance import timeit
 
 
 class TrainingDataset:
@@ -14,7 +15,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = "key", "previous_key", "month", "label"
+    columns = "key", "previous_key", "month", 'hour', "label"
     DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -23,6 +24,7 @@ class TrainingDataset:
             level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)]
         ),
 
+    @timeit
     def build(self, use_cache=False, write_cache=True):
         """When cache is enabled, writes a parquet in a temporary file"""
         if use_cache:
@@ -40,17 +42,17 @@ class TrainingDataset:
         df_with_previous = self._join_with_previous(search_performed_df_filtered)
 
         logging.info("Group by month")
-        df_by_month = df_with_previous.withColumn("month", F.month("timestamp"))
-
+        with_month = df_with_previous.withColumn("month", F.month("timestamp"))
+        with_hour = with_month.withColumn("hour", F.hour("timestamp"))
 
         # keep only the necessary columns
-        pair = df_by_month.select("month", "key", "previous_key", "timestamp")
+        pair = with_hour.select("month", 'hour', "key", "previous_key", "timestamp")
 
         logging.info("Adding number of times the pair was executed together")
         grouped = (
-            pair.groupBy("month", "key", "previous_key")
-            .agg(F.count("previous_key").alias("times"))
-            .sort("key", "times")
+            pair.groupBy("month", 'hour', "key", "previous_key")
+                .agg(F.count("previous_key").alias("times"))
+                .sort("key", "times")
         )
 
         grouped.cache()
@@ -69,6 +71,15 @@ class TrainingDataset:
         dataset.show(10)
         return dataset
 
+    @timeit
+    def _add_label(self, grouped):
+        dataset = grouped.withColumn(
+            "label",
+            F.col("times") / F.sum("times").over(Window.partitionBy("month", 'hour', "key")),
+        ).orderBy("month", 'hour', "key", "label")
+        return dataset.select(*self.columns)
+
+    @timeit
     def _join_with_previous(self, df):
         """Adds the previou_key as an entry"""
         # build pair dataset with label
@@ -96,13 +107,6 @@ class TrainingDataset:
             shutil.rmtree(TrainingDataset.DATASET_CACHE_FILE)
 
         dataset.write.parquet(TrainingDataset.DATASET_CACHE_FILE)
-
-    def _add_label(self, grouped):
-        dataset = grouped.withColumn(
-            "label",
-            F.col("times") / F.sum("times").over(Window.partitionBy("month", "key")),
-        ).orderBy("month", "key", "label")
-        return dataset.select(*self.columns)
 
     def _read_cache(self):
         if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):

@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # using ipython interfers with fire arguments passing
 import logging
+import os
 from typing import Optional
 
 from pyspark.sql import SparkSession
+from sklearn.metrics import mean_absolute_error
 
+from search_run.infrastructure.performance import timeit
 from search_run.observability.logger import initialize_logging
 from search_run.ranking.next_item_predictor.evaluator import Evaluate
 from search_run.ranking.next_item_predictor.train import Train
@@ -17,7 +20,10 @@ class Pipeline:
     """
     Exposes the whole ML pipeline, the runs everything
     """
+    def __init__(self):
+        os.environ['TIME_IT'] = '1'
 
+    @timeit
     def run(self, disable_mlflow=False, use_cached_dataset=True):
         """
         Runs the whole pipeline
@@ -33,6 +39,7 @@ class Pipeline:
 
         Evaluate().evaluate(model)
 
+    @timeit
     def build_dataset(self, use_cache=False, view_only=False):
         """
         Builds the dataset ready for training
@@ -47,6 +54,7 @@ class Pipeline:
 
         return dataset
 
+    @timeit
     def train(
         self, *, dataset: Optional[TrainingDataset] = None, epochs=None, use_cache=True
     ):
@@ -92,7 +100,10 @@ class Pipeline:
             .withColumn("baseline", F.lit(1))
         )
         pd_naive = naive.select("label", "baseline").toPandas()
-        return {"baseline_mse": mean_squared_error(pd_naive.label, pd_naive.baseline)}
+        return {
+            "baseline_mse": mean_squared_error(pd_naive.label, pd_naive.baseline),
+            'baseline_mae': mean_absolute_error(pd_naive.label, pd_naive.baseline)
+        }
 
     def _spark(self):
         return SparkSession.builder.getOrCreate()

@@ -20,6 +20,7 @@ class Inference:
         self.configuration = configuration
         self.debug = os.getenv("DEBUG", False)
         self.forced_previous_key = None
+        self.all_keys = self.configuration.commands.keys()
 
     @timeit
     def get_ranking(self, forced_previous_key: Optional[str] = None) -> List[str]:
@@ -46,10 +47,12 @@ class Inference:
         return only_keys
 
     def _build_dataset(self, previous_key_embedding):
-        from search_run.ranking.entry_embeddings import EmbeddingSerialization
 
-        month = datetime.datetime.now().month
-        X = np.zeros([len(self.all_keys), 2 * 384 + 1])
+        now = datetime.datetime.now()
+        month = now.month
+        hour = now.hour
+
+        X = np.zeros([len(self.all_keys), 2 * 384 + 1 + 1])
         for i, (key, embedding) in enumerate(self.embedding_mapping.items()):
             if embedding is None:
                 logging.warning(f"No content for key {key}")
@@ -59,6 +62,7 @@ class Inference:
                     previous_key_embedding,
                     EmbeddingSerialization.read(embedding),
                     np.asarray([month]),
+                    np.asarray([hour]),
                 )
             )
         return X
@@ -75,12 +79,7 @@ class Inference:
     def _load_all_keys_embeddings(self):
         from search_run.ranking.entry_embeddings import EmbeddingsReader
 
-        self.embedding_mapping = EmbeddingsReader().load(self._load_all_keys())
-
-    @timeit
-    def _load_all_keys(self):
-        self.all_keys = self.configuration.commands.keys()
-        return self.all_keys
+        self.embedding_mapping = EmbeddingsReader().load(self.all_keys)
 
     @timeit
     def _get_embedding_previous_key(self):

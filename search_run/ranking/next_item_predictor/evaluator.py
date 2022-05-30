@@ -34,7 +34,7 @@ class Evaluate:
             "days quality tracking life good day",
         ]
 
-        print({"params_used": {"month": self.month}})
+        print({"params_used": {"month": self.month, 'hour': self.hour}})
 
         inference = Inference(self.configuration)
 
