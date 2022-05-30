@@ -1,12 +1,11 @@
 import datetime
 import logging
-from typing import List, Tuple
 import sys
 
-import numpy as np
-
+from search_run.config import ConfigurationLoader
 from search_run.ranking.entries_loader import EntriesLoader
-from search_run.ranking.entry_embeddings import EmbeddingsReader, EmbeddingSerialization
+from search_run.ranking.entry_embeddings import EmbeddingsReader
+from search_run.ranking.next_item_predictor.inference import Inference
 
 
 class Evaluate:
@@ -20,6 +19,7 @@ class Evaluate:
         self.NUM_OF_BOTTOM_RESULTS = 4
         logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
         from search_run.ranking.models import PythonSearchMLFlow
+        self.configuration = ConfigurationLoader().load()
 
         self.model = PythonSearchMLFlow().get_latest_next_predictor_model(debug_info=True)
 
@@ -36,8 +36,10 @@ class Evaluate:
 
         print({"params_used": {"month": self.month}})
 
+        inference = Inference(self.configuration)
+
         for key in keys_to_test:
-            result = self.get_rank_for_key(key)
+            result = inference.get_ranking(forced_previous_key=key)
             print(f"Key: {key}")
 
             print(f"Top")
@@ -47,27 +49,3 @@ class Evaluate:
             print(f"Bottom")
             for i in result[-self.NUM_OF_BOTTOM_RESULTS:]:
                 print(f"    {i}")
-
-    def get_rank_for_key(self, selected_key) -> List[Tuple[str, float]]:
-        """
-        Looks what should be next if the current key is the one passed, look for all current existing keys
-        """
-
-        X_validation = np.zeros([len(self.all_latest_keys), 2 * 384 + 1])
-        X_key = []
-        selected_key_embedding = EmbeddingSerialization.read(self.embeddings_keys_latest[selected_key])
-        for i, key in enumerate(self.all_latest_keys):
-            X_validation[i] = np.concatenate(
-                (
-                    selected_key_embedding,
-                    EmbeddingSerialization.read(self.embeddings_keys_latest[key]),
-                    np.asarray([self.month]),
-                )
-            )
-            X_key.append(key)
-
-        Y_pred = self.model.predict(X_validation)
-        result = list(zip(X_key, Y_pred))
-        result.sort(key=lambda x: x[1], reverse=True)
-
-        return result

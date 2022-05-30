@@ -1,26 +1,33 @@
 import logging
 import os
 import datetime
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 
 from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.infrastructure.performance import timeit
 from search_run.ranking.models import PythonSearchMLFlow
+from search_run.ranking.entry_embeddings import EmbeddingSerialization
 
 
-class Inference():
+class Inference:
+    """
+    Performs the ranking inference
+    """
 
     def __init__(self, configuration):
         self.configuration = configuration
         self.debug = os.getenv("DEBUG", False)
+        self.forced_previous_key = None
 
     @timeit
-    def get_ranking(self) -> List[str]:
+    def get_ranking(self, forced_previous_key: Optional[str] = None) -> List[str]:
         """
         Gets the ranking from the next item model
         """
+        self.forced_previous_key = forced_previous_key
+
         if not self.debug:
             self._disable_debug()
 
@@ -77,7 +84,20 @@ class Inference():
 
     @timeit
     def _get_embedding_previous_key(self):
-        from search_run.ranking.entry_embeddings import EmbeddingSerialization
+
+        previous_key = self._find_previous_key_with_embedding()
+
+        if self.forced_previous_key:
+            print('Forcing previous key')
+            previous_key = self.forced_previous_key
+
+        logging.info(f"Previous key: {previous_key}")
+
+        return EmbeddingSerialization.read(
+            self.embedding_mapping[previous_key]
+        )
+
+    def _find_previous_key_with_embedding(self) -> str:
         for previous_key in LatestUsedEntries().get_latest_used_keys():
             if previous_key in self.embedding_mapping and self.embedding_mapping[previous_key]:
                 # exits the loop as soon as we find an existing previous key
@@ -88,12 +108,7 @@ class Inference():
                     f"Could not find embedding for previous key {previous_key}, value: "
                     f"{self.embedding_mapping.get(previous_key)}"
                 )
-
-        logging.info(f"Previous key: {previous_key}")
-
-        return EmbeddingSerialization.read(
-            self.embedding_mapping[previous_key]
-        )
+        return previous_key
 
     def _disable_debug(self):
         import os

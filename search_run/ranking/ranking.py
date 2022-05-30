@@ -10,7 +10,6 @@ from search_run.config import PythonSearchConfiguration
 from search_run.features import FeatureToggle
 from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.observability.logger import logging
-from search_run.ranking.models import PythonSearchMLFlow
 from search_run.infrastructure.performance import timeit
 
 
