@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import json
 from collections import namedtuple
 from typing import List, Tuple
@@ -11,8 +10,6 @@ from search_run.config import PythonSearchConfiguration
 from search_run.features import FeatureToggle
 from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.observability.logger import logging
-import numpy as np
-from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.ranking.models import PythonSearchMLFlow
 from search_run.infrastructure.performance import timeit
 
@@ -83,7 +80,8 @@ class RankingGenerator:
             print("Results not being loadded from cache")
 
         if self.feature_toggle.is_enabled("ranking_next"):
-            self.ranked_keys = self.get_ranking_next()
+            from search_run.ranking.next_item_predictor.inference import Inference
+            self.ranked_keys = Inference(self.configuration).get_ranking()
 
         self._fetch_latest_entries()
 
@@ -146,103 +144,6 @@ class RankingGenerator:
         # reverse the list given that we pop from the end
         used_entries.reverse()
         return used_entries
-
-    @timeit
-    def get_ranking_next(self, top_n=-1) -> List[str]:
-        """
-        Gets the ranking from the next item model
-        """
-
-        if not self.debug:
-            self._disable_debug()
-
-        self._load_all_keys_embeddings()
-        previous_key_embedding = self._get_embedding_previous_key()
-
-        X = self._build_dataset(previous_key_embedding)
-        self._load_mlflow_model()
-        Y = self._predict(X)
-
-        result = list(zip(self.all_keys, Y))
-        result.sort(key=lambda x: x[1], reverse=True)
-
-        only_keys = [entry[0] for entry in result]
-
-        if top_n > 0:
-            only_keys = only_keys[0:top_n]
-
-        return only_keys
-
-    def _build_dataset(self, previous_key_embedding):
-        from search_run.ranking.entry_embeddings import EmbeddingSerialization
-
-        month = datetime.datetime.now().month
-        X = np.zeros([len(self.all_keys), 2 * 384 + 1])
-        for i, (key, embedding) in enumerate(self.embedding_mapping.items()):
-            if embedding is None:
-                logging.warning(f"No content for key {key}")
-                continue
-            X[i] = np.concatenate(
-                (
-                    previous_key_embedding,
-                    EmbeddingSerialization.read(embedding),
-                    np.asarray([month]),
-                )
-            )
-        return X
-
-    @timeit
-    def _predict(self, X):
-        return self.model.predict(X)
-
-    @timeit
-    def _load_mlflow_model(self):
-        self.model = PythonSearchMLFlow().get_latest_next_predictor_model()
-
-    @timeit
-    def _load_all_keys_embeddings(self):
-        from search_run.ranking.entry_embeddings import EmbeddingsReader
-
-        self.embedding_mapping = EmbeddingsReader().load(self._load_all_keys())
-
-    @timeit
-    def _load_all_keys(self):
-        self.all_keys = self.configuration.commands.keys()
-        return self.all_keys
-
-    @timeit
-    def _get_embedding_previous_key(self):
-        from search_run.ranking.entry_embeddings import EmbeddingSerialization
-        for previous_key in LatestUsedEntries().get_latest_used_keys():
-            if previous_key in self.embedding_mapping and self.embedding_mapping[previous_key]:
-                # exits the loop as soon as we find an existing previous key
-                logging.info(f"Picked previous key: {previous_key}")
-                break
-            else:
-                logging.warning(
-                    f"Could not find embedding for previous key {previous_key}, value: "
-                    f"{self.embedding_mapping.get(previous_key)}"
-                )
-
-        logging.info(f"Previous key: {previous_key}")
-
-        return EmbeddingSerialization.read(
-            self.embedding_mapping[previous_key]
-        )
-
-    def _disable_debug(self):
-        import os
-
-        # disable tensorflow warnings
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-        # disable system warnings
-        import warnings
-
-        warnings.filterwarnings("ignore")
-        import logging
-
-        logger = logging.getLogger()
-        logger.disabled = True
 
     @timeit
     def print_entries(self, data: List[Tuple[str, dict]]):

@@ -10,7 +10,7 @@ from search_run.ranking.next_item_predictor.training_dataset import TrainingData
 
 class Train:
     # looks like the ideal in the current architecture
-    EPOCHS = 22
+    EPOCHS = 25
 
     def __init__(self, epochs=None):
         if not epochs:
