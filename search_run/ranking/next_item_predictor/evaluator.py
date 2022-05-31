@@ -23,12 +23,10 @@ class Evaluate:
         from search_run.ranking.models import PythonSearchMLFlow
 
         self.configuration = ConfigurationLoader().load()
-
-        self.model = PythonSearchMLFlow().get_next_predictor_model(debug_info=True)
-
     def evaluate(self, run_id=None):
         """Evaluate a model against our ranking"""
         logging.info("Evaluate model")
+        print('Run id ', run_id)
         self.all_latest_keys = EntriesLoader.load_all_keys()
         self.embeddings_keys_latest = EmbeddingsReader().load(self.all_latest_keys)
 
@@ -38,9 +36,7 @@ class Evaluate:
             "days quality tracking life good day",
         ]
 
-        print({"params_used": {"month": self.month}})
-
-        inference = Inference(self.configuration)
+        inference = Inference(configuration=self.configuration, run_id=run_id)
 
         for key in keys_to_test:
             result = inference.get_ranking(forced_previous_key=key)

@@ -16,14 +16,14 @@ class Inference:
     Performs the ranking inference
     """
 
-    def __init__(self, configuration):
+    def __init__(self, configuration, run_id: Optional[str]=None):
         self.configuration = configuration
         self.debug = os.getenv("DEBUG", False)
         self.forced_previous_key = None
         # previous key should be setted in runtime
         self.previous_key = None
         self.all_keys = self.configuration.commands.keys()
-        self.model = self._load_mlflow_model()
+        self.model = self._load_mlflow_model(run_id=run_id)
 
     @timeit
     def get_ranking(self, forced_previous_key: Optional[str] = None) -> List[str]:
@@ -81,8 +81,8 @@ class Inference:
         return self.model.predict(X)
 
     @timeit
-    def _load_mlflow_model(self):
-        return PythonSearchMLFlow().get_next_predictor_model()
+    def _load_mlflow_model(self, run_id=None):
+        return PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
 
     @timeit
     def _load_all_keys_embeddings(self):
@@ -93,11 +93,11 @@ class Inference:
     @timeit
     def _get_embedding_previous_key(self):
 
-        self.previous_key = self._find_previous_key_with_embedding()
-
         if self.forced_previous_key:
             print("Forcing previous key")
             self.previous_key = self.forced_previous_key
+        else:
+            self.previous_key = self._find_previous_key_with_embedding()
 
         logging.info(f"Previous key: {self.previous_key}")
 
