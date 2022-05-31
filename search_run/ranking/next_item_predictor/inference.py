@@ -16,9 +16,11 @@ class Inference:
     Performs the ranking inference
     """
 
-    def __init__(self, configuration, run_id: Optional[str]=None):
+    def __init__(self, configuration, run_id: Optional[str] = None):
         self.configuration = configuration
-        self.debug = os.getenv("DEBUG", False)
+        self.debug = os.getenv("PS_DEBUG", False)
+        if not self.debug:
+            self._disable_debug()
         self.forced_previous_key = None
         # previous key should be setted in runtime
         self.previous_key = None
@@ -31,9 +33,6 @@ class Inference:
         Gets the ranking from the next item model
         """
         self.forced_previous_key = forced_previous_key
-
-        if not self.debug:
-            self._disable_debug()
 
         self._load_all_keys_embeddings()
         previous_key_embedding = self._get_embedding_previous_key()
@@ -107,8 +106,8 @@ class Inference:
         """Look into the recently used keys and"""
         for previous_key in LatestUsedEntries().get_latest_used_keys():
             if (
-                previous_key in self.embedding_mapping
-                and self.embedding_mapping[previous_key]
+                    previous_key in self.embedding_mapping
+                    and self.embedding_mapping[previous_key]
             ):
                 previous_key
                 # exits the loop as soon as we find an existing previous key

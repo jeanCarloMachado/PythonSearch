@@ -6,11 +6,11 @@ from search_run.config import DataConfig
 
 class PythonSearchMLFlow:
     def __init__(self):
-        self.debug = os.getenv('DEBUG')
+
+        self.debug = os.getenv('PS_DEBUG', False)
         import mlflow
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         self.mlflow_instance = mlflow
-
 
     def get_latest_next_predictor_run(self) -> RunInfo:
         from mlflow.tracking import MlflowClient
@@ -32,4 +32,5 @@ class PythonSearchMLFlow:
         if self.debug:
             print(f"Loading run id: {run_id}")
 
-        return self.mlflow_instance.keras.load_model(f"runs:/{run_id}/model")
+        model = self.mlflow_instance.keras.load_model(f"runs:/{run_id}/model")
+        return model
