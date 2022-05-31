@@ -1,3 +1,4 @@
+from typing import Optional
 
 from mlflow.entities import RunInfo
 
@@ -19,10 +20,13 @@ class PythonSearchMLFlow:
         runs = client.list_run_infos(experiment_id=experiment.experiment_id)
         return runs[0]
 
-    def get_latest_next_predictor_model(self, debug_info=False):
+    def get_next_predictor_model(self, run_id: Optional[str] = None, debug_info=False):
         import mlflow
 
-        run = self.get_latest_next_predictor_run()
+        if not run_id:
+            run_id = self.get_latest_next_predictor_run().run_id
+
         if debug_info:
-            print(f"Run id: {run.run_id}")
-        return mlflow.keras.load_model(f"runs:/{run.run_id}/model")
+            print(f"Loading run id: {run_id}")
+
+        return mlflow.keras.load_model(f"runs:/{run_id}/model")

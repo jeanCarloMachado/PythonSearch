@@ -38,9 +38,8 @@ class RegisterNew:
         )
         self.infer_content(clipboard_content, key)
 
-
     def infer_content(self, content: str, key: str):
-        """ Add an entry inferring the type """
+        """Add an entry inferring the type"""
         interpreter: BaseEntry = Interpreter.build_instance(
             self.configuration
         ).get_interpreter(content)
@@ -57,7 +56,6 @@ class RegisterNew:
         if emptish(content):
             raise RegisterNewException.empty_content()
 
-
         key, as_dict = transform_into_anonymous_entry(content)
         self.entry_inserter.insert(key, as_dict)
 
@@ -70,7 +68,6 @@ class RegisterNew:
         )
 
         self.register_snippet(snippet_content, key)
-
 
     def register_snippet(self, content, key):
         if emptish(content):

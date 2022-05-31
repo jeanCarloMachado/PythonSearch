@@ -1,4 +1,3 @@
-
 from grimoire.shell import shell
 
 from search_run.apps.clipboard import Clipboard

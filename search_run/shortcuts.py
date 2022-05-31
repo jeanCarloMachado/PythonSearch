@@ -2,6 +2,7 @@ class Shortcuts:
     """
     List of mapped i3 shortcuts, in gnome the syntax is different.
     """
+
     CTRL_W = "Control+w"
     CTRL_V = "Control+v"
     CTRL_SPACE = "Control+space"

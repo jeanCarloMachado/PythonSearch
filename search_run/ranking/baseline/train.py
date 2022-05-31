@@ -62,8 +62,8 @@ def create_Y(aggregated_df):
 
 
 def perform_train_and_log(keys_embeddings, X, Y):
-    from xgboost import XGBRegressor
     import xgboost
+    from xgboost import XGBRegressor
 
     mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
     # this creates a new experiment

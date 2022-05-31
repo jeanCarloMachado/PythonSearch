@@ -20,8 +20,9 @@ class Pipeline:
     """
     Exposes the whole ML pipeline, the runs everything
     """
+
     def __init__(self):
-        os.environ['TIME_IT'] = '1'
+        os.environ["TIME_IT"] = "1"
 
     @timeit
     def run(self, disable_mlflow=False, use_cached_dataset=True):
@@ -80,7 +81,7 @@ class Pipeline:
         """
         Evaluate the latest dataset
         """
-        return Evaluate().evaluate()
+        return Evaluate().evaluate
 
     def baseline_mse(self, dataset=None):
         """
@@ -102,7 +103,7 @@ class Pipeline:
         pd_naive = naive.select("label", "baseline").toPandas()
         return {
             "baseline_mse": mean_squared_error(pd_naive.label, pd_naive.baseline),
-            'baseline_mae': mean_absolute_error(pd_naive.label, pd_naive.baseline)
+            "baseline_mae": mean_absolute_error(pd_naive.label, pd_naive.baseline),
         }
 
     def _spark(self):

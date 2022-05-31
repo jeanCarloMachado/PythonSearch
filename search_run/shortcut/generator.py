@@ -6,15 +6,13 @@ from search_run.shortcut.i3 import I3
 
 class ShortcutGenerator:
     """
- Generate shortcuts for python search
+    Generate shortcuts for python search
     """
 
     def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration
 
-    def generate(
-        self
-    ):
+    def generate(self):
         """
         Export a new configuration.
 

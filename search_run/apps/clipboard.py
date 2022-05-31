@@ -5,7 +5,7 @@ from search_run.apps.notification_ui import send_notification
 
 
 class Clipboard:
-    def get_content(self, source='--primary'):
+    def get_content(self, source="--primary"):
         """
         Accepted values are --primary and --clipboard
         """
@@ -33,7 +33,7 @@ class Clipboard:
         def shellquote(s):
             return "'" + s.replace("'", "'\\''") + "'"
 
-        sanitized=shellquote(content)
+        sanitized = shellquote(content)
         cmd = f"echo {sanitized} | xsel --clipboard --primary --input"
 
         if enable_notifications:

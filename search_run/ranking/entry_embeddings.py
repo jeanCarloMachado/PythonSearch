@@ -12,6 +12,7 @@ class EmbeddingsReader:
     """
     Responsible for quickly reading the embeddings from redis
     """
+
     def __init__(self):
         self.client = PythonSearchRedis.get_client()
 
@@ -21,7 +22,6 @@ class EmbeddingsReader:
         """
         keys = EntriesLoader.load_all_keys()
         return self.load(keys)
-
 
     @timeit
     def load(self, keys) -> dict[str, bytes]:
@@ -45,7 +45,7 @@ class EmbeddingsReader:
 
 
 class EntryEmbeddings:
-    """ Responsible for writing the embeddings in redis """
+    """Responsible for writing the embeddings in redis"""
 
     def __init__(self):
         self.client = PythonSearchRedis.get_client()
@@ -91,7 +91,7 @@ class EntryEmbeddings:
 
 
 class EmbeddingSerialization:
-    """ Responsible to encode the numpy embeddings in a format readis can read and write from and to """
+    """Responsible to encode the numpy embeddings in a format readis can read and write from and to"""
 
     @staticmethod
     def read(embedding):

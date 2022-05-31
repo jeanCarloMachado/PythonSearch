@@ -24,7 +24,6 @@ class EntryInserter:
         line_to_add = f"    '{key}': {row_entry},"
         self._append_entry(line_to_add)
 
-
         send_notification(f"Entry {row_entry} inserted successfully")
 
         # refresh the configuration
@@ -43,17 +42,18 @@ class EntryInserter:
 
         shutil.copyfile(self.file_to_append, copy_file)
 
-        with open(copy_file, 'w') as out, open(self.file_to_append) as source_file:
+        with open(copy_file, "w") as out, open(self.file_to_append) as source_file:
             for line in source_file:
                 out.write(line)
                 if self.NEW_ENTRIES_STRING in line:
                     # insert text.
                     print(f"Writing line: {line_to_add}")
-                    out.write(line_to_add + '\n')
+                    out.write(line_to_add + "\n")
 
         # compile and make sure the file is a valid python
         import os
-        if os.system(f'python -m compileall -q {copy_file}') != 0:
+
+        if os.system(f"python -m compileall -q {copy_file}") != 0:
             message = "Copy of file does not compile so wont proceed replacing!"
             send_notification(message)
             raise Exception(message)

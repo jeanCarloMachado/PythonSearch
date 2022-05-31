@@ -1,14 +1,14 @@
+import datetime
 import logging
 import os
-import datetime
 from typing import List, Optional
 
 import numpy as np
 
 from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.infrastructure.performance import timeit
-from search_run.ranking.models import PythonSearchMLFlow
 from search_run.ranking.entry_embeddings import EmbeddingSerialization
+from search_run.ranking.models import PythonSearchMLFlow
 
 
 class Inference:
@@ -20,7 +20,10 @@ class Inference:
         self.configuration = configuration
         self.debug = os.getenv("DEBUG", False)
         self.forced_previous_key = None
+        # previous key should be setted in runtime
+        self.previous_key = None
         self.all_keys = self.configuration.commands.keys()
+        self.model = self._load_mlflow_model()
 
     @timeit
     def get_ranking(self, forced_previous_key: Optional[str] = None) -> List[str]:
@@ -52,6 +55,12 @@ class Inference:
         month = now.month
         hour = now.hour
 
+        if self.debug:
+            print(
+                "Inference parameters",
+                {"hour": hour, "month": month, "previous_key": self.previous_key},
+            )
+
         X = np.zeros([len(self.all_keys), 2 * 384 + 1 + 1])
         for i, (key, embedding) in enumerate(self.embedding_mapping.items()):
             if embedding is None:
@@ -73,7 +82,7 @@ class Inference:
 
     @timeit
     def _load_mlflow_model(self):
-        self.model = PythonSearchMLFlow().get_latest_next_predictor_model()
+        return PythonSearchMLFlow().get_next_predictor_model()
 
     @timeit
     def _load_all_keys_embeddings(self):
@@ -84,28 +93,32 @@ class Inference:
     @timeit
     def _get_embedding_previous_key(self):
 
-        previous_key = self._find_previous_key_with_embedding()
+        self.previous_key = self._find_previous_key_with_embedding()
 
         if self.forced_previous_key:
-            print('Forcing previous key')
-            previous_key = self.forced_previous_key
+            print("Forcing previous key")
+            self.previous_key = self.forced_previous_key
 
-        logging.info(f"Previous key: {previous_key}")
+        logging.info(f"Previous key: {self.previous_key}")
 
-        return EmbeddingSerialization.read(
-            self.embedding_mapping[previous_key]
-        )
+        return EmbeddingSerialization.read(self.embedding_mapping[self.previous_key])
 
     def _find_previous_key_with_embedding(self) -> str:
+        """Look into the recently used keys and"""
         for previous_key in LatestUsedEntries().get_latest_used_keys():
-            if previous_key in self.embedding_mapping and self.embedding_mapping[previous_key]:
+            if (
+                previous_key in self.embedding_mapping
+                and self.embedding_mapping[previous_key]
+            ):
+                previous_key
                 # exits the loop as soon as we find an existing previous key
-                logging.info(f"Picked previous key: {previous_key}")
+                if self.debug:
+                    print(f"Picked previous key: {previous_key}")
                 break
             else:
                 logging.warning(
                     f"Could not find embedding for previous key {previous_key}, value: "
-                    f"{self.embedding_mapping.get(previous_key)}"
+                    f"{self.embedding_mapping.get(self.previous_key)}"
                 )
         return previous_key
 

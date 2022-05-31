@@ -10,15 +10,16 @@ from search_run.ranking.next_item_predictor.training_dataset import TrainingData
 
 
 class Train:
-    EPOCHS = 40
+    EPOCHS = 30
     TEST_SPLIT_SIZE = 0.10
+    BATCH_SIZE = 128
 
     def __init__(self, epochs=None):
         if not epochs:
             epochs = Train.EPOCHS
         self.epochs = epochs
         # enable the profiling scafolding
-        os.environ['TIME_IT'] = '1'
+        os.environ["TIME_IT"] = "1"
 
     def train_and_log(self, dataset):
         """train the model and log it to MLFlow"""
@@ -45,37 +46,31 @@ class Train:
             X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
         )
 
-        def normalize(X_train, X_test):
-            # normalize
-            mean = X_train.mean(axis=0)
-            X_train -= mean
-            std = X_train.std(axis=0)
-            X_train /= std
+        X_train, X_test = self._normalize(X_train, X_test)
 
-            X_test -= mean
-            X_test /= std
-
-            return X_train, X_test
-
-        X_train, X_test = normalize(X_train, X_test)
+        # fill test dataset nans with 0.5s
+        X_test = np.where(np.isnan(X_test), 0.5, X_test)
+        Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
 
         from keras import layers
         from keras.models import Sequential
 
         print("Starting train with N epochs, N=", self.epochs)
         model = Sequential()
-        model.add(layers.Dense(256, activation="relu", input_shape=X[1].shape))
+        model.add(layers.Dense(256, activation="relu"))
         model.add(layers.Dropout(0.5))
         model.add(layers.Dense(128, activation="relu"))
         model.add(layers.Dropout(0.5))
+        model.add(layers.Dense(64, activation="relu"))
+        model.add(layers.Dropout(0.5))
         model.add(layers.Dense(1))
-        model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", 'mse'])
+        model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
 
         history = model.fit(
             X_train,
             Y_train,
             epochs=self.epochs,
-            batch_size=32,
+            batch_size=Train.BATCH_SIZE,
             validation_data=(X_test, Y_test),
         )
 
@@ -107,6 +102,18 @@ class Train:
             plt.show()
 
         return model, metrics
+
+    def _normalize(self, X_train, X_test):
+        # normalize
+        mean = X_train.mean(axis=0)
+        X_train -= mean
+        std = X_train.std(axis=0)
+        X_train /= std
+
+        X_test -= mean
+        X_test /= std
+
+        return X_train, X_test
 
     def create_XY(self, dataset: TrainingDataset) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -141,7 +148,7 @@ class Train:
         return X, Y
 
     def create_embeddings_training_dataset(
-            self, dataset: TrainingDataset
+        self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
         create embeddings

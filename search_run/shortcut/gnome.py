@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-import subprocess
-
 import logging
+import subprocess
 
 from search_run.apps.terminal import Terminal
 from search_run.entries_group import EntriesGroup
@@ -12,7 +11,7 @@ class Gnome:
         self.configuration = configuration
 
     def generate(self):
-        print('Generating gnome shortctus')
+        print("Generating gnome shortctus")
         self._reset()
 
         shortcut_found = False
@@ -21,7 +20,7 @@ class Gnome:
                 logging.info(f"Generating shortcut for {key}")
                 identifier = self._generate_identifier(key)
                 cmd = f'search_run run_key "{identifier}" --force_gui_mode=1 --from_shortcut=1'
-                self.generate_shortcut(identifier, cmd, content['gnome_shortcut'])
+                self.generate_shortcut(identifier, cmd, content["gnome_shortcut"])
                 shortcut_found = True
 
         if not shortcut_found:
@@ -58,7 +57,9 @@ class Gnome:
         item_s = "/" + key.replace(" ", "/").replace(".", "/") + "/"
         firstname = "custom"
         # get the current list of custom shortcuts
-        get = lambda cmd: subprocess.check_output(["/bin/bash", "-c", cmd]).decode("utf-8")
+        get = lambda cmd: subprocess.check_output(["/bin/bash", "-c", cmd]).decode(
+            "utf-8"
+        )
         array_str = get("gsettings get " + key)
         # in case the array was empty, remove the annotation hints
         command_result = array_str.lstrip("@as")
@@ -74,10 +75,10 @@ class Gnome:
         # add the new keybinding to the list
         current.append(new)
         # create the shortcut, set the name, command and shortcut key
-        cmd0 = 'gsettings set ' + key + ' "' + str(current) + '"'
-        cmd1 = 'gsettings set ' + subkey1 + new + " name '" + name + "'"
-        cmd2 = 'gsettings set ' + subkey1 + new + " command '" + command + "'"
-        cmd3 = 'gsettings set ' + subkey1 + new + " binding '" + binding + "'"
+        cmd0 = "gsettings set " + key + ' "' + str(current) + '"'
+        cmd1 = "gsettings set " + subkey1 + new + " name '" + name + "'"
+        cmd2 = "gsettings set " + subkey1 + new + " command '" + command + "'"
+        cmd3 = "gsettings set " + subkey1 + new + " binding '" + binding + "'"
 
         for cmd in [cmd0, cmd1, cmd2, cmd3]:
             print(f"CMD executing: {cmd}")

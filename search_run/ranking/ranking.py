@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import json
+import os
 from collections import namedtuple
 from typing import List, Tuple
-import os
 
 from search_run.acronyms import generate_acronyms
 from search_run.config import PythonSearchConfiguration
 from search_run.features import FeatureToggle
+from search_run.infrastructure.performance import timeit
 from search_run.infrastructure.redis import PythonSearchRedis
 from search_run.observability.logger import logging
-from search_run.infrastructure.performance import timeit
 
 
 class RankingGenerator:
@@ -66,7 +66,7 @@ class RankingGenerator:
         """Mutate self.ranked keys with teh results, supports caching"""
         if self.is_redis_supported and not recompute_ranking:
             if self.debug:
-                print('Results being loaded from cache')
+                print("Results being loaded from cache")
 
             keys = self.redis_client.get("cache_ranking_result")
             keys = keys.decode("utf-8").split("|")
@@ -80,6 +80,7 @@ class RankingGenerator:
 
         if self.feature_toggle.is_enabled("ranking_next"):
             from search_run.ranking.next_item_predictor.inference import Inference
+
             self.ranked_keys = Inference(self.configuration).get_ranking()
 
         self._fetch_latest_entries()
@@ -115,10 +116,10 @@ class RankingGenerator:
         return result, final_key_list
 
     def _fetch_latest_entries(self):
-        """ Populate the variable used_entries  with the results from redis """
+        """Populate the variable used_entries  with the results from redis"""
         self.used_entries: List[Tuple[str, dict]] = []
         if not self.configuration.supported_features.is_enabled(
-                "redis"
+            "redis"
         ) or not self.feature_toggle.is_enabled("ranking_latest_used"):
             return
 
@@ -146,7 +147,7 @@ class RankingGenerator:
 
     @timeit
     def print_entries(self, data: List[Tuple[str, dict]]):
-        """ Print results """
+        """Print results"""
         position = 1
         for name, content in data:
             name_clean = name.lower()
@@ -165,7 +166,7 @@ class RankingGenerator:
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')
-            if os.getenv('ENABLE_TIME_IT'):
+            if os.getenv("ENABLE_TIME_IT"):
                 # do not print if enable timeit is on
                 continue
             print(content_str)

@@ -15,7 +15,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = "key", "previous_key", "month", 'hour', "label"
+    columns = "key", "previous_key", "month", "hour", "label"
     DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -46,13 +46,13 @@ class TrainingDataset:
         with_hour = with_month.withColumn("hour", F.hour("timestamp"))
 
         # keep only the necessary columns
-        pair = with_hour.select("month", 'hour', "key", "previous_key", "timestamp")
+        pair = with_hour.select("month", "hour", "key", "previous_key", "timestamp")
 
         logging.info("Adding number of times the pair was executed together")
         grouped = (
-            pair.groupBy("month", 'hour', "key", "previous_key")
-                .agg(F.count("previous_key").alias("times"))
-                .sort("key", "times")
+            pair.groupBy("month", "hour", "key", "previous_key")
+            .agg(F.count("previous_key").alias("times"))
+            .sort("key", "times")
         )
 
         grouped.cache()
@@ -75,8 +75,9 @@ class TrainingDataset:
     def _add_label(self, grouped):
         dataset = grouped.withColumn(
             "label",
-            F.col("times") / F.sum("times").over(Window.partitionBy("month", 'hour', "key")),
-        ).orderBy("month", 'hour', "key", "label")
+            F.col("times")
+            / F.sum("times").over(Window.partitionBy("month", "hour", "key")),
+        ).orderBy("month", "hour", "key", "label")
         return dataset.select(*self.columns)
 
     @timeit

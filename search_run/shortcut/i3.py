@@ -6,6 +6,7 @@ from grimoire.shell import shell
 
 from search_run.entries_group import EntriesGroup
 
+
 class I3:
     def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration
@@ -13,7 +14,7 @@ class I3:
     def generate(self):
 
         shortcut_str = self._generate_i3_shortcuts_string()
-        i3_config_path = os.path.join(os.environ['HOME'], ".config/i3")
+        i3_config_path = os.path.join(os.environ["HOME"], ".config/i3")
         if not os.path.exists(f"{i3_config_path}/config_part1"):
             raise Exception("Cannot find part 1 of i3 configuration")
 

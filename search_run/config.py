@@ -60,11 +60,11 @@ class PythonSearchConfiguration(EntriesGroup):
     commands: dict
 
     def __init__(
-            self,
-            *,
-            entries: Optional[dict] = None,
-            entries_groups: Optional[List[EntriesGroup]] = None,
-            supported_features: Optional[FeaturesSupport] = None,
+        self,
+        *,
+        entries: Optional[dict] = None,
+        entries_groups: Optional[List[EntriesGroup]] = None,
+        supported_features: Optional[FeaturesSupport] = None,
     ):
         if entries:
             self.commands = entries
@@ -80,19 +80,20 @@ class PythonSearchConfiguration(EntriesGroup):
 
 class ConfigurationLoader:
     """
-        Loads the application from the environment
+    Loads the application from the environment
     """
 
     def load(self) -> PythonSearchConfiguration:
         import sys
-        env_name = 'PYTHON_SEARCH_ENTRIES_FOLDER'
+
+        env_name = "PYTHON_SEARCH_ENTRIES_FOLDER"
 
         if env_name not in os.environ:
-            raise Exception(f'{env_name} must be set to load the entries dynamically')
+            raise Exception(f"{env_name} must be set to load the entries dynamically")
 
         folder = os.environ[env_name]
 
-        config_location = os.path.join(folder, 'entries/main.py')
+        config_location = os.path.join(folder, "entries/main.py")
 
         if not os.path.exists(config_location):
             raise Exception(f"Could not find entries main file {config_location}")
