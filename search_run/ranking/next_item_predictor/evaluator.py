@@ -20,7 +20,6 @@ class Evaluate:
         logging.basicConfig(
             level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)]
         )
-        from search_run.ranking.models import PythonSearchMLFlow
 
         self.configuration = ConfigurationLoader().load()
     def evaluate(self, run_id=None):

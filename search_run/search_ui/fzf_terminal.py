@@ -66,7 +66,6 @@ class FzfInTerminal:
         --bind "ctrl-k:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-h:reload:({self.executable} ranking generate)" \
         --bind "ctrl-r:reload:({self.executable} ranking generate_with_caching)" \
-        --bind "ctrl-n:reload:({self.executable} nlp get_read_projection_rank_for_query {{q}})" \
         --bind "ctrl-t:execute-silent:(notify-send testjean)" \
         --bind "ctrl-g:execute-silent:( {self.executable} google_it {{q}} )" \
         --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
