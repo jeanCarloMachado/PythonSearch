@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 import os
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 import numpy as np
 
@@ -30,12 +30,11 @@ class Inference:
         self.inference_embeddings = InferenceEmbeddingsLoader(self.all_keys)
 
     @timeit
-    def get_ranking(self, predefined_input: Optional[InferenceInput] = None) -> List[str]:
+    def get_ranking(self, predefined_input: Optional[InferenceInput] = None, return_weights=False) -> List[str]:
         """
         Gets the ranking from the next item model
         """
-        if not predefined_input:
-            inference_input = InferenceInput.from_context(self.inference_embeddings)
+        inference_input = predefined_input if predefined_input else InferenceInput.from_context(self.inference_embeddings)
 
         X = self._build_dataset(inference_input)
         Y = self._predict(X)
@@ -43,7 +42,12 @@ class Inference:
         result = list(zip(self.all_keys, Y))
         result.sort(key=lambda x: x[1], reverse=True)
 
+
+        if return_weights:
+            return result
+
         only_keys = [entry[0] for entry in result]
+
 
         return only_keys
 
@@ -98,7 +102,7 @@ class InferenceInput:
     month: int
     previous_key: str
 
-    def __init__(self, hour, month, previous_key):
+    def __init__(self,*, hour, month, previous_key):
         self.hour = hour
         self.month = month
         self.previous_key = previous_key
@@ -110,7 +114,7 @@ class InferenceInput:
         """
         now = datetime.datetime.now()
 
-        instance = InferenceInput(now.hour, now.month, embedding_loader.get_recent_key())
+        instance = InferenceInput(hour=now.hour, month=now.month, previous_key=embedding_loader.get_recent_key())
 
         if os.getenv("DEBUG", False):
             print("Inference input: ", instance.__dict__)
