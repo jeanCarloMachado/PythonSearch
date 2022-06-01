@@ -23,6 +23,7 @@ class EmbeddingsReader:
         keys = EntriesLoader.load_all_keys()
         return self.load(keys)
 
+
     @timeit
     def load(self, keys) -> dict[str, bytes]:
         """

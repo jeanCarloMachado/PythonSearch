@@ -125,14 +125,14 @@ def create_historical_embeddings(aggregated_df):
     # setup the embeddings of the old executed keys
     historical_train_keys = aggregated_df.select("key").collect()
     historical_train_keys = [key.key for key in historical_train_keys]
+    print("Creating historical embeddings, sample:", historical_train_keys[0:10])
     return create_embeddings(historical_train_keys)
 
 
 def create_embeddings(keys: List[str]) -> ndarray:
     from sentence_transformers import SentenceTransformer
-
     transformer = SentenceTransformer("nreimers/MiniLM-L6-H384-uncased")
-    return transformer.encode(keys, batch_size=8, show_progress_bar=True)
+    return transformer.encode(keys, batch_size=128, show_progress_bar=True)
 
 
 def validate_latest_model_ranks():

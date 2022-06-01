@@ -67,13 +67,13 @@ class Pipeline:
         model, metrics = Train(epochs).train(dataset, plot_history=True)
         print(metrics)
 
-    def train_and_log(self, dataset=None):
+    def train_and_log(self, dataset=None, use_cache=True):
         """
         Trains the model and logs it to MLFlow
         """
 
         if not dataset:
-            dataset = self.build_dataset(use_cache=True)
+            dataset = self.build_dataset(use_cache=use_cache)
 
         return Train().train_and_log(dataset)
 

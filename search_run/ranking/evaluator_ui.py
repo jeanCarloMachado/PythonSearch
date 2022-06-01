@@ -16,15 +16,15 @@ st.write("### Prediction results")
 
 scenarios = {
 
-    'work vs non work same time': {
+    'work vs non work typical hours': {
         'a': {
             'previous_key': 'ml platform roadmap team event session',
-            'hour': 8,
+            'hour': 14,
             'month': 6,
         },
         'b': {
             'previous_key': 'but tickets to brazil',
-            'hour': 8,
+            'hour': 21,
             'month': 6,
         }
 
@@ -45,7 +45,7 @@ scenarios = {
 }
 current_scenario = st.selectbox('Scenario', scenarios)
 
-col1, col2 = st.columns(2)
+colA, colB = st.columns(2)
 
 
 def get_input_for_scenario(scenario, a_or_b='a'):
@@ -53,26 +53,21 @@ def get_input_for_scenario(scenario, a_or_b='a'):
     return InferenceInput(**input_data)
 
 
-from datetime import datetime;
+def perform_inference(inference_input):
+    results = Inference(configuration=config).get_ranking(inference_input, True)
+    return pd.DataFrame.from_dict(results)
 
-col1.write("##### Input A")
-inference_input = get_input_for_scenario(current_scenario, 'a')
 
-inference_input.previous_key = col1.text_input('Previous key', inference_input.previous_key,
-                                               key=datetime.now().timestamp())
-col1.write(inference_input.__dict__)
+colA.write("##### Input A")
+inference_a = get_input_for_scenario(current_scenario, 'a')
 
-results = Inference(configuration=config).get_ranking(inference_input, True)
-result_df = pd.DataFrame.from_dict(results)
-col1.dataframe(result_df, height=500)
+inference_a.previous_key = colA.text_input('Previous key A', inference_a.previous_key)
+colA.write(inference_a.__dict__)
+colA.dataframe(perform_inference(inference_a), height=500)
 
-col2.write("##### Input B")
-inference_input = get_input_for_scenario(current_scenario, 'b')
+colB.write("##### Input B")
+inference_b = get_input_for_scenario(current_scenario, 'b')
 
-inference_input.previous_key = col2.text_input('Previous key', inference_input.previous_key,
-                                               key=datetime.now().timestamp() + 1000)
-col2.write(inference_input.__dict__)
-
-results = Inference(configuration=config).get_ranking(inference_input, True)
-result_df = pd.DataFrame.from_dict(results)
-col2.dataframe(result_df, height=500)
+inference_b.previous_key = colB.text_input('Previous key B', inference_b.previous_key)
+colB.write(inference_b.__dict__)
+colB.dataframe(perform_inference(inference_b), height=500)

@@ -19,14 +19,21 @@ class Inference:
     """
 
     def __init__(self, configuration, run_id: Optional[str] = None):
-        self.configuration = configuration
         self.debug = os.getenv("DEBUG", False)
+        self.run_id = run_id if run_id else '614b80867a83425ba98c226ea591c14a'
+
+        if self.debug:
+            print("Manually setted run id: ", self.run_id)
+
+        self.configuration = configuration
         if not self.debug:
             self._disable_debug()
+
+
         # previous key should be setted in runtime
         self.previous_key = None
         self.all_keys = self.configuration.commands.keys()
-        self.model = self._load_mlflow_model(run_id=run_id)
+        self.model = self._load_mlflow_model(run_id=self.run_id)
         self.inference_embeddings = InferenceEmbeddingsLoader(self.all_keys)
 
     @timeit
@@ -65,8 +72,8 @@ class Inference:
 
             X[i] = np.concatenate(
                 (
-                    previous_key_embedding,
                     embedding,
+                    previous_key_embedding,
                     np.asarray([inference_input.month]),
                     np.asarray([inference_input.hour]),
                 )

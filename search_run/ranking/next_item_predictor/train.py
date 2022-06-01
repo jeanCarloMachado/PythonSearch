@@ -103,24 +103,13 @@ class Train:
 
         return model, metrics
 
-    def _normalize(self, X_train, X_test):
-        # normalize
-        mean = X_train.mean(axis=0)
-        X_train -= mean
-        std = X_train.std(axis=0)
-        X_train /= std
-
-        X_test -= mean
-        X_test /= std
-
-        return X_train, X_test
 
     def create_XY(self, dataset: TrainingDataset) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y
         Returns a pair with X, Y
         """
-
+        print("Number of rows in the dataset: ", dataset.count())
         embeddings_keys = self.create_embeddings_training_dataset(dataset)
 
         # + 1 is for the month number
@@ -147,15 +136,31 @@ class Train:
 
         return X, Y
 
+
+    def _normalize(self, X_train, X_test):
+        # normalize
+        mean = X_train.mean(axis=0)
+        X_train -= mean
+        std = X_train.std(axis=0)
+        X_train /= std
+
+        X_test -= mean
+        X_test /= std
+
+        return X_train, X_test
+
     def create_embeddings_training_dataset(
         self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
         create embeddings
         """
+        print("Creating embeddings of traning dataset")
 
         # add embeddings to the dataset
         all_keys = self._get_all_keys_dataset(dataset)
+
+        print("Sample of historical keys: ", all_keys[0:10])
 
         return create_indexed_embeddings(all_keys)
 
