@@ -29,6 +29,19 @@ scenarios = {
         }
 
     },
+    'work vs non work typical hours 2': {
+            'a': {
+                'previous_key': 'git log in catalog',
+                'hour': 14,
+                'month': 6,
+            },
+            'b': {
+                'previous_key': 'precos agosto enviado ao pai',
+                'hour': 21,
+                'month': 6,
+            }
+
+        },
     'work in and not business hours': {
         'a': {
             'previous_key': 'ml platform roadmap team event session',
