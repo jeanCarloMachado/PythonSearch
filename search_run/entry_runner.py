@@ -2,17 +2,14 @@ from __future__ import annotations
 
 import json
 import re
-from cmd import Cmd
 from typing import List
 
-from grimoire.notification import notify_send, send_notification
-from grimoire.string import generate_identifier
+from search_run.apps.notification_ui import send_notification
 
 from search_run.config import PythonSearchConfiguration
 from search_run.context import Context
 from search_run.events.events import SearchRunPerformed
 from search_run.events.producer import EventProducer
-from search_run.exceptions import RunException
 from search_run.interpreter.cmd import CmdEntry
 from search_run.interpreter.interpreter import Interpreter
 from search_run.observability.logger import initialize_systemd_logging, logging
@@ -54,11 +51,13 @@ class EntryRunner:
             send_notification(f"{key}")
 
         rank_position = None
-        try:
-            matadata_dict = json.loads(metadata)
-            rank_position = matadata_dict.get("position")
-        except BaseException as e:
-            self.logging.warning(f"Could not decode metadata: {e}")
+
+        if metadata:
+            try:
+                matadata_dict = json.loads(metadata)
+                rank_position = matadata_dict.get("position")
+            except BaseException as e:
+                self.logging.warning(f"Could not decode metadata: {e}")
 
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
@@ -90,7 +89,7 @@ class EntryRunner:
 
         if len(matches) > 1:
             real_key = min(matches, key=len)
-            notify_send(f"Multiple matches for this key {matches} using the smaller")
+            send_notification(f"Multiple matches for this key {matches} using the smaller")
 
         return Interpreter.build_instance(self.configuration).default(real_key)
 
@@ -111,3 +110,12 @@ class EntryRunner:
                 matching_keys.append(registered_key)
 
         return matching_keys
+
+def generate_identifier(string):
+    """
+    strip the string from all special characters lefting only [A-B-09]
+    """
+    result = "".join(e for e in string if e.isalnum())
+    result = result.lower()
+
+    return result

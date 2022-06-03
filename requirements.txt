@@ -5,7 +5,6 @@ pandas
 pyspark
 ddtrace
 personal-grimoire==1.6
-sentence-transformers
 #dev onlny
 flake8-functions
 build
@@ -14,3 +13,5 @@ apipkg #needed by pytest
 kafka-python
 findspark
 redis
+#sentence-transformers
+pyyaml

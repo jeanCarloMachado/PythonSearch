@@ -1,5 +1,6 @@
 class Shortcuts:
     """
+    @todo move this out of the repo
     List of mapped i3 shortcuts, in gnome the syntax is different.
     """
 

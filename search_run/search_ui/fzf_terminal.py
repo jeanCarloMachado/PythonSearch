@@ -26,7 +26,7 @@ class FzfInTerminal:
     def __init__(self, *, title=""):
         self.height = FzfInTerminal.HEIGHT
         self.width = FzfInTerminal.WIDTH
-        self.preview_cmd = "(echo '{}' | cut -d ':' -f1 --complement | jq . -C 2>/dev/null ) || echo {}"
+        self.preview_cmd = "(echo '{}' | rev  | cut -d ':' -f1 | rev | jq . -C 2>/dev/null ) || echo {}"
         self.executable = "search_run"
         self.title = title
 
@@ -75,7 +75,7 @@ class FzfInTerminal:
         """
 
     def _launch_terminal(self, internal_cmd: str) -> None:
-        launch_cmd = f"""ionice -n 3 nice -19 kitty \
+        launch_cmd = f"""nice -19 kitty \
         --title="{self.title} {datetime.datetime.now().isoformat()}"\
          -o remember_window_size=n \
         -o initial_window_width={self.width}  \

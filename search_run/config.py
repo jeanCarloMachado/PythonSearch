@@ -80,7 +80,7 @@ class PythonSearchConfiguration(EntriesGroup):
 
 class ConfigurationLoader:
     """
-    Loads the application from the environment
+    Loads the application from the environment.py
     """
 
     def load(self) -> PythonSearchConfiguration:
