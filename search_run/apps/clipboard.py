@@ -1,6 +1,6 @@
 from grimoire.shell import shell
 from grimoire.string import chomp, remove_new_lines
-
+from search_run.environment import is_mac
 from search_run.apps.notification_ui import send_notification
 
 
@@ -34,7 +34,12 @@ class Clipboard:
             return "'" + s.replace("'", "'\\''") + "'"
 
         sanitized = shellquote(content)
-        cmd = f"echo {sanitized} | xsel --clipboard --primary --input"
+
+        clipboard_cmd = 'xsel --clipboard --primary --input'
+        if is_mac():
+            clipboard_cmd = 'pbcopy'
+
+        cmd = f"echo {sanitized} | {clipboard_cmd}"
 
         if enable_notifications:
             send_notification(f"Content copied: {sanitized}")
