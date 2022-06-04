@@ -6,7 +6,6 @@ from grimoire.shell import shell
 
 from search_run.entries_group import EntriesGroup
 
-
 class I3:
     def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration

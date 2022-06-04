@@ -94,6 +94,7 @@ class PythonSearchCli:
         return RegisterNew(self.configuration)
 
     def generate_shortcuts(self):
+        """Generate shorcuts for all environemtns"""
         from search_run.shortcut.generator import ShortcutGenerator
 
         configuration_exporter = ShortcutGenerator(self.configuration)
