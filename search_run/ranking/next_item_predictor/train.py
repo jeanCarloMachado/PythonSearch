@@ -10,7 +10,7 @@ from search_run.ranking.next_item_predictor.training_dataset import TrainingData
 
 
 class Train:
-    EPOCHS = 30
+    EPOCHS = 35
     TEST_SPLIT_SIZE = 0.10
     BATCH_SIZE = 128
 
@@ -57,11 +57,7 @@ class Train:
 
         print("Starting train with N epochs, N=", self.epochs)
         model = Sequential()
-        model.add(layers.Dense(256, activation="relu"))
-        model.add(layers.Dropout(0.5))
         model.add(layers.Dense(128, activation="relu"))
-        model.add(layers.Dropout(0.5))
-        model.add(layers.Dense(64, activation="relu"))
         model.add(layers.Dropout(0.5))
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
@@ -103,7 +99,6 @@ class Train:
 
         return model, metrics
 
-
     def create_XY(self, dataset: TrainingDataset) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y
@@ -136,7 +131,6 @@ class Train:
 
         return X, Y
 
-
     def _normalize(self, X_train, X_test):
         # normalize
         mean = X_train.mean(axis=0)
@@ -150,7 +144,7 @@ class Train:
         return X_train, X_test
 
     def create_embeddings_training_dataset(
-        self, dataset: TrainingDataset
+            self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
         create embeddings

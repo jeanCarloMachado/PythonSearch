@@ -1,6 +1,9 @@
 import logging
 import os.path
 import sys
+from typing import Optional
+
+from pyspark.sql import DataFrame
 
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
@@ -25,10 +28,14 @@ class TrainingDataset:
         ),
 
     @timeit
-    def build(self, use_cache=False, write_cache=True):
-        """When cache is enabled, writes a parquet in a temporary file"""
+    def build(self, use_cache=False, write_cache=True) -> DataFrame:
+        """
+        When cache is enabled, writes a parquet in a temporary file
+        """
         if use_cache:
-            return self._read_cache()
+            cache = self._read_cache()
+            if cache:
+                return cache
 
         search_performed_df = SearchesPerformed().load()
 
@@ -109,7 +116,7 @@ class TrainingDataset:
 
         dataset.write.parquet(TrainingDataset.DATASET_CACHE_FILE)
 
-    def _read_cache(self):
+    def _read_cache(self) -> Optional[DataFrame]:
         if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
             print("Reading cache dataset")
             return self._spark.read.parquet(TrainingDataset.DATASET_CACHE_FILE)
