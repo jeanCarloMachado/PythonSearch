@@ -81,6 +81,7 @@ class FzfInTerminal:
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
         -o font_family="FontAwesome" \
+        -o confirm_os_window_close=0 \
         -o font_size={FzfInTerminal.FONT_SIZE} \
          {internal_cmd}
         """
