@@ -6,7 +6,6 @@ from typing import Optional
 from search_run.apps.clipboard import Clipboard
 from grimoire.desktop.dmenu import Dmenu
 from grimoire.logging import logging
-from grimoire.notification import send_notification
 
 from search_run.apps.window_manager import I3
 from search_run.context import Context
@@ -43,6 +42,7 @@ class BaseEntry:
         if result == "y":
             return True
 
+        from search_run.apps.notification_ui import send_notification
         send_notification(f"Operation cancelled. Confirmation response was '{result}'")
 
         return False

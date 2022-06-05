@@ -53,7 +53,7 @@ class PythonSearchCli:
     def run_key(self):
         return EntryRunner(self.configuration).run_key
 
-    def clipboard_key(self, key):
+    def copy_entry_content(self, key: str):
         """
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
@@ -61,6 +61,14 @@ class PythonSearchCli:
         from search_run.interpreter.interpreter import Interpreter
 
         Interpreter.build_instance(self.configuration).clipboard(key)
+
+
+    def copy_key_only(self, key_str: str):
+        """
+        Copies to clipboard the key
+        """
+        from search_run.apps.clipboard import Clipboard
+        Clipboard().set_content(key_str)
 
     def edit_key(self, key):
         from search_run.entry_capture.edit_content import EditKey

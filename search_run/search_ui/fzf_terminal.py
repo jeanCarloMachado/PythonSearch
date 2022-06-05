@@ -56,14 +56,13 @@ class FzfInTerminal:
         --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+first" \
-        --bind "ctrl-c:execute-silent:(nohup {self.executable} clipboard_key {{}} & disown)" \
+        --bind "ctrl-c:execute-silent:(nohup {self.executable} copy_entry_content {{}} & disown)" \
+        --bind "ctrl-k:execute-silent:(nohup {self.executable} copy_key_only {{}} & disown)" \
         --bind "ctrl-c:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
         --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-s:execute-silent:(nohup {self.executable} search_edit {{}} & disown)" \
         --bind "ctrl-s:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "ctrl-k:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
-        --bind "ctrl-k:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-h:reload:({self.executable} ranking generate)" \
         --bind "ctrl-r:reload:({self.executable} ranking generate_with_caching)" \
         --bind "ctrl-t:execute-silent:(notify-send testjean)" \
