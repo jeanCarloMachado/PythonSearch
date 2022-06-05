@@ -6,6 +6,7 @@ import numpy as np
 
 from search_run.config import DataConfig
 from search_run.ranking.entry_embeddings import create_indexed_embeddings
+from search_run.ranking.next_item_predictor.nextitemmodel import NextItemModel
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
 
 
@@ -13,6 +14,7 @@ class Train:
     EPOCHS = 35
     TEST_SPLIT_SIZE = 0.10
     BATCH_SIZE = 128
+
 
     def __init__(self, epochs=None):
         if not epochs:
@@ -108,22 +110,23 @@ class Train:
         embeddings_keys = self.create_embeddings_training_dataset(dataset)
 
         # + 1 is for the month number
-        dimensions_X = 2 * 384 + 1 + 1
-        print(f"Dimensions of dataset = {dimensions_X}")
-        X = np.zeros([dataset.count(), dimensions_X])
+
+        print(f"Dimensions of dataset = {NextItemModel.dimensions_X}")
+        X = np.zeros([dataset.count(), NextItemModel.dimensions_X])
         Y = np.empty(dataset.count())
 
         print("X shape:", X.shape)
 
-        collected_keys = dataset.select(*TrainingDataset.columns).collect()
+        collected_keys = dataset.select(*NextItemModel.columns).collect()
 
         for i, collected_key in enumerate(collected_keys):
             X[i] = np.concatenate(
                 [
+                    np.asarray([collected_key.month]),
+                    np.asarray([collected_key.day]),
                     embeddings_keys[collected_key.key],
                     embeddings_keys[collected_key.previous_key],
-                    np.asarray([collected_key.month]),
-                    np.asarray([collected_key.hour]),
+                    embeddings_keys[collected_key.before_previous_key],
                 ]
             )
             Y[i] = collected_key.label

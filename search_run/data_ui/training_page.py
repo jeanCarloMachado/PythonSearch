@@ -19,5 +19,5 @@ def load_training_page():
     st.pyplot(fig)
 
 def load_dataset():
-    df = TrainingDataset().build(use_cache=True)
+    df = TrainingDataset().build(use_cache=False)
     return df

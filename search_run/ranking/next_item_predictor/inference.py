@@ -11,6 +11,7 @@ from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.infrastructure.performance import timeit
 from search_run.ranking.entry_embeddings import EmbeddingSerialization, EmbeddingsReader
 from search_run.ranking.models import PythonSearchMLFlow
+from search_run.ranking.next_item_predictor.nextitemmodel import NextItemModel
 
 
 class Inference:
@@ -60,9 +61,11 @@ class Inference:
 
     def _build_dataset(self, inference_input: InferenceInput):
 
-        X = np.zeros([len(self.all_keys), 2 * 384 + 1 + 1])
+        X = np.zeros([len(self.all_keys), NextItemModel.dimensions_X])
 
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(inference_input.previous_key)
+        before_previous_key_embedding = self.inference_embeddings.get_embedding_from_key(inference_input.previous_key)
+
 
         for i, key in enumerate(self.all_keys):
             embedding = self.inference_embeddings.get_embedding_from_key(key)
@@ -72,10 +75,11 @@ class Inference:
 
             X[i] = np.concatenate(
                 (
+                    np.asarray([inference_input.month]),
+                    np.asarray([inference_input.day]),
                     embedding,
                     previous_key_embedding,
-                    np.asarray([inference_input.month]),
-                    np.asarray([inference_input.hour]),
+                    before_previous_key_embedding
                 )
             )
 
@@ -108,11 +112,14 @@ class InferenceInput:
     hour: int
     month: int
     previous_key: str
+    before_previous_key: str
 
-    def __init__(self,*, hour, month, previous_key):
+    def __init__(self,*, hour, month, previous_key, before_previous_key):
         self.hour = hour
         self.month = month
         self.previous_key = previous_key
+        self.before_previous_key = before_previous_key
+
 
     @staticmethod
     def from_context(embedding_loader: InferenceEmbeddingsLoader) -> 'InferenceInput':
@@ -121,7 +128,9 @@ class InferenceInput:
         """
         now = datetime.datetime.now()
 
-        instance = InferenceInput(hour=now.hour, month=now.month, previous_key=embedding_loader.get_recent_key())
+        recent_keys = embedding_loader.get_recent_keys()
+        instance = InferenceInput(hour=now.hour, month=now.month, previous_key=recent_keys[0],
+                                  before_previous_key=recent_keys[1])
 
         if os.getenv("DEBUG", False):
             print("Inference input: ", instance.__dict__)
@@ -133,14 +142,18 @@ class InferenceEmbeddingsLoader:
     def __init__(self, all_keys):
         self.embedding_mapping = EmbeddingsReader().load(all_keys)
 
-    def get_recent_key(self) -> str:
+    def get_recent_keys(self, size=2) -> str:
         """Look into the recently used keys and return the most recent for which there are embeddings"""
+        result = []
         for previous_key in LatestUsedEntries().get_latest_used_keys():
             if (
                     previous_key in self.embedding_mapping
                     and self.embedding_mapping[previous_key]
             ):
-                return previous_key
+                result.append(previous_key)
+                if len(result) == size:
+                    return result
+
 
         raise Exception('Could not find a recent key with embeddings')
 

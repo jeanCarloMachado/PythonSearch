@@ -11,6 +11,7 @@ from pyspark.sql.window import Window
 
 from search_run.datasets.searchesperformed import SearchesPerformed
 from search_run.infrastructure.performance import timeit
+from search_run.ranking.next_item_predictor.nextitemmodel import NextItemModel
 
 
 class TrainingDataset:
@@ -18,7 +19,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = "key", "previous_key", "month", "hour", "label"
+
     DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -50,25 +51,33 @@ class TrainingDataset:
 
         logging.info("Group by month")
         with_month = df_with_previous.withColumn("month", F.month("timestamp"))
-        with_hour = with_month.withColumn("hour", F.hour("timestamp"))
+
+
+        logging.info("Group by day")
+        with_hour = with_month.withColumn("day", F.dayofweek("timestamp"))
 
         # keep only the necessary columns
-        pair = with_hour.select("month", "hour", "key", "previous_key", "timestamp")
+        columns = NextItemModel.x_columns + ("timestamp",)
+        pair = with_hour.select(*columns)
 
         logging.info("Adding number of times the pair was executed together")
-        grouped = (
-            pair.groupBy("month", "hour", "key", "previous_key")
+        with_times_executed = (
+            pair.groupBy("month", "day", "key", "previous_key", "before_previous_key")
             .agg(F.count("previous_key").alias("times"))
             .sort("key", "times")
         )
 
-        grouped.cache()
-        grouped.count()
+        with_times_executed.cache()
+        with_times_executed.count()
 
         logging.info("Adding label")
 
         # add the label
-        dataset = self._add_label(grouped)
+        # divides by the number of executions in the same time period
+        dataset = with_times_executed.withColumn('total_day', F.sum('times').over(Window.partitionBy('month', 'day')))
+        print('Normalize label on percentage terms')
+        dataset = dataset.withColumn("label", (F.col("times") / F.col("total_day")) * F.lit(1000))
+
 
         logging.info("TrainingDataset ready, writing it to disk")
         if write_cache:
@@ -76,16 +85,8 @@ class TrainingDataset:
 
         logging.info("Printing a sample of the dataset")
         dataset.show(10)
-        return dataset
 
-    @timeit
-    def _add_label(self, grouped):
-        dataset = grouped.withColumn(
-            "label",
-            F.col("times")
-            / F.sum("times").over(Window.partitionBy("month", "hour", "key")),
-        ).orderBy("month", "hour", "key", "label")
-        return dataset.select(*self.columns)
+        return dataset
 
     @timeit
     def _join_with_previous(self, df):
@@ -101,9 +102,16 @@ class TrainingDataset:
         ).sort("timestamp", ascending=False)
 
         # add previous key to the dataset
-        search_performed_df_with_previous = search_performed_df_row_number.withColumn(
-            "previous_key", F.lag("key", 1, None).over(window)
-        ).sort("timestamp", ascending=False)
+        search_performed_df_with_previous = (
+            search_performed_df_row_number
+            .withColumn(
+                "previous_key", F.lag("key", 1, None).over(window)
+            )
+            .withColumn(
+                "before_previous_key", F.lag("key", 2, None).over(window)
+            )
+            .sort("timestamp", ascending=False)
+        )
 
         return search_performed_df_with_previous
 
