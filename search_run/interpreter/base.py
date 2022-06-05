@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import Optional
 
-from grimoire.desktop.clipboard import Clipboard
+from search_run.apps.clipboard import Clipboard
 from grimoire.desktop.dmenu import Dmenu
 from grimoire.logging import logging
 from grimoire.notification import send_notification

@@ -1,7 +1,6 @@
 from grimoire.shell import shell
 from grimoire.string import chomp, remove_new_lines
 from search_run.environment import is_mac
-from search_run.apps.notification_ui import send_notification
 
 
 class Clipboard:
@@ -29,7 +28,13 @@ class Clipboard:
         suffix = " ..." if len(content) > size_of_preview else ""
         return f"{final_content}{suffix}"
 
-    def set_content(self, content, enable_notifications=True):
+    def set_content(self, content: str, enable_notifications=True):
+        """
+        Put a string in the clibboard
+        :param content:
+        :param enable_notifications:
+        :return:
+        """
         def shellquote(s):
             return "'" + s.replace("'", "'\\''") + "'"
 
@@ -42,6 +47,7 @@ class Clipboard:
         cmd = f"echo {sanitized} | {clipboard_cmd}"
 
         if enable_notifications:
+            from search_run.apps.notification_ui import send_notification
             send_notification(f"Content copied: {sanitized}")
 
         return shell.run(cmd)
