@@ -51,16 +51,22 @@ class CmdEntry(BaseEntry):
         if "high_priority" in self.cmd:
             cmd = f"nice -19 {cmd}"
 
+
         if "directory" in self.cmd:
             cmd = f'cd {self.cmd["directory"]} && {cmd}'
 
         if "tmux" in self.cmd:
             cmd = f'tmux new -s "{self._get_window_title()}" {cmd} '
 
-        if WRAP_IN_TERMINAL in self.cmd:
-            cmd = f"{cmd} ; tail -f /dev/null"
+        hold_terminal = False if 'not_hold_terminal' in self.cmd else True
 
-        cmd = self._try_to_wrap_in_terminal(cmd)
+        if WRAP_IN_TERMINAL in self.cmd:
+            cmd = f"{cmd} "
+
+            if hold_terminal:
+                cmd+= '; tail - f / dev / null'
+
+            cmd = self._try_to_wrap_in_terminal(cmd)
 
         logging.info(f"Command to run: {cmd}")
         result = self._execute(cmd)
@@ -71,10 +77,11 @@ class CmdEntry(BaseEntry):
         if WRAP_IN_TERMINAL in self.cmd:
             logging.info("Running it in a new terminal")
 
+            hold_terminal = False if 'not_hold_terminal' in self.cmd else True
             cmd = Terminal().wrap_cmd_into_terminal(
                 cmd,
                 title=self._get_window_title(),
-                hold_terminal_open_on_end=True,
+                hold_terminal_open_on_end=hold_terminal,
             )
             logging.info(f"Command to run: {cmd}")
 
@@ -91,18 +98,20 @@ class CmdEntry(BaseEntry):
         return remove_special_chars(title, [" "])
 
     def _execute(self, cmd):
-        logging.info(f"Command to run: {cmd}")
+        logging.info(f"To run: {cmd}")
+
+        hold_terminal = False if 'not_hold_terminal' in self.cmd else True
         if (
             self.context
             and self.context.is_group_command()
             and not self.context.should_execute_sequentially()
-        ):
+        ) or not hold_terminal:
             return shell.run_command_no_wait(cmd)
 
         if self.context and self.context.should_execute_sequentially():
             return shell.run_with_result(cmd)
-
-        return shell.run(cmd)
+        import os
+        return os.system(cmd)
 
     def return_result(self, result):
         if "notify-result" in self.cmd:

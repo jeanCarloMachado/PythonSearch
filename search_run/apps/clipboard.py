@@ -9,7 +9,11 @@ class Clipboard:
         Accepted values are --primary and --clipboard
         """
 
-        result = shell.run_with_result(f"xsel {source} --output")
+        cmd = f"xsel {source} --output"
+        if is_mac():
+            cmd = 'pbpaste'
+
+        result = shell.run_with_result(cmd)
         result = chomp(result)
 
         return result

@@ -53,7 +53,7 @@ class EntryInserter:
         # compile and make sure the file is a valid python
         import os
 
-        if os.system(f"python -m compileall -q {copy_file}") != 0:
+        if os.system(f"python3 -m compileall -q {copy_file}") != 0:
             message = "Copy of file does not compile so wont proceed replacing!"
             send_notification(message)
             raise Exception(message)

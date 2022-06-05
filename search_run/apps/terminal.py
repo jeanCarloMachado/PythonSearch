@@ -25,8 +25,10 @@ class Terminal:
         wraps the command in a terminal but does not execute it
         """
         if hold_terminal_open_on_end:
-            cmd = f" {cmd}"
+            cmd = f'bash -c "{cmd}"'
+        else:
+            cmd = f'bash -c "{cmd}"'
 
-        final_cmd = f'kitty -T "{title}" bash -c "{cmd}" '
+        final_cmd = f'kitty -T "{title}" {cmd} '
 
         return final_cmd

@@ -6,17 +6,27 @@ from grimoire.file import append_file
 from grimoire.shell import shell as s
 from grimoire.string import chomp, emptish
 
+import os
+import time
 
 class AskQuestion:
     def ask(self, message: str) -> str:
+        content_file = '/tmp/python_search_input'
+        if os.path.exists(content_file):
+            os.remove(content_file)
 
-        result = Rofi(title=message).open()
+        cmd = f"""kitty bash -c 'print {message}; read tmp; echo "$tmp" >{content_file}' &"""
+        os.system(cmd)
 
-        if emptish(result):
-            raise AskQuestionException.empty_content()
+        while not os.path.exists(content_file):
+            time.sleep(1)
+
+        time.sleep(0.2)
+
+        with open(content_file) as file:
+            result = file.readlines()[0].strip()
 
         return result
-
 
 class AskQuestionException(Exception):
     config = {
@@ -30,57 +40,6 @@ class AskQuestionException(Exception):
         return AskQuestionException(
             f"The value you gave to dmenu looks empty. Will not proceed"
         )
-
-
-class Rofi:
-    def __init__(
-        self, title="Run: ", history_file=None, options_file=None, accept_empty=False
-    ):
-        self.title = title
-        self.history_file = history_file
-        self.accept_empty = accept_empty
-        self.options_file = options_file
-
-    def open(
-        self, get_options_cmd: Optional[str] = None, accept_empty: Optional[bool] = None
-    ) -> str:
-
-        if accept_empty is not None:
-            self.accept_empty = accept_empty
-
-        entries_cmd = ""
-        if self.history_file:
-            entries_cmd = f"tac {self.history_file} | "
-        if self.options_file:
-            entries_cmd = f"tac {self.options_file} | "
-
-        # Tried things that did not work:
-        cmd = f"""{entries_cmd} nice -19 rofi\
-          -width 1000\
-          -l 0 \
-          -show-match\
-          -dmenu\
-          -p '{self.title}'"""
-
-        if get_options_cmd:
-            cmd = f"{get_options_cmd} | {cmd}"
-
-        try:
-            result = s.check_output(cmd)
-        except CalledProcessError:
-            result = ""
-            return result
-
-        logging.info(f"Rofi result: {result}")
-
-        result = chomp(result)
-        if emptish(result) and not self.accept_empty:
-            raise MenuException.given_empty_value()
-
-        if self.history_file:
-            append_file(self.history_file, f"\n{result}\n")
-
-        return result
 
 
 class MenuException(Exception):
