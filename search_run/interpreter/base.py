@@ -5,8 +5,7 @@ from typing import Optional
 
 from search_run.apps.clipboard import Clipboard
 from grimoire.desktop.dmenu import Dmenu
-from grimoire.logging import logging
-
+import logging
 from search_run.apps.window_manager import I3
 from search_run.context import Context
 

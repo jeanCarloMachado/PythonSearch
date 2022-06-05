@@ -8,7 +8,6 @@ from search_run.apps.notification_ui import send_notification
 
 from search_run.config import PythonSearchConfiguration
 from search_run.context import Context
-from search_run.events.events import SearchRunPerformed
 from search_run.events.producer import EventProducer
 from search_run.interpreter.cmd import CmdEntry
 from search_run.interpreter.interpreter import Interpreter
@@ -79,6 +78,7 @@ class EntryRunner:
             Context.get_instance().enable_gui_mode()
 
         if self.configuration.supported_features.is_enabled("event_tracking"):
+            from search_run.events.events import SearchRunPerformed
             EventProducer().send_object(
                 SearchRunPerformed(
                     key=key, query_input=query_used, shortcut=from_shortcut

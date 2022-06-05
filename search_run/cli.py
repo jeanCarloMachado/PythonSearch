@@ -68,7 +68,7 @@ class PythonSearchCli:
         Copies to clipboard the key
         """
         from search_run.apps.clipboard import Clipboard
-        Clipboard().set_content(key_str)
+        Clipboard().set_content(key_str.split(':')[0])
 
     def edit_key(self, key):
         from search_run.entry_capture.edit_content import EditKey

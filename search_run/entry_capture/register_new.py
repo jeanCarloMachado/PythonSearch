@@ -12,7 +12,6 @@ from grimoire.translator.translator import Translator
 
 from search_run.entry_capture.data_capture_ui import AskQuestion
 from search_run.entry_capture.entry_inserter import EntryInserter
-from search_run.events.events import RegisterExecuted
 from search_run.exceptions import RegisterNewException
 from search_run.interpreter.base import BaseEntry
 from search_run.interpreter.interpreter import Interpreter
@@ -115,6 +114,7 @@ class RegisterNew:
         key = AskQuestion().ask(title)
 
         if self.configuration.supported_features.is_enabled("event_tracking"):
+            from search_run.events.events import RegisterExecuted
             event = RegisterExecuted(**{"key": key, "content": clipboard_content})
             self.message_broker.produce(event.dict())
 
