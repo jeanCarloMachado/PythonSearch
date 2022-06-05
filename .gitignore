@@ -6,3 +6,4 @@ dist/*
 *.cache/*
 *__pycache__*
 .idea
+nohup.out
