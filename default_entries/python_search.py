@@ -13,6 +13,7 @@ class PythonSearch(EntriesGroup):
             "description": "Starts python search only once and reuse the same session",
             "focus_match": PythonSearchConfiguration.APPLICATION_TITLE,
             "cmd": "nice -19 search_run search",
+            "i3_shortcut": 'Mod1+space',
             "gnome_shortcut": "<Alt>space",
         },
         "save entry from clipboard inferring type": {
