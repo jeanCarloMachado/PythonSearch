@@ -8,7 +8,6 @@ from search_run.apps.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from search_run.apps.notification_ui import send_notification
 from grimoire.string import emptish
-from grimoire.translator.translator import Translator
 
 from search_run.entry_capture.data_capture_ui import AskQuestion
 from search_run.entry_capture.entry_inserter import EntryInserter
@@ -87,6 +86,7 @@ class RegisterNew:
         if emptish(key):
             raise RegisterNewException.empty_content()
 
+        from grimoire.translator.translator import Translator
         Translator().translator_clipboard()
         time.sleep(1)
 
