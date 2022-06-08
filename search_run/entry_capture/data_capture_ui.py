@@ -1,13 +1,6 @@
-import logging
-from subprocess import CalledProcessError
-from typing import Optional
-
-from grimoire.file import append_file
-from grimoire.shell import shell as s
-from grimoire.string import chomp, emptish
-
 import os
 import time
+
 
 class AskQuestion:
     def ask(self, message: str) -> str:
@@ -27,28 +20,3 @@ class AskQuestion:
             result = file.readlines()[0].strip()
 
         return result
-
-class AskQuestionException(Exception):
-    config = {
-        "disable_tray_message": True,
-        "enable_notification": True,
-        "disable_sentry": True,
-    }
-
-    @staticmethod
-    def empty_content():
-        return AskQuestionException(
-            f"The value you gave to dmenu looks empty. Will not proceed"
-        )
-
-
-class MenuException(Exception):
-    config = {
-        "disable_tray_message": True,
-        "enable_notification": True,
-        "disable_sentry": True,
-    }
-
-    @staticmethod
-    def given_empty_value():
-        return MenuException("No option selected in rofi!")
