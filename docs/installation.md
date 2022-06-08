@@ -18,11 +18,16 @@ making it work for everybody. If you wanna install it please reach out that I ca
 pip install python-search
 ```
 
-
 ## Developer Installation
 
 ```sh
 git clone ...
 pip install -r requirements.in
 pip install -e .
+```
+
+# Mac specific
+
+```
+brew install coreutils
 ```

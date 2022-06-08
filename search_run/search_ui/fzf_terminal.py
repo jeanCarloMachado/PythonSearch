@@ -2,6 +2,7 @@ import datetime
 import os
 
 from search_run.config import PythonSearchConfiguration
+from search_run.environment import is_mac
 from search_run.observability.logger import logging
 
 
@@ -26,7 +27,11 @@ class FzfInTerminal:
     def __init__(self, *, title=""):
         self.height = FzfInTerminal.HEIGHT
         self.width = FzfInTerminal.WIDTH
-        self.preview_cmd = "(echo '{}' | rev  | cut -d ':' -f1 | rev | jq . -C 2>/dev/null ) || echo {}"
+        cut_binary = 'cut'
+        if is_mac():
+            cut_binary = 'gcut'
+
+        self.preview_cmd = f"(echo '{{}}' | {cut_binary} -d ':' -f1 --complement | jq . -C 2>/dev/null )"
         self.executable = "search_run"
         self.title = title
 
