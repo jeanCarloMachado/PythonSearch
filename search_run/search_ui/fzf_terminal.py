@@ -2,7 +2,6 @@ import datetime
 import os
 
 from search_run.config import PythonSearchConfiguration
-from search_run.environment import is_mac
 from search_run.observability.logger import logging
 
 
