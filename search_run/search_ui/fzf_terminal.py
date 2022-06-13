@@ -27,11 +27,8 @@ class FzfInTerminal:
     def __init__(self, *, title=""):
         self.height = FzfInTerminal.HEIGHT
         self.width = FzfInTerminal.WIDTH
-        cut_binary = 'cut'
-        if is_mac():
-            cut_binary = 'gcut'
 
-        self.preview_cmd = f"(echo '{{}}' | {cut_binary} -d ':' -f1 --complement | jq . -C 2>/dev/null )"
+        self.preview_cmd = f"search_run _utils preview_entry {{}} "
         self.executable = "search_run"
         self.title = title
 

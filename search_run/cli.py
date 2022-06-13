@@ -143,6 +143,18 @@ class PythonSearchCli:
                     self.configuration.APPLICATION_TITLE
                 )
 
+            def preview_entry(self, entry_text: str):
+                """
+                Recieves entries from fzf and show them formatted for the preview window
+                """
+                key = entry_text.split(':')[0]
+                json_str = entry_text.replace(key+':', '')
+                import json
+                data = json.loads(json_str)
+
+                print(json.dumps(data, indent=2))
+
+
         return Utils(self.configuration)
 
     def google_it(self, query):
