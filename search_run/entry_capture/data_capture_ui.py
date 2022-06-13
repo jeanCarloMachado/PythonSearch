@@ -5,7 +5,6 @@ import time
 class AskQuestion:
     def ask(self, message: str) -> str:
 
-
         message = self._sanitize_message(message)
         content_file = '/tmp/python_search_input'
         if os.path.exists(content_file):
