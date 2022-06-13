@@ -6,7 +6,14 @@ from grimoire.shell import shell
 
 from search_run.entries_group import EntriesGroup
 
+
 class I3:
+    """
+    Setup a custom way of dealing with i3 shortcuts
+    For this to work you have to rename your $HOME/.config/i3/config to $HOME/.config/i3/config_part 1
+    And then let this script generate the file $HOME/.config/i3/config
+    """
+
     def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration
 

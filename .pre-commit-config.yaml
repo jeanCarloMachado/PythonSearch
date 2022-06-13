@@ -30,14 +30,6 @@ repos:
         pass_filenames: false
         language: system
         stages: [commit]
-# flake requires quite manual intervention
-# it is down to almost last because we should
-# fix the big picture topics before (like correctness on tests)
--   repo: https://gitlab.com/pycqa/flake8
-    rev: 3.7.9
-    hooks:
-      - id: flake8
-        stages: [ commit, manual ]
 -   repo: local
     hooks:
         - id: flakeFunctions

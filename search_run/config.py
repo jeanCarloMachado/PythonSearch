@@ -31,6 +31,7 @@ class DataConfig:
     MLFLOW_MODELS_PATH = f"{os.environ['HOME']}/projects/PySearchEntries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v0"
+    DATA_WAREHOUSE_FOLDER = '/data/python_search/data_warehouse'
     SEARCH_RUNS_PERFORMED_FOLDER = (
         "/data/python_search/data_warehouse/dataframes/SearchRunPerformed"
     )

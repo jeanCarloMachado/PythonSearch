@@ -1,6 +1,7 @@
 from search_run.apps.window_manager import WindowManager
 from search_run.config import PythonSearchConfiguration
 from search_run.entry_runner import EntryRunner
+from search_run.search_ui.preview import Preview
 
 
 def error_handler(e):
@@ -133,6 +134,7 @@ class PythonSearchCli:
     def _utils(self):
         """Here commands that are small topics and dont fit the rest"""
 
+
         class Utils:
             def __init__(self, configuration):
                 self.configuration = configuration
@@ -147,12 +149,7 @@ class PythonSearchCli:
                 """
                 Recieves entries from fzf and show them formatted for the preview window
                 """
-                key = entry_text.split(':')[0]
-                json_str = entry_text.replace(key+':', '')
-                import json
-                data = json.loads(json_str)
-
-                print(json.dumps(data, indent=2))
+                Preview().display(entry_text)
 
 
         return Utils(self.configuration)
