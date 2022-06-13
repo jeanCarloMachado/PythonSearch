@@ -110,7 +110,8 @@ class RegisterNew:
         """
 
         clipboard_content = self._get_clippboard_content()
-        send_notification(f"Content to store: {clipboard_content}")
+
+        title = f'Content to store: {clipboard_content}\n{title}'
         key = AskQuestion().ask(title)
 
         if self.configuration.supported_features.is_enabled("event_tracking"):

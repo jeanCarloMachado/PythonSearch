@@ -3,7 +3,6 @@ from __future__ import annotations
 import shutil
 from datetime import datetime
 
-from search_run.apps.notification_ui import send_notification
 
 class EntryInserter:
     """Add an entry dict to the entries repository"""
@@ -22,6 +21,7 @@ class EntryInserter:
         line_to_add = f"    '{key}': {row_entry},"
         self._append_entry(line_to_add)
 
+        from search_run.apps.notification_ui import send_notification
         send_notification(f"Entry {row_entry} inserted successfully")
 
         # refresh the configuration
