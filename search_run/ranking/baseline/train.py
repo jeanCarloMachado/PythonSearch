@@ -16,7 +16,7 @@ from search_run.core_entities import SearchRunPerformedType
 from search_run.ranking.baseline.serve import get_latest_run, get_ranked_keys
 
 home = os.getenv("HOME")
-path = "/data/python_search/data_warehouse/dataframes/SearchRunPerformed"
+path = DataConfig.SEARCH_RUNS_PERFORMED_FOLDER
 
 
 def load_searches():

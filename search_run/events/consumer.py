@@ -2,6 +2,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 
+from search_run.config import DataConfig
 from search_run.events.events import SearchRunPerformed
 
 default_port = "9092"
@@ -55,11 +56,11 @@ class SparkEventConsumer:
             df.writeStream.format("parquet")
             .outputMode("append")
             .option(
-                "path", f"/data/python_search/data_warehouse/dataframes/{topic_name}"
+                "path", f"{DataConfig.DATA_WAREHOUSE_FOLDER}/dataframes/{topic_name}"
             )
             .option(
                 "checkpointLocation",
-                f"/data/python_search/data_warehouse/checkpoints/{topic_name}",
+                f"{DataConfig.DATA_WAREHOUSE_FOLDER}/checkpoints/{topic_name}",
             )  # write-ahead logs for
             .trigger(processingTime="1 second")
             .start()
