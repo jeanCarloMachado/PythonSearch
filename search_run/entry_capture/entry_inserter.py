@@ -4,8 +4,6 @@ import shutil
 from datetime import datetime
 
 from search_run.apps.notification_ui import send_notification
-from search_run.apps.terminal import Terminal
-
 
 class EntryInserter:
     """Add an entry dict to the entries repository"""
@@ -28,7 +26,10 @@ class EntryInserter:
 
         # refresh the configuration
         if enable_shortcuts_generation:
-            Terminal.run_command("search_run generate_shortcuts")
+            from search_run.interpreter.cmd import CmdEntry
+            CmdEntry({
+                'cmd': "search_run generate_shortcuts"
+            })
 
     def _append_entry(self, line_to_add: str):
         """

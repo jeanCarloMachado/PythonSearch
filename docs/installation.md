@@ -8,8 +8,6 @@ making it work for everybody. If you wanna install it please reach out that I ca
 - [fzf](https://github.com/junegunn/fzf#examples)
 - jq
 - xsell
-- tmux
-- rofi
 - Python >= 3.9
 
 # Installation
@@ -28,6 +26,6 @@ pip install -e .
 
 # Mac specific
 
-```
+```sh
 brew install coreutils
 ```

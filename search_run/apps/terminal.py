@@ -1,22 +1,8 @@
-import logging
-import os
-
 
 class Terminal:
     """
     Terminal abstraction for search run
     """
-
-    @staticmethod
-    def run_command(cmd) -> bool:
-        """runs a shell command  raise an exception on failure"""
-        message = f'=> Command to run: "{cmd}"'
-        logging.debug(message)
-
-        result = os.system(cmd)
-        success = result == 0
-
-        return success
 
     def wrap_cmd_into_terminal(
         self, cmd, title=None, hold_terminal_open_on_end=True

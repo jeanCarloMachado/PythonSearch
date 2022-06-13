@@ -2,7 +2,6 @@
 import logging
 import subprocess
 
-from search_run.apps.terminal import Terminal
 from search_run.entries_group import EntriesGroup
 
 
@@ -28,9 +27,11 @@ class Gnome:
 
     def _reset(self):
         """reset existing shortcuts, necessary only for gnome"""
-        Terminal.run_command(
-            "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
-        )
+
+        from search_run.interpreter.cmd import CmdEntry
+        CmdEntry({
+            'cmd': "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
+        })
 
     def generate_shortcut(self, name: str, command: str, binding: str):
         """
