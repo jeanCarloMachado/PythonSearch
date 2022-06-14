@@ -8,5 +8,5 @@ def send_notification(message : str):
     if is_mac():
         cmd = f"""osascript -e 'display notification "{clean}"'"""
 
-    from search_run.interpreter.cmd import CmdEntry
-    CmdEntry({"cmd": cmd}).interpret_default()
+    import os
+    os.system(cmd)
