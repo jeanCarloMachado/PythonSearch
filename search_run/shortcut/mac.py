@@ -3,10 +3,15 @@
 import os
 
 class Mac:
+    """
+    Mac support for tool iCanHazShortcut
+
+    """
     def __init__(self, configuration):
         self.configuration = configuration
         import os
         self.config_folder = f'{os.environ["HOME"]}/.config/iCanHazShortcut/'
+
     def generate(self):
         print("Generating macos shortctus")
 
@@ -37,7 +42,6 @@ class Mac:
         os.system('open -a iCanHazSHortcut')
 
     def _entry(self, shortcut, key, number):
-        #shortcut = shortcut.encode('ascii', 'backslashreplace').decode("utf-8")
         shortcut = shortcut
         return f"""
         

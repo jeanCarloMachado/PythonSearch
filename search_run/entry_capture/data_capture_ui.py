@@ -10,7 +10,7 @@ class AskQuestion:
         if os.path.exists(content_file):
             os.remove(content_file)
 
-        cmd = f"""kitty bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
+        cmd = f"""kitty -o confirm_os_window_close=0 bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
         os.system(cmd)
 
         while not os.path.exists(content_file):

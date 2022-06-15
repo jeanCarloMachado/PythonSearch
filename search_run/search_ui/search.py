@@ -1,6 +1,5 @@
 from search_run.search_ui.fzf_terminal import FzfInTerminal
 
-
 class Search:
     """
     Opens search with all entries

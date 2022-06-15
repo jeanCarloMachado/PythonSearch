@@ -16,6 +16,6 @@ class Terminal:
         if hold_terminal_open_on_end:
             hold = ' --hold '
 
-        final_cmd = f'kitty {hold} -T "{title}" {cmd} '
+        final_cmd = f'kitty {hold} -o confirm_os_window_close=0 -T "{title}" {cmd} '
 
         return final_cmd

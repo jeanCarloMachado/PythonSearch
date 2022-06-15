@@ -58,7 +58,7 @@ class EditKey:
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
         """ "edit a configuration file given the name and line"""
         cmd: str = (
-            f"MY_TITLE='GrimorieSearchRun' kitty bash -c 'cd"
+            f"MY_TITLE='GrimorieSearchRun' kitty -o confirm_os_window_close=0 bash -c 'cd"
             f" {self.configuration.get_project_root()} "
             f"; {config.EDITOR} {file_name} +{line}' "
         )
