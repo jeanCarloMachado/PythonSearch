@@ -1,6 +1,7 @@
 import os
 import time
 
+from search_run.apps.terminal import Terminal
 
 class AskQuestion:
     def ask(self, message: str) -> str:
@@ -10,7 +11,7 @@ class AskQuestion:
         if os.path.exists(content_file):
             os.remove(content_file)
 
-        cmd = f"""kitty -o confirm_os_window_close=0 bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
+        cmd = f"""kitty -o {Terminal.DEFAULT_TERMINAL_PARAMS} bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
         os.system(cmd)
 
         while not os.path.exists(content_file):
