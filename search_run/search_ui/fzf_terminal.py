@@ -10,10 +10,10 @@ class FzfInTerminal:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE = 13
-    PREVIEW_PERCENTAGE_SIZE = 50
-    HEIGHT = 330
-    WIDTH = 1100
+    FONT_SIZE = 15
+    PREVIEW_PERCENTAGE_SIZE = 40
+    HEIGHT = 250
+    WIDTH = 1200
 
     configuration: PythonSearchConfiguration
 
