@@ -1,12 +1,15 @@
-from grimoire.shell import shell
 
-
+from search_run.interpreter.cmd import CmdEntry
 class Browser:
-    def open(self, url, app_mode=False, get_command_only=False):
+    def open(self, url: str):
         """
+        Opens a url in your browser
         if get_command_only is true returns the command to execute rather than executing it
 
         """
-        cmd = self.open_get_command(url, app_mode, get_command_only)
 
-        return shell.run(cmd)
+        import os
+        cmd = f"{os.getenv('BROWSER')} {url}"
+        CmdEntry({'cmd': cmd}).interpret_default()
+
+
