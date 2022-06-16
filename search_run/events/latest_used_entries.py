@@ -1,11 +1,13 @@
+#!/usr/bin/env python3
+
 import json
+import sys
 import logging
 
 from kafka import KafkaConsumer
 
 from search_run.config import KafkaConfig
 from search_run.infrastructure.redis import PythonSearchRedis
-
 
 class LatestUsedEntries:
     """
@@ -17,6 +19,8 @@ class LatestUsedEntries:
     NUMBER_OF_KEYS_TO_RETRIEVE = 100
 
     def __init__(self, key_name="latest_consumed_key"):
+        logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)])
+
         self.redis_key_name = key_name
         self.redis_client = LatestUsedEntries.get_redis_client()
 
@@ -44,6 +48,7 @@ class LatestUsedEntries:
         self.redis_client.ltrim(self.redis_key_name, 0, self.MAX_PERSISTED_ITEMS)
 
     def consume(self):
+        print("Starting kafka cosumer")
         consumer = KafkaConsumer(
             "SearchRunPerformed",
             bootstrap_servers=KafkaConfig.host,

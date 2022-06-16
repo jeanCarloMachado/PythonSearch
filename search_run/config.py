@@ -49,7 +49,7 @@ class KafkaConfig:
 
 class RedisConfig:
     host = "localhost"
-    port = 6378
+    port = 6379
 
 
 class PythonSearchConfiguration(EntriesGroup):

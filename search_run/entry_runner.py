@@ -80,7 +80,7 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-        if True or self.configuration.supported_features.is_enabled("event_tracking"):
+        if self.configuration.supported_features.is_enabled("event_tracking"):
             logging.info("Starting event recording procedure")
             from search_run.events.events import SearchRunPerformed
             EventProducer().send_object(

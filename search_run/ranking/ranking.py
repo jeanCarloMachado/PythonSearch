@@ -121,6 +121,8 @@ class RankingGenerator:
         if not self.configuration.supported_features.is_enabled(
             "redis"
         ) or not self.feature_toggle.is_enabled("ranking_latest_used"):
+            if self.debug:
+                print(f'Disabled latest entries')
             return
 
         self.used_entries = self.get_used_entries_from_redis(self.entries)

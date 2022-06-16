@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
