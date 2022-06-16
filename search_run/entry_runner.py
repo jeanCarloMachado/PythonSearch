@@ -65,6 +65,9 @@ class EntryRunner:
 
         matches = self._matching_keys(key)
 
+        if not matches:
+            raise Exception(f"No key matches you given requested key: {key}")
+
         self.logging.info(
             f"""
             Matches of key: {key}

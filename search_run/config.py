@@ -7,6 +7,7 @@ import os
 from typing import List, Optional
 
 from search_run.entries_group import EntriesGroup
+from search_run.environment import is_mac
 from search_run.features import FeaturesSupport
 
 
@@ -22,18 +23,18 @@ class DataConfig:
     """
 
     # output of the model
-    prediction_batch_location = "/data/python_search/predict_input_lenght/latest"
+    base_data_folder = '/data/python_search' if not is_mac() else  os.environ['HOME'] + '/.python_search_data'
+    prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
     # a copy of the search run entries for the feature store
-    entries_dump = "/data/python_search/entries_dumped/latest"
-    entries_dump_file = "/data/python_search/entries_dumped/latest/000.parquet"
-    commands_performed = "/data/grimoire/message_topics/run_key_command_performed"
+    entries_dump = base_data_folder + "/entries_dumped/latest"
+    entries_dump_file = base_data_folder + "/entries_dumped/latest/000.parquet"
     cached_configuration = "/tmp/search_and_run_configuration_cached"
     MLFLOW_MODELS_PATH = f"{os.environ['HOME']}/projects/PySearchEntries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v0"
-    DATA_WAREHOUSE_FOLDER = '/data/python_search/data_warehouse'
+    DATA_WAREHOUSE_FOLDER = base_data_folder + '/data_warehouse'
     SEARCH_RUNS_PERFORMED_FOLDER = (
-        "/data/python_search/data_warehouse/dataframes/SearchRunPerformed"
+        base_data_folder + "/data_warehouse/dataframes/SearchRunPerformed"
     )
 
 

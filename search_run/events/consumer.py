@@ -7,7 +7,7 @@ from search_run.config import DataConfig
 from search_run.events.events import SearchRunPerformed
 
 default_port = "9092"
-host = f"localhost:{default_port}"
+host = f"127.0.0.1:{default_port}"
 
 
 def consume_search_run_performed():
@@ -34,7 +34,7 @@ class SparkEventConsumer:
 
         spark-submit \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
-        /home/jean/projects/PythonSearch/search_run/events/consumer.py consume_search_run_performed
+        $HOME/projects/PythonSearch/search_run/events/consumer.py consume_search_run_performed
         """
 
         spark = SparkSession.builder.getOrCreate()

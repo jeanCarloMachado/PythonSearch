@@ -21,6 +21,8 @@ class EventProducer:
         self.send(topic_name, event_object.__dict__)
 
     def send(self, topic_name: str, message: dict):
-        if self.producer:
-            self.producer.send(topic_name, json.dumps(message).encode())
-        logging.warn("Could not create kakfa producer, not sending messages")
+        if not self.producer:
+            logging.warning("Could not create kakfa producer, not sending messages")
+            return
+
+        self.producer.send(topic_name, json.dumps(message).encode())
