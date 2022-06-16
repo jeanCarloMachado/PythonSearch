@@ -16,7 +16,8 @@ class Mac:
         print("Generating macos shortctus")
 
         shortcut_found = False
-        shortcut_number = 1
+        # starts with number 2 as number 1 is static in config.part1
+        shortcut_number = 2
         import shutil
         shutil.copyfile(f'{self.config_folder}/config.ini.part1', f'{self.config_folder}/config.ini')
 
@@ -48,7 +49,7 @@ class Mac:
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}
-command = search_run run_key '{key}'
+command = log_command.sh search_run run_key '{key}'
 workdir = 
 enabled = yes
 """

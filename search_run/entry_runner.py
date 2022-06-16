@@ -80,7 +80,8 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-        if self.configuration.supported_features.is_enabled("event_tracking"):
+        if True or self.configuration.supported_features.is_enabled("event_tracking"):
+            logging.info("Starting event recording procedure")
             from search_run.events.events import SearchRunPerformed
             EventProducer().send_object(
                 SearchRunPerformed(
@@ -94,6 +95,7 @@ class EntryRunner:
             real_key = min(matches, key=len)
             send_notification(f"Multiple matches for this key {matches} using the smaller")
 
+        print('Interpret next')
         return Interpreter.build_instance(self.configuration).default(real_key)
 
     def _matching_keys(self, key: str) -> List[str]:

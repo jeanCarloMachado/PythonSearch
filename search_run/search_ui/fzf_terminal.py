@@ -47,7 +47,7 @@ class FzfInTerminal:
         --border=none \
         --margin=0% \
         --padding=0% \
-        --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
+        --bind "enter:execute-silent:(nohup log_command.sh {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "enter:+reload:({self.executable} ranking generate)" \
         --bind "enter:+clear-query" \
