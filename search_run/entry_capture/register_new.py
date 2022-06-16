@@ -6,7 +6,6 @@ from typing import Tuple
 
 from search_run.apps.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
-from search_run.apps.notification_ui import send_notification
 from grimoire.string import emptish
 
 from search_run.entry_capture.data_capture_ui import AskQuestion
@@ -114,10 +113,6 @@ class RegisterNew:
         title = f'Content to store: {clipboard_content}\n{title}'
         key = AskQuestion().ask(title)
 
-        if self.configuration.supported_features.is_enabled("event_tracking"):
-            from search_run.events.events import RegisterExecuted
-            event = RegisterExecuted(**{"key": key, "content": clipboard_content})
-            self.message_broker.produce(event.dict())
 
         return clipboard_content, key
 
