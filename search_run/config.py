@@ -49,7 +49,7 @@ class KafkaConfig:
 
 class RedisConfig:
     host = "localhost"
-    port = 6379
+    port = 6379 if is_mac() else 6378
 
 
 class PythonSearchConfiguration(EntriesGroup):
