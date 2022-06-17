@@ -7,7 +7,7 @@ from search_run.config import DataConfig
 from search_run.events.events import SearchRunPerformed
 
 default_port = "9092"
-host = f"127.0.0.1:{default_port}"
+host = f"localhost:{default_port}"
 
 
 def consume_search_run_performed():

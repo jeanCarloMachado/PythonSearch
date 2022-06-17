@@ -21,7 +21,7 @@ def initialize_logging():
     handlers = [
         logging.StreamHandler(sys.stdout),
     ]
-    if is_mac():
+    if not is_mac():
         handlers.append(setup_systemd_handler())
 
     logging.basicConfig(

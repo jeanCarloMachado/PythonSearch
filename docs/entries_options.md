@@ -53,5 +53,5 @@ To get a popup asking to continue before doing so.
 
 ## Other
 
-"file": """/home/jean/Desktop/books/StaffEng-Digital.pdf""",
+"file": ""HOME + "/Desktop/books/StaffEng-Digital.pdf""",
 "disable_sequential_execution": True,
