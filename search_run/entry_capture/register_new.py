@@ -85,8 +85,11 @@ class RegisterNew:
         if emptish(key):
             raise RegisterNewException.empty_content()
 
-        from grimoire.translator.translator import Translator
-        Translator().translator_clipboard()
+        from search_run.interpreter.url import Url
+        cmd = {
+            'url': f"https://translate.google.com/?sl=de&tl=en&text={key}&op=translate"
+        }
+        Url(cmd).interpret_default()
         time.sleep(1)
 
         meaning = AskQuestion().ask(f"Please type the meaning of ({key})")
