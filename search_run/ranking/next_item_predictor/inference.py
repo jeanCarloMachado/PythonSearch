@@ -18,9 +18,11 @@ class Inference:
     Performs the ranking inference
     """
 
+    PRODUCTION_RUN_ID = '8683900e6ec243e6b9fa40652c224180'
+
     def __init__(self, configuration, run_id: Optional[str] = None):
         self.debug = os.getenv("DEBUG", False)
-        self.run_id = run_id if run_id else '614b80867a83425ba98c226ea591c14a'
+        self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
 
         if self.debug:
             print("Manually setted run id: ", self.run_id)

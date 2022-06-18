@@ -10,8 +10,8 @@ from search_run.ranking.next_item_predictor.training_dataset import TrainingData
 
 
 class Train:
-    EPOCHS = 35
-    TEST_SPLIT_SIZE = 0.10
+    EPOCHS = 20
+    TEST_SPLIT_SIZE = 0.20
     BATCH_SIZE = 128
 
     def __init__(self, epochs=None):
@@ -27,7 +27,7 @@ class Train:
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         # this creates a new experiment
         mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
-        mlflow.autolog()
+        mlflow.keras.autolog()
         # @todo: try mlflow.keras.autolog()
 
         with mlflow.start_run():
@@ -46,7 +46,7 @@ class Train:
             X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
         )
 
-        X_train, X_test = self._normalize(X_train, X_test)
+        #X_train, X_test = self._normalize(X_train, X_test)
 
         # fill test dataset nans with 0.5s
         X_test = np.where(np.isnan(X_test), 0.5, X_test)
@@ -57,8 +57,8 @@ class Train:
 
         print("Starting train with N epochs, N=", self.epochs)
         model = Sequential()
-        model.add(layers.Dense(128, activation="relu"))
-        model.add(layers.Dropout(0.5))
+        model.add(layers.Dense(64, activation="relu"))
+        #model.add(layers.Dropout(0.5))
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
 
