@@ -2,6 +2,7 @@ import datetime
 import os
 
 from search_run.config import PythonSearchConfiguration
+from search_run.environment import is_mac
 from search_run.observability.logger import logging
 
 
@@ -11,9 +12,9 @@ class FzfInTerminal:
     """
 
     FONT_SIZE = 15
-    PREVIEW_PERCENTAGE_SIZE = 40
-    HEIGHT = 300
-    WIDTH = 1200
+    PREVIEW_PERCENTAGE_SIZE = 50
+    HEIGHT = 270
+    WIDTH = 1100
 
     configuration: PythonSearchConfiguration
 
@@ -75,12 +76,22 @@ class FzfInTerminal:
         """
 
     def _launch_terminal(self, internal_cmd: str) -> None:
+
+
+        # good fonts for mac
+        # - monaco
+        # - menlo
+
+        font = "FontAwesome"
+        if is_mac():
+            font = "Monaco"
+
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title} {datetime.datetime.now().isoformat()}"\
          -o remember_window_size=n \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
-        -o font_family="FontAwesome" \
+        -o font_family="{font}" \
         -o confirm_os_window_close=0 \
         -o font_size={FzfInTerminal.FONT_SIZE} \
          {internal_cmd}

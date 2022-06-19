@@ -33,6 +33,5 @@ class PythonSearchMLFlow:
             print(f"Loading run id: {run_id}")
 
 
-
         model = self.mlflow_instance.keras.load_model(f"runs:/{run_id}/model")
         return model
