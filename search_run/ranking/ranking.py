@@ -35,6 +35,10 @@ class RankingGenerator:
 
         self.used_entries: List[Tuple[str, dict]] = []
 
+        if self.feature_toggle.is_enabled("ranking_next"):
+            from search_run.ranking.next_item_predictor.inference import Inference
+            self.inference = Inference(self.configuration)
+
     def generate_with_caching(self):
         """
         Uses cached rank if available and only add new keys on top
@@ -73,15 +77,14 @@ class RankingGenerator:
 
             missing_keys = set(self.ranked_keys) - set(keys)
             self.ranked_keys = list(missing_keys) + keys
+            raise Exception("This should not be called now")
             return
 
         if self.debug:
             print("Results not being loadded from cache")
 
         if self.feature_toggle.is_enabled("ranking_next"):
-            from search_run.ranking.next_item_predictor.inference import Inference
-
-            self.ranked_keys = Inference(self.configuration).get_ranking()
+            self.ranked_keys = self.inference.get_ranking()
 
         self._fetch_latest_entries()
 
@@ -142,15 +145,15 @@ class RankingGenerator:
             if used_key not in entries or used_key in used_entries:
                 continue
             used_entries.append((used_key, entries[used_key]))
-            del entries[used_key]
         # reverse the list given that we pop from the end
         used_entries.reverse()
         return used_entries
 
     @timeit
-    def print_entries(self, data: List[Tuple[str, dict]]):
+    def print_entries(self, data: List[Tuple[str, dict]]) -> str:
         """Print results"""
         position = 1
+        result = ""
         for name, content in data:
             name_clean = name.lower()
             try:
@@ -171,7 +174,8 @@ class RankingGenerator:
             if os.getenv("ENABLE_TIME_IT"):
                 # do not print if enable timeit is on
                 continue
-            print(content_str)
+            result += content_str + "\n"
+        return result
 
 
 if __name__ == "__main__":

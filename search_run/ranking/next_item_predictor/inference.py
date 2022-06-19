@@ -21,6 +21,7 @@ class Inference:
     PRODUCTION_RUN_ID = '8683900e6ec243e6b9fa40652c224180'
 
     def __init__(self, configuration, run_id: Optional[str] = None):
+
         self.debug = os.getenv("DEBUG", False)
         self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
 
@@ -28,20 +29,18 @@ class Inference:
             print("Manually setted run id: ", self.run_id)
 
         self.configuration = configuration
-        if not self.debug:
-            self._disable_debug()
-
         # previous key should be setted in runtime
         self.previous_key = None
         self.all_keys = self.configuration.commands.keys()
-        self.model = self._load_mlflow_model(run_id=self.run_id)
         self.inference_embeddings = InferenceEmbeddingsLoader(self.all_keys)
+        self.model = self._load_mlflow_model(run_id=self.run_id)
 
     @timeit
     def get_ranking(self, predefined_input: Optional[InferenceInput] = None, return_weights=False) -> List[str]:
         """
         Gets the ranking from the next item model
         """
+        print('Number of existing keys: ', str(len(self.all_keys)))
         inference_input = predefined_input if predefined_input else InferenceInput.from_context(
             self.inference_embeddings)
 
@@ -87,21 +86,11 @@ class Inference:
 
     @timeit
     def _load_mlflow_model(self, run_id=None):
-        return PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
 
-    def _disable_debug(self):
-        import os
+        model = PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
+        return model
+        return model
 
-        # disable tensorflow warnings
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-        # disable system warnings
-        import warnings
-
-        warnings.filterwarnings("ignore")
-        import logging
-
-        logger = logging.getLogger()
-        logger.disabled = True
 
 
 class InferenceInput:
@@ -131,18 +120,33 @@ class InferenceInput:
 
 class InferenceEmbeddingsLoader:
     def __init__(self, all_keys):
-        self.embedding_mapping = EmbeddingsReader().load(all_keys)
+        import copy
+        self.all_keys = copy.copy(list(all_keys))
+        self.latest_used_entries = LatestUsedEntries()
+        self.embedding_mapping = EmbeddingsReader().load(self.all_keys)
 
     def get_recent_key(self) -> str:
         """Look into the recently used keys and return the most recent for which there are embeddings"""
-        for previous_key in LatestUsedEntries().get_latest_used_keys():
-            if (
-                    previous_key in self.embedding_mapping
-                    and self.embedding_mapping[previous_key]
-            ):
-                return previous_key
+        iterator = self.latest_used_entries.get_latest_used_keys()
+        print("On get_recent_key all keys size: " + str(len(self.all_keys)))
+        print("Number of latest used keys: " + str(len(iterator)))
 
-        raise Exception('Could not find a recent key with embeddings')
+        print("Mapping size: " + str(len(self.embedding_mapping)))
+        for previous_key in iterator:
+            if previous_key not in self.embedding_mapping:
+                print(f"Key {previous_key} not found in mapping")
+                continue
+            if not self.embedding_mapping[previous_key]:
+                print("Key found but no content in: ", previous_key)
+                continue
+
+            return previous_key
+
+        print_mapping = False
+        extra_message = ''
+        if print_mapping:
+            extra_message = 'Existing keys: ' + str(self.embedding_mapping.keys())
+        raise Exception(f'Could not find a recent key with embeddings' + extra_message)
 
     def get_embedding_from_key(self, key):
         if self.embedding_mapping[key] is None:

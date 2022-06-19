@@ -101,7 +101,10 @@ class ConfigurationLoader:
             raise Exception(f"Could not find entries main file {config_location}")
 
         sys.path.append(folder)
+        import importlib
+        import entries.main as entries_main
+        importlib.reload(entries_main)
+        config = entries_main.config
 
-        from entries.main import config
 
         return config

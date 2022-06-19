@@ -36,7 +36,7 @@ class FzfInTerminal:
         self._launch_terminal(self.internal_cmd())
 
     def internal_cmd(self):
-        return f"""bash -c '{self.executable} ranking generate | \
+        return f"""bash -c '{self._get_rankging_generate_cmd()} | \
                 fzf \
         --tiebreak=length,begin,index \
         --cycle \
@@ -50,7 +50,7 @@ class FzfInTerminal:
         --padding=0% \
         --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "enter:+reload:({self.executable} ranking generate)" \
+        --bind "enter:+reload:({self._get_rankging_generate_cmd()})" \
         --bind "enter:+clear-query" \
         --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
@@ -65,8 +65,7 @@ class FzfInTerminal:
         --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-s:execute-silent:(nohup {self.executable} search_edit {{}} & disown)" \
         --bind "ctrl-s:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "ctrl-h:reload:({self.executable} ranking generate)" \
-        --bind "ctrl-r:reload:({self.executable} ranking generate_with_caching)" \
+        --bind "ctrl-r:reload:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-t:execute-silent:(notify-send testjean)" \
         --bind "ctrl-g:execute-silent:( {self.executable} google_it {{q}} )" \
         --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
@@ -75,12 +74,18 @@ class FzfInTerminal:
         --bind "ctrl-d:abort" '
         """
 
+
+    def _get_rankging_generate_cmd(self, reload=False):
+        # in mac we need tensorflow to be installed via conda
+        if is_mac():
+            if reload:
+                return f'curl -s localhost:8000/ranking/reload_and_generate'
+
+            return f'curl -s localhost:8000/ranking/generate'
+
+        return f'{self.executable} ranking generate'
+
     def _launch_terminal(self, internal_cmd: str) -> None:
-
-
-        # good fonts for mac
-        # - monaco
-        # - menlo
 
         font = "FontAwesome"
         if is_mac():
