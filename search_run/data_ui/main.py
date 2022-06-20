@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 import streamlit as st
 
 from search_run.data_ui.training_page import load_training_page
@@ -6,6 +7,7 @@ from search_run.datasets.searchesperformed import SearchesPerformed
 
 open_page = 'training'
 
+os.putenv('SPARK_LOCAL_IP', 'localhost')
 with st.sidebar:
 
     if st.button("Results evaluation"):

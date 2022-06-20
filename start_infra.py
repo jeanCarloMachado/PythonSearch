@@ -40,6 +40,7 @@ class StartSevices:
         time.sleep(3)
         self.api()
 
+        time.sleep(5)
         send_notification("Infra setup finished")
 
 if __name__ == '__main__':

@@ -1,3 +1,7 @@
+import os
+
+from search_run.environment import is_mac
+
 
 class Terminal:
     """
@@ -12,7 +16,8 @@ class Terminal:
         """
         wraps the command in a terminal but does not execute it
         """
-        cmd = f'bash -c "{cmd}"'
+        shell = os.environ['PYTHON_SEARCH_CUSTOM_SHELL'] if 'PYTHON_SEARCH_CUSTOM_SHELL' in os.environ else 'bash'
+        cmd = f'{shell} -c "{cmd}"'
 
         hold = ''
         if hold_terminal_open_on_end:
