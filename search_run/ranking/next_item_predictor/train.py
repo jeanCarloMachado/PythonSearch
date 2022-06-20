@@ -1,12 +1,11 @@
 import os
-from typing import Dict, List, Tuple
-
 import mlflow
 import numpy as np
 
 from search_run.config import DataConfig
-from search_run.ranking.entry_embeddings import create_indexed_embeddings
+from sklearn.model_selection import train_test_split
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
+from search_run.ranking.next_item_predictor.transform import Transform
 
 
 class Train:
@@ -36,17 +35,17 @@ class Train:
 
         return model, metrics
 
-    def train(self, dataset: TrainingDataset, plot_history=False):
-
-        X, Y = self.create_XY(dataset)
-
-        from sklearn.model_selection import train_test_split
-
+    def split(self, X, Y):
         X_train, X_test, Y_train, Y_test = train_test_split(
             X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
         )
+        return X_train, X_test, Y_train, Y_test
 
-        #X_train, X_test = self._normalize(X_train, X_test)
+
+    def train(self, dataset: TrainingDataset, plot_history=False):
+
+        X, Y = Transform().transform(dataset)
+        X_train, X_test, Y_train, Y_test = self.split(X, Y)
 
         # fill test dataset nans with 0.5s
         X_test = np.where(np.isnan(X_test), 0.5, X_test)
@@ -58,7 +57,6 @@ class Train:
         print("Starting train with N epochs, N=", self.epochs)
         model = Sequential()
         model.add(layers.Dense(64, activation="relu"))
-        #model.add(layers.Dropout(0.5))
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
 
@@ -99,37 +97,6 @@ class Train:
 
         return model, metrics
 
-    def create_XY(self, dataset: TrainingDataset) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Transform the dataset into X and Y
-        Returns a pair with X, Y
-        """
-        print("Number of rows in the dataset: ", dataset.count())
-        embeddings_keys = self.create_embeddings_training_dataset(dataset)
-
-        # + 1 is for the month number
-        dimensions_X = 2 * 384 + 1 + 1
-        print(f"Dimensions of dataset = {dimensions_X}")
-        X = np.zeros([dataset.count(), dimensions_X])
-        Y = np.empty(dataset.count())
-
-        print("X shape:", X.shape)
-
-        collected_keys = dataset.select(*TrainingDataset.columns).collect()
-
-        for i, collected_key in enumerate(collected_keys):
-            X[i] = np.concatenate(
-                [
-                    embeddings_keys[collected_key.key],
-                    embeddings_keys[collected_key.previous_key],
-                    np.asarray([collected_key.month]),
-                    np.asarray([collected_key.hour]),
-                ]
-            )
-            Y[i] = collected_key.label
-        print("Sample dataset:", X[0])
-
-        return X, Y
 
     def _normalize(self, X_train, X_test):
         # normalize
@@ -143,27 +110,3 @@ class Train:
 
         return X_train, X_test
 
-    def create_embeddings_training_dataset(
-            self, dataset: TrainingDataset
-    ) -> Dict[str, np.ndarray]:
-        """
-        create embeddings
-        """
-        print("Creating embeddings of traning dataset")
-
-        # add embeddings to the dataset
-        all_keys = self._get_all_keys_dataset(dataset)
-
-        print("Sample of historical keys: ", all_keys[0:10])
-
-        return create_indexed_embeddings(all_keys)
-
-    def _get_all_keys_dataset(self, dataset: TrainingDataset) -> List[str]:
-        collected_keys = dataset.select("key", "previous_key").collect()
-
-        keys = []
-        for collected_keys in collected_keys:
-            keys.append(collected_keys.key)
-            keys.append(collected_keys.previous_key)
-
-        return keys
