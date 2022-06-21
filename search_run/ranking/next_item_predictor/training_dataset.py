@@ -1,8 +1,9 @@
 import logging
 import os.path
 import sys
-from typing import Optional
+from typing import Optional, Tuple
 
+import numpy as np
 from pyspark.sql import DataFrame
 
 import pyspark.sql.functions as F
@@ -77,6 +78,7 @@ class TrainingDataset:
         logging.info("Printing a sample of the dataset")
         dataset.show(10)
         return dataset
+
 
     @timeit
     def _add_label(self, grouped):

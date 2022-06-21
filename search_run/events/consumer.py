@@ -41,6 +41,7 @@ class SparkEventConsumer:
         df = (
             spark.readStream.format("kafka")
             .option("kafka.bootstrap.servers", host)
+            .option("failOnDataLoss", "false")
             .option("subscribe", topic_name)
             .option("subscribe", topic_name)
             .load()

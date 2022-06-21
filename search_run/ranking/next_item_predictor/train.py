@@ -1,17 +1,19 @@
 import os
-from typing import Dict, List, Tuple
+from typing import Tuple, Any
 
 import mlflow
 import numpy as np
-
+from keras import layers
+from keras.models import Sequential
 from search_run.config import DataConfig
-from search_run.ranking.entry_embeddings import create_indexed_embeddings
+from sklearn.model_selection import train_test_split
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
+from search_run.ranking.next_item_predictor.transform import Transform
 
 
 class Train:
-    EPOCHS = 35
-    TEST_SPLIT_SIZE = 0.10
+    EPOCHS = 20
+    TEST_SPLIT_SIZE = 0.20
     BATCH_SIZE = 128
 
     def __init__(self, epochs=None):
@@ -27,7 +29,7 @@ class Train:
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         # this creates a new experiment
         mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
-        mlflow.autolog()
+        mlflow.keras.autolog()
         # @todo: try mlflow.keras.autolog()
 
         with mlflow.start_run():
@@ -36,29 +38,46 @@ class Train:
 
         return model, metrics
 
-    def train(self, dataset: TrainingDataset, plot_history=False):
-
-        X, Y = self.create_XY(dataset)
-
-        from sklearn.model_selection import train_test_split
-
+    def split(self, X, Y):
         X_train, X_test, Y_train, Y_test = train_test_split(
             X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
         )
+        return X_train, X_test, Y_train, Y_test
 
-        X_train, X_test = self._normalize(X_train, X_test)
+    def prepare_data(self, dataset):
+        X, Y = Transform().transform(dataset)
+        X_train, X_test, Y_train, Y_test = self.split(X, Y)
 
         # fill test dataset nans with 0.5s
         X_test = np.where(np.isnan(X_test), 0.5, X_test)
         Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
 
-        from keras import layers
-        from keras.models import Sequential
+
+        return X_train, X_test, Y_train, Y_test
+
+    def train(self, dataset: TrainingDataset, plot_history=False):
+        """
+        performs training
+
+        :param dataset:
+        :param plot_history:
+        :return:
+        """
+        X_train, X_test, Y_train, Y_test = self.prepare_data(dataset)
+
+        model, history = self._only_train(X_train, X_test, Y_train, Y_test)
+        metrics = self._compute_standard_metrics(model, X_train, X_test, Y_train, Y_test)
+
+        if plot_history:
+            self._plot_training_history(history)
+
+        return model, metrics
+
+    def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
 
         print("Starting train with N epochs, N=", self.epochs)
         model = Sequential()
-        model.add(layers.Dense(128, activation="relu"))
-        model.add(layers.Dropout(0.5))
+        model.add(layers.Dense(64, activation="relu"))
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
 
@@ -70,6 +89,12 @@ class Train:
             validation_data=(X_test, Y_test),
         )
 
+        return model, history
+
+    def _compute_standard_metrics(self, model, X_train, X_test, Y_train, Y_test):
+        """
+        computes mse and mae for train and test splits
+        """
         train_mse, train_mae, train_mse2 = model.evaluate(X_train, Y_train)
         test_mse, test_mae, test_mse2 = model.evaluate(X_test, Y_test)
 
@@ -79,57 +104,24 @@ class Train:
             "test_mse": test_mse,
             "test_mae": test_mae,
         }
-
         print("Metrics:", metrics)
 
-        if plot_history:
-            import matplotlib.pyplot as plt
+        return metrics
 
-            loss = history.history["loss"]
-            val_loss = history.history["val_loss"]
+    def _plot_training_history(self, history):
+        import matplotlib.pyplot as plt
 
-            epochs_range = range(1, self.epochs + 1)
-            plt.plot(epochs_range, loss, "bo", label="Training Loss")
-            plt.plot(epochs_range, val_loss, "b", label="Validation Loss")
-            plt.title("Training and validation loss")
-            plt.xlabel("Epochs")
-            plt.ylabel("Loss")
-            plt.legend()
-            plt.show()
+        loss = history.history["loss"]
+        val_loss = history.history["val_loss"]
 
-        return model, metrics
-
-    def create_XY(self, dataset: TrainingDataset) -> Tuple[np.ndarray, np.ndarray]:
-        """
-        Transform the dataset into X and Y
-        Returns a pair with X, Y
-        """
-        print("Number of rows in the dataset: ", dataset.count())
-        embeddings_keys = self.create_embeddings_training_dataset(dataset)
-
-        # + 1 is for the month number
-        dimensions_X = 2 * 384 + 1 + 1
-        print(f"Dimensions of dataset = {dimensions_X}")
-        X = np.zeros([dataset.count(), dimensions_X])
-        Y = np.empty(dataset.count())
-
-        print("X shape:", X.shape)
-
-        collected_keys = dataset.select(*TrainingDataset.columns).collect()
-
-        for i, collected_key in enumerate(collected_keys):
-            X[i] = np.concatenate(
-                [
-                    embeddings_keys[collected_key.key],
-                    embeddings_keys[collected_key.previous_key],
-                    np.asarray([collected_key.month]),
-                    np.asarray([collected_key.hour]),
-                ]
-            )
-            Y[i] = collected_key.label
-        print("Sample dataset:", X[0])
-
-        return X, Y
+        epochs_range = range(1, self.epochs + 1)
+        plt.plot(epochs_range, loss, "bo", label="Training Loss")
+        plt.plot(epochs_range, val_loss, "b", label="Validation Loss")
+        plt.title("Training and validation loss")
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        plt.legend()
+        plt.show()
 
     def _normalize(self, X_train, X_test):
         # normalize
@@ -143,27 +135,3 @@ class Train:
 
         return X_train, X_test
 
-    def create_embeddings_training_dataset(
-            self, dataset: TrainingDataset
-    ) -> Dict[str, np.ndarray]:
-        """
-        create embeddings
-        """
-        print("Creating embeddings of traning dataset")
-
-        # add embeddings to the dataset
-        all_keys = self._get_all_keys_dataset(dataset)
-
-        print("Sample of historical keys: ", all_keys[0:10])
-
-        return create_indexed_embeddings(all_keys)
-
-    def _get_all_keys_dataset(self, dataset: TrainingDataset) -> List[str]:
-        collected_keys = dataset.select("key", "previous_key").collect()
-
-        keys = []
-        for collected_keys in collected_keys:
-            keys.append(collected_keys.key)
-            keys.append(collected_keys.previous_key)
-
-        return keys

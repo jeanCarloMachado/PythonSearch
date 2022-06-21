@@ -13,5 +13,11 @@ apipkg #needed by pytest
 kafka-python
 findspark
 redis
-#sentence-transformers
+sentence-transformers
 pyyaml
+msgpack-numpy
+mlflow
+typed-pyspark~=0.0.4
+keras
+tensorflow
+matplotlib

@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+# !/usr/bin/env python3
 import msgpack_numpy as m
 import numpy as np
 

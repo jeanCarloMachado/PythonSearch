@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from search_run.apps.notification_ui import send_notification
 
 
 class StartSevices:
@@ -21,11 +22,14 @@ class StartSevices:
     def consume_entries_redis(self):
         os.system('$HOME/projects/PythonSearch/search_run/events/latest_used_entries.py consume &')
 
+    def api(self):
+        os.system("conda run -n base python $HOME/projects/PythonSearch/search_run/web_api.py &")
+
     def all(self):
         import time;
 
         self.zookeeper()
-        time.sleep(3)
+        time.sleep(10)
         self.kafka()
         time.sleep(3)
         self.spark_consumer()
@@ -34,6 +38,10 @@ class StartSevices:
         time.sleep(3)
         self.consume_entries_redis()
         time.sleep(3)
+        self.api()
+
+        time.sleep(5)
+        send_notification("Infra setup finished")
 
 if __name__ == '__main__':
     import fire

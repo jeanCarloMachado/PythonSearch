@@ -1,5 +1,4 @@
 
-
 class Preview:
     def display(self, entry_text):
         """
@@ -13,5 +12,4 @@ class Preview:
             data = json.loads(json_str)
             print(json.dumps(data, indent=1))
         except BaseException as e:
-            print('Error decoding:')
             print(json_str)

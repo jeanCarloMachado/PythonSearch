@@ -23,7 +23,7 @@ class DataConfig:
     """
 
     # output of the model
-    base_data_folder = '/data/python_search' if not is_mac() else os.environ['HOME'] + '/.python_search_data/python_search_arch'
+    base_data_folder = '/data/python_search'
     prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
     # a copy of the search run entries for the feature store
     entries_dump = base_data_folder + "/entries_dumped/latest"
@@ -101,7 +101,10 @@ class ConfigurationLoader:
             raise Exception(f"Could not find entries main file {config_location}")
 
         sys.path.append(folder)
+        import importlib
+        import entries.main as entries_main
+        importlib.reload(entries_main)
+        config = entries_main.config
 
-        from entries.main import config
 
         return config
