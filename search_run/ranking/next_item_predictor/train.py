@@ -1,7 +1,10 @@
 import os
+from typing import Tuple, Any
+
 import mlflow
 import numpy as np
-
+from keras import layers
+from keras.models import Sequential
 from search_run.config import DataConfig
 from sklearn.model_selection import train_test_split
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
@@ -41,9 +44,7 @@ class Train:
         )
         return X_train, X_test, Y_train, Y_test
 
-
-    def train(self, dataset: TrainingDataset, plot_history=False):
-
+    def prepare_data(self, dataset):
         X, Y = Transform().transform(dataset)
         X_train, X_test, Y_train, Y_test = self.split(X, Y)
 
@@ -51,8 +52,28 @@ class Train:
         X_test = np.where(np.isnan(X_test), 0.5, X_test)
         Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
 
-        from keras import layers
-        from keras.models import Sequential
+
+        return X_train, X_test, Y_train, Y_test
+
+    def train(self, dataset: TrainingDataset, plot_history=False):
+        """
+        performs training
+
+        :param dataset:
+        :param plot_history:
+        :return:
+        """
+        X_train, X_test, Y_train, Y_test = self.prepare_data(dataset)
+
+        model, history = self._only_train(X_train, X_test, Y_train, Y_test)
+        metrics = self._compute_standard_metrics(model, X_train, X_test, Y_train, Y_test)
+
+        if plot_history:
+            self._plot_training_history(history)
+
+        return model, metrics
+
+    def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
 
         print("Starting train with N epochs, N=", self.epochs)
         model = Sequential()
@@ -68,6 +89,12 @@ class Train:
             validation_data=(X_test, Y_test),
         )
 
+        return model, history
+
+    def _compute_standard_metrics(self, model, X_train, X_test, Y_train, Y_test):
+        """
+        computes mse and mae for train and test splits
+        """
         train_mse, train_mae, train_mse2 = model.evaluate(X_train, Y_train)
         test_mse, test_mae, test_mse2 = model.evaluate(X_test, Y_test)
 
@@ -77,26 +104,24 @@ class Train:
             "test_mse": test_mse,
             "test_mae": test_mae,
         }
-
         print("Metrics:", metrics)
 
-        if plot_history:
-            import matplotlib.pyplot as plt
+        return metrics
 
-            loss = history.history["loss"]
-            val_loss = history.history["val_loss"]
+    def _plot_training_history(self, history):
+        import matplotlib.pyplot as plt
 
-            epochs_range = range(1, self.epochs + 1)
-            plt.plot(epochs_range, loss, "bo", label="Training Loss")
-            plt.plot(epochs_range, val_loss, "b", label="Validation Loss")
-            plt.title("Training and validation loss")
-            plt.xlabel("Epochs")
-            plt.ylabel("Loss")
-            plt.legend()
-            plt.show()
+        loss = history.history["loss"]
+        val_loss = history.history["val_loss"]
 
-        return model, metrics
-
+        epochs_range = range(1, self.epochs + 1)
+        plt.plot(epochs_range, loss, "bo", label="Training Loss")
+        plt.plot(epochs_range, val_loss, "b", label="Validation Loss")
+        plt.title("Training and validation loss")
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        plt.legend()
+        plt.show()
 
     def _normalize(self, X_train, X_test):
         # normalize

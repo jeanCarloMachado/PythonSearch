@@ -7,7 +7,6 @@ import numpy as np
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
 
 class Transform:
-
     def transform(self, dataset) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y

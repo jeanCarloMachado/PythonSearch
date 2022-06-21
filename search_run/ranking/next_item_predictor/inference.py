@@ -18,7 +18,7 @@ class Inference:
     Performs the ranking inference
     """
 
-    PRODUCTION_RUN_ID = '8683900e6ec243e6b9fa40652c224180'
+    PRODUCTION_RUN_ID = '92beab211e31400bb98a39a7dce4961d'
 
     def __init__(self, configuration, run_id: Optional[str] = None):
 

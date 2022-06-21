@@ -22,8 +22,11 @@ class Evaluate:
         )
 
         self.configuration = ConfigurationLoader().load()
+
     def evaluate(self, run_id=None):
-        """Evaluate a model against our ranking"""
+        """
+        Evaluate a model against our ranking
+        """
         logging.info("Evaluate model")
         print('Run id ', run_id)
         self.all_latest_keys = EntriesLoader.load_all_keys()
