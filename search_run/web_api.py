@@ -12,7 +12,7 @@ generator = RankingGenerator(config)
 @app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
 def reload():
     global generator
-    config = ConfigurationLoader().load()
+    config = ConfigurationLoader().reload()
     generator = RankingGenerator(config)
     return generator.generate()
 

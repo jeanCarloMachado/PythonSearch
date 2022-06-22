@@ -86,13 +86,13 @@ class ConfigurationLoader:
     """
 
     def load(self) -> PythonSearchConfiguration:
-        import sys
 
         env_name = "PYTHON_SEARCH_ENTRIES_FOLDER"
 
         if env_name not in os.environ:
             raise Exception(f"{env_name} must be set to load the entries dynamically")
 
+        print(f'Env: {env_name}={os.environ[env_name]}')
         folder = os.environ[env_name]
 
         config_location = os.path.join(folder, "entries/main.py")
@@ -100,9 +100,16 @@ class ConfigurationLoader:
         if not os.path.exists(config_location):
             raise Exception(f"Could not find entries main file {config_location}")
 
+        import sys
         sys.path.append(folder)
-        import importlib
         import entries.main as entries_main
+        config = entries_main.config
+
+        return config
+
+    def reload(self):
+        import entries.main as entries_main
+        import importlib
         importlib.reload(entries_main)
         config = entries_main.config
 
