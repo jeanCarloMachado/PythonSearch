@@ -12,8 +12,8 @@ from search_run.ranking.next_item_predictor.transform import Transform
 
 
 class Train:
-    EPOCHS = 40
-    TEST_SPLIT_SIZE = 0.20
+    EPOCHS = 30
+    TEST_SPLIT_SIZE = 0.10
     BATCH_SIZE = 128
 
     def __init__(self, epochs=None):
@@ -85,7 +85,9 @@ class Train:
 
         model = Sequential()
         model.add(layers.Dense(128, activation="relu"))
+        model.add(layers.Dropout(0.5))
         model.add(layers.Dense(64, activation="relu"))
+        model.add(layers.Dropout(0.5))
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
 
