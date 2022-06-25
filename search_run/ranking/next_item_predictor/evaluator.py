@@ -4,7 +4,7 @@ import sys
 
 from search_run.config import ConfigurationLoader
 from search_run.ranking.entries_loader import EntriesLoader
-from search_run.ranking.entry_embeddings import EmbeddingsReader
+from search_run.ranking.entry_embeddings import RedisEmbeddingsReader
 from search_run.ranking.next_item_predictor.inference import Inference
 
 
@@ -30,7 +30,7 @@ class Evaluate:
         logging.info("Evaluate model")
         print('Run id ', run_id)
         self.all_latest_keys = EntriesLoader.load_all_keys()
-        self.embeddings_keys_latest = EmbeddingsReader().load(self.all_latest_keys)
+        self.embeddings_keys_latest = RedisEmbeddingsReader().load(self.all_latest_keys)
 
         keys_to_test = [
             # "my beat81 bookings",

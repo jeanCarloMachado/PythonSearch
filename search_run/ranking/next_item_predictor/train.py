@@ -12,7 +12,7 @@ from search_run.ranking.next_item_predictor.transform import Transform
 
 
 class Train:
-    EPOCHS = 20
+    EPOCHS = 40
     TEST_SPLIT_SIZE = 0.20
     BATCH_SIZE = 128
 
@@ -33,27 +33,11 @@ class Train:
         # @todo: try mlflow.keras.autolog()
 
         with mlflow.start_run():
-            model, metrics = self.train(dataset)
+            model, metrics, offline_evaluation = self.train(dataset)
             mlflow.log_params(metrics)
+            mlflow.log_params(offline_evaluation)
 
         return model, metrics
-
-    def split(self, X, Y):
-        X_train, X_test, Y_train, Y_test = train_test_split(
-            X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
-        )
-        return X_train, X_test, Y_train, Y_test
-
-    def prepare_data(self, dataset):
-        X, Y = Transform().transform(dataset)
-        X_train, X_test, Y_train, Y_test = self.split(X, Y)
-
-        # fill test dataset nans with 0.5s
-        X_test = np.where(np.isnan(X_test), 0.5, X_test)
-        Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
-
-
-        return X_train, X_test, Y_train, Y_test
 
     def train(self, dataset: TrainingDataset, plot_history=False):
         """
@@ -63,20 +47,44 @@ class Train:
         :param plot_history:
         :return:
         """
-        X_train, X_test, Y_train, Y_test = self.prepare_data(dataset)
 
-        model, history = self._only_train(X_train, X_test, Y_train, Y_test)
-        metrics = self._compute_standard_metrics(model, X_train, X_test, Y_train, Y_test)
+        # prepare the data
+        X, Y = Transform().transform(dataset)
+        X_train, X_test, Y_train, Y_test = self.split(X, Y)
+
+        X_test = np.where(np.isnan(X_test), 0.5, X_test)
+        Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
+        Y_train = np.where(np.isnan(Y_train), 0.5, Y_train)
+
+        X_test_p = np.delete(X_test, 0, axis=1)
+        X_train_p = np.delete(X_train, 0, axis=1)
+
+        model, history = self._only_train(X_train_p, X_test_p, Y_train, Y_test)
+        metrics = self._compute_standard_metrics(model, X_train_p, X_test_p, Y_train, Y_test)
+
+        offline_evaluation = self.offline_evaluation(model, dataset, X_test)
 
         if plot_history:
             self._plot_training_history(history)
 
-        return model, metrics
+        return model, metrics, offline_evaluation
 
     def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
 
         print("Starting train with N epochs, N=", self.epochs)
+        print({
+            'shape_x_train': X_train.shape,
+            'shape_x_test': X_test.shape,
+            'shape_y_train': Y_train.shape,
+            'shape_y_test': Y_test.shape,
+            "X_train has nan: ": np.any(np.isnan(X_train)),
+            "Y_train has nan: ": np.any(np.isnan(Y_train)),
+            "X_test has nan: ": np.any(np.isnan(X_test)),
+            "y_test has nan: ": np.any(np.isnan(Y_test))
+        })
+
         model = Sequential()
+        model.add(layers.Dense(128, activation="relu"))
         model.add(layers.Dense(64, activation="relu"))
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
@@ -90,6 +98,62 @@ class Train:
         )
 
         return model, history
+
+    def offline_evaluation(self, model, dataset, X_test):
+        print('Starting offline evaluation!')
+        ids = [int(x) for x in X_test[:, 0].tolist()]
+        df = dataset.toPandas()
+        test_df = df[df['entry_number'].isin(ids)]
+        test_df
+
+        from search_run.ranking.next_item_predictor.inference import Inference, InferenceInput
+        inference = Inference(model=model)
+
+        def key_exists(key):
+            return key in inference.configuration.commands.keys()
+
+        total_found = 0
+        number_of_tests = 20
+        avg_position = 0
+        number_of_existing_keys = len(inference.configuration.commands.keys())
+        for index, row in test_df.iterrows():
+            if not key_exists(row['previous_key']) or not key_exists(row['key']):
+                print(f"Key pair does not exist any longer ({row['previous_key']}, {row['key']})")
+                continue
+
+            input = InferenceInput(hour=row['hour'], month=row['month'], previous_key=row['previous_key'])
+            result = inference.get_ranking(predefined_input=input, return_weights=False)
+
+            metadata = {
+                "pair": row['previous_key'] + " -> " + row['key'],
+                "position_target": result.index(row['key']),
+                "Len": len(result),
+                "type of result": type(result),
+            }
+            print(metadata)
+
+            avg_position += metadata['position_target']
+            total_found += 1
+            if total_found == number_of_tests:
+                break
+
+        avg_position = avg_position / number_of_tests
+        result = {
+            'avg_position_for_tests': avg_position,
+            'number_of_tests': number_of_tests,
+            'number_of_existing_keys': number_of_existing_keys,
+        }
+        print(result)
+
+
+        return result
+
+    def split(self, X, Y):
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
+        )
+        return X_train, X_test, Y_train, Y_test
+
 
     def _compute_standard_metrics(self, model, X_train, X_test, Y_train, Y_test):
         """

@@ -3,24 +3,25 @@ from __future__ import annotations
 import datetime
 import logging
 import os
-from typing import List, Optional
+from typing import List, Optional, Any
 
 import numpy as np
 
+from search_run.config import ConfigurationLoader, PythonSearchConfiguration
 from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.infrastructure.performance import timeit
-from search_run.ranking.entry_embeddings import EmbeddingSerialization, EmbeddingsReader
+from search_run.ranking.entry_embeddings import EmbeddingSerialization, RedisEmbeddingsReader, RedisEmbeddingsWriter
 from search_run.ranking.models import PythonSearchMLFlow
 
 
 class Inference:
     """
-    Performs the ranking inference
+    Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = '92beab211e31400bb98a39a7dce4961d'
+    PRODUCTION_RUN_ID = '5e15efc4192043fd8f6b1ae88cadfe94'
 
-    def __init__(self, configuration, run_id: Optional[str] = None):
+    def __init__(self, configuration: Optional[PythonSearchConfiguration] = None, run_id: Optional[str] = None, model: Optional[Any] = None):
 
         self.debug = os.getenv("DEBUG", False)
         self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
@@ -28,12 +29,15 @@ class Inference:
         if self.debug:
             print("Manually setted run id: ", self.run_id)
 
-        self.configuration = configuration
+
+        print('Using run id: ' + self.run_id)
+        self.configuration = configuration if configuration else ConfigurationLoader().load()
         # previous key should be setted in runtime
         self.previous_key = None
         self.all_keys = self.configuration.commands.keys()
         self.inference_embeddings = InferenceEmbeddingsLoader(self.all_keys)
-        self.model = self._load_mlflow_model(run_id=self.run_id)
+
+        self.model = model if model else self._load_mlflow_model(run_id=self.run_id)
 
     @timeit
     def get_ranking(self, predefined_input: Optional[InferenceInput] = None, return_weights=False) -> List[str]:
@@ -66,7 +70,7 @@ class Inference:
         for i, key in enumerate(self.all_keys):
             embedding = self.inference_embeddings.get_embedding_from_key(key)
             if embedding is None:
-                logging.warning(f"No content for key {key}")
+                logging.warning(f"No content for key ({key})")
                 continue
 
             X[i] = np.concatenate(
@@ -92,7 +96,6 @@ class Inference:
         return model
 
 
-
 class InferenceInput:
     hour: int
     month: int
@@ -112,8 +115,7 @@ class InferenceInput:
 
         instance = InferenceInput(hour=now.hour, month=now.month, previous_key=embedding_loader.get_recent_key())
 
-        if os.getenv("DEBUG", False):
-            print("Inference input: ", instance.__dict__)
+        print("Inference input: ", instance.__dict__)
 
         return instance
 
@@ -123,7 +125,7 @@ class InferenceEmbeddingsLoader:
         import copy
         self.all_keys = copy.copy(list(all_keys))
         self.latest_used_entries = LatestUsedEntries()
-        self.embedding_mapping = EmbeddingsReader().load(self.all_keys)
+        self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
 
     def get_recent_key(self) -> str:
         """Look into the recently used keys and return the most recent for which there are embeddings"""
@@ -148,7 +150,14 @@ class InferenceEmbeddingsLoader:
             extra_message = 'Existing keys: ' + str(self.embedding_mapping.keys())
         raise Exception(f'Could not find a recent key with embeddings' + extra_message)
 
-    def get_embedding_from_key(self, key):
-        if self.embedding_mapping[key] is None:
-            return
+    def get_embedding_from_key(self, key: str):
+        """
+        Return an embedding based on the keys
+        """
+        if not key in self.embedding_mapping or self.embedding_mapping[key] is None:
+            print(f"The embedding for ({key}) is empty in redis. Sycning the missing keys")
+            RedisEmbeddingsWriter().sync_missing()
+            self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
+
+
         return EmbeddingSerialization.read(self.embedding_mapping[key])

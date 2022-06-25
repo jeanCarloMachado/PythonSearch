@@ -7,18 +7,25 @@ import numpy as np
 from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
 
 class Transform:
-    def transform(self, dataset) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Transform pattern
+    From training dataset to -> model input
+    And from inference dataset -> model input
+    """
+
+    # + 1 is for the month number
+    # + 1 for entry number
+    DIMENSIONS = 2 * 384 + 1 + 1 + 1
+
+    def transform(self, dataset, keep_ids=False) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y
         Returns a pair with X, Y
         """
         print("Number of rows in the dataset: ", dataset.count())
+        print(f"Dimensions of dataset = {Transform.DIMENSIONS}")
         embeddings_keys = self.create_embeddings_training_dataset(dataset)
-
-        # + 1 is for the month number
-        dimensions_X = 2 * 384 + 1 + 1
-        print(f"Dimensions of dataset = {dimensions_X}")
-        X = np.zeros([dataset.count(), dimensions_X])
+        X = np.zeros([dataset.count(), Transform.DIMENSIONS])
         Y = np.empty(dataset.count())
 
         print("X shape:", X.shape)
@@ -28,14 +35,15 @@ class Transform:
         for i, collected_key in enumerate(collected_keys):
             X[i] = np.concatenate(
                 [
+                    np.asarray([collected_key.entry_number]),
                     embeddings_keys[collected_key.key],
                     embeddings_keys[collected_key.previous_key],
                     np.asarray([collected_key.month]),
                     np.asarray([collected_key.hour]),
                 ]
             )
+
             Y[i] = collected_key.label
-        print("Sample dataset:", X[0])
 
         return X, Y
 

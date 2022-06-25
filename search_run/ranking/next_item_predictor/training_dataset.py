@@ -19,7 +19,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = "key", "previous_key", "month", "hour", "label"
+    columns = "key", "previous_key", "month", "hour", "label", 'entry_number'
     DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -79,7 +79,6 @@ class TrainingDataset:
         dataset.show(10)
         return dataset
 
-
     @timeit
     def _add_label(self, grouped):
         dataset = grouped.withColumn(
@@ -87,6 +86,11 @@ class TrainingDataset:
             F.col("times")
             / F.sum("times").over(Window.partitionBy("month", "hour", "key")),
         ).orderBy("month", "hour", "key", "label")
+
+        # add an auto-increment id
+        window = Window.orderBy(F.col('key'))
+        dataset = dataset.withColumn('entry_number', F.row_number().over(window))
+
         return dataset.select(*self.columns)
 
     @timeit

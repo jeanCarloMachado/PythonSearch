@@ -22,8 +22,24 @@ class StartSevices:
     def consume_entries_redis(self):
         os.system('$HOME/projects/PythonSearch/search_run/events/latest_used_entries.py consume &')
 
-    def api(self):
-        os.system("conda run -n base python $HOME/projects/PythonSearch/search_run/web_api.py &")
+    def api(self, background=False, print_only=False):
+        import os
+        HOME = os.getenv('HOME')
+        cmd = f"conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/search_run/web_api.py"
+
+        if print_only:
+            print(cmd)
+            return
+
+        return self._run(cmd, background)
+
+    def _run(self, cmd: str, background=False):
+        if background:
+            print("Background enabled")
+            cmd = cmd + " & "
+
+        os.system(cmd)
+
 
     def all(self):
         import time;
@@ -38,7 +54,7 @@ class StartSevices:
         time.sleep(3)
         self.consume_entries_redis()
         time.sleep(3)
-        self.api()
+        self.api(background=True)
 
         time.sleep(5)
         send_notification("Infra setup finished")
