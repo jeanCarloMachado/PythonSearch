@@ -4,7 +4,6 @@ import json
 from typing import Optional
 
 from search_run.apps.clipboard import Clipboard
-from grimoire.desktop.dmenu import Dmenu
 import logging
 from search_run.apps.window_manager import I3
 from search_run.context import Context
@@ -34,9 +33,10 @@ class BaseEntry:
         self._call_after()
 
     def _confirmed_continue(self) -> bool:
-        result = Dmenu(
-            title=f"Type (y) if you wanna to proceed to run command: {self.cmd['cmd']}"
-        ).rofi()
+        from search_run.entry_capture.data_capture_ui import AskQuestion
+        result = AskQuestion().ask(
+            f"Type (y) if you wanna to proceed to run command: {self.cmd['cmd']}"
+        )
 
         if result == "y":
             return True

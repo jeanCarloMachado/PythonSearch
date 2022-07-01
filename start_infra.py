@@ -36,7 +36,7 @@ class StartSevices:
     def _run(self, cmd: str, background=False):
         if background:
             print("Background enabled")
-            cmd = cmd + " & "
+            cmd = "nohup " + cmd + " & "
 
         os.system(cmd)
 

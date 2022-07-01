@@ -33,6 +33,11 @@ class FzfInTerminal:
         self.title = title
 
     def run(self) -> None:
+        if is_mac():
+            result = os.system("(ps aux | grep -i kitty |  grep -v grep) && open -a Kitty")
+            if result == 0:
+                return
+
         self._launch_terminal(self.internal_cmd())
 
     def internal_cmd(self):
@@ -99,6 +104,7 @@ class FzfInTerminal:
         -o font_family="{font}" \
         -o confirm_os_window_close=0 \
         -o font_size={FzfInTerminal.FONT_SIZE} \
+        --single-instance  \
          {internal_cmd}
         """
         logging.info(f"Command performed:\n {internal_cmd}")
