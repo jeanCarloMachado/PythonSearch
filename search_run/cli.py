@@ -1,6 +1,7 @@
 from search_run.apps.window_manager import WindowManager
 from search_run.config import PythonSearchConfiguration
 from search_run.entry_runner import EntryRunner
+from search_run.environment import is_mac
 from search_run.search_ui.preview import Preview
 
 
@@ -141,6 +142,9 @@ class PythonSearchCli:
 
             def hide_launcher(self):
                 """hide the search launcher -i2 specific"""
+                if is_mac():
+                    import os
+                    os.system("""osascript -e 'tell application "System Events" to keystroke "H" using {command down}'""")
                 WindowManager.load_from_environment().hide_window(
                     self.configuration.APPLICATION_TITLE
                 )

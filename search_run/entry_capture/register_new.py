@@ -82,6 +82,12 @@ class RegisterNew:
         """Register german workds you dont know by saving them to the clipboard and storing in python search"""
         key = Clipboard().get_content()
 
+        self.german_from_text(key)
+
+
+    def german_from_text(self, key):
+        """Register german workds you dont know by saving them to the clipboard and storing in python search"""
+
         if emptish(key):
             raise RegisterNewException.empty_content()
 

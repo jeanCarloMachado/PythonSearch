@@ -22,6 +22,11 @@ def root():
     global generator
     return generator.generate()
 
+@app.get("/about")
+def root():
+    global generator
+    return {"run_id": generator.inference.PRODUCTION_RUN_ID}
+
 
 if __name__ == "__main__":
     import uvicorn

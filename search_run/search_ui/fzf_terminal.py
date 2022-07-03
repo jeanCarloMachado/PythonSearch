@@ -42,7 +42,7 @@ class FzfInTerminal:
 
     def internal_cmd(self):
         return f"""bash -c '{self._get_rankging_generate_cmd()} | \
-                fzf \
+        fzf \
         --tiebreak=length,begin,index \
         --cycle \
         --no-hscroll \
@@ -76,7 +76,9 @@ class FzfInTerminal:
         --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
-        --bind "ctrl-d:abort" '
+        --bind "ctrl-d:abort"  \
+        --color=fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f 
+        '
         """
 
 

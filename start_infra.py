@@ -22,8 +22,12 @@ class StartSevices:
     def consume_entries_redis(self):
         os.system('$HOME/projects/PythonSearch/search_run/events/latest_used_entries.py consume &')
 
-    def api(self, background=False, print_only=False):
-        import os
+    def api(self, background=False, print_only=False, kill=False):
+
+        if kill:
+            print("Killing web api first")
+            os.system("pkill -f web_api.py")
+
         HOME = os.getenv('HOME')
         cmd = f"conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/search_run/web_api.py"
 
