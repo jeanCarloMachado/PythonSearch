@@ -3,14 +3,16 @@ from __future__ import annotations
 import datetime
 import logging
 import os
-from typing import List, Optional, Any
+from typing import Any, List, Optional
 
 import numpy as np
 
 from search_run.config import ConfigurationLoader, PythonSearchConfiguration
 from search_run.events.latest_used_entries import LatestUsedEntries
 from search_run.infrastructure.performance import timeit
-from search_run.ranking.entry_embeddings import EmbeddingSerialization, RedisEmbeddingsReader, RedisEmbeddingsWriter
+from search_run.ranking.entry_embeddings import (EmbeddingSerialization,
+                                                 RedisEmbeddingsReader,
+                                                 RedisEmbeddingsWriter)
 from search_run.ranking.models import PythonSearchMLFlow
 
 
@@ -19,9 +21,14 @@ class Inference:
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = '0db25bb7b21045c8a75f762e92ce7cd8'
+    PRODUCTION_RUN_ID = "0db25bb7b21045c8a75f762e92ce7cd8"
 
-    def __init__(self, configuration: Optional[PythonSearchConfiguration] = None, run_id: Optional[str] = None, model: Optional[Any] = None):
+    def __init__(
+        self,
+        configuration: Optional[PythonSearchConfiguration] = None,
+        run_id: Optional[str] = None,
+        model: Optional[Any] = None,
+    ):
 
         self.debug = os.getenv("DEBUG", False)
         self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
@@ -29,9 +36,10 @@ class Inference:
         if self.debug:
             print("Manually setted run id: ", self.run_id)
 
-
-        print('Using run id: ' + self.run_id)
-        self.configuration = configuration if configuration else ConfigurationLoader().load()
+        print("Using run id: " + self.run_id)
+        self.configuration = (
+            configuration if configuration else ConfigurationLoader().load()
+        )
         # previous key should be setted in runtime
         self.previous_key = None
         self.all_keys = self.configuration.commands.keys()
@@ -40,13 +48,18 @@ class Inference:
         self.model = model if model else self._load_mlflow_model(run_id=self.run_id)
 
     @timeit
-    def get_ranking(self, predefined_input: Optional[InferenceInput] = None, return_weights=False) -> List[str]:
+    def get_ranking(
+        self, predefined_input: Optional[InferenceInput] = None, return_weights=False
+    ) -> List[str]:
         """
         Gets the ranking from the next item model
         """
-        print('Number of existing keys: ', str(len(self.all_keys)))
-        inference_input = predefined_input if predefined_input else InferenceInput.from_context(
-            self.inference_embeddings)
+        print("Number of existing keys: ", str(len(self.all_keys)))
+        inference_input = (
+            predefined_input
+            if predefined_input
+            else InferenceInput.from_context(self.inference_embeddings)
+        )
 
         X = self._build_dataset(inference_input)
         Y = self._predict(X)
@@ -65,7 +78,9 @@ class Inference:
 
         X = np.zeros([len(self.all_keys), 2 * 384 + 1 + 1])
 
-        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(inference_input.previous_key)
+        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
+            inference_input.previous_key
+        )
 
         for i, key in enumerate(self.all_keys):
             embedding = self.inference_embeddings.get_embedding_from_key(key)
@@ -107,13 +122,17 @@ class InferenceInput:
         self.previous_key = previous_key
 
     @staticmethod
-    def from_context(embedding_loader: InferenceEmbeddingsLoader) -> 'InferenceInput':
+    def from_context(embedding_loader: InferenceEmbeddingsLoader) -> "InferenceInput":
         """
         Do inference based on the current time and the recent used keys
         """
         now = datetime.datetime.now()
 
-        instance = InferenceInput(hour=now.hour, month=now.month, previous_key=embedding_loader.get_recent_key())
+        instance = InferenceInput(
+            hour=now.hour,
+            month=now.month,
+            previous_key=embedding_loader.get_recent_key(),
+        )
 
         print("Inference input: ", instance.__dict__)
 
@@ -123,6 +142,7 @@ class InferenceInput:
 class InferenceEmbeddingsLoader:
     def __init__(self, all_keys):
         import copy
+
         self.all_keys = copy.copy(list(all_keys))
         self.latest_used_entries = LatestUsedEntries()
         self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
@@ -145,19 +165,20 @@ class InferenceEmbeddingsLoader:
             return previous_key
 
         print_mapping = False
-        extra_message = ''
+        extra_message = ""
         if print_mapping:
-            extra_message = 'Existing keys: ' + str(self.embedding_mapping.keys())
-        raise Exception(f'Could not find a recent key with embeddings' + extra_message)
+            extra_message = "Existing keys: " + str(self.embedding_mapping.keys())
+        raise Exception(f"Could not find a recent key with embeddings" + extra_message)
 
     def get_embedding_from_key(self, key: str):
         """
         Return an embedding based on the keys
         """
         if not key in self.embedding_mapping or self.embedding_mapping[key] is None:
-            print(f"The embedding for ({key}) is empty in redis. Sycning the missing keys")
+            print(
+                f"The embedding for ({key}) is empty in redis. Sycning the missing keys"
+            )
             RedisEmbeddingsWriter().sync_missing()
             self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
-
 
         return EmbeddingSerialization.read(self.embedding_mapping[key])

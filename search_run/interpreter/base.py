@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Optional
 
 from search_run.apps.clipboard import Clipboard
-import logging
 from search_run.apps.window_manager import I3
 from search_run.context import Context
 
@@ -34,6 +34,7 @@ class BaseEntry:
 
     def _confirmed_continue(self) -> bool:
         from search_run.entry_capture.data_capture_ui import AskQuestion
+
         result = AskQuestion().ask(
             f"Type (y) if you wanna to proceed to run command: {self.cmd['cmd']}"
         )
@@ -42,6 +43,7 @@ class BaseEntry:
             return True
 
         from search_run.apps.notification_ui import send_notification
+
         send_notification(f"Operation cancelled. Confirmation response was '{result}'")
 
         return False

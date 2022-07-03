@@ -4,6 +4,7 @@ from search_run.apps.clipboard import Clipboard
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseEntry
 
+
 class SnippetInterpreter(BaseEntry):
     """
     Snippet handler

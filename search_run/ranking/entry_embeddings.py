@@ -36,7 +36,6 @@ class RedisEmbeddingsReader:
         embedding_mapping = dict(zip(keys, all_embeddings))
         return embedding_mapping
 
-
     def load_all_keys(self):
         """
         Generate embeddings for all currently existing entries
@@ -57,14 +56,16 @@ class RedisEmbeddingsWriter:
         Write embeddings of keys not present in redis
         """
 
-        #load current embeddings
+        # load current embeddings
 
         existing_embeddings = RedisEmbeddingsReader().load_all_keys()
 
-        empty_keys = [key for key, embedding in existing_embeddings.items() if embedding is None]
+        empty_keys = [
+            key for key, embedding in existing_embeddings.items() if embedding is None
+        ]
 
         if not len(empty_keys):
-            print('No keys missing sync, exit early')
+            print("No keys missing sync, exit early")
             return
 
         embeddings = create_indexed_embeddings(empty_keys)
@@ -113,4 +114,5 @@ def create_indexed_embeddings(keys):
 
 if __name__ == "__main__":
     import fire
+
     fire.Fire()

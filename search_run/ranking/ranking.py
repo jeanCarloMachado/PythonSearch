@@ -36,7 +36,9 @@ class RankingGenerator:
         self.used_entries: List[Tuple[str, dict]] = []
 
         if self.feature_toggle.is_enabled("ranking_next"):
-            from search_run.ranking.next_item_predictor.inference import Inference
+            from search_run.ranking.next_item_predictor.inference import \
+                Inference
+
             self.inference = Inference(self.configuration)
 
     def generate_with_caching(self):
@@ -125,7 +127,7 @@ class RankingGenerator:
             "redis"
         ) or not self.feature_toggle.is_enabled("ranking_latest_used"):
             if self.debug:
-                print(f'Disabled latest entries')
+                print(f"Disabled latest entries")
             return
 
         self.used_entries = self.get_used_entries_from_redis(self.entries)

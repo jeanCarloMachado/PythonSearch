@@ -32,5 +32,3 @@ class ShortcutGenerator:
 
         if WindowManager.is_gnome():
             Gnome(self.configuration).generate()
-
-

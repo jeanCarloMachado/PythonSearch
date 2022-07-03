@@ -11,7 +11,8 @@ from search_run.infrastructure.performance import timeit
 from search_run.observability.logger import initialize_logging
 from search_run.ranking.next_item_predictor.evaluator import Evaluate
 from search_run.ranking.next_item_predictor.train import Train
-from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
+from search_run.ranking.next_item_predictor.training_dataset import \
+    TrainingDataset
 
 initialize_logging()
 

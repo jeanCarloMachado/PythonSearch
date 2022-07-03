@@ -5,10 +5,10 @@ from typing import Optional
 from grimoire import s
 from grimoire.shell import shell
 
+from search_run.apps.terminal import Terminal
 from search_run.config import config
 from search_run.interpreter.cmd import CmdEntry
 
-from search_run.apps.terminal import Terminal
 
 class EditKey:
     """Set of commands to edit the entries"""

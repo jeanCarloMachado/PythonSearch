@@ -29,9 +29,12 @@ class Gnome:
         """reset existing shortcuts, necessary only for gnome"""
 
         from search_run.interpreter.cmd import CmdEntry
-        CmdEntry({
-            'cmd': "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
-        })
+
+        CmdEntry(
+            {
+                "cmd": "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
+            }
+        )
 
     def generate_shortcut(self, name: str, command: str, binding: str):
         """

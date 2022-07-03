@@ -28,7 +28,7 @@ class Evaluate:
         Evaluate a model against our ranking
         """
         logging.info("Evaluate model")
-        print('Run id ', run_id)
+        print("Run id ", run_id)
         self.all_latest_keys = EntriesLoader.load_all_keys()
         self.embeddings_keys_latest = RedisEmbeddingsReader().load(self.all_latest_keys)
 

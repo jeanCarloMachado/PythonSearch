@@ -12,7 +12,8 @@ def setup_systemd_handler():
 
     # systemd only works for linux
     from systemd.journal import JournalHandler
-    return JournalHandler(SYSLOG_IDENTIFIER=SYSLOG_IDENTIFIER),
+
+    return (JournalHandler(SYSLOG_IDENTIFIER=SYSLOG_IDENTIFIER),)
 
 
 def initialize_logging():
@@ -24,10 +25,7 @@ def initialize_logging():
     if not is_mac():
         handlers.append(setup_systemd_handler())
 
-    logging.basicConfig(
-        level=logging.INFO,
-        handlers=handlers
-    )
+    logging.basicConfig(level=logging.INFO, handlers=handlers)
 
     return logging
 

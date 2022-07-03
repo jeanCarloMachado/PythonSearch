@@ -1,18 +1,20 @@
 import logging
 import os
 
+from search_run.environment import is_mac
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseEntry
 from search_run.interpreter.cmd import CmdEntry
-from search_run.environment import is_mac
 
 
 class Url(BaseEntry):
     def __init__(self, cmd, context=None):
         self.context = context
 
-        if os.getenv('BROWSER') is None:
-            logging.info('BROWSWER environment variable not set! Url commands will not work.')
+        if os.getenv("BROWSER") is None:
+            logging.info(
+                "BROWSWER environment variable not set! Url commands will not work."
+            )
 
         if type(cmd) == str and Url.is_url(cmd):
             self.cmd = {"url": cmd}

@@ -1,6 +1,8 @@
 import os
 from typing import Optional
+
 from mlflow.entities import RunInfo
+
 from search_run.config import DataConfig
 
 
@@ -9,10 +11,12 @@ class PythonSearchMLFlow:
     Accessor to MLflow API
 
     """
+
     def __init__(self):
 
-        self.debug = os.getenv('PS_DEBUG', False)
+        self.debug = os.getenv("PS_DEBUG", False)
         import mlflow
+
         self.mlflow_instance = mlflow
         self.mlflow_instance.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
 
@@ -35,7 +39,6 @@ class PythonSearchMLFlow:
 
         if self.debug:
             print(f"Loading run id: {run_id}")
-
 
         model = self.mlflow_instance.keras.load_model(f"runs:/{run_id}/model")
         return model

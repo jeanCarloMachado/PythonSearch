@@ -34,7 +34,9 @@ class FzfInTerminal:
 
     def run(self) -> None:
         if is_mac():
-            result = os.system("(ps aux | grep -i kitty |  grep -v grep) && open -a Kitty")
+            result = os.system(
+                "(ps aux | grep -i kitty |  grep -v grep) && open -a Kitty"
+            )
             if result == 0:
                 return
 
@@ -81,16 +83,15 @@ class FzfInTerminal:
         '
         """
 
-
     def _get_rankging_generate_cmd(self, reload=False):
         # in mac we need tensorflow to be installed via conda
         if is_mac():
             if reload:
-                return f'curl -s localhost:8000/ranking/reload_and_generate'
+                return f"curl -s localhost:8000/ranking/reload_and_generate"
 
-            return f'curl -s localhost:8000/ranking/generate'
+            return f"curl -s localhost:8000/ranking/generate"
 
-        return f'{self.executable} ranking generate'
+        return f"{self.executable} ranking generate"
 
     def _launch_terminal(self, internal_cmd: str) -> None:
 

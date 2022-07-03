@@ -4,10 +4,10 @@ import datetime
 import time
 from typing import Tuple
 
-from search_run.apps.clipboard import Clipboard
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.string import emptish
 
+from search_run.apps.clipboard import Clipboard
 from search_run.entry_capture.data_capture_ui import AskQuestion
 from search_run.entry_capture.entry_inserter import EntryInserter
 from search_run.exceptions import RegisterNewException
@@ -84,7 +84,6 @@ class RegisterNew:
 
         self.german_from_text(key)
 
-
     def german_from_text(self, key):
         """Register german workds you dont know by saving them to the clipboard and storing in python search"""
 
@@ -92,8 +91,9 @@ class RegisterNew:
             raise RegisterNewException.empty_content()
 
         from search_run.interpreter.url import Url
+
         cmd = {
-            'url': f"https://translate.google.com/?sl=de&tl=en&text={key}&op=translate"
+            "url": f"https://translate.google.com/?sl=de&tl=en&text={key}&op=translate"
         }
         Url(cmd).interpret_default()
         time.sleep(1)
@@ -119,9 +119,8 @@ class RegisterNew:
 
         clipboard_content = self._get_clippboard_content()
 
-        title = f'Content to store: {clipboard_content}\n{title}'
+        title = f"Content to store: {clipboard_content}\n{title}"
         key = AskQuestion().ask(title)
-
 
         return clipboard_content, key
 

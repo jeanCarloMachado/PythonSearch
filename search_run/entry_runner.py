@@ -5,7 +5,6 @@ import re
 from typing import List
 
 from search_run.apps.notification_ui import send_notification
-
 from search_run.config import PythonSearchConfiguration
 from search_run.context import Context
 from search_run.events.producer import EventProducer
@@ -83,6 +82,7 @@ class EntryRunner:
         if self.configuration.supported_features.is_enabled("event_tracking"):
             logging.info("Starting event recording procedure")
             from search_run.events.events import SearchRunPerformed
+
             EventProducer().send_object(
                 SearchRunPerformed(
                     key=key, query_input=query_used, shortcut=from_shortcut
@@ -93,9 +93,11 @@ class EntryRunner:
 
         if len(matches) > 1:
             real_key = min(matches, key=len)
-            send_notification(f"Multiple matches for this key {matches} using the smaller")
+            send_notification(
+                f"Multiple matches for this key {matches} using the smaller"
+            )
 
-        print('Interpret next')
+        print("Interpret next")
         return Interpreter.build_instance(self.configuration).default(real_key)
 
     def _matching_keys(self, key: str) -> List[str]:
@@ -115,6 +117,7 @@ class EntryRunner:
                 matching_keys.append(registered_key)
 
         return matching_keys
+
 
 def generate_identifier(string):
     """

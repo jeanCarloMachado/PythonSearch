@@ -3,11 +3,12 @@ import time
 
 from search_run.apps.terminal import Terminal
 
+
 class AskQuestion:
     def ask(self, message: str) -> str:
 
         message = self._sanitize_message(message)
-        content_file = '/tmp/python_search_input'
+        content_file = "/tmp/python_search_input"
         if os.path.exists(content_file):
             os.remove(content_file)
 
@@ -25,5 +26,7 @@ class AskQuestion:
         return result
 
     def _sanitize_message(self, message):
-        allowed_chars = [' ', ':', "\n"]
-        return ''.join(char for char in message if char.isalnum() or char in allowed_chars)
+        allowed_chars = [" ", ":", "\n"]
+        return "".join(
+            char for char in message if char.isalnum() or char in allowed_chars
+        )

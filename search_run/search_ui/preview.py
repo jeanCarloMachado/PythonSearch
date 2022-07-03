@@ -1,11 +1,10 @@
-
 class Preview:
     def display(self, entry_text):
         """
         Prints the
         """
-        key = entry_text.split(':')[0]
-        json_str = entry_text.replace(key + ':', '')
+        key = entry_text.split(":")[0]
+        json_str = entry_text.replace(key + ":", "")
         import json
 
         try:

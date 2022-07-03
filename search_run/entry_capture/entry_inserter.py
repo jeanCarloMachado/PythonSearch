@@ -22,14 +22,14 @@ class EntryInserter:
         self._append_entry(line_to_add)
 
         from search_run.apps.notification_ui import send_notification
+
         send_notification(f"Entry {row_entry} inserted successfully")
 
         # refresh the configuration
         if enable_shortcuts_generation:
             from search_run.interpreter.cmd import CmdEntry
-            CmdEntry({
-                'cmd': "search_run generate_shortcuts"
-            })
+
+            CmdEntry({"cmd": "search_run generate_shortcuts"})
 
     def _append_entry(self, line_to_add: str):
         """

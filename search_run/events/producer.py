@@ -12,7 +12,12 @@ class EventProducer:
     def __init__(self):
 
         try:
-            self.producer = KafkaProducer(bootstrap_servers=KafkaConfig.host, acks=0, max_block_ms=1000, request_timeout_ms=500)
+            self.producer = KafkaProducer(
+                bootstrap_servers=KafkaConfig.host,
+                acks=0,
+                max_block_ms=1000,
+                request_timeout_ms=500,
+            )
         except Exception as e:
             logging.info("Could not create kafka producer, not sending messages")
             self.producer = None
@@ -29,5 +34,3 @@ class EventProducer:
 
         self.producer.send(topic_name, json.dumps(message).encode())
         self.producer.flush()
-
-

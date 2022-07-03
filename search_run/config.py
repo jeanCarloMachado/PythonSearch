@@ -23,7 +23,7 @@ class DataConfig:
     """
 
     # output of the model
-    base_data_folder = '/data/python_search'
+    base_data_folder = "/data/python_search"
     prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
     # a copy of the search run entries for the feature store
     entries_dump = base_data_folder + "/entries_dumped/latest"
@@ -32,7 +32,7 @@ class DataConfig:
     MLFLOW_MODELS_PATH = f"{os.environ['HOME']}/projects/PySearchEntries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v0"
-    DATA_WAREHOUSE_FOLDER = base_data_folder + '/data_warehouse'
+    DATA_WAREHOUSE_FOLDER = base_data_folder + "/data_warehouse"
     SEARCH_RUNS_PERFORMED_FOLDER = (
         base_data_folder + "/data_warehouse/dataframes/SearchRunPerformed"
     )
@@ -92,7 +92,7 @@ class ConfigurationLoader:
         if env_name not in os.environ:
             raise Exception(f"{env_name} must be set to load the entries dynamically")
 
-        print(f'Env: {env_name}={os.environ[env_name]}')
+        print(f"Env: {env_name}={os.environ[env_name]}")
         folder = os.environ[env_name]
 
         config_location = os.path.join(folder, "entries/main.py")
@@ -101,17 +101,20 @@ class ConfigurationLoader:
             raise Exception(f"Could not find entries main file {config_location}")
 
         import sys
+
         sys.path.append(folder)
         import entries.main as entries_main
+
         config = entries_main.config
 
         return config
 
     def reload(self):
-        import entries.main as entries_main
         import importlib
+
+        import entries.main as entries_main
+
         importlib.reload(entries_main)
         config = entries_main.config
-
 
         return config

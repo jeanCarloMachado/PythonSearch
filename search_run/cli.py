@@ -64,13 +64,13 @@ class PythonSearchCli:
 
         Interpreter.build_instance(self.configuration).clipboard(key)
 
-
     def copy_key_only(self, key_str: str):
         """
         Copies to clipboard the key
         """
         from search_run.apps.clipboard import Clipboard
-        Clipboard().set_content(key_str.split(':')[0])
+
+        Clipboard().set_content(key_str.split(":")[0])
 
     def edit_key(self, key):
         from search_run.entry_capture.edit_content import EditKey
@@ -135,7 +135,6 @@ class PythonSearchCli:
     def _utils(self):
         """Here commands that are small topics and dont fit the rest"""
 
-
         class Utils:
             def __init__(self, configuration):
                 self.configuration = configuration
@@ -144,7 +143,10 @@ class PythonSearchCli:
                 """hide the search launcher -i2 specific"""
                 if is_mac():
                     import os
-                    os.system("""osascript -e 'tell application "System Events" to keystroke "H" using {command down}'""")
+
+                    os.system(
+                        """osascript -e 'tell application "System Events" to keystroke "H" using {command down}'"""
+                    )
                 WindowManager.load_from_environment().hide_window(
                     self.configuration.APPLICATION_TITLE
                 )
@@ -154,7 +156,6 @@ class PythonSearchCli:
                 Recieves entries from fzf and show them formatted for the preview window
                 """
                 Preview().display(entry_text)
-
 
         return Utils(self.configuration)
 

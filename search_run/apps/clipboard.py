@@ -1,5 +1,6 @@
 from grimoire.shell import shell
 from grimoire.string import chomp, remove_new_lines
+
 from search_run.environment import is_mac
 
 
@@ -11,7 +12,7 @@ class Clipboard:
 
         cmd = f"xsel {source} --output"
         if is_mac():
-            cmd = 'pbpaste'
+            cmd = "pbpaste"
 
         result = shell.run_with_result(cmd)
         result = chomp(result)
@@ -39,19 +40,21 @@ class Clipboard:
         :param enable_notifications:
         :return:
         """
+
         def shellquote(s):
             return "'" + s.replace("'", "'\\''") + "'"
 
         sanitized = shellquote(content)
 
-        clipboard_cmd = 'xsel --clipboard --primary --input'
+        clipboard_cmd = "xsel --clipboard --primary --input"
         if is_mac():
-            clipboard_cmd = 'pbcopy'
+            clipboard_cmd = "pbcopy"
 
         cmd = f"echo {sanitized} | {clipboard_cmd}"
 
         if enable_notifications:
             from search_run.apps.notification_ui import send_notification
+
             send_notification(f"Content copied: {sanitized}")
 
         return shell.run(cmd)

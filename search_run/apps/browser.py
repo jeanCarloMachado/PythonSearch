@@ -1,5 +1,6 @@
-
 from search_run.interpreter.cmd import CmdEntry
+
+
 class Browser:
     def open(self, url: str):
         """
@@ -9,7 +10,6 @@ class Browser:
         """
 
         import os
+
         cmd = f"{os.getenv('BROWSER')} {url}"
-        CmdEntry({'cmd': cmd}).interpret_default()
-
-
+        CmdEntry({"cmd": cmd}).interpret_default()

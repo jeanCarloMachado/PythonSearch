@@ -1,13 +1,15 @@
 import os
-from typing import Tuple, Any
+from typing import Any, Tuple
 
 import mlflow
 import numpy as np
 from keras import layers
 from keras.models import Sequential
-from search_run.config import DataConfig
 from sklearn.model_selection import train_test_split
-from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
+
+from search_run.config import DataConfig
+from search_run.ranking.next_item_predictor.training_dataset import \
+    TrainingDataset
 from search_run.ranking.next_item_predictor.transform import Transform
 
 
@@ -60,7 +62,9 @@ class Train:
         X_train_p = np.delete(X_train, 0, axis=1)
 
         model, history = self._only_train(X_train_p, X_test_p, Y_train, Y_test)
-        metrics = self._compute_standard_metrics(model, X_train_p, X_test_p, Y_train, Y_test)
+        metrics = self._compute_standard_metrics(
+            model, X_train_p, X_test_p, Y_train, Y_test
+        )
 
         offline_evaluation = self.offline_evaluation(model, dataset, X_test)
 
@@ -72,16 +76,18 @@ class Train:
     def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
 
         print("Starting train with N epochs, N=", self.epochs)
-        print({
-            'shape_x_train': X_train.shape,
-            'shape_x_test': X_test.shape,
-            'shape_y_train': Y_train.shape,
-            'shape_y_test': Y_test.shape,
-            "X_train has nan: ": np.any(np.isnan(X_train)),
-            "Y_train has nan: ": np.any(np.isnan(Y_train)),
-            "X_test has nan: ": np.any(np.isnan(X_test)),
-            "y_test has nan: ": np.any(np.isnan(Y_test))
-        })
+        print(
+            {
+                "shape_x_train": X_train.shape,
+                "shape_x_test": X_test.shape,
+                "shape_y_train": Y_train.shape,
+                "shape_y_test": Y_test.shape,
+                "X_train has nan: ": np.any(np.isnan(X_train)),
+                "Y_train has nan: ": np.any(np.isnan(Y_train)),
+                "X_test has nan: ": np.any(np.isnan(X_test)),
+                "y_test has nan: ": np.any(np.isnan(Y_test)),
+            }
+        )
 
         model = Sequential()
         model.add(layers.Dense(128, activation="relu"))
@@ -102,13 +108,15 @@ class Train:
         return model, history
 
     def offline_evaluation(self, model, dataset, X_test):
-        print('Starting offline evaluation!')
+        print("Starting offline evaluation!")
         ids = [int(x) for x in X_test[:, 0].tolist()]
         df = dataset.toPandas()
-        test_df = df[df['entry_number'].isin(ids)]
+        test_df = df[df["entry_number"].isin(ids)]
         test_df
 
-        from search_run.ranking.next_item_predictor.inference import Inference, InferenceInput
+        from search_run.ranking.next_item_predictor.inference import (
+            Inference, InferenceInput)
+
         inference = Inference(model=model)
 
         def key_exists(key):
@@ -119,34 +127,37 @@ class Train:
         avg_position = 0
         number_of_existing_keys = len(inference.configuration.commands.keys())
         for index, row in test_df.iterrows():
-            if not key_exists(row['previous_key']) or not key_exists(row['key']):
-                print(f"Key pair does not exist any longer ({row['previous_key']}, {row['key']})")
+            if not key_exists(row["previous_key"]) or not key_exists(row["key"]):
+                print(
+                    f"Key pair does not exist any longer ({row['previous_key']}, {row['key']})"
+                )
                 continue
 
-            input = InferenceInput(hour=row['hour'], month=row['month'], previous_key=row['previous_key'])
+            input = InferenceInput(
+                hour=row["hour"], month=row["month"], previous_key=row["previous_key"]
+            )
             result = inference.get_ranking(predefined_input=input, return_weights=False)
 
             metadata = {
-                "pair": row['previous_key'] + " -> " + row['key'],
-                "position_target": result.index(row['key']),
+                "pair": row["previous_key"] + " -> " + row["key"],
+                "position_target": result.index(row["key"]),
                 "Len": len(result),
                 "type of result": type(result),
             }
             print(metadata)
 
-            avg_position += metadata['position_target']
+            avg_position += metadata["position_target"]
             total_found += 1
             if total_found == number_of_tests:
                 break
 
         avg_position = avg_position / number_of_tests
         result = {
-            'avg_position_for_tests': avg_position,
-            'number_of_tests': number_of_tests,
-            'number_of_existing_keys': number_of_existing_keys,
+            "avg_position_for_tests": avg_position,
+            "number_of_tests": number_of_tests,
+            "number_of_existing_keys": number_of_existing_keys,
         }
         print(result)
-
 
         return result
 
@@ -155,7 +166,6 @@ class Train:
             X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
         )
         return X_train, X_test, Y_train, Y_test
-
 
     def _compute_standard_metrics(self, model, X_train, X_test, Y_train, Y_test):
         """
@@ -200,4 +210,3 @@ class Train:
         X_test /= std
 
         return X_train, X_test
-

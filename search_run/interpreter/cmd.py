@@ -71,7 +71,7 @@ class CmdEntry(BaseEntry):
 
         logging.info("Running it in a new terminal")
 
-        hold_terminal = False if 'not_hold_terminal' in self.cmd else True
+        hold_terminal = False if "not_hold_terminal" in self.cmd else True
         cmd = Terminal().wrap_cmd_into_terminal(
             cmd,
             title=self._get_window_title(),
@@ -94,17 +94,18 @@ class CmdEntry(BaseEntry):
     def _execute(self, cmd):
         logging.info(f"To run: {cmd}")
 
-        hold_terminal = False if 'not_hold_terminal' in self.cmd else True
+        hold_terminal = False if "not_hold_terminal" in self.cmd else True
         if (
-                self.context
-                and self.context.is_group_command()
-                and not self.context.should_execute_sequentially()
+            self.context
+            and self.context.is_group_command()
+            and not self.context.should_execute_sequentially()
         ) or not hold_terminal:
             return shell.run_command_no_wait(cmd)
 
         if self.context and self.context.should_execute_sequentially():
             return shell.run_with_result(cmd)
         import os
+
         return os.system(cmd)
 
     def return_result(self, result):

@@ -1,10 +1,11 @@
-from typing import Tuple, Dict, List
+from typing import Dict, List, Tuple
 
-from search_run.ranking.entry_embeddings import create_indexed_embeddings
 import numpy as np
 
+from search_run.ranking.entry_embeddings import create_indexed_embeddings
+from search_run.ranking.next_item_predictor.training_dataset import \
+    TrainingDataset
 
-from search_run.ranking.next_item_predictor.training_dataset import TrainingDataset
 
 class Transform:
     """
@@ -48,7 +49,7 @@ class Transform:
         return X, Y
 
     def create_embeddings_training_dataset(
-            self, dataset: TrainingDataset
+        self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
         create embeddings

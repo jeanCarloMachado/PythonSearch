@@ -1,26 +1,33 @@
 #!/usr/bin/env python3
 import os
+
 from search_run.apps.notification_ui import send_notification
 
 
 class StartSevices:
     def zookeeper(self):
-        os.system('zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties &')
+        os.system(
+            "zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties &"
+        )
 
     def kafka(self):
-        os.system('kafka-server-start /opt/homebrew/etc/kafka/server.properties &')
+        os.system("kafka-server-start /opt/homebrew/etc/kafka/server.properties &")
 
     def spark_consumer(self):
-        os.system(''' spark-submit \
+        os.system(
+            """ spark-submit \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
         $HOME/projects/PythonSearch/search_run/events/consumer.py consume_search_run_performed &
-                  ''')
+                  """
+        )
 
     def redis(self):
-        os.system('redis-server &')
+        os.system("redis-server &")
 
     def consume_entries_redis(self):
-        os.system('$HOME/projects/PythonSearch/search_run/events/latest_used_entries.py consume &')
+        os.system(
+            "$HOME/projects/PythonSearch/search_run/events/latest_used_entries.py consume &"
+        )
 
     def api(self, background=False, print_only=False, kill=False):
 
@@ -28,7 +35,7 @@ class StartSevices:
             print("Killing web api first")
             os.system("pkill -f web_api.py")
 
-        HOME = os.getenv('HOME')
+        HOME = os.getenv("HOME")
         cmd = f"conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/search_run/web_api.py"
 
         if print_only:
@@ -44,9 +51,8 @@ class StartSevices:
 
         os.system(cmd)
 
-
     def all(self):
-        import time;
+        import time
 
         self.zookeeper()
         time.sleep(10)
@@ -63,8 +69,8 @@ class StartSevices:
         time.sleep(5)
         send_notification("Infra setup finished")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     import fire
+
     fire.Fire(StartSevices)
-
-

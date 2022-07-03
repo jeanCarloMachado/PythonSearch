@@ -4,10 +4,8 @@ import sys
 from typing import Optional, Tuple
 
 import numpy as np
-from pyspark.sql import DataFrame
-
 import pyspark.sql.functions as F
-from pyspark.sql import SparkSession
+from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.window import Window
 
 from search_run.datasets.searchesperformed import SearchesPerformed
@@ -19,7 +17,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = "key", "previous_key", "month", "hour", "label", 'entry_number'
+    columns = "key", "previous_key", "month", "hour", "label", "entry_number"
     DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -88,8 +86,8 @@ class TrainingDataset:
         ).orderBy("month", "hour", "key", "label")
 
         # add an auto-increment id
-        window = Window.orderBy(F.col('key'))
-        dataset = dataset.withColumn('entry_number', F.row_number().over(window))
+        window = Window.orderBy(F.col("key"))
+        dataset = dataset.withColumn("entry_number", F.row_number().over(window))
 
         return dataset.select(*self.columns)
 
