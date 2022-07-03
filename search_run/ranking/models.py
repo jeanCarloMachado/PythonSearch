@@ -5,6 +5,10 @@ from search_run.config import DataConfig
 
 
 class PythonSearchMLFlow:
+    """
+    Accessor to MLflow API
+
+    """
     def __init__(self):
 
         self.debug = os.getenv('PS_DEBUG', False)
