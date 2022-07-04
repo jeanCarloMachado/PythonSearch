@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+from typing import List
+
 import msgpack_numpy as m
 import numpy as np
+from numpy import ndarray
 
 from search_run.infrastructure.performance import timeit
 from search_run.infrastructure.redis import PythonSearchRedis
-from search_run.ranking.baseline.train import create_embeddings
 from search_run.ranking.entries_loader import EntriesLoader
 
 
@@ -103,6 +105,13 @@ class EmbeddingSerialization:
     @staticmethod
     def serialize(embedding):
         return m.packb(embedding)
+
+
+def create_embeddings(keys: List[str]) -> ndarray:
+    from sentence_transformers import SentenceTransformer
+
+    transformer = SentenceTransformer("nreimers/MiniLM-L6-H384-uncased")
+    return transformer.encode(keys, batch_size=128, show_progress_bar=True)
 
 
 def create_indexed_embeddings(keys):
