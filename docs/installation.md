@@ -4,10 +4,10 @@
 making it work for everybody. If you wanna install it please reach out that I can help you out - Jean**
 
 
-- [kitty terminal](https://sw.kovidgoyal.net/kitty/) (if you need other termaials should be simple to support)
-- [fzf](https://github.com/junegunn/fzf#examples)
-- jq
-- xsell
+- [kitty terminal](https://sw.kovidgoyal.net/kitty/) (if you need them, other terminals should be simple to support)
+- [fzf](https://github.com/junegunn/fzf#installation)
+- [jq](https://stedolan.github.io/jq/)
+- [xsel](https://github.com/kfish/xsel)
 - Python >= 3.9
 
 # Installation
