@@ -11,7 +11,9 @@ from search_run.interpreter.cmd import CmdEntry
 
 
 class EditKey:
-    """Set of commands to edit the entries"""
+    """
+    Set of commands to edit the entries
+    """
 
     def __init__(self, configuration):
         self.configuration = configuration

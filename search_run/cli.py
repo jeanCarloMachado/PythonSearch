@@ -172,3 +172,8 @@ class PythonSearchCli:
         from search_run.ranking.next_item_predictor.pipeline import Pipeline
 
         return Pipeline
+
+    def infra_report(self):
+        from search_run.infrastructure.report import Report
+
+        return Report()

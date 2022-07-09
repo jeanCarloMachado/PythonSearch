@@ -6,7 +6,6 @@ The entries of search run are simple python dictionaries.
 
 A shell command to run that should run in a new terminal window.
 
-
 ## Window title
 
 The title that will be displayed in the new opened window
@@ -22,13 +21,11 @@ Example:
 alue: String
 Tries to match the window and focusing on it before opening a new one.
 
-
 ## app_mode
 
 Type: Boolean, default False
 
 ## Before and after hooks
-
 
 ### call_after and call_before
 
@@ -36,6 +33,7 @@ Type: Str
 An entry key to execute before or after running the current key.
 
 Example:
+
 ```py
     "call_after": "search_run run_key 'localhost 5000'",
 ```

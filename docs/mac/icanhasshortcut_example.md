@@ -24,110 +24,110 @@ workdir_column_width = 100
 shortcut = ⌘Space
 action = search run
 command = log_command.sh search_run search
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut2]
 shortcut = ⌘↩
-action = 
+action =
 command = open -a iTerm .
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut3]
 shortcut = ⌘M
 action = gmail
 command = search_run run_key 'gmail client application force open'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut4]
 shortcut = ⌘0
 action = copy now
 command = search_run run_key 'date current today now min and seconds copy'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut5]
 shortcut = ⌘1
 action = whatsapp
 command = search_run run_key 'whatsapp webapp'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut6]
 shortcut = ⌥R
 action = add new
 command = search_run register_new infer_from_clipboard
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut7]
 shortcut = ⇧⌥R
 action = register snippet
 command = search_run register_new snippet_from_clipboard
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut8]
 shortcut = ⌘J
 action = journaling
 command = search_run run_key 'journaling workflowy'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut9]
 shortcut = ⌃⌘T
 action = translator
 command = search_run run_key 'google translator app'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut10]
 shortcut = ⌥V
 action = life visionlife vision board
 command = search_run run_key 'life vision board'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut11]
 shortcut = ⇧⌘C
 action = calendar
 command = search_run run_key 'google calendar'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut12]
 shortcut = ⌘T
 action = email task
 command = search_run run_key 'type email task'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut13]
 shortcut = ⇧⌃R
 action = drafts and notes
 command = search_run run_key 'drafts and notes'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut14]
 shortcut = ⌘B
 action = browser
 command = search_run run_key 'chrome browser mac'
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut15]
 shortcut = ⌥S
 action = spotify
 command = open -a Spotify
-workdir = 
+workdir =
 enabled = yes
 
 [shortcut16]
 shortcut = ⌥2
 action = jira board
 command = search_run run_key 'python search jira board'
-workdir = 
+workdir =
 enabled = yes
