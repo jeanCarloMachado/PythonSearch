@@ -14,20 +14,20 @@ Write a python script like this, and call it.
 import datetime
 
 entries = {
-    "open browser": {"url": "https://google.com"},
     # snippets when executed copy the content to the clipboard
     "date current today now copy": {
         # anything can be even python code
         "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "mac_shortcut": "Control+Shift+0",
+        "gnome_shortcut": "Control+Shift+0",
         "i3_shortcut": "Control+Shift+0",
     },
     "matplotlib python import": {"snippet": "import matplotlib.pyplot as plt"},
+    # a url
+    "open browser": {"url": "https://google.com"},
     # a shell command
-    "watch current cpu frequency": {
-        "cli_cmd": """
-                sudo watch \
-                 cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
-            """,
+    "top": {
+        "cli_cmd": "htop",
     },
     # generate multiple entries based on different values
     **{
