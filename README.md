@@ -6,7 +6,6 @@
 - add shortcuts to actions
 - add custom types and actions
 
-
 ## How to use
 
 Write a python script like this, and call it.
@@ -48,7 +47,6 @@ PythonSearchCli.setup_from_config(config)
 ## Installation
 
 Installation instructions can be found in the [installation manual](docs/installation.md)
-
 
 ## Legal
 

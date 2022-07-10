@@ -15,7 +15,6 @@ A configuration of the hole application. Also includes entries configurations
 
 The interpreter of an entry
 
-
 ## Search ui
 
 The interface responsible to render the search component.

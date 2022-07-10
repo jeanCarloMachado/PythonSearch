@@ -15,7 +15,6 @@ from typed_pyspark import Dataframe
 class Entry:
     """
     An python dictionary we write in PythonSearch
-
     """
 
     name: str
