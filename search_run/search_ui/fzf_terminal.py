@@ -59,6 +59,7 @@ class FzfInTerminal:
         --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "enter:+reload:({self._get_rankging_generate_cmd()})" \
         --bind "enter:+clear-query" \
+        --bind "enter:+abort"  \
         --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "alt-m:execute-silent:(nohup {self.executable} edit_main {{}} & disown)" \
@@ -100,14 +101,12 @@ class FzfInTerminal:
             font = "Monaco"
 
         launch_cmd = f"""nice -19 kitty \
-        --title="{self.title} {datetime.datetime.now().isoformat()}"\
+        --title="{self.title}"\
          -o remember_window_size=n \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
         -o font_family="{font}" \
         -o confirm_os_window_close=0 \
-        -o font_size={FzfInTerminal.FONT_SIZE} \
-        --single-instance  \
          {internal_cmd}
         """
         logging.info(f"Command performed:\n {internal_cmd}")

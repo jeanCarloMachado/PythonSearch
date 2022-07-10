@@ -58,7 +58,7 @@ class PythonSearchConfiguration(EntriesGroup):
     Everything to customize about the application should be tunneled through this clas
     """
 
-    APPLICATION_TITLE = "PythonSearch - Search"
+    APPLICATION_TITLE = "SearchPythonSearch"
     commands: dict
 
     def __init__(
