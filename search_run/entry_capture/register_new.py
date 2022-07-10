@@ -116,11 +116,14 @@ class RegisterNew:
         Get content from clipboard and from input
         AND produces the event
         """
+        from search_run.entry_capture.data_capture_gui import launch
 
         clipboard_content = self._get_clippboard_content()
-
-        title = f"Content to store: {clipboard_content}\n{title}"
-        key = AskQuestion().ask(title)
+        if True:
+            key, clipboard_content, _ = launch(default_content=clipboard_content)
+        else:
+            title = f"Content to store: {clipboard_content}\n{title}"
+            key = AskQuestion().ask(title)
 
         return clipboard_content, key
 

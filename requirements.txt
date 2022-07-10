@@ -21,3 +21,4 @@ typed-pyspark~=0.0.4
 keras
 tensorflow
 matplotlib
+pysimplegui

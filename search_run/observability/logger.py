@@ -13,7 +13,7 @@ def setup_systemd_handler():
     # systemd only works for linux
     from systemd.journal import JournalHandler
 
-    return (JournalHandler(SYSLOG_IDENTIFIER=SYSLOG_IDENTIFIER),)
+    return JournalHandler(SYSLOG_IDENTIFIER=SYSLOG_IDENTIFIER)
 
 
 def initialize_logging():

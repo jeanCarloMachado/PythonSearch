@@ -8,7 +8,9 @@ making it work for everybody. If you wanna install it please reach out that I ca
 - [fzf](https://github.com/junegunn/fzf#installation)
 - [jq](https://stedolan.github.io/jq/)
 - [xsel](https://github.com/kfish/xsel)
+- [wmctrl](https://github.com/saravanabalagi/wmctrl)
 - Python >= 3.9
+
 
 # Installation
 
