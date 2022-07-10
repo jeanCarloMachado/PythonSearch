@@ -2,6 +2,7 @@ import os
 from typing import Any
 
 from search_run.context import Context
+from search_run.environment import is_mac
 from search_run.exceptions import CommandDoNotMatchException
 from search_run.interpreter.base import BaseEntry
 from search_run.interpreter.cmd import CmdEntry
@@ -25,6 +26,10 @@ class FileInterpreter(BaseEntry):
         )
 
     def get_executable(self):
+
+        if is_mac():
+            return "open"
+
         if os.path.isdir(self.cmd["file"]):
             return "nautilus"
 
