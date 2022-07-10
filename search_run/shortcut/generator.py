@@ -27,8 +27,5 @@ class ShortcutGenerator:
             Mac(self.configuration).generate()
             return
 
-        if WindowManager.is_i3():
-            I3(self.configuration).generate()
-
         if WindowManager.is_gnome():
             Gnome(self.configuration).generate()
