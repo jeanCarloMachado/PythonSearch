@@ -75,7 +75,7 @@ class FzfInTerminal:
         --bind "shift-up:first" \
         --bind "esc:abort" \
         --bind "ctrl-d:abort"  \
-        --color=fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f  && exit 0
+        --color=fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f  ; exit 0
         '
         """
 
