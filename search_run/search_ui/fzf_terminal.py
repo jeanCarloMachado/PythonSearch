@@ -11,7 +11,7 @@ class FzfInTerminal:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE = 15
+    FONT_SIZE = 13
     PREVIEW_PERCENTAGE_SIZE = 50
     HEIGHT = 270
     WIDTH = 1100
@@ -33,16 +33,11 @@ class FzfInTerminal:
         self.title = title
 
     def run(self) -> None:
-        if is_mac():
-            result = os.system(
-                "(ps aux | grep -i kitty |  grep -v grep) && open -a Kitty"
-            )
-            if result == 0:
-                return
-
         self._launch_terminal(self.internal_cmd())
 
     def internal_cmd(self):
+
+        # for more fzf options see: https://www.mankier.com/1/fzf#
         return f"""bash -c '{self._get_rankging_generate_cmd()} | \
         fzf \
         --tiebreak=length,begin,index \
@@ -60,7 +55,6 @@ class FzfInTerminal:
         --bind "enter:+reload:({self._get_rankging_generate_cmd()})" \
         --bind "enter:+clear-query" \
         --bind "enter:+abort"  \
-        --bind "esc:execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "alt-m:execute-silent:(nohup {self.executable} edit_main {{}} & disown)" \
         --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
@@ -79,8 +73,9 @@ class FzfInTerminal:
         --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
+        --bind "esc:abort" \
         --bind "ctrl-d:abort"  \
-        --color=fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f 
+        --color=fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f  && exit 0
         '
         """
 
@@ -102,10 +97,11 @@ class FzfInTerminal:
 
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title}"\
-         -o remember_window_size=n \
+        -o remember_window_size=n \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
         -o font_family="{font}" \
+         -o font_size={FzfInTerminal.FONT_SIZE} \
         -o confirm_os_window_close=0 \
          {internal_cmd}
         """
