@@ -36,6 +36,7 @@ class I3(WindowManager):
         Try to focus on the window with the passed title, returns True if successful
         """
         cmd = f'wmctrl -a "{title}" '
+        print("Focus on window with cmd:", cmd)
 
         result = 0 == os.system(cmd)
 
