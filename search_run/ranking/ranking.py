@@ -140,9 +140,7 @@ class RankingGenerator:
         returns a list of used entries to be placed on top of the ranking
         """
         used_entries = []
-        from search_run.events.latest_used_entries import LatestUsedEntries
-
-        latest_used = LatestUsedEntries().get_latest_used_keys()
+        latest_used = self._get_latest_used_keys()
         for used_key in latest_used:
             if used_key not in entries or used_key in used_entries:
                 continue
@@ -150,6 +148,11 @@ class RankingGenerator:
         # reverse the list given that we pop from the end
         used_entries.reverse()
         return used_entries
+
+    def _get_latest_used_keys(self):
+        from search_run.events.latest_used_entries import LatestUsedEntries
+
+        return LatestUsedEntries().get_latest_used_keys()
 
     @timeit
     def print_entries(self, data: List[Tuple[str, dict]]) -> str:

@@ -5,7 +5,9 @@ from datetime import datetime
 
 
 class EntryInserter:
-    """Add an entry dict to the entries repository"""
+    """
+    Class responsible to the actual writing of the new entry
+    """
 
     NEW_ENTRIES_STRING = "# NEW_ENTRIES_HERE"
 
@@ -20,6 +22,14 @@ class EntryInserter:
         row_entry = str(entry)
         line_to_add = f"    '{key}': {row_entry},"
         self._append_entry(line_to_add)
+
+        if self.configuration.supported_features.is_enabled("event_tracking"):
+            from search_run.events.events import SearchRunPerformed
+            from search_run.events.producer import EventProducer
+
+            EventProducer().send_object(
+                SearchRunPerformed(key=key, query_input="", shortcut=False)
+            )
 
         from search_run.apps.notification_ui import send_notification
 

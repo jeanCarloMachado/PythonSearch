@@ -24,7 +24,7 @@ class StartSevices:
     def redis(self):
         os.system("redis-server &")
 
-    def consume_entries_redis(self):
+    def consume_latest_entries_redis(self):
         os.system(
             "$HOME/projects/PythonSearch/search_run/events/latest_used_entries.py consume &"
         )
@@ -55,14 +55,14 @@ class StartSevices:
         import time
 
         self.zookeeper()
-        time.sleep(10)
+        time.sleep(15)
         self.kafka()
         time.sleep(3)
         self.spark_consumer()
         time.sleep(3)
         self.redis()
         time.sleep(3)
-        self.consume_entries_redis()
+        self.consume_latest_entries_redis()
         time.sleep(3)
         self.api(background=True)
 
