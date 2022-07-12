@@ -1,3 +1,6 @@
+# 2022-07-12
+
+- Mac now closes the window when python search runs
 
 # 2022-06-13
 

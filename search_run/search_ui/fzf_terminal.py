@@ -100,6 +100,7 @@ class FzfInTerminal:
         -o remember_window_size=n \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
+        -o macos_quit_when_last_window_closed=yes \
         -o font_family="{font}" \
          -o font_size={FzfInTerminal.FONT_SIZE} \
         -o confirm_os_window_close=0 \
