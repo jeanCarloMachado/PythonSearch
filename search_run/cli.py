@@ -177,3 +177,8 @@ class PythonSearchCli:
         from search_run.infrastructure.report import Report
 
         return Report()
+
+    def capture_input(self):
+        from search_run.apps.capture_input import launch
+
+        return launch

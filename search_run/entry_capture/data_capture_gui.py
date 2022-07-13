@@ -1,14 +1,15 @@
-import json
-
 import fire
 
 
 def launch(default_content=""):
+    """
+    Launch the data capture GUI.
+    """
     import PySimpleGUI as sg
 
     pysearch_modes = ["URL", "Command", "Snippet", "File"]
 
-    sg.theme("Dark Grey 12")
+    sg.theme("SystemDefault1")
     width = max(map(len, pysearch_modes)) + 1
 
     layout = [
