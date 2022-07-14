@@ -55,6 +55,11 @@ class FzfInTerminal:
         --bind "enter:+reload:({self._get_rankging_generate_cmd()})" \
         --bind "enter:+clear-query" \
         --bind "enter:+abort"  \
+        --bind "double-click:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
+        --bind "double-click:+execute-silent:({self.executable} _utils hide_launcher)" \
+        --bind "double-click:+reload:({self._get_rankging_generate_cmd()})" \
+        --bind "double-click:+clear-query" \
+        --bind "double-click:+abort"  \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "alt-m:execute-silent:(nohup {self.executable} edit_main {{}} & disown)" \
         --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
