@@ -182,3 +182,7 @@ class PythonSearchCli:
         from search_run.apps.capture_input import launch
 
         return launch
+
+def main():
+    import fire
+    fire.Fire(PythonSearchCli)

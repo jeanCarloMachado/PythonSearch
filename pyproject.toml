@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "python-search"
+version = "0.2.0"
+description = "Digitalize everything in python"
+authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+fire = "^0.4.0"
+pydantic = "^1.9.1"
+numpy = "^1.23.1"
+pandas = "^1.4.3"
+pyspark = "^3.3.0"
+personal-grimoire = "1.6"
+kafka-python = "^2.0.2"
+findspark = "^2.0.1"
+redis = "^4.3.4"
+typed-pyspark = "~=0.0.4"
+
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+mltools  = 'search_run.cli:main'
