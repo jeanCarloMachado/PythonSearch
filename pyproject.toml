@@ -3,6 +3,9 @@ name = "python-search"
 version = "0.2.0"
 description = "Digitalize everything in python"
 authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
+packages = [
+    {include = "search_run"}
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8"

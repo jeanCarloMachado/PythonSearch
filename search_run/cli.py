@@ -183,6 +183,8 @@ class PythonSearchCli:
 
         return launch
 
+
 def main():
     import fire
+
     fire.Fire(PythonSearchCli)
