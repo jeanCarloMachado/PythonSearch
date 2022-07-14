@@ -7,33 +7,32 @@ def launch(default_content=""):
     """
     import PySimpleGUI as sg
 
-    pysearch_modes = ["URL", "Command", "Snippet", "File"]
-
     sg.theme("SystemDefault1")
-    width = max(map(len, pysearch_modes)) + 1
+    font_size = 12
 
     layout = [
         [sg.Text("Enter Description:")],
         [sg.Input(key="key")],
         [sg.Text("Content:")],
         [sg.Input(key="content", default_text=default_content)],
-        [sg.Text("Select Type:")],
-        [sg.Combo(pysearch_modes, size=(width, 5), enable_events=True, key="type")],
         [sg.Button("Write", key="write")],
     ]
 
-    window = sg.Window("Enter Values", layout, finalize=True)
+    window = sg.Window(
+        "Capture entry", layout, font=("Helvetica", font_size), finalize=True
+    )
+    window["key"].bind("<Return>", "_Enter")
 
     while True:
         event, values = window.read()
-        if event == "write":
+        if event == "write" or event.endswith("_Enter"):
             break
         if event == sg.WINDOW_CLOSED:
             break
 
     window.close()
 
-    return values["key"], values["content"], values["type"]
+    return values["key"], values["content"], "type"
 
 
 if __name__ == "__main__":
