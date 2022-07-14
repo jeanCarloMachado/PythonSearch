@@ -28,4 +28,5 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-mltools  = 'search_run.cli:main'
+python_search = 'search_run.cli:main'
+next_item_pipeline = 'search_run.ranking.next_item_predictor.pipeline:main'

@@ -111,7 +111,11 @@ class Pipeline:
         return SparkSession.builder.getOrCreate()
 
 
-if __name__ == "__main__":
+def main():
     import fire
 
     fire.Fire(Pipeline)
+
+
+if __name__ == "__main__":
+    main()
