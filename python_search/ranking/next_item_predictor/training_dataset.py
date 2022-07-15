@@ -1,9 +1,8 @@
 import logging
 import os.path
 import sys
-from typing import Optional, Tuple
+from typing import Optional
 
-import numpy as np
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.window import Window
