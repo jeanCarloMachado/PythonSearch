@@ -11,10 +11,13 @@ from search_run.infrastructure.performance import timeit
 from search_run.observability.logger import initialize_logging
 from search_run.ranking.next_item_predictor.evaluator import Evaluate
 from search_run.ranking.next_item_predictor.train import Train
+from search_run.ranking.next_item_predictor.xgboost_train import XGBoost_training
 from search_run.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
 
+
 initialize_logging()
+
 
 
 class Pipeline:
@@ -55,6 +58,14 @@ class Pipeline:
             return
 
         return dataset
+
+    def train_xgboost(self):
+        """
+        Train the XGBoost model
+        """
+        dataset = self.build_dataset(use_cache=False)
+        XGBoost_training().train(dataset)
+
 
     @timeit
     def train(

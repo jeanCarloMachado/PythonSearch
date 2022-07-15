@@ -35,9 +35,9 @@ class Train:
         # @todo: try mlflow.keras.autolog()
 
         with mlflow.start_run():
-            model, metrics, offline_evaluation = self.train(dataset)
+            model, metrics = self.train(dataset)
             mlflow.log_params(metrics)
-            mlflow.log_params(offline_evaluation)
+            #mlflow.log_params(offline_evaluation)
 
         return model, metrics
 
@@ -66,12 +66,12 @@ class Train:
             model, X_train_p, X_test_p, Y_train, Y_test
         )
 
-        offline_evaluation = self.offline_evaluation(model, dataset, X_test)
+        #offline_evaluation = self.offline_evaluation(model, dataset, X_test)
 
         if plot_history:
             self._plot_training_history(history)
 
-        return model, metrics, offline_evaluation
+        return model, metrics, #offline_evaluation
 
     def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
 
