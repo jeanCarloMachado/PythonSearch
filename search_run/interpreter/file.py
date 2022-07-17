@@ -26,6 +26,10 @@ class FileInterpreter(BaseEntry):
         )
 
     def get_executable(self):
+        filename, file_extension = os.path.splitext(self.cmd["file"])
+
+        if file_extension == ".py":
+            return "vim"
 
         if is_mac():
             return "open"
@@ -33,21 +37,14 @@ class FileInterpreter(BaseEntry):
         if os.path.isdir(self.cmd["file"]):
             return "nautilus"
 
-        executable = "vim"
-
-        filename, file_extension = os.path.splitext(self.cmd["file"])
-
-        if file_extension == ".php":
-            executable = "phpstormn"
-        elif file_extension == ".pdf":
+        if file_extension == ".pdf":
             # executable = "okular"
-            executable = "zathura"
-        elif file_extension == ".py":
-            executable = "vim"
-        elif file_extension == ".ipynb":
-            executable = "pycharm"
+            return "zathura"
 
-        return executable
+        elif file_extension == ".ipynb":
+            return "pycharm"
+
+        return "vim"
 
     def interpret_default(self):
         executable = self.get_executable()
