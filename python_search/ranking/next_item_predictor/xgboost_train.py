@@ -1,29 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_absolute_error
 import xgboost as xgb
-from search_run.ranking.next_item_predictor.transform import Transform
+from python_search.ranking.next_item_predictor.transform import Transform
 
 
 class XGBoost_training:
-
-    def _split(self, dataset):
-
-        X, Y = Transform().transform(dataset)
-
-        X_train, X_test, Y_train, Y_test = train_test_split(
-            X, Y, test_size=0.10, random_state=42
-        )
-        X_test = np.where(np.isnan(X_test), 0.5, X_test)
-        Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
-        Y_train = np.where(np.isnan(Y_train), 0.5, Y_train)
-        X_train = np.where(np.isnan(X_train), 0.5, X_train)
-
-        X_test_p = np.delete(X_test, 0, axis=1)
-        X_train_p = np.delete(X_train, 0, axis=1)
-        return X_train_p, X_test_p, Y_train, Y_test
-
     def train(self, dataset):
 
         X_train, X_test, Y_train, Y_test = self._split(dataset)
@@ -42,6 +25,22 @@ class XGBoost_training:
         self.evaluate_XGBoost(model)
 
         return model
+
+    def _split(self, dataset):
+
+        X, Y = Transform().transform(dataset)
+
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            X, Y, test_size=0.10, random_state=42
+        )
+        X_test = np.where(np.isnan(X_test), 0.5, X_test)
+        Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
+        Y_train = np.where(np.isnan(Y_train), 0.5, Y_train)
+        X_train = np.where(np.isnan(X_train), 0.5, X_train)
+
+        X_test_p = np.delete(X_test, 0, axis=1)
+        X_train_p = np.delete(X_train, 0, axis=1)
+        return X_train_p, X_test_p, Y_train, Y_test
 
     def evaluate_XGBoost(self, model):
 

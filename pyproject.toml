@@ -16,6 +16,7 @@ kafka-python = "^2.0.2"
 findspark = "^2.0.1"
 redis = "^4.3.4"
 typed-pyspark = "~=0.0.4"
+xgboost = "^1.6.1"
 
 
 [tool.poetry.dev-dependencies]
