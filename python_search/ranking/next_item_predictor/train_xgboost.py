@@ -1,20 +1,21 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error
 import xgboost as xgb
+from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import train_test_split
+
 from python_search.ranking.next_item_predictor.transform import Transform
 
 
-class XGBoost_training:
+class TrainXGBoost:
     def train(self, dataset):
 
         X_train, X_test, Y_train, Y_test = self._split(dataset)
 
         model = xgb.XGBRegressor(
-            tree_method='hist',
+            tree_method="hist",
             eval_metric=mean_absolute_error,
-            objective='reg:squarederror',
+            objective="reg:squarederror",
             eval_set=[(X_train, Y_train), (X_test, Y_test)],
             booster="gblinear",
         )
@@ -22,7 +23,7 @@ class XGBoost_training:
         eval_set = [(X_train, Y_train), (X_test, Y_test)]
         model.fit(X_train, Y_train, eval_set=eval_set)
 
-        self.evaluate_XGBoost(model)
+        self._evaluate_metrics(model)
 
         return model
 
@@ -42,26 +43,26 @@ class XGBoost_training:
         X_train_p = np.delete(X_train, 0, axis=1)
         return X_train_p, X_test_p, Y_train, Y_test
 
-    def evaluate_XGBoost(self, model):
+    def _evaluate_metrics(self, model):
 
         results = model.evals_result()
-        epochs = len(results['validation_0']['rmse'])
+        epochs = len(results["validation_0"]["rmse"])
         x_axis = range(0, epochs)
         fig, ax = plt.subplots()
-        ax.plot(x_axis, results['validation_0']['rmse'], label='Train')
-        ax.plot(x_axis, results['validation_1']['rmse'], label='Test')
+        ax.plot(x_axis, results["validation_0"]["rmse"], label="Train")
+        ax.plot(x_axis, results["validation_1"]["rmse"], label="Test")
         ax.legend()
-        plt.ylabel('rmse')
-        plt.title('XGBoost_training rmse')
+        plt.ylabel("rmse")
+        plt.title("XGBoost_training rmse")
         plt.show()
 
         results = model.evals_result()
-        epochs = len(results['validation_0']['mean_absolute_error'])
+        epochs = len(results["validation_0"]["mean_absolute_error"])
         x_axis = range(0, epochs)
         fig, ax = plt.subplots()
-        ax.plot(x_axis, results['validation_0']['mean_absolute_error'], label='Train')
-        ax.plot(x_axis, results['validation_1']['mean_absolute_error'], label='Test')
+        ax.plot(x_axis, results["validation_0"]["mean_absolute_error"], label="Train")
+        ax.plot(x_axis, results["validation_1"]["mean_absolute_error"], label="Test")
         ax.legend()
-        plt.ylabel('mae')
-        plt.title('XGBoost_training mae')
+        plt.ylabel("mae")
+        plt.title("XGBoost_training mae")
         plt.show()

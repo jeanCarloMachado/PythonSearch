@@ -75,7 +75,7 @@ class Train:
         if plot_history:
             self._plot_training_history(history)
 
-        return model, metrics,  offline_evaluation
+        return model, metrics, offline_evaluation
 
     def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
 

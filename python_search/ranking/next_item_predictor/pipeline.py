@@ -10,13 +10,13 @@ from sklearn.metrics import mean_absolute_error
 from python_search.infrastructure.performance import timeit
 from python_search.observability.logger import initialize_logging
 from python_search.ranking.next_item_predictor.evaluator import Evaluate
-from python_search.ranking.next_item_predictor.train import Train
+from python_search.ranking.next_item_predictor.train_keras import Train
+from python_search.ranking.next_item_predictor.train_xgboost import \
+    TrainXGBoost
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
-from python_search.ranking.next_item_predictor.xgboost_train import XGBoost_training
 
 initialize_logging()
-
 
 
 class Pipeline:
@@ -58,14 +58,6 @@ class Pipeline:
 
         return dataset
 
-    def train_xgboost(self):
-        """
-        Train the XGBoost model
-        """
-        dataset = self.build_dataset(use_cache=False)
-        XGBoost_training().train(dataset)
-
-
     @timeit
     def train(
         self, *, dataset: Optional[TrainingDataset] = None, epochs=None, use_cache=True
@@ -94,6 +86,13 @@ class Pipeline:
             dataset = self.build_dataset(use_cache=use_cache)
 
         return Train().train_and_log(dataset)
+
+    def train_xgboost(self):
+        """
+        Train the XGBoost model
+        """
+        dataset = self.build_dataset(use_cache=False)
+        TrainXGBoost().train(dataset)
 
     def evaluate(self):
         """
