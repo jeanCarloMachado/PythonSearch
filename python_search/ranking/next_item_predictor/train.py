@@ -24,11 +24,13 @@ class Train:
         if not epochs:
             epochs = Train.EPOCHS
         self.epochs = epochs
-        # enable the profiling scafolding
+        # enable the profiling scaffolding
         os.environ["TIME_IT"] = "1"
 
     def train_and_log(self, dataset):
-        """train the model and log it to MLFlow"""
+        """
+        train the model and log it to MLFlow
+        """
 
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         # this creates a new experiment
@@ -37,7 +39,7 @@ class Train:
         # @todo: try mlflow.keras.autolog()
 
         with mlflow.start_run():
-            model, metrics, offline_evaluation = self.train(dataset)
+            model, metrics = self.train(dataset)
             mlflow.log_params(metrics)
             mlflow.log_params(offline_evaluation)
 
@@ -73,7 +75,7 @@ class Train:
         if plot_history:
             self._plot_training_history(history)
 
-        return model, metrics, offline_evaluation
+        return model, metrics,  offline_evaluation
 
     def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
 

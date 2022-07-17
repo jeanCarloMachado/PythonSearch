@@ -13,8 +13,10 @@ from python_search.ranking.next_item_predictor.evaluator import Evaluate
 from python_search.ranking.next_item_predictor.train import Train
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
+from python_search.ranking.next_item_predictor.xgboost_train import XGBoost_training
 
 initialize_logging()
+
 
 
 class Pipeline:
@@ -55,6 +57,14 @@ class Pipeline:
             return
 
         return dataset
+
+    def train_xgboost(self):
+        """
+        Train the XGBoost model
+        """
+        dataset = self.build_dataset(use_cache=False)
+        XGBoost_training().train(dataset)
+
 
     @timeit
     def train(
