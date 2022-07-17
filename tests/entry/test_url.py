@@ -1,6 +1,6 @@
 import unittest
 
-from search_run.interpreter.url import Url
+from python_search.interpreter.url import Url
 
 
 class MyTestCase(unittest.TestCase):

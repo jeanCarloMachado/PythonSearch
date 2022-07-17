@@ -1,5 +1,5 @@
 def test_logging():
-    from search_run.observability.logger import logging
+    from python_search.observability.logger import logging
 
     logging.info("Test logging ")
 

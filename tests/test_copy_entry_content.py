@@ -1,4 +1,4 @@
-from search_run.interpreter.url import Url
+from python_search.interpreter.url import Url
 
 
 def test_copy():

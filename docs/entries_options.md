@@ -35,7 +35,7 @@ An entry key to execute before or after running the current key.
 Example:
 
 ```py
-    "call_after": "search_run run_key 'localhost 5000'",
+    "call_after": "python_search run_key 'localhost 5000'",
 ```
 
 ## Ask confirmation

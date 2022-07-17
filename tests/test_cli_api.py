@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-binary = "search_run"
+binary = "python_search"
 
 
 @pytest.mark.skipif("CI" in os.environ, reason="not supported on ci yet")

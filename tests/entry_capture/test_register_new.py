@@ -1,4 +1,4 @@
-from search_run.entry_capture.register_new import \
+from python_search.entry_capture.register_new import \
     transform_into_anonymous_entry
 
 

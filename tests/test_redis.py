@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from search_run.events.latest_used_entries import LatestUsedEntries
+from python_search.events.latest_used_entries import LatestUsedEntries
 
 test_redis_key_name = "test_last_consumed_keys"
 

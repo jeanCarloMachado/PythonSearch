@@ -1,6 +1,6 @@
-from search_run.events.consumer import SparkEventConsumer
-from search_run.events.latest_used_entries import LatestUsedEntries
-from search_run.events.producer import EventProducer
+from python_search.events.consumer import SparkEventConsumer
+from python_search.events.latest_used_entries import LatestUsedEntries
+from python_search.events.producer import EventProducer
 
 topic_name = "mytopic"
 

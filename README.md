@@ -36,8 +36,8 @@ entries = {
     },
 }
 
-from search_run.config import PythonSearchConfiguration
-from search_run.cli import PythonSearchCli
+from python_search.config import PythonSearchConfiguration
+from python_search.cli import PythonSearchCli
 
 config = PythonSearchConfiguration(entries=entries)
 PythonSearchCli.setup_from_config(config)

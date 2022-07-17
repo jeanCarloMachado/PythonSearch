@@ -1,4 +1,4 @@
-from search_run.acronyms import generate_acronym
+from python_search.acronyms import generate_acronym
 
 
 def test_acronyms():

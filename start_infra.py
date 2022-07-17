@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-from search_run.apps.notification_ui import send_notification
+from python_search.apps.notification_ui import send_notification
 
 
 class StartSevices:
@@ -17,7 +17,7 @@ class StartSevices:
         os.system(
             """ spark-submit \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
-        $HOME/projects/PythonSearch/search_run/events/consumer.py consume_search_run_performed &
+        $HOME/projects/PythonSearch/python_search/events/consumer.py consume_search_run_performed &
                   """
         )
 
@@ -26,7 +26,7 @@ class StartSevices:
 
     def consume_latest_entries_redis(self):
         os.system(
-            "$HOME/projects/PythonSearch/search_run/events/latest_used_entries.py consume &"
+            "$HOME/projects/PythonSearch/python_search/events/latest_used_entries.py consume &"
         )
 
     def api(self, background=False, print_only=False, kill=False):
@@ -36,7 +36,7 @@ class StartSevices:
             os.system("pkill -f web_api.py")
 
         HOME = os.getenv("HOME")
-        cmd = f"conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/search_run/web_api.py"
+        cmd = f"conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/python_search/web_api.py"
 
         if print_only:
             print(cmd)

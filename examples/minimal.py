@@ -33,11 +33,11 @@ entries = {
 
 
 # this configuration file contains all customizeable options for search run
-from search_run.config import PythonSearchConfiguration
+from python_search.config import PythonSearchConfiguration
 
 config = PythonSearchConfiguration(entries=entries)
 
 if __name__ == "__main__":
-    from search_run.cli import PythonSearchCli
+    from python_search.cli import PythonSearchCli
 
     PythonSearchCli.setup_from_config(config)
