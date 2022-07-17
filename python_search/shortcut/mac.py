@@ -26,21 +26,22 @@ class Mac:
         )
 
         for key, content in list(self.configuration.commands.items()):
-            if type(content) is dict and "mac_shortcut" in content:
-                print(f"Generating shortcut for {key}")
+            if not type(content) is dict:
+                continue
 
-                shortcut_content = self._entry(
-                    content["mac_shortcut"], key, shortcut_number
-                )
-                with open(f"{self.config_folder}/config.ini", "a") as myfile:
-                    print(shortcut_content)
-                    myfile.write(shortcut_content)
-
-                shortcut_number += 1
+            if "mac_shortcut" in content:
+                self._add_shortcut(content["mac_shortcut"], key, shortcut_number)
                 shortcut_found = True
+                shortcut_number += 1
+
+            if "mac_shortcuts" in content:
+                for shortcut in content["mac_shortcuts"]:
+                    self._add_shortcut(shortcut, key, shortcut_number)
+                    shortcut_found = True
+                    shortcut_number += 1
 
         if not shortcut_found:
-            print("No shortcut found for mac")
+            print("No shortcuts found for mac")
             return
 
         os.system(f"cd {self.config_folder} ; add_bom_to_file.sh config.ini")
@@ -48,7 +49,15 @@ class Mac:
         os.system("pkill -f iCanHaz")
         os.system("open -a iCanHazSHortcut")
 
-    def _entry(self, shortcut, key, number):
+    def _add_shortcut(self, shortcut, key, shortcut_number):
+        print(f"Generating shortcut for {key}")
+
+        shortcut_content = self._entry(shortcut, key, shortcut_number)
+        with open(f"{self.config_folder}/config.ini", "a") as myfile:
+            print(shortcut_content)
+            myfile.write(shortcut_content)
+
+    def _entry(self, shortcut, key, number) -> str:
         shortcut = shortcut
         return f"""
         

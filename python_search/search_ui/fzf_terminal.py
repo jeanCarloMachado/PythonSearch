@@ -29,7 +29,7 @@ class FzfInTerminal:
         self.width = FzfInTerminal.WIDTH
 
         self.preview_cmd = f"python_search _utils preview_entry {{}} "
-        self.executable = "python_search"
+        self.executable = "search_run"
         self.title = title
 
     def run(self) -> None:

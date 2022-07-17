@@ -27,4 +27,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 python_search = 'python_search.cli:main'
-next_item_pipeline = 'search_run.ranking.next_item_predictor.pipeline:main'
+next_item_pipeline = 'python_search.ranking.next_item_predictor.pipeline:main'
