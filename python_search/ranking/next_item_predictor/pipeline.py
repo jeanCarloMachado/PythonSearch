@@ -65,8 +65,15 @@ class Pipeline:
             dataset = self.build_dataset(use_cache=use_cache)
 
         print(f"Custom epochs {epochs}")
-        model, metrics = Train(epochs).train(dataset, plot_history=True)
-        print(metrics)
+        model, metrics, offline_evaluation = Train(epochs).train(
+            dataset, plot_history=True
+        )
+        print(
+            {
+                "metrics": metrics,
+                "offline_evaluation": offline_evaluation,
+            }
+        )
 
     def train_and_log(self, dataset=None, use_cache=True):
         """

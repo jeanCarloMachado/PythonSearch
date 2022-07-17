@@ -30,14 +30,14 @@ class Mac:
                 continue
 
             if "mac_shortcut" in content:
-                self._add_shortcut(content["mac_shortcut"], key, shortcut_number)
                 shortcut_found = True
+                self._add_shortcut(content["mac_shortcut"], key, shortcut_number)
                 shortcut_number += 1
 
             if "mac_shortcuts" in content:
+                shortcut_found = True
                 for shortcut in content["mac_shortcuts"]:
                     self._add_shortcut(shortcut, key, shortcut_number)
-                    shortcut_found = True
                     shortcut_number += 1
 
         if not shortcut_found:
