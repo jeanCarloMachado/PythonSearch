@@ -10,7 +10,8 @@ from python_search.context import Context
 from python_search.events.producer import EventProducer
 from python_search.interpreter.cmd import CmdEntry
 from python_search.interpreter.interpreter import Interpreter
-from python_search.observability.logger import initialize_systemd_logging, logging
+from python_search.observability.logger import (initialize_systemd_logging,
+                                                logging)
 
 
 class EntryRunner:
