@@ -87,7 +87,7 @@ class ConfigurationLoader:
     Loads the application from the environment.py
     """
 
-    def load_entries(self) -> PythonSearchConfiguration:
+    def load_entries(self):
 
         env_name = "PYTHON_SEARCH_ENTRIES_FOLDER"
 
