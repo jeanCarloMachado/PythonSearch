@@ -1,8 +1,10 @@
 # Changelog
+## 0.3.1
 
+-added customisation for the GUI Theme/Font_Size
 ## 0.3
 
-- rename search_run module to pytho search
+- rename search_run module to python_search
 
 ## 2022-07-12
 
@@ -14,4 +16,4 @@ Make preview window work both on mac and linux by using python rather than shell
 
 ## 2022-05-27
 
-[WIP] Add support to gnome shortcuts
+Add support to gnome shortcuts

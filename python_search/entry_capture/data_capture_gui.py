@@ -1,4 +1,5 @@
 import fire
+from python_search.config import ConfigurationLoader
 
 
 def launch(default_content=""):
@@ -7,8 +8,9 @@ def launch(default_content=""):
     """
     import PySimpleGUI as sg
 
-    sg.theme("SystemDefault1")
-    font_size = 12
+    config = ConfigurationLoader().load_config()
+    sg.theme(config.simple_gui_theme)
+    font_size = config.simple_gui_font_size
 
     layout = [
         [sg.Text("Enter Description:")],

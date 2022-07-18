@@ -60,6 +60,8 @@ class PythonSearchConfiguration(EntriesGroup):
 
     APPLICATION_TITLE = "SearchPythonSearch"
     commands: dict
+    simple_gui_theme = "SystemDefault1"
+    simple_gui_font_size = 12
 
     def __init__(
         self,
@@ -85,7 +87,7 @@ class ConfigurationLoader:
     Loads the application from the environment.py
     """
 
-    def load(self) -> PythonSearchConfiguration:
+    def load_entries(self):
 
         env_name = "PYTHON_SEARCH_ENTRIES_FOLDER"
 
@@ -95,17 +97,39 @@ class ConfigurationLoader:
         print(f"Env: {env_name}={os.environ[env_name]}")
         folder = os.environ[env_name]
 
-        config_location = os.path.join(folder, "entries/main.py")
+        entries_location = os.path.join(folder, "entries/main.py")
 
-        if not os.path.exists(config_location):
-            raise Exception(f"Could not find entries main file {config_location}")
+        if not os.path.exists(entries_location):
+            raise Exception(f"Could not find entries main file {entries_location}")
 
         import sys
 
         sys.path.append(folder)
         import entries.main as entries_main
 
-        config = entries_main.config
+        config = entries_main.entries
+
+        return config
+
+    def load_config(self) -> PythonSearchConfiguration:
+
+        env_name = "PYTHON_SEARCH_CONFIG_FOLDER"
+
+        if env_name not in os.environ:
+            raise Exception(f"{env_name} must be set to load the config dynamically")
+
+        print(f"Env: {env_name}={os.environ[env_name]}")
+        folder = os.environ[env_name]
+
+        config_location = os.path.join(folder, "entries/main.py")
+
+        if not os.path.exists(config_location):
+            raise Exception(f"Could not find config file {config_location}")
+
+        import sys
+
+        sys.path.append(folder)
+        from entries.main import config
 
         return config
 
