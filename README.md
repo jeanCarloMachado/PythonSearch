@@ -51,3 +51,4 @@ Installation instructions can be found in the [installation manual](docs/install
 ## Legal
 
 This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE.txt) for the full text.
+Copyright 2022 Jean Carlo Machado
