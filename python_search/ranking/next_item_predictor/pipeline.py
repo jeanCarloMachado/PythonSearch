@@ -65,7 +65,7 @@ class Pipeline:
         dataset: Optional[TrainingDataset] = None,
         epochs=None,
         use_cache=True,
-        log=True,
+        log_model=True,
     ):
         if not dataset:
             print(f"Using data with cache: {use_cache} type: {type(use_cache)}")
@@ -73,10 +73,8 @@ class Pipeline:
 
         print(f"Custom epochs {epochs}")
 
-        if log:
-            model, metrics, offline_evaluation = Train(epochs).train_and_log(
-                dataset, plot_history=True
-            )
+        if log_model:
+            model, metrics, offline_evaluation = Train(epochs).train_and_log(dataset)
         else:
             model, metrics, offline_evaluation = Train(epochs).train(
                 dataset, plot_history=True
@@ -88,6 +86,13 @@ class Pipeline:
                 "offline_evaluation": offline_evaluation,
             }
         )
+
+    def train(self, use_cache=False, log_model=True):
+        parameters = locals()
+        del parameters["self"]
+
+        self.train_keras(**parameters)
+        self.train_xgboost(**parameters)
 
     def train_xgboost(self, use_cache=False, log_model=True):
         """
