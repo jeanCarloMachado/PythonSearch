@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import datetime
 import logging
 import os
@@ -33,12 +34,12 @@ class Inference:
         self.debug = os.getenv("DEBUG", False)
         self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
 
-        if self.debug:
-            print("Manually setted run id: ", self.run_id)
-
-        print("Using run id: " + self.run_id)
+        if model:
+            print("Using custom passed model")
+        else:
+            print("Using run id: " + self.run_id)
         self.configuration = (
-            configuration if configuration else ConfigurationLoader().load()
+            configuration if configuration else ConfigurationLoader().load_config()
         )
         # previous key should be setted in runtime
         self.previous_key = None
@@ -141,7 +142,6 @@ class InferenceInput:
 
 class InferenceEmbeddingsLoader:
     def __init__(self, all_keys):
-        import copy
 
         self.all_keys = copy.copy(list(all_keys))
         self.latest_used_entries = LatestUsedEntries()

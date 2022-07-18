@@ -87,11 +87,11 @@ class Pipeline:
 
         return Train().train_and_log(dataset)
 
-    def train_xgboost(self):
+    def train_xgboost(self, use_cache=False):
         """
         Train the XGBoost model
         """
-        dataset = self.build_dataset(use_cache=False)
+        dataset = self.build_dataset(use_cache=use_cache)
         TrainXGBoost().train(dataset)
 
     def evaluate(self):

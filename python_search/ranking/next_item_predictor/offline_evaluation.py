@@ -11,7 +11,7 @@ class OfflineEvaluation:
         ids = [int(x) for x in X_test[:, 0].tolist()]
         df = dataset.toPandas()
         test_df = df[df["entry_number"].isin(ids)]
-        test_df
+        print("TestDF shape: ", test_df.shape)
 
         from python_search.ranking.next_item_predictor.inference import (
             Inference, InferenceInput)

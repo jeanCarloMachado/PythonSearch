@@ -113,7 +113,7 @@ class ConfigurationLoader:
 
     def load_config(self) -> PythonSearchConfiguration:
 
-        env_name = "PYTHON_SEARCH_CONFIG_FOLDER"
+        env_name = "PYTHON_SEARCH_ENTRIES_FOLDER"
 
         if env_name not in os.environ:
             raise Exception(f"{env_name} must be set to load the config dynamically")

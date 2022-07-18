@@ -4,6 +4,8 @@ import xgboost as xgb
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
 
+from python_search.ranking.next_item_predictor.offline_evaluation import \
+    OfflineEvaluation
 from python_search.ranking.next_item_predictor.transform import Transform
 
 
@@ -11,6 +13,10 @@ class TrainXGBoost:
     def train(self, dataset):
 
         X_train, X_test, Y_train, Y_test = self._split(dataset)
+
+        X_test_p = X_test
+        X_test = np.delete(X_test, 0, axis=1)
+        X_train = np.delete(X_train, 0, axis=1)
 
         model = xgb.XGBRegressor(
             tree_method="hist",
@@ -24,6 +30,8 @@ class TrainXGBoost:
         model.fit(X_train, Y_train, eval_set=eval_set)
 
         self._evaluate_metrics(model)
+        offline_evaluation = OfflineEvaluation().run(model, dataset, X_test_p)
+        print(offline_evaluation)
 
         return model
 
@@ -39,11 +47,9 @@ class TrainXGBoost:
         Y_train = np.where(np.isnan(Y_train), 0.5, Y_train)
         X_train = np.where(np.isnan(X_train), 0.5, X_train)
 
-        X_test_p = np.delete(X_test, 0, axis=1)
-        X_train_p = np.delete(X_train, 0, axis=1)
-        return X_train_p, X_test_p, Y_train, Y_test
+        return X_train, X_test, Y_train, Y_test
 
-    def _evaluate_metrics(self, model):
+    def _evaluate_metrics(self, model, display_metrics=False):
 
         results = model.evals_result()
         epochs = len(results["validation_0"]["rmse"])
@@ -54,7 +60,8 @@ class TrainXGBoost:
         ax.legend()
         plt.ylabel("rmse")
         plt.title("XGBoost_training rmse")
-        plt.show()
+        if display_metrics:
+            plt.show()
 
         results = model.evals_result()
         epochs = len(results["validation_0"]["mean_absolute_error"])
@@ -65,4 +72,5 @@ class TrainXGBoost:
         ax.legend()
         plt.ylabel("mae")
         plt.title("XGBoost_training mae")
-        plt.show()
+        if display_metrics:
+            plt.show()
