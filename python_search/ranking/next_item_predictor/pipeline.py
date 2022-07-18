@@ -50,7 +50,7 @@ class Pipeline:
         """
         dataset = TrainingDataset().build(use_cache)
 
-        print("Training dataset is ready", dataset.sample(0.1).show(n=10))
+        print("Training dataset is ready, printing top 10", dataset.show(n=10))
 
         if view_only:
             print("View only enabled will early return")

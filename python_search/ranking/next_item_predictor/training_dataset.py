@@ -80,8 +80,10 @@ class TrainingDataset:
     def _add_label(self, grouped):
         dataset = grouped.withColumn(
             "label",
-            F.col("times")
-            / F.sum("times").over(Window.partitionBy("month", "hour", "key")),
+            (
+                F.col("times")
+                * F.sum("times").over(Window.partitionBy("month", "hour", "key"))
+            ),
         ).orderBy("month", "hour", "key", "label")
 
         # add an auto-increment id

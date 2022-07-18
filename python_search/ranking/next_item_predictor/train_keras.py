@@ -43,7 +43,7 @@ class Train:
             mlflow.log_params(metrics)
             mlflow.log_params(offline_evaluation)
 
-        return model, metrics
+        return model, metrics, offline_evaluation
 
     def train(self, dataset: TrainingDataset, plot_history=False):
         """
