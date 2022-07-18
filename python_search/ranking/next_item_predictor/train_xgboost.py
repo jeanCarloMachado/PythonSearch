@@ -4,12 +4,31 @@ import xgboost as xgb
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import train_test_split
 
+from python_search.config import DataConfig
 from python_search.ranking.next_item_predictor.offline_evaluation import \
     OfflineEvaluation
 from python_search.ranking.next_item_predictor.transform import Transform
 
 
 class TrainXGBoost:
+    def train_and_log(self, dataset):
+        """
+        train the model and log it to MLFlow
+        """
+        import mlflow
+
+        mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
+        # this creates a new experiment
+        mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
+        mlflow.xgboost.autolog()
+
+        with mlflow.start_run():
+            model, offline_evaluation = self.train(dataset)
+            # mlflow.log_params(metrics)
+            mlflow.log_params(offline_evaluation)
+
+        return model, offline_evaluation
+
     def train(self, dataset):
 
         X_train, X_test, Y_train, Y_test = self._split(dataset)
@@ -33,7 +52,7 @@ class TrainXGBoost:
         offline_evaluation = OfflineEvaluation().run(model, dataset, X_test_p)
         print(offline_evaluation)
 
-        return model
+        return model, offline_evaluation
 
     def _split(self, dataset):
 

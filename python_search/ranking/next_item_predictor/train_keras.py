@@ -39,7 +39,7 @@ class Train:
         # @todo: try mlflow.keras.autolog()
 
         with mlflow.start_run():
-            model, metrics = self.train(dataset)
+            model, metrics, offline_evaluation = self.train(dataset)
             mlflow.log_params(metrics)
             mlflow.log_params(offline_evaluation)
 

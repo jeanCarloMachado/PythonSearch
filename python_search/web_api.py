@@ -5,7 +5,7 @@ app = FastAPI()
 from python_search.config import ConfigurationLoader
 from python_search.ranking.ranking import RankingGenerator
 
-config = ConfigurationLoader().load()
+config = ConfigurationLoader().load_config()
 generator = RankingGenerator(config)
 
 

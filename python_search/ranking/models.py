@@ -40,5 +40,5 @@ class PythonSearchMLFlow:
         if self.debug:
             print(f"Loading run id: {run_id}")
 
-        model = self.mlflow_instance.keras.load_model(f"runs:/{run_id}/model")
+        model = self.mlflow_instance.xgboost.load_model(f"runs:/{run_id}/model")
         return model

@@ -39,7 +39,7 @@ class Pipeline:
             model, _ = self.train_and_log(dataset)
         else:
             print("MLFLow disabled")
-            model, _ = self.train(dataset)
+            model, _ = self.train_keras(dataset)
 
         Evaluate().evaluate(model)
 
@@ -59,17 +59,29 @@ class Pipeline:
         return dataset
 
     @timeit
-    def train(
-        self, *, dataset: Optional[TrainingDataset] = None, epochs=None, use_cache=True
+    def train_keras(
+        self,
+        *,
+        dataset: Optional[TrainingDataset] = None,
+        epochs=None,
+        use_cache=True,
+        log=True,
     ):
         if not dataset:
             print(f"Using data with cache: {use_cache} type: {type(use_cache)}")
             dataset = self.build_dataset(use_cache=use_cache)
 
         print(f"Custom epochs {epochs}")
-        model, metrics, offline_evaluation = Train(epochs).train(
-            dataset, plot_history=True
-        )
+
+        if log:
+            model, metrics, offline_evaluation = Train(epochs).train_and_log(
+                dataset, plot_history=True
+            )
+        else:
+            model, metrics, offline_evaluation = Train(epochs).train(
+                dataset, plot_history=True
+            )
+
         print(
             {
                 "metrics": metrics,
@@ -77,22 +89,15 @@ class Pipeline:
             }
         )
 
-    def train_and_log(self, dataset=None, use_cache=True):
-        """
-        Trains the model and logs it to MLFlow
-        """
-
-        if not dataset:
-            dataset = self.build_dataset(use_cache=use_cache)
-
-        return Train().train_and_log(dataset)
-
-    def train_xgboost(self, use_cache=False):
+    def train_xgboost(self, use_cache=False, log_model=True):
         """
         Train the XGBoost model
         """
         dataset = self.build_dataset(use_cache=use_cache)
-        TrainXGBoost().train(dataset)
+        if log_model:
+            TrainXGBoost().train_and_log(dataset)
+        else:
+            TrainXGBoost().train(dataset)
 
     def evaluate(self):
         """
