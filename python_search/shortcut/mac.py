@@ -45,11 +45,11 @@ class Mac:
             return
 
         os.system(f"cd {self.config_folder} ; add_bom_to_file.sh config.ini")
-
+        # restart shortcut app
         os.system("pkill -f iCanHaz")
         os.system("open -a iCanHazSHortcut")
 
-    def _add_shortcut(self, shortcut, key, shortcut_number):
+    def _add_shortcut(self, shortcut: str, key: str, shortcut_number):
         print(f"Generating shortcut for {key}")
 
         shortcut_content = self._entry(shortcut, key, shortcut_number)
@@ -63,7 +63,7 @@ class Mac:
         
 [shortcut{number}]
 shortcut = {shortcut}
-action = {key}
+action = {key}{number}
 command = log_command.sh search_run run_key '{key}'
 workdir = 
 enabled = yes

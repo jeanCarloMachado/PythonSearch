@@ -36,5 +36,9 @@ def launch(name="Enter Data"):
     return values["content"]
 
 
-if __name__ == "__main__":
+def main():
     fire.Fire(launch)
+
+
+if __name__ == "__main__":
+    main()

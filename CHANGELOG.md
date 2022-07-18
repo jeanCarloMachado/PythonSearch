@@ -1,7 +1,9 @@
 # Changelog
+
 ## 0.3.1
 
 -added customisation for the GUI Theme/Font_Size
+
 ## 0.3
 
 - rename search_run module to python_search

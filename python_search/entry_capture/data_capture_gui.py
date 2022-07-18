@@ -1,4 +1,5 @@
 import fire
+
 from python_search.config import ConfigurationLoader
 
 
