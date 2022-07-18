@@ -13,7 +13,7 @@ class Url(BaseEntry):
 
         if os.getenv("BROWSER") is None:
             logging.info(
-                "BROWSWER environment variable not set! Url commands will not work."
+                "BROWSER environment variable not set! Url commands will not work."
             )
 
         if type(cmd) == str and Url.is_url(cmd):
