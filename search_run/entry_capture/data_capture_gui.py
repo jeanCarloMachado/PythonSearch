@@ -7,7 +7,7 @@ def launch(default_content=""):
     """
     import PySimpleGUI as sg
 
-    sg.theme("DarkGrey12")
+    sg.theme("SystemStandard1")
     font_size = 12
 
     layout = [
