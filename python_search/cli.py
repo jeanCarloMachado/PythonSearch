@@ -1,3 +1,5 @@
+import logging
+
 from python_search.apps.window_manager import WindowManager
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.entry_runner import EntryRunner
@@ -45,7 +47,7 @@ class PythonSearchCli:
         so they keep being fast
         """
         if not configuration:
-            print("No configuration provided, using default")
+            logging.debug("No configuration provided, using default")
             configuration = ConfigurationLoader().load_config()
 
         self.configuration = configuration
@@ -108,7 +110,7 @@ class PythonSearchCli:
         return RegisterNew(self.configuration)
 
     def generate_shortcuts(self):
-        """Generate shorcuts for all environemtns"""
+        """Generate shorcuts for all environments"""
         from python_search.shortcut.generator import ShortcutGenerator
 
         configuration_exporter = ShortcutGenerator(self.configuration)

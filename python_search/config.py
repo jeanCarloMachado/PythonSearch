@@ -3,6 +3,7 @@ Clients should depend on a configuration instance (config) rather than in the cl
 the class should only be used for type annotation.
 This way we can have multiple configs depending of the enviroment.
 """
+import logging
 import os
 from typing import List, Optional
 
@@ -118,7 +119,7 @@ class ConfigurationLoader:
         if env_name not in os.environ:
             raise Exception(f"{env_name} must be set to load the config dynamically")
 
-        print(f"Env: {env_name}={os.environ[env_name]}")
+        logging.debug(f"Env: {env_name}={os.environ[env_name]}")
         folder = os.environ[env_name]
 
         config_location = os.path.join(folder, "entries/main.py")
