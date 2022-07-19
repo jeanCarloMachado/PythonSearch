@@ -67,8 +67,6 @@ class RegisterNew:
         self.register_snippet(snippet_content, key)
 
     def register_snippet(self, content, key):
-        if emptish(content):
-            raise RegisterNewException.empty_content()
 
         as_dict = {
             "snippet": content,
@@ -130,7 +128,7 @@ class RegisterNew:
     def _get_clippboard_content(self) -> str:
         clipboard_content = Clipboard().get_content()
         logging.info(f"Current clipboard content '{clipboard_content}'")
-        if emptish(clipboard_content):
+        if len(clipboard_content) == 0:
             raise RegisterNewException.empty_content()
 
         return clipboard_content

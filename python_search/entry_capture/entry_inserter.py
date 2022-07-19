@@ -3,6 +3,8 @@ from __future__ import annotations
 import shutil
 from datetime import datetime
 
+from python_search.config import PythonSearchConfiguration
+
 
 class EntryInserter:
     """
@@ -11,7 +13,7 @@ class EntryInserter:
 
     NEW_ENTRIES_STRING = "# NEW_ENTRIES_HERE"
 
-    def __init__(self, configuration):
+    def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
         self.file_to_append = self.configuration.get_project_root() + "/entries/main.py"
 
@@ -66,6 +68,8 @@ class EntryInserter:
 
         if os.system(f"python3 -m compileall -q {copy_file}") != 0:
             message = "Copy of file does not compile so wont proceed replacing!"
+            from python_search.apps.notification_ui import send_notification
+
             send_notification(message)
             raise Exception(message)
 

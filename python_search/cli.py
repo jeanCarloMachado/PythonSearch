@@ -1,5 +1,5 @@
 from python_search.apps.window_manager import WindowManager
-from python_search.config import PythonSearchConfiguration
+from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.search_ui.preview import Preview
@@ -44,6 +44,10 @@ class PythonSearchCli:
         Keep this constructor small and import dependencies inside the functions
         so they keep being fast
         """
+        if not configuration:
+            print("No configuration provided, using default")
+            configuration = ConfigurationLoader().load_config()
+
         self.configuration = configuration
 
     def search(self):

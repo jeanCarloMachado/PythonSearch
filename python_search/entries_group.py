@@ -70,8 +70,5 @@ class EntriesGroup:
         Returns the root of the project where the config is
         @todo substitues PROJECT_ROOT with this
         """
-        source = self.get_source_file()
-        path = os.path.dirname(source)
-        # always go 1 path up
 
-        return path
+        return os.environ["PYTHON_SEARCH_ENTRIES_FOLDER"]
