@@ -60,7 +60,11 @@ class Clipboard:
         return shell.run(cmd)
 
 
-if __name__ == "__main__":
+def main():
     import fire
 
     fire.Fire(Clipboard)
+
+
+if __name__ == "__main__":
+    main()

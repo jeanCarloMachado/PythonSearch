@@ -3,41 +3,42 @@ import sys
 import fire
 
 
-def launch(name="Enter Data"):
-    """
-    Launch the data capture GUI.
-    """
-    import PySimpleGUI as sg
+class CollectInput:
+    def launch(self, name="Enter Data"):
+        """
+        Launch the data capture GUI.
+        """
+        import PySimpleGUI as sg
 
-    font_size = 12
-    sg.theme("SystemDefault1")
+        font_size = 12
+        sg.theme("SystemDefault1")
 
-    layout = [
-        [
-            sg.Input(
-                key="content",
-            )
-        ],
-        [sg.Button("Continue", key="write")],
-    ]
+        layout = [
+            [
+                sg.Input(
+                    key="content",
+                )
+            ],
+            [sg.Button("Continue", key="write")],
+        ]
 
-    window = sg.Window(name, layout, finalize=True, font=("Helvetica", font_size))
-    window["content"].bind("<Return>", "_Enter")
+        window = sg.Window(name, layout, finalize=True, font=("Helvetica", font_size))
+        window["content"].bind("<Return>", "_Enter")
 
-    while True:
-        event, values = window.read()
-        if event == "write" or event == "content_Enter":
-            break
-        if event == sg.WINDOW_CLOSED:
-            sys.exit(1)
+        while True:
+            event, values = window.read()
+            if event == "write" or event == "content_Enter":
+                break
+            if event == sg.WINDOW_CLOSED:
+                sys.exit(1)
 
-    window.close()
+        window.close()
 
-    return values["content"]
+        return values["content"]
 
 
 def main():
-    fire.Fire(launch)
+    fire.Fire(CollectInput().launch)
 
 
 if __name__ == "__main__":

@@ -76,14 +76,10 @@ class RegisterNew:
 
         self.entry_inserter.insert(key, as_dict)
 
-    def german_from_clipboard(self):
-        """Register german workds you dont know by saving them to the clipboard and storing in python search"""
-        key = Clipboard().get_content()
-
-        self.german_from_text(key)
-
     def german_from_text(self, key):
-        """Register german workds you dont know by saving them to the clipboard and storing in python search"""
+        """
+        Register german workds you dont know by saving them to the clipboard and storing in python search
+        """
 
         if emptish(key):
             raise RegisterNewException.empty_content()
@@ -96,7 +92,9 @@ class RegisterNew:
         Url(cmd).interpret_default()
         time.sleep(1)
 
-        meaning = AskQuestion().ask(f"Please type the meaning of ({key})")
+        from python_search.apps.capture_input import CollectInput
+
+        meaning = CollectInput().launch(f"Please type the meaning of ({key})")
 
         if emptish(meaning):
             raise RegisterNewException.empty_content()
@@ -114,11 +112,14 @@ class RegisterNew:
         Get content from clipboard and from input
         AND produces the event
         """
-        from python_search.entry_capture.data_capture_gui import launch
+        from python_search.entry_capture.data_capture_gui import \
+            EntryCaptureGUI
 
         clipboard_content = self._get_clippboard_content()
         if True:
-            key, clipboard_content, _ = launch(default_content=clipboard_content)
+            key, clipboard_content, _ = EntryCaptureGUI.launch(
+                default_content=clipboard_content
+            )
         else:
             title = f"Content to store: {clipboard_content}\n{title}"
             key = AskQuestion().ask(title)
