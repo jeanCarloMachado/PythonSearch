@@ -116,13 +116,9 @@ class RegisterNew:
             EntryCaptureGUI
 
         clipboard_content = self._get_clippboard_content()
-        if True:
-            key, clipboard_content, _ = EntryCaptureGUI.launch(
-                default_content=clipboard_content
-            )
-        else:
-            title = f"Content to store: {clipboard_content}\n{title}"
-            key = AskQuestion().ask(title)
+        key, clipboard_content, _ = EntryCaptureGUI().launch(
+            title, default_content=clipboard_content
+        )
 
         return clipboard_content, key
 

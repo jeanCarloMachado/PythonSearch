@@ -4,7 +4,7 @@ from python_search.config import ConfigurationLoader
 
 
 class EntryCaptureGUI:
-    def launch(self, default_content=""):
+    def launch(self, title="Capture Entry", default_content=""):
         """
         Launch the data capture GUI.
         """
@@ -22,9 +22,7 @@ class EntryCaptureGUI:
             [sg.Button("Write", key="write")],
         ]
 
-        window = sg.Window(
-            "Capture entry", layout, font=("Helvetica", font_size), finalize=True
-        )
+        window = sg.Window(title, layout, font=("Helvetica", font_size), finalize=True)
         window["key"].bind("<Return>", "_Enter")
 
         while True:

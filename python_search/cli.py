@@ -99,11 +99,6 @@ class PythonSearchCli:
 
         return RegisterNew(self.configuration).infer_from_clipboard()
 
-    def register_snippet_clipboard(self):
-        from python_search.entry_capture.register_new import RegisterNew
-
-        return RegisterNew(self.configuration).snippet_from_clipboard()
-
     def register_new(self):
         from python_search.entry_capture.register_new import RegisterNew
 
@@ -185,9 +180,9 @@ class PythonSearchCli:
         return Report()
 
     def capture_input(self):
-        from python_search.apps.capture_input import launch
+        from python_search.apps.capture_input import CollectInput
 
-        return launch
+        return CollectInput.launch
 
 
 def main():
