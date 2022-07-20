@@ -61,7 +61,10 @@ class RankingGenerator:
         result, final_list = self._merge_and_build_result()
 
         if self.is_redis_supported and recompute_ranking:
-            self._save_ranking_order_in_cache(final_list)
+            try:
+                self._save_ranking_order_in_cache(final_list)
+            except Exception as e:
+                print(f"Error saving ranking to cache: {e}")
         return self.print_entries(result)
 
     def _save_ranking_order_in_cache(self, ranking: List[str]):

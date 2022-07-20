@@ -13,24 +13,19 @@ class ShortcutGenerator:
 
     def __init__(self, configuration: EntriesGroup):
         self.configuration = configuration
+        self.mac = Mac(self.configuration)
+        self.gnome = Gnome(self.configuration)
+        self.i3 = I3(self.configuration)
 
     def generate(self):
-        """
-        Export a new configuration.
-
-        You can customize the method of ranking.
-        By default the ranking is just a projection of the data.
-        But if you want to have better ranking you can pass "complete"
-        the more expensive algorithm optimizing the ranking will be used.
-        """
         if is_mac():
-            Mac(self.configuration).generate()
+            self.mac.generate()
             return
 
         if WindowManager.is_gnome():
-            Gnome(self.configuration).generate()
+            self.gnome.generate()
             return
 
         if WindowManager.is_i3():
-            I3(self.configuration).generate()
+            self.i3.generate()
             return

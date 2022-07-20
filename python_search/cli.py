@@ -104,12 +104,11 @@ class PythonSearchCli:
 
         return RegisterNew(self.configuration)
 
-    def generate_shortcuts(self):
+    def shortcut_generator(self):
         """Generate shorcuts for all environments"""
         from python_search.shortcut.generator import ShortcutGenerator
 
-        configuration_exporter = ShortcutGenerator(self.configuration)
-        configuration_exporter.generate()
+        return ShortcutGenerator(self.configuration)
 
     def ranking(self):
         from python_search.ranking.ranking import RankingGenerator

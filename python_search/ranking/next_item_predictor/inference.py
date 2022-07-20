@@ -62,16 +62,18 @@ class Inference:
             else InferenceInput.from_context(self.inference_embeddings)
         )
 
-        X = self._build_dataset(inference_input)
-        Y = self._predict(X)
+        try:
+            X = self._build_dataset(inference_input)
+            Y = self._predict(X)
+            result = list(zip(self.all_keys, Y))
+            result.sort(key=lambda x: x[1], reverse=True)
+            if return_weights:
+                return result
 
-        result = list(zip(self.all_keys, Y))
-        result.sort(key=lambda x: x[1], reverse=True)
-
-        if return_weights:
-            return result
-
-        only_keys = [entry[0] for entry in result]
+            only_keys = [entry[0] for entry in result]
+        except Exception as e:
+            print("Error: ", e)
+            only_keys = self.all_keys
 
         return only_keys
 
@@ -178,7 +180,11 @@ class InferenceEmbeddingsLoader:
             print(
                 f"The embedding for ({key}) is empty in redis. Sycning the missing keys"
             )
-            RedisEmbeddingsWriter().sync_missing()
+            try:
+                RedisEmbeddingsWriter().sync_missing()
+            except Exception as e:
+                print(f"Could not sync missing embeddings: {e}")
+
             self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
 
         return EmbeddingSerialization.read(self.embedding_mapping[key])

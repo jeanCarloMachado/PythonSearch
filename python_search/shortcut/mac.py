@@ -13,7 +13,7 @@ class Mac:
 
         self.config_folder = f'{os.environ["HOME"]}/.config/iCanHazShortcut/'
 
-    def generate(self):
+    def generate(self, restart_app=True):
         print("Generating macos shortctus")
 
         shortcut_found = False
@@ -25,37 +25,54 @@ class Mac:
             f"{self.config_folder}/config.ini.part1", f"{self.config_folder}/config.ini"
         )
 
+        content_to_write = ""
         for key, content in list(self.configuration.commands.items()):
             if not type(content) is dict:
                 continue
 
             if "mac_shortcut" in content:
                 shortcut_found = True
-                self._add_shortcut(content["mac_shortcut"], key, shortcut_number)
+                content_to_write += self._add_shortcut(
+                    content["mac_shortcut"], key, shortcut_number
+                )
                 shortcut_number += 1
 
             if "mac_shortcuts" in content:
                 shortcut_found = True
                 for shortcut in content["mac_shortcuts"]:
-                    self._add_shortcut(shortcut, key, shortcut_number)
+                    content_to_write += self._add_shortcut(
+                        shortcut, key, shortcut_number
+                    )
                     shortcut_number += 1
 
         if not shortcut_found:
             print("No shortcuts found for mac")
             return
+        else:
+            config_file = f"{self.config_folder}config.ini"
+            with open(config_file, "a") as myfile:
+                print(config_file, content_to_write)
+                myfile.write(content_to_write)
 
         os.system(f"cd {self.config_folder} ; add_bom_to_file.sh config.ini")
         # restart shortcut app
-        os.system("pkill -f iCanHaz")
-        os.system("open -a iCanHazSHortcut")
+        if restart_app:
+            print("Restarting shortcut app")
+            os.system("pkill -f iCanHaz")
+            os.system("open -a iCanHazShortcut")
 
-    def _add_shortcut(self, shortcut: str, key: str, shortcut_number):
+        print(f"Done! {shortcut_number}  shortcuts generated")
+
+        import subprocess
+
+        number_of_items = subprocess.getoutput(
+            f"grep '\[shortcut' {self.config_folder}config.ini | wc -l"
+        )
+        print(f"In the file we found {number_of_items} items")
+
+    def _add_shortcut(self, shortcut: str, key: str, shortcut_number) -> str:
         print(f"Generating shortcut for {key}")
-
-        shortcut_content = self._entry(shortcut, key, shortcut_number)
-        with open(f"{self.config_folder}/config.ini", "a") as myfile:
-            print(shortcut_content)
-            myfile.write(shortcut_content)
+        return self._entry(shortcut, key, shortcut_number)
 
     def _entry(self, shortcut, key, number) -> str:
         shortcut = shortcut
@@ -64,7 +81,7 @@ class Mac:
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command = log_command.sh search_run run_key '{key}'
+command = log_command.sh search_run run_key '{key}' ; echo '{number}'
 workdir = 
 enabled = yes
 """
