@@ -11,3 +11,13 @@ def send_notification(message: str):
     import os
 
     os.system(cmd)
+
+
+def main():
+    import fire
+
+    fire.Fire(send_notification)
+
+
+if __name__ == "__main__":
+    main()

@@ -8,3 +8,4 @@ dist/*
 .idea
 nohup.out
 dump.rdb
+.DS_Store

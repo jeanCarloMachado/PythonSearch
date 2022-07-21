@@ -1,4 +1,5 @@
 import os
+import time
 
 
 class Mac:
@@ -15,6 +16,11 @@ class Mac:
 
     def generate(self, restart_app=True):
         print("Generating macos shortctus")
+
+        if restart_app:
+            print("Killing shortcut app")
+            os.system("pkill -f iCanHa")
+            time.sleep(2)
 
         shortcut_found = False
         # starts with number 2 as number 1 is static in config.part1
@@ -55,10 +61,11 @@ class Mac:
                 myfile.write(content_to_write)
 
         os.system(f"cd {self.config_folder} ; add_bom_to_file.sh config.ini")
+        time.sleep(1)
+
         # restart shortcut app
         if restart_app:
             print("Restarting shortcut app")
-            os.system("pkill -f iCanHaz")
             os.system("open -a iCanHazShortcut")
 
         print(f"Done! {shortcut_number}  shortcuts generated")
@@ -81,7 +88,7 @@ class Mac:
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command = log_command.sh search_run run_key '{key}' ; echo '{number}'
+command = log_command.sh python_search run_key '{key}' 
 workdir = 
 enabled = yes
 """
