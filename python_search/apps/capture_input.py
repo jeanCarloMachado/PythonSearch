@@ -38,10 +38,9 @@ class CollectInput:
 
         while True:
             event, values = window.read()
-            print(event)
-            if event == "write" or event.endswith("_Enter") or event.endswith("_Esc"):
+            if event == "write" or event.endswith("_Enter"):
                 break
-            if event == sg.WINDOW_CLOSED:
+            if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 sys.exit(1)
 
         window.close()

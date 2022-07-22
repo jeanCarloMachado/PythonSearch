@@ -39,9 +39,9 @@ class EntryCaptureGUI:
 
         while True:
             event, values = window.read()
-            if event == "write" or event.endswith("_Enter") or event.endswith("_Esc"):
+            if event == "write" or event.endswith("_Enter"):
                 break
-            if event == sg.WINDOW_CLOSED:
+            if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 break
 
         window.close()
