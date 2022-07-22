@@ -13,8 +13,8 @@ class FzfInTerminal:
 
     FONT_SIZE = 13
     PREVIEW_PERCENTAGE_SIZE = 50
-    HEIGHT = 270
-    WIDTH = 1100
+    HEIGHT = 250
+    WIDTH = 1050
 
     configuration: PythonSearchConfiguration
 
