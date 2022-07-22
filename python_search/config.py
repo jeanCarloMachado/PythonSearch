@@ -45,7 +45,7 @@ config = SearchRunConfiguration()
 
 class KafkaConfig:
     default_port: str = "9092"
-    host: str = f"localhost:{default_port}"
+    host: str = f"127.0.0.1:{default_port}"
 
 
 class RedisConfig:

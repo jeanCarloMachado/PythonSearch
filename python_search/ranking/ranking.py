@@ -58,11 +58,11 @@ class RankingGenerator:
         self.ranked_keys: List[str] = self.entries.keys()
 
         self._build_rank(recompute_ranking)
-        result, final_list = self._merge_and_build_result()
+        result, only_list = self._merge_and_build_result()
 
         if self.is_redis_supported and recompute_ranking:
             try:
-                self._save_ranking_order_in_cache(final_list)
+                self._save_ranking_order_in_cache(only_list)
             except Exception as e:
                 print(f"Error saving ranking to cache: {e}")
         return self.print_entries(result)
@@ -100,19 +100,24 @@ class RankingGenerator:
         result = []
         increment = 0
         final_key_list = []
-        for key in self.ranked_keys:
-            # add used entry on the top on every second iteration
-            if increment % 2 == 0 and len(self.used_entries):
-                used_entry = self.used_entries.pop()
-                # sometimes there can be a bug of saving somethign other than dicts as entries
-                if type(used_entry[1]) != dict:
-                    logging.warning(f"Entry is not a dict {used_entry[1]}")
-                    continue
-                logging.debug(f"Increment: {increment}  with entry {used_entry}")
-                final_key_list.append(used_entry[0])
-                result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
-                increment += 1
 
+        while self.used_entries:
+            used_entry = self.used_entries.pop()
+            key = used_entry[0]
+            if key not in self.entries:
+                # key not found in entries
+                continue
+
+            # sometimes there can be a bug of saving somethign other than dicts as entries
+            if type(used_entry[1]) != dict:
+                logging.warning(f"Entry is not a dict {used_entry[1]}")
+                continue
+            logging.debug(f"Increment: {increment}  with entry {used_entry}")
+            final_key_list.append(used_entry[0])
+            result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
+            increment += 1
+
+        for key in self.ranked_keys:
             if key not in self.entries:
                 # key not found in entries
                 continue
@@ -121,6 +126,7 @@ class RankingGenerator:
             final_key_list.append(key)
             increment += 1
 
+        # the result is the one to be returned, final_key_list is to be used in the cache
         return result, final_key_list
 
     def _fetch_latest_entries(self):

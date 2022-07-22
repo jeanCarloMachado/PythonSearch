@@ -7,26 +7,28 @@ from python_search.apps.notification_ui import send_notification
 class StartSevices:
     def zookeeper(self):
         os.system(
-            "zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties &"
+            "LOG_FILE=/tmp/log_zoookeeper log_command.sh zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties &"
         )
 
     def kafka(self):
-        os.system("kafka-server-start /opt/homebrew/etc/kafka/server.properties &")
+        os.system(
+            "LOG_FILE=/tmp/log_kafka log_command.sh kafka-server-start /opt/homebrew/etc/kafka/server.properties &"
+        )
 
     def spark_consumer(self):
         os.system(
-            """ spark-submit \
+            """ LOG_FILE=/tmp/log_spark log_command.sh spark-submit \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
         $HOME/projects/PythonSearch/python_search/events/consumer.py consume_search_run_performed &
                   """
         )
 
     def redis(self):
-        os.system("redis-server &")
+        os.system("LOG_FILE=/tmp/log_redis log_command.sh redis-server &")
 
     def consume_latest_entries_redis(self):
         os.system(
-            "$HOME/projects/PythonSearch/python_search/events/latest_used_entries.py consume &"
+            "LOG_FILE=/tmp/log_consumer_redis log_command.sh $HOME/projects/PythonSearch/python_search/events/latest_used_entries.py consume &"
         )
 
     def api(self, background=False, print_only=False, kill=False):
@@ -36,7 +38,7 @@ class StartSevices:
             os.system("pkill -f web_api.py")
 
         HOME = os.getenv("HOME")
-        cmd = f"conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/python_search/web_api.py"
+        cmd = f"LOG_FILE=/tmp/log_webserver conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/python_search/web_api.py"
 
         if print_only:
             print(cmd)
@@ -61,9 +63,8 @@ class StartSevices:
         self.spark_consumer()
         time.sleep(3)
         self.redis()
-        time.sleep(3)
+        time.sleep(6)
         self.consume_latest_entries_redis()
-        time.sleep(3)
         self.api(background=True)
 
         time.sleep(5)

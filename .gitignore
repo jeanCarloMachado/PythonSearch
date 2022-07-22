@@ -7,5 +7,6 @@ dist/*
 *__pycache__*
 .idea
 nohup.out
-dump.rdb
+*.rdb
 .DS_Store
+
