@@ -35,10 +35,11 @@ class EntryCaptureGUI:
         window.set_alpha(1.0)
 
         window["key"].bind("<Return>", "_Enter")
+        window["content"].bind("<Escape>", "_Esc")
 
         while True:
             event, values = window.read()
-            if event == "write" or event.endswith("_Enter"):
+            if event == "write" or event.endswith("_Enter") or event.endswith("_Esc"):
                 break
             if event == sg.WINDOW_CLOSED:
                 break
