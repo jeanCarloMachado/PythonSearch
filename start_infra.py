@@ -71,7 +71,11 @@ class StartSevices:
         send_notification("Infra setup finished")
 
 
-if __name__ == "__main__":
+def main():
     import fire
 
     fire.Fire(StartSevices)
+
+
+if __name__ == "__main__":
+    main()

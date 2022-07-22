@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.3.2"
+version = "0.3.3"
 description = "Digitalize everything in python"
 authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
 
@@ -32,3 +32,4 @@ next_item_pipeline = 'python_search.ranking.next_item_predictor.pipeline:main'
 collect_input = 'python_search.apps.capture_input:main'
 clipboard = 'python_search.apps.clipboard:main'
 notify_send = 'python_search.apps.notification_ui:main'
+start_infra = 'start_infra:main'
