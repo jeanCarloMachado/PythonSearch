@@ -22,7 +22,18 @@ class EntryCaptureGUI:
             [sg.Button("Write", key="write")],
         ]
 
-        window = sg.Window(title, layout, font=("Helvetica", font_size), finalize=True)
+        window = sg.Window(
+            title,
+            layout,
+            font=("Helvetica", font_size),
+            alpha_channel=0.9,
+            finalize=True,
+        )
+
+        # workaround for mac bug
+        window.read(timeout=1000)
+        window.set_alpha(1.0)
+
         window["key"].bind("<Return>", "_Enter")
 
         while True:

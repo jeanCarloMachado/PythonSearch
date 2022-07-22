@@ -12,7 +12,6 @@ class CollectInput:
 
         font_size = 12
         sg.theme("SystemDefault1")
-
         layout = [
             [
                 sg.Input(
@@ -22,7 +21,18 @@ class CollectInput:
             [sg.Button("Continue", key="write")],
         ]
 
-        window = sg.Window(name, layout, finalize=True, font=("Helvetica", font_size))
+        window = sg.Window(
+            name,
+            layout,
+            finalize=True,
+            font=("Helvetica", font_size),
+            alpha_channel=0.9,
+        )
+
+        # workaround for mac bug
+        window.read(timeout=1000)
+        window.set_alpha(1.0)
+
         window["content"].bind("<Return>", "_Enter")
 
         while True:
