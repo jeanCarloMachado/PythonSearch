@@ -37,8 +37,7 @@ class StartSevices:
             print("Killing web api first")
             os.system("pkill -f web_api.py")
 
-        HOME = os.getenv("HOME")
-        cmd = f"LOG_FILE=/tmp/log_webserver conda run --no-capture-output  -n base python {HOME}/projects/PythonSearch/python_search/web_api.py"
+        cmd = f"LOG_FILE=/tmp/log_webserver log_command.sh  python_search_webapi"
 
         if print_only:
             print(cmd)

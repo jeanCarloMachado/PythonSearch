@@ -29,10 +29,14 @@ def root():
     return {"run_id": generator.inference.PRODUCTION_RUN_ID}
 
 
-if __name__ == "__main__":
+def main():
     import os
 
     import uvicorn
 
     os.putenv("WEB_CONCURRENCY", "1")
-    uvicorn.run("web_api:app", host="0.0.0.0", port=8000)
+    uvicorn.run("python_search.web_api:app", host="0.0.0.0", port=8000)
+
+
+if __name__ == "__main__":
+    main()

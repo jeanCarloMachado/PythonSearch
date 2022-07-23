@@ -89,7 +89,12 @@ class RankingGenerator:
             print("Results not being loadded from cache")
 
         if self.feature_toggle.is_enabled("ranking_next"):
-            self.ranked_keys = self.inference.get_ranking()
+            try:
+                self.ranked_keys = self.inference.get_ranking()
+            except Exception as e:
+                print(
+                    f"Inference failed with error {e} falling back to default ranking"
+                )
 
         self._fetch_latest_entries()
 

@@ -17,6 +17,12 @@ findspark = "^2.0.1"
 redis = "^4.3.4"
 typed-pyspark = "~=0.0.4"
 xgboost = "^1.6.1"
+PyYAML = "^6.0"
+fastapi = "^0.79.0"
+msgpack-numpy = "^0.4.8"
+mlflow = "^1.27.0"
+sklearn = "^0.0"
+uvicorn = "^0.18.2"
 
 
 [tool.poetry.dev-dependencies]
@@ -34,3 +40,4 @@ clipboard = 'python_search.apps.clipboard:main'
 notify_send = 'python_search.apps.notification_ui:main'
 start_infra = 'start_infra:main'
 browser = 'python_search.apps.browser:main'
+python_search_webapi = 'python_search.web_api:main'

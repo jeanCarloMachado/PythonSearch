@@ -170,6 +170,7 @@ class InferenceEmbeddingsLoader:
         extra_message = ""
         if print_mapping:
             extra_message = "Existing keys: " + str(self.embedding_mapping.keys())
+
         raise Exception(f"Could not find a recent key with embeddings" + extra_message)
 
     def get_embedding_from_key(self, key: str):
