@@ -1,5 +1,4 @@
-# !/usr/bin/env python
-import fire
+# !/usr/bin/env python import fire
 import PySimpleGUI as sg
 
 

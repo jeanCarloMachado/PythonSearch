@@ -59,6 +59,9 @@ class PythonSearchCli:
         Search(self.configuration).run()
 
     def run_key(self):
+        import sys
+
+        print(sys.version_info)
         return EntryRunner(self.configuration).run_key
 
     def copy_entry_content(self, key: str):

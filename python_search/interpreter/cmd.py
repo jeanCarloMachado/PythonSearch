@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Optional
 
 from grimoire.notification import send_notification
@@ -60,9 +61,9 @@ class CmdEntry(BaseEntry):
         if WRAP_IN_TERMINAL in self.cmd:
             cmd = self._try_to_wrap_in_terminal(cmd)
 
-        logging.info(f"Command to run: {cmd}")
+        print(f"Command to run: {cmd}")
         result = self._execute(cmd)
-        logging.info(f"Result finished: {result}")
+        print(f"Result finished: {result}")
         return self.return_result(result)
 
     def _try_to_wrap_in_terminal(self, cmd):
@@ -104,9 +105,12 @@ class CmdEntry(BaseEntry):
 
         if self.context and self.context.should_execute_sequentially():
             return shell.run_with_result(cmd)
-        import os
 
-        return os.system(cmd)
+        import subprocess
+
+        output = subprocess.check_output(cmd, shell=True)
+        print(output)
+        return 0
 
     def return_result(self, result):
         if "notify-result" in self.cmd:

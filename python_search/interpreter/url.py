@@ -25,11 +25,11 @@ class Url(BaseEntry):
 
         app_mode = self.cmd["app_mode"] if "app_mode" in self.cmd else False
         shell_cmd: str = Browser().open_cmd(self.cmd["url"], app_mode)
-        logging.info(f"Final command={shell_cmd}")
 
         final_cmd = self.cmd
         final_cmd["cmd"] = shell_cmd
 
+        print(f"Final command={final_cmd}")
         return CmdEntry(final_cmd, self.context).interpret_default()
 
     def copiable_part(self):

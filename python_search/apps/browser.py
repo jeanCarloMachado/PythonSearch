@@ -15,7 +15,7 @@ class Browser:
 
     # a tuple with the binary and the type
     _MAC_DEFAULT_BROWSER = (
-        "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome",
+        '/usr/bin/open -a "/Applications/Google Chrome.app"',
         SupportedBrowsers.CHROME,
     )
     _LINUX_DEFAULT_BROWSER = "google-chrome", SupportedBrowsers.CHROME
@@ -43,9 +43,9 @@ class Browser:
             browser, type = self._LINUX_DEFAULT_BROWSER
 
         if type == SupportedBrowsers.CHROME and app_mode:
-            return f"{browser} --app='{url}'"
+            return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --profile-directory=Default --app='{url}'"
 
-        return f"{browser} {url}"
+        return f"{browser} '{url}'"
 
 
 def main():
