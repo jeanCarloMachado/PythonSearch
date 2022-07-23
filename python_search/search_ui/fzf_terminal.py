@@ -11,7 +11,7 @@ class FzfInTerminal:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE = 13
+    FONT_SIZE = 14
     PREVIEW_PERCENTAGE_SIZE = 50
     HEIGHT = 250
     WIDTH = 1050
@@ -84,7 +84,7 @@ class FzfInTerminal:
         return cmd
 
     def _run_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
+        return f"""--bind "{shortcut}:execute-silent:(LOG_FILE=/tmp/log_run_key_fzf nohup  log_command.sh {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "{shortcut}:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "{shortcut}:+reload:({self._get_rankging_generate_cmd()})" \
         --bind "{shortcut}:+clear-query" \
