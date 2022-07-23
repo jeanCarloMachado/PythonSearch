@@ -21,6 +21,7 @@ class Terminal:
             if "PYTHON_SEARCH_CUSTOM_SHELL" in os.environ
             else "bash"
         )
+        shell = "/bin/bash"
         cmd = f'{shell} -c "{cmd}"'
 
         hold = ""

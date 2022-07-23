@@ -1,14 +1,41 @@
+#!/usr/bin/env zsh
 #!/bin/bash
+#!/usr/bin/env bash
+
+
 
 destination_file=${LOG_FILE:-/tmp/debug}
 echo "Check the results in the file: $destination_file"
 
-echo "Start collecting info about command $(date)" > $destination_file
-whereis python3 >>$destination_file
-which python3 >>$destination_file
 
-echo $(python3 -V) >> $destination_file
-echo "Args $@" >> $destination_file
+
+echo "Start collecting info about command $(date)" > $destination_file
+
+# append from here on
+
+echo "Sourcing config"
+# source $HOME/config.sh
+# export $($HOME/config.sh)
+[ -f $HOME/config.sh ] && . $HOME/config.sh
+
+
+
+#echo "Env result" >>$destination_file
+#env >>$destination_file
+
+
+echo "PATH: ${PATH}" >>$destination_file
+
+echo "SHELL: ${SHELL}" >>$destination_file
+#echo "Bash verison: ${bash --version}" >>$destination_file
+
+echo "Python info" >>$destination_file
+echo "whereis python $(whereis python3)" >>$destination_file
+echo "which python $(which python3 )" >>$destination_file
+echo "python3 -V: $(python3 -V)" >>$destination_file
+
+
+echo "Args: $@" >> $destination_file
 
 echo "Result below:" >>$destination_file
 "$@" >>$destination_file 2>&1

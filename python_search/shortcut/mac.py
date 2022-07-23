@@ -88,7 +88,7 @@ class Mac:
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command = log_command.sh python_search run_key '{key}' 
+command = LOG_FILE=/tmp/log_shortcut log_command.sh python_search run_key "{key}" 
 workdir = 
 enabled = yes
 """
