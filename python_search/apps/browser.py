@@ -13,6 +13,7 @@ class Browser:
     Abstracts the browser features cross-platform
     """
 
+    # a tuple with the binary and the type
     _MAC_DEFAULT_BROWSER = (
         "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome",
         SupportedBrowsers.CHROME,

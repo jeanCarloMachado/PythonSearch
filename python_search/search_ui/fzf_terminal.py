@@ -36,9 +36,13 @@ class FzfInTerminal:
         self._launch_terminal(self.internal_cmd())
 
     def internal_cmd(self):
+        """
 
+        :return:
+        """
+        FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f"
         # for more fzf options see: https://www.mankier.com/1/fzf#
-        return f"""bash -c '{self._get_rankging_generate_cmd()} | \
+        cmd = f"""bash -c '{self._get_rankging_generate_cmd()} | \
         fzf \
         --tiebreak=length,begin,index \
         --cycle \
@@ -50,16 +54,10 @@ class FzfInTerminal:
         --border=none \
         --margin=0% \
         --padding=0% \
-        --bind "enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
-        --bind "enter:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "enter:+reload:({self._get_rankging_generate_cmd()})" \
-        --bind "enter:+clear-query" \
-        --bind "enter:+abort"  \
-        --bind "double-click:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
-        --bind "double-click:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "double-click:+reload:({self._get_rankging_generate_cmd()})" \
-        --bind "double-click:+clear-query" \
-        --bind "double-click:+abort"  \
+        {self._run_key("enter")} \
+        {self._run_key("double-click")} \
+        {self._edit_key('ctrl-e')} \
+        {self._edit_key('right-click')} \
         --bind "alt-enter:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
         --bind "alt-m:execute-silent:(nohup {self.executable} edit_main {{}} & disown)" \
         --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
@@ -68,8 +66,6 @@ class FzfInTerminal:
         --bind "ctrl-k:execute-silent:(nohup {self.executable} copy_key_only {{}} & disown)" \
         --bind "ctrl-c:execute-silent:(nohup {self.executable} copy_entry_content {{}} & disown)" \
         --bind "ctrl-c:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "ctrl-e:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
-        --bind "ctrl-e:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-s:execute-silent:(nohup {self.executable} search_edit {{}} & disown)" \
         --bind "ctrl-s:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-r:reload:({self._get_rankging_generate_cmd(reload=True)})" \
@@ -80,9 +76,23 @@ class FzfInTerminal:
         --bind "shift-up:first" \
         --bind "esc:abort" \
         --bind "ctrl-d:abort"  \
-        --color=fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f  ; exit 0
+        --color={FZF_LIGHT_THEME}  ; exit 0
         '
         """
+
+        print("CMD", cmd)
+        return cmd
+
+    def _run_key(self, shortcut) -> str:
+        return f"""--bind "{shortcut}:execute-silent:(nohup {self.executable} run_key {{}} --query_used {{q}} & disown)" \
+        --bind "{shortcut}:+execute-silent:({self.executable} _utils hide_launcher)" \
+        --bind "{shortcut}:+reload:({self._get_rankging_generate_cmd()})" \
+        --bind "{shortcut}:+clear-query" \
+        --bind "{shortcut}:+abort"   """
+
+    def _edit_key(self, shortcut) -> str:
+        return f"""--bind "{shortcut}:execute-silent:(nohup {self.executable} edit_key {{}} & disown)" \
+        --bind "{shortcut}:+execute-silent:({self.executable} _utils hide_launcher)"  """
 
     def _get_rankging_generate_cmd(self, reload=False):
         # in mac we need tensorflow to be installed via conda
