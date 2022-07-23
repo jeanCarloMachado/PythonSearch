@@ -23,6 +23,7 @@ msgpack-numpy = "^0.4.8"
 mlflow = "^1.27.0"
 sklearn = "^0.0"
 uvicorn = "^0.18.2"
+PySimpleGUI = "^4.60.1"
 
 
 [tool.poetry.dev-dependencies]
