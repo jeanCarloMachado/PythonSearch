@@ -1,15 +1,57 @@
-from python_search.interpreter.cmd import CmdEntry
+from __future__ import annotations
+
+from python_search.environment import is_mac
+
+
+class SupportedBrowsers:
+    CHROME = "chrome"
+    FIREFOX = "firefox"
 
 
 class Browser:
-    def open(self, url: str):
+    """
+    Abstracts the browser features cross-platform
+    """
+
+    _MAC_DEFAULT_BROWSER = (
+        "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome",
+        SupportedBrowsers.CHROME,
+    )
+    _LINUX_DEFAULT_BROWSER = "google-chrome", SupportedBrowsers.CHROME
+
+    def open(self, url: str, app_mode=False):
         """
-        Opens a url in your browser
-        if get_command_only is true returns the command to execute rather than executing it
+        performs the open
+        """
+        params = locals()
+        del params["self"]
+        cmd_to_run = self.open_cmd(**params)
+        print("Comand to run:", cmd_to_run)
+        from python_search.interpreter.cmd import CmdEntry
 
+        CmdEntry({"cmd": cmd_to_run}).interpret_default()
+
+    def open_cmd(self, url: str, app_mode=False) -> str:
+        """
+        Returns the shell command to open the browser
         """
 
-        import os
+        if is_mac():
+            browser, type = self._MAC_DEFAULT_BROWSER
+        else:
+            browser, type = self._LINUX_DEFAULT_BROWSER
 
-        cmd = f"{os.getenv('BROWSER')} {url}"
-        CmdEntry({"cmd": cmd}).interpret_default()
+        if type == SupportedBrowsers.CHROME and app_mode:
+            return f"{browser} --app='{url}'"
+
+        return f"{browser} {url}"
+
+
+def main():
+    import fire
+
+    fire.Fire(Browser)
+
+
+if __name__ == "__main__":
+    main()
