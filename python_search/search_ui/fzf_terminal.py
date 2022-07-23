@@ -70,6 +70,8 @@ class FzfInTerminal:
         --bind "ctrl-s:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-r:reload:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-t:execute-silent:(notify-send testjean)" \
+        --bind "alt-g:execute-silent:( {self.executable} google_it {{q}} )" \
+        --bind "alt-g:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-g:execute-silent:( {self.executable} google_it {{q}} )" \
         --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-f:first" \
