@@ -18,7 +18,7 @@ class Gnome:
             if type(content) is dict and "gnome_shortcut" in content:
                 logging.info(f"Generating shortcut for {key}")
                 identifier = self._generate_identifier(key)
-                cmd = f'search_run run_key "{identifier}" --force_gui_mode=1 --from_shortcut=1'
+                cmd = f'python_search run_key "{identifier}" --force_gui_mode=1 --from_shortcut=1'
                 self.generate_shortcut(identifier, cmd, content["gnome_shortcut"])
                 shortcut_found = True
 

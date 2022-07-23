@@ -18,18 +18,18 @@ class PythonSearch(EntriesGroup):
         },
         "save entry from clipboard inferring type": {
             "description": "Register to search run a string snippet",
-            "cmd": "search_run register_clipboard",
+            "cmd": "python_search register_clipboard",
             "i3_shortcut": Shortcuts.SUPER_R,
             "gnome_shortcut": "<Super>r",
         },
         "register snippet search run": {
             "description": "Register to search run a string snippet",
-            "cmd": "search_run register_snippet_clipboard",
+            "cmd": "python_search register_snippet_clipboard",
             "i3_shortcut": Shortcuts.SUPER_SHIFT_R,
             "gnome_shortcut": "<Super><Shift>r",
         },
         "generate shortcuts python search": {
-            "cmd": "search_run generate_shortcuts",
+            "cmd": "python_search generate_shortcuts",
             "i3_shortcut": Shortcuts.ALT_SHIFT_R,
             "gnome_shortcut": "<Alt><Shift>r",
         },
