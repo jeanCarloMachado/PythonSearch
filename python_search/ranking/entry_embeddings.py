@@ -121,7 +121,11 @@ def create_indexed_embeddings(keys):
     return embeddings_keys
 
 
-if __name__ == "__main__":
+def main():
     import fire
 
     fire.Fire()
+
+
+if __name__ == "__main__":
+    main()
