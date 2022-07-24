@@ -1,5 +1,4 @@
 import logging
-import os
 from typing import Optional
 
 from grimoire.notification import send_notification
@@ -108,6 +107,7 @@ class CmdEntry(BaseEntry):
 
         import subprocess
 
+        print("Using subprocess")
         output = subprocess.check_output(cmd, shell=True)
         print(output)
         return 0
