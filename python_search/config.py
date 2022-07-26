@@ -90,7 +90,7 @@ class ConfigurationLoader:
 
     def load_entries(self):
 
-        env_name = "PYTHON_SEARCH_ENTRIES_FOLDER"
+        env_name = "PS_ENTRIES_HOME"
 
         if env_name not in os.environ:
             raise Exception(f"{env_name} must be set to load the entries dynamically")
@@ -98,7 +98,7 @@ class ConfigurationLoader:
         print(f"Env: {env_name}={os.environ[env_name]}")
         folder = os.environ[env_name]
 
-        entries_location = os.path.join(folder, "entries/main.py")
+        entries_location = os.path.join(folder, "entries/entries_main.py")
 
         if not os.path.exists(entries_location):
             raise Exception(f"Could not find entries main file {entries_location}")
@@ -106,7 +106,7 @@ class ConfigurationLoader:
         import sys
 
         sys.path.append(folder)
-        import entries.main as entries_main
+        import entries_main as entries_main
 
         config = entries_main.entries
 
@@ -114,7 +114,7 @@ class ConfigurationLoader:
 
     def load_config(self) -> PythonSearchConfiguration:
 
-        env_name = "PYTHON_SEARCH_ENTRIES_FOLDER"
+        env_name = "PS_ENTRIES_HOME"
 
         if env_name not in os.environ:
             raise Exception(f"{env_name} must be set to load the config dynamically")
@@ -122,7 +122,7 @@ class ConfigurationLoader:
         logging.debug(f"Env: {env_name}={os.environ[env_name]}")
         folder = os.environ[env_name]
 
-        config_location = os.path.join(folder, "entries/main.py")
+        config_location = os.path.join(folder, "entries_main.py")
 
         if not os.path.exists(config_location):
             raise Exception(f"Could not find config file {config_location}")
@@ -130,14 +130,14 @@ class ConfigurationLoader:
         import sys
 
         sys.path.append(folder)
-        from entries.main import config
+        from entries_main import config
 
         return config
 
     def reload(self):
         import importlib
 
-        import entries.main as entries_main
+        import entries_main
 
         importlib.reload(entries_main)
         config = entries_main.config

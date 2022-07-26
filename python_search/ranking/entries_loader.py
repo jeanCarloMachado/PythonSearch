@@ -6,6 +6,6 @@ class EntriesLoader:
 
     @staticmethod
     def load_all_keys() -> List[str]:
-        from entries.main import config
+        from entries_main import config
 
         return list(config.commands.keys())

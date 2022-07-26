@@ -15,7 +15,9 @@ class EntryInserter:
 
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
-        self.file_to_append = self.configuration.get_project_root() + "/entries/main.py"
+        self.file_to_append = (
+            self.configuration.get_project_root() + "/entries/entries_main.py"
+        )
 
     def insert(self, key: str, entry: dict, enable_shortcuts_generation=False):
 

@@ -1,4 +1,4 @@
 def test_loads():
-    from examples.minimal import config
+    from examples.entries_main import config
 
     assert config is not None

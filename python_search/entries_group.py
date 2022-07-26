@@ -71,4 +71,4 @@ class EntriesGroup:
         @todo substitues PROJECT_ROOT with this
         """
 
-        return os.environ["PYTHON_SEARCH_ENTRIES_FOLDER"]
+        return os.environ["PS_ENTRIES_HOME"]

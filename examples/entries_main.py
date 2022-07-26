@@ -22,7 +22,7 @@ entries = {
     },
     # uses the application itself to register new entries from the clipboard
     "register new entry programatically": {
-        "cmd": "minimal.py register_clipboard",
+        "cmd": "entries_main.py register_clipboard",
     },
     # use search run to help you to learn language
     "letter ending viele grusse": {

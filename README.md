@@ -6,12 +6,34 @@
 - add shortcuts to actions
 - add custom types and actions
 
-## How to use
+## Minimal installation
 
+This installation covers the minimun functionality of Python search.
 Write a python script like this, and call it.
 
+### 1. Install python search
+
+```sh
+pip install python-search
+```
+
+### 2. Create a repo for your entries
+
+```sh
+mkdir $HOME/PythonSearchEntries
+export PYTHON_SEARCH_ENTRIES_HOME=$HOME/PythonSearchEntries
+
+# also save this variable in a startup script, examples below
+# echo "export PYTHON_SEARCH_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.bashrc
+# echo "export PYTHON_SEARCH_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.zsh_profile
+```
+
+### 3 Create an startup script
+
 ```py
+# Name it entries_main.py
 import datetime
+
 
 entries = {
     # snippets when executed copy the content to the clipboard
@@ -44,9 +66,7 @@ PythonSearchCli.setup_from_config(config)
 
 ```
 
-## Installation
-
-Installation instructions can be found in the [installation manual](docs/installation.md)
+Complete installation instructions can be found in the [installation manual](docs/installation.md)
 
 ## Legal
 

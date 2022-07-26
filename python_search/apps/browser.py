@@ -42,8 +42,9 @@ class Browser:
         else:
             browser, type = self._LINUX_DEFAULT_BROWSER
 
-        if type == SupportedBrowsers.CHROME and app_mode:
-            return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --profile-directory=Default --app='{url}'"
+        # @todo this not always work consider adding a a retry mechanism
+        # if type == SupportedBrowsers.CHROME and app_mode:
+        #    return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  --app='{url}'"
 
         return f"{browser} '{url}'"
 
