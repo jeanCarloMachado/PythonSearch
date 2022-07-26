@@ -21,11 +21,11 @@ pip install python-search
 
 ```sh
 mkdir $HOME/PythonSearchEntries
-export PYTHON_SEARCH_ENTRIES_HOME=$HOME/PythonSearchEntries
+export PS_ENTRIES_HOME=$HOME/PythonSearchEntries
 
 # also save this variable in a startup script, examples below
-# echo "export PYTHON_SEARCH_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.bashrc
-# echo "export PYTHON_SEARCH_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.zsh_profile
+# echo "export PS_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.bashrc
+# echo "export PS_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.zsh_profile
 ```
 
 ### 3 Create an startup script
@@ -63,7 +63,20 @@ from python_search.cli import PythonSearchCli
 
 config = PythonSearchConfiguration(entries=entries)
 PythonSearchCli.setup_from_config(config)
+```
 
+Done!
+You can run the search UI by running
+
+```shell
+python_search search
+```
+
+Basically everythign in python search you do through the cli tool.
+To understand the options run:
+
+```sh
+python_search --help
 ```
 
 Complete installation instructions can be found in the [installation manual](docs/installation.md)
