@@ -22,7 +22,7 @@ class Preview:
 
             if "snippet" in entry_data:
                 print("Type: Snippet")
-                print(f"{Fore.YELLOW}{entry_data['snippet']}{Style.RESET_ALL}")
+                print(f"{Fore.RED}{entry_data['snippet']}{Style.RESET_ALL}")
                 del entry_data["snippet"]
 
             if "cmd" in entry_data:
