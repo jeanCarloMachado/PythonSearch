@@ -107,10 +107,16 @@ class CmdEntry(BaseEntry):
 
         import subprocess
 
-        print("Using subprocess")
-        output = subprocess.check_output(cmd, shell=True)
-        print(output)
-        return 0
+        p = subprocess.Popen(
+            cmd,
+            shell=True,
+            stdin=None,
+            stdout=None,
+            stderr=None,
+            close_fds=True,
+        )
+
+        return {"pid": p.pid}
 
     def return_result(self, result):
         if "notify-result" in self.cmd:
