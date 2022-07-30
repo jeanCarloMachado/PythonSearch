@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+Minimal intallation supported.
+
 ## 0.3.1
 
 -added customisation for the GUI Theme/Font_Size

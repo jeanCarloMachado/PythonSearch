@@ -1,3 +1,7 @@
+"""
+run it like this:
+
+"""
 import wx.adv
 
 from python_search.infrastructure.infrastructure import Infrastructure
@@ -21,6 +25,7 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
 
     def CreatePopupMenu(self):
         menu = wx.Menu()
+        self.create_menu_item(menu, "Data UI", self.data_ui)
         self.create_menu_item(menu, "Infra Status", self.infra_status)
         self.create_menu_item(menu, "Webservice", self.web_api)
         self.create_menu_item(menu, "Redis consumer", self.latest_redis_consumer)
@@ -43,6 +48,18 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
 
     def on_left_down(self, event):
         print("Tray icon was left-clicked.")
+
+    def data_ui(self, event):
+        from subprocess import Popen
+
+        Popen(
+            'python_search run_key "pythonsearch data app ui run new evaluator streamlit main"',
+            shell=True,
+            stdin=None,
+            stdout=None,
+            stderr=None,
+            close_fds=True,
+        )
 
     def infra_status(self, event):
         self.infra.status_window()

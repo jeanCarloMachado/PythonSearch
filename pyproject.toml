@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "python-search"
-version = "0.3.3"
+version = "0.4.0"
 description = "Digitalize everything in python"
 authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.8,<4.0"
 fire = "^0.4.0"
 pydantic = "^1.9.1"
 numpy = "^1.23.1"
