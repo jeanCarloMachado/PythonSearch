@@ -9,3 +9,9 @@ class EntriesLoader:
         from entries_main import config
 
         return list(config.commands.keys())
+
+    @staticmethod
+    def load_all_entries() -> List[str]:
+        from entries_main import config
+
+        return config.commands
