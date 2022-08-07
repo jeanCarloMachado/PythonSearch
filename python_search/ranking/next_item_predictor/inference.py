@@ -4,6 +4,7 @@ import copy
 import datetime
 import logging
 import os
+import traceback
 from typing import Any, List, Optional
 
 import numpy as np
@@ -72,7 +73,12 @@ class Inference:
 
             only_keys = [entry[0] for entry in result]
         except Exception as e:
-            print("Error: ", e)
+            print(
+                "Error while performing inference, returning baseline ranking. Details: "
+                + e.__str__()
+            )
+
+            print(traceback.format_exc())
             only_keys = self.all_keys
 
         return only_keys
@@ -100,6 +106,7 @@ class Inference:
                 )
             )
 
+        breakpoint()
         return X
 
     @timeit
@@ -179,13 +186,14 @@ class InferenceEmbeddingsLoader:
         """
         if not key in self.embedding_mapping or self.embedding_mapping[key] is None:
             print(
-                f"The embedding for ({key}) is empty in redis. Sycning the missing keys"
+                f"The embedding for ({key}) is empty in redis. Syncing the missing keys"
             )
-            try:
-                RedisEmbeddingsWriter().sync_missing()
-            except Exception as e:
-                print(f"Could not sync missing embeddings: {e}")
-
+            RedisEmbeddingsWriter().sync_missing()
             self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
+
+            if self.embedding_mapping[key] is None:
+                raise Exception(
+                    f"After trying to sync embedding  for key '{key}' is still empty"
+                )
 
         return EmbeddingSerialization.read(self.embedding_mapping[key])

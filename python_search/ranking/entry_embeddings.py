@@ -85,14 +85,17 @@ class RedisEmbeddingsWriter:
     def read_embedding(self, key):
         return EmbeddingSerialization.read(self.client.hget(key, "embedding"))
 
-    def create_for_all_keys(self):
+    def create_all(self):
         """
         Generate embeddings for all currently existing entries
         """
         keys = EntriesLoader.load_all_keys()
         embeddings = create_indexed_embeddings(keys)
 
-        return embeddings
+        for key, embedding in embeddings.items():
+            self.write_embedding(key, embedding)
+
+        print("Done!")
 
 
 class EmbeddingSerialization:

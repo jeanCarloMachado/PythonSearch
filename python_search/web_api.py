@@ -23,10 +23,19 @@ def root():
     return generator.generate()
 
 
-@app.get("/about")
+@app.get("/_health")
 def root():
     global generator
-    return {"run_id": generator.inference.PRODUCTION_RUN_ID}
+
+    from python_search.events.latest_used_entries import LatestUsedEntries
+
+    entries = LatestUsedEntries().get_latest_used_keys()
+
+    return {
+        "keys_count": len(ConfigurationLoader().load_config().commands.keys()),
+        "run_id": generator.inference.PRODUCTION_RUN_ID,
+        "latest_used_entries": entries,
+    }
 
 
 def main():
@@ -35,7 +44,14 @@ def main():
     import uvicorn
 
     os.putenv("WEB_CONCURRENCY", "1")
-    uvicorn.run("python_search.web_api:app", host="0.0.0.0", port=8000)
+    reload = False
+    if "PS_DEBUG" in os.environ:
+        print("Debug mode is ON, enabling reload")
+        reload = True
+    else:
+        print("Debug mode is OFF")
+
+    uvicorn.run("python_search.web_api:app", host="0.0.0.0", port=8000, reload=reload)
 
 
 if __name__ == "__main__":

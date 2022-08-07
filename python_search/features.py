@@ -44,4 +44,11 @@ class FeatureToggle:
         os.system(f"rm {self.BASE_PATH}/{feature_name}")
 
     def is_enabled(self, feature_name: str) -> bool:
-        return 0 == os.system(f" test -f {self.BASE_PATH}/{feature_name}")
+        result = 0 == os.system(f" test -f {self.BASE_PATH}/{feature_name}")
+
+        if result:
+            print(f"Feature toggle {feature_name} is enabled")
+        else:
+            print(f"Feature toggle {feature_name} is disabled")
+
+        return result
