@@ -20,7 +20,7 @@ class Browser:
     )
     _LINUX_DEFAULT_BROWSER = "google-chrome", SupportedBrowsers.CHROME
 
-    def open(self, url: str, app_mode=False):
+    def open(self, url: str, app_mode=False, incognito=False) -> None:
         """
         performs the open
         """
@@ -32,7 +32,7 @@ class Browser:
 
         CmdEntry({"cmd": cmd_to_run}).interpret_default()
 
-    def open_cmd(self, url: str, app_mode=False) -> str:
+    def open_cmd(self, url: str, app_mode=False, incognito=False) -> str:
         """
         Returns the shell command to open the browser
         """
@@ -46,7 +46,12 @@ class Browser:
         # if type == SupportedBrowsers.CHROME and app_mode:
         #    return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  --app='{url}'"
 
-        return f"{browser} '{url}'"
+        cmd = f"{browser} '{url}'"
+
+        if type == SupportedBrowsers.CHROME and incognito:
+            cmd = f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  --incognito '{url}'"
+
+        return cmd
 
 
 def main():
