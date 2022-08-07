@@ -95,10 +95,10 @@ class ConfigurationLoader:
         if env_name not in os.environ:
             raise Exception(f"{env_name} must be set to load the entries dynamically")
 
-        print(f"Env: {env_name}={os.environ[env_name]}")
+        logging.info(f"Env: {env_name}={os.environ[env_name]}")
         folder = os.environ[env_name]
 
-        entries_location = os.path.join(folder, "entries/entries_main.py")
+        entries_location = os.path.join(folder, "entries_main.py")
 
         if not os.path.exists(entries_location):
             raise Exception(f"Could not find entries main file {entries_location}")

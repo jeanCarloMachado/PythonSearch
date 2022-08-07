@@ -24,6 +24,7 @@ mlflow = "^1.27.0"
 sklearn = "^0.0"
 uvicorn = "^0.18.2"
 PySimpleGUI = "^4.60.1"
+sentence-transformers = "^2.2.2"
 
 
 [tool.poetry.dev-dependencies]

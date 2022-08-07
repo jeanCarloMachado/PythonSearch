@@ -1,17 +1,11 @@
 from typing import List
 
+from python_search.config import ConfigurationLoader
+
 
 class EntriesLoader:
     """Class to access the current existing key"""
 
     @staticmethod
     def load_all_keys() -> List[str]:
-        from entries_main import config
-
-        return list(config.commands.keys())
-
-    @staticmethod
-    def load_all_entries() -> List[str]:
-        from entries_main import config
-
-        return config.commands
+        return list(ConfigurationLoader().load_entries().keys())

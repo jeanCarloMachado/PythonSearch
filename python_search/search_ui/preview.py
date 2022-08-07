@@ -1,7 +1,12 @@
 from datetime import datetime
 
+from python_search.config import ConfigurationLoader
+
 
 class Preview:
+    def __init__(self):
+        self.configuration = ConfigurationLoader()
+
     def display(self, entry_text):
         """
         Prints the entry in the preview window
@@ -11,9 +16,7 @@ class Preview:
 
         try:
 
-            from python_search.ranking.entries_loader import EntriesLoader
-
-            entry_data = EntriesLoader.load_all_entries()[key]
+            entry_data = self.configuration.load_entries()[key]
             print("")
             if "url" in entry_data:
                 print(f"{Fore.BLUE}{entry_data['url']}{Style.RESET_ALL}")
