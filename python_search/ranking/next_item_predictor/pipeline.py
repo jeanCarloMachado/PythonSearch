@@ -58,6 +58,23 @@ class Pipeline:
 
         return dataset
 
+    def train(self, use_cache=False, log_model=True):
+        """
+        Trains both xgboost and keras models
+
+        Args:
+            use_cache:
+            log_model:
+
+        Returns:
+
+        """
+        parameters = locals()
+        del parameters["self"]
+
+        self.train_xgboost(**parameters)
+        self.train_keras(**parameters)
+
     @timeit
     def train_keras(
         self,
@@ -67,6 +84,7 @@ class Pipeline:
         use_cache=True,
         log_model=True,
     ):
+        print("Start training Keras model")
         if not dataset:
             print(f"Using data with cache: {use_cache} type: {type(use_cache)}")
             dataset = self.build_dataset(use_cache=use_cache)
@@ -87,17 +105,11 @@ class Pipeline:
             }
         )
 
-    def train(self, use_cache=False, log_model=True):
-        parameters = locals()
-        del parameters["self"]
-
-        self.train_keras(**parameters)
-        self.train_xgboost(**parameters)
-
     def train_xgboost(self, use_cache=False, log_model=True):
         """
         Train the XGBoost model
         """
+        print("Start training XGBoost model")
         dataset = self.build_dataset(use_cache=use_cache)
         if log_model:
             TrainXGBoost().train_and_log(dataset)

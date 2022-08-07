@@ -8,4 +8,8 @@ class EntriesLoader:
 
     @staticmethod
     def load_all_keys() -> List[str]:
-        return list(ConfigurationLoader().load_entries().keys())
+        keys = list(ConfigurationLoader().load_entries().keys())
+
+        print("Loaded in total " + str(len(keys)) + " keys")
+
+        return keys

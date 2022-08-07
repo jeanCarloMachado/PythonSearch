@@ -32,7 +32,7 @@ entries = {
 }
 
 
-# this configuration file contains all customizeable options for search run
+# this configuration file contains all customizable options for search run
 from python_search.config import PythonSearchConfiguration
 
 config = PythonSearchConfiguration(entries=entries)

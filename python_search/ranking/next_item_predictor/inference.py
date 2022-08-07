@@ -23,7 +23,7 @@ class Inference:
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "dc69421a40d24ddda816b7033698a72c"
+    PRODUCTION_RUN_ID = "de432f5e006b425283f18741c6b22429"
 
     def __init__(
         self,
@@ -106,7 +106,6 @@ class Inference:
                 )
             )
 
-        breakpoint()
         return X
 
     @timeit

@@ -8,7 +8,7 @@ authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
 python = ">=3.8,<4.0"
 fire = "^0.4.0"
 pydantic = "^1.9.1"
-numpy = "^1.23.1"
+numpy = "1.23.*"
 pandas = "^1.4.3"
 pyspark = "^3.3.0"
 personal-grimoire = "1.6"
@@ -25,6 +25,7 @@ sklearn = "^0.0"
 uvicorn = "^0.18.2"
 PySimpleGUI = "^4.60.1"
 sentence-transformers = "^2.2.2"
+matplotlib = "^3.5.2"
 
 
 [tool.poetry.dev-dependencies]
