@@ -79,7 +79,8 @@ To understand the options run:
 python_search --help
 ```
 
-Complete installation instructions can be found in the [installation manual](docs/installation.md)
+Complete installation instructions can be found in the [installation manual](docs/installation.md).
+You can also find the [code documentation here](https://jeancarlomachado.net/PythonSearch/).
 
 ## Legal
 
