@@ -26,6 +26,7 @@ uvicorn = "^0.18.2"
 PySimpleGUI = "^4.60.1"
 sentence-transformers = "^2.2.2"
 matplotlib = "^3.5.2"
+pdoc3 = {version = "^0.10.0", optional = true}
 
 
 [tool.poetry.dev-dependencies]

@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>python_search.shortcuts API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>python_search.shortcuts</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Shortcuts:
+    &#34;&#34;&#34;
+    @todo move this out of the repo
+    List of mapped i3 shortcuts, in gnome the syntax is different.
+    &#34;&#34;&#34;
+
+    CTRL_W = &#34;Control+w&#34;
+    CTRL_V = &#34;Control+v&#34;
+    CTRL_SPACE = &#34;Control+space&#34;
+    SUPER_SPACE = &#34;Mod4+space&#34;
+    SUPER_A = &#34;Mod4+A&#34;
+    SUPER_W = &#34;Mod4+w&#34;
+    SUPER_D = &#34;Mod4+d&#34;
+    SUPER_P = &#34;Mod4+p&#34;
+
+    ALT_SPACE = &#34;Mod1+space&#34;
+    ALT_SHIFT_SPACE = &#34;Mod1+Shift+space&#34;
+    ALT_SHIFT_D = &#34;Mod1+Shift+d&#34;
+    ALT_SHIFT_S = &#34;Mod1+Shift+s&#34;
+    ALT_SHIFT_J = &#34;Mod1+Shift+j&#34;
+    ALT_SHIFT_L = &#34;Mod1+Shift+l&#34;
+    SUPER_H = &#34;Mod4+h&#34;
+    SUPER_SHIFT_H = &#34;Mod4+Shift+h&#34;
+    CTRL_SHIFT_H = &#34;Control+Shift+h&#34;
+    CTRL_H = &#34;Control+h&#34;
+    ALT_H = &#34;Mod1+h&#34;
+    ALT_A = &#34;Mod1+a&#34;
+    ALT_V = &#34;Mod1+v&#34;
+    ALT_SHIFT_A = &#34;Mod1+Shift+a&#34;
+    ALT_SHIFT_H = &#34;Mod1+Shift+h&#34;
+    CTRL_B = &#34;Control+b&#34;
+    CTRL_E = &#34;Control+e&#34;
+    CTRL_P = &#34;Control+p&#34;
+    CTRL_I = &#34;Control+i&#34;
+    CTRL_K = &#34;Control+k&#34;
+    CTRL_D = &#34;Control+d&#34;
+    CTRL_L = &#34;Control+l&#34;
+    CTRL_SHIFT_D = &#34;Control+Shift+d&#34;
+    CTRL_SHIFT_K = &#34;Control+Shift+k&#34;
+    CTRL_SHIFT_E = &#34;Control+Shift+e&#34;
+    ALT_SHIFT_X = &#34;Mod1+Shift+x&#34;
+    CTRL_5 = &#34;Control+5&#34;
+    CTRL_Q = &#34;Control+q&#34;
+    SUPER_T = &#34;Mod4+t&#34;
+    SUPER_0 = &#34;Mod4+0&#34;
+    SUPER_9 = &#34;Mod4+9&#34;
+    SUPER_8 = &#34;Mod4+8&#34;
+    SUPER_7 = &#34;Mod4+7&#34;
+
+    SUPER_SHIFT_W = &#34;Mod4+Shift+w&#34;
+    SUPER_SHIFT_V = &#34;Mod4+Shift+v&#34;
+
+    CTRL_SHIFT_N = &#34;Control+Shift+n&#34;
+    CTRL_SHIFT_9 = &#34;Control+Shift+9&#34;
+    CTRL_SHIFT_X = &#34;Control+Shift+x&#34;
+    CTRL_SHIFT_F = &#34;Control+Shift+f&#34;
+    CTRL_SHIFT_8 = &#34;Control+Shift+8&#34;
+    CTRL_SHIFT_7 = &#34;Control+Shift+7&#34;
+    CTRL_SHIFT_6 = &#34;Control+Shift+6&#34;
+    CTRL_SHIFT_5 = &#34;Control+Shift+5&#34;
+    CTRL_SHIFT_4 = &#34;Control+Shift+4&#34;
+    CTRL_SHIFT_3 = &#34;Control+Shift+3&#34;
+    CTRL_SHIFT_1 = &#34;Control+Shift+1&#34;
+
+    CTRL_SHIFT_G = &#34;Control+Shift+g&#34;
+    CTRL_SHIFT_P = &#34;Control+Shift+p&#34;
+    CTRL_SHIFT_W = &#34;Control+Shift+w&#34;
+    CTRL_ALT_T = &#34;Control+Mod1+t&#34;
+    ALT_SHIFT_T = &#34;Mod1+Shift+t&#34;
+
+    ALT_SHIFT_I = &#34;Mod1+Shift+i&#34;
+    ALT_SHIFT_0 = &#34;Mod1+Shift+0&#34;
+    CTRL_SHIFT_0 = &#34;Control+Shift+0&#34;
+    ALT_SHIFT_Z = &#34;Mod1+Shift+z&#34;
+    ALT_K = &#34;Mod1+k&#34;
+    ALT_O = &#34;Mod1+o&#34;
+    ALT_T = &#34;Mod1+t&#34;
+    ALT_SHIFT_K = &#34;Mod1+Shift+k&#34;
+    ALT_D = &#34;Mod1+d&#34;
+    ALT_I = &#34;Mod1+i&#34;
+    ALT_P = &#34;Mod1+p&#34;
+    ALT_SHIFT_P = &#34;Mod1+Shift+p&#34;
+    ALT_W = &#34;Mod1+w&#34;
+    ALT_SHIFT_W = &#34;Mod1+Shift+w&#34;
+    ALT_U = &#34;Mod1+u&#34;
+    ALT_N = &#34;Mod1+n&#34;
+    ALT_M = &#34;Mod1+m&#34;
+    SUPER_M = &#34;Mod4+m&#34;
+    ALT_SHIFT_M = &#34;Mod1+Shift+m&#34;
+    ALT_F = &#34;Mod1+f&#34;
+    ALT_SHIFT_F = &#34;Mod1+Shift+f&#34;
+    ALT_E = &#34;Mod1+e&#34;
+    ALT_C = &#34;Mod1+c&#34;
+    ALT_SHIFT_J = &#34;Mod1+Shift+j&#34;
+    CTRL_J = &#34;Control+j&#34;
+    CTRL_SHIFT_J = &#34;Control+Shift+j&#34;
+    ALT_SHIFT_E = &#34;Mod1+Shift+e&#34;
+    ALT_SHIFT_N = &#34;Mod1+Shift+n&#34;
+
+    ALT_J = &#34;Mod1+j&#34;
+    ALT_G = &#34;Mod1+g&#34;
+    ALT_B = &#34;Mod1+b&#34;
+    ALT_SHIFT_B = &#34;Mod1+Shift+b&#34;
+    SUPER_B = &#34;Mod4+b&#34;
+    SUPER_SHIFT_B = &#34;Mod4+Shift+b&#34;
+    SUPER_SHIFT_1 = &#34;Mod4+Shift+1&#34;
+    SUPER_SHIFT_2 = &#34;Mod4+Shift+2&#34;
+    SUPER_SHIFT_3 = &#34;Mod4+Shift+3&#34;
+    SUPER_SHIFT_4 = &#34;Mod4+Shift+4&#34;
+    ALT_L = &#34;Mod1+l&#34;
+    ALT_SHIFT_L = &#34;Mod1+Shift+l&#34;
+    ALT_SHIFT_G = &#34;Mod1+Shift+g&#34;
+
+    CTRL_1 = &#34;Control+1&#34;
+    CTRL_2 = &#34;Control+2&#34;
+    CTRL_3 = &#34;Control+3&#34;
+    CTRL_4 = &#34;Control+4&#34;
+    CTRL_5 = &#34;Control+5&#34;
+    CTRL_6 = &#34;Control+6&#34;
+    CTRL_7 = &#34;Control+7&#34;
+    CTRL_8 = &#34;Control+8&#34;
+    CTRL_9 = &#34;Control+9&#34;
+    CTRL_0 = &#34;Control+0&#34;
+
+    ALT_1 = &#34;Mod1+1&#34;
+    ALT_2 = &#34;Mod1+2&#34;
+    ALT_3 = &#34;Mod1+3&#34;
+    ALT_4 = &#34;Mod1+4&#34;
+    ALT_5 = &#34;Mod1+5&#34;
+    ALT_6 = &#34;Mod1+6&#34;
+    ALT_7 = &#34;Mod1+7&#34;
+    ALT_8 = &#34;Mod1+8&#34;
+    ALT_9 = &#34;Mod1+9&#34;
+    ALT_0 = &#34;Mod1+0&#34;
+
+    ALT_SHIFT_1 = &#34;Mod1+Shift+1&#34;
+    ALT_SHIFT_2 = &#34;Mod1+Shift+2&#34;
+    ALT_SHIFT_3 = &#34;Mod1+Shift+3&#34;
+    ALT_SHIFT_4 = &#34;Mod1+Shift+4&#34;
+    ALT_SHIFT_5 = &#34;Mod1+Shift+5&#34;
+    ALT_SHIFT_6 = &#34;Mod1+Shift+6&#34;
+    ALT_SHIFT_7 = &#34;Mod1+Shift+7&#34;
+    ALT_SHIFT_8 = &#34;Mod1+Shift+8&#34;
+    ALT_SHIFT_9 = &#34;Mod1+Shift+9&#34;
+    ALT_SHIFT_0 = &#34;Mod1+Shift+0&#34;
+
+    CTRL_1 = &#34;Control+1&#34;
+    CTRL_2 = &#34;Control+2&#34;
+    CTRL_3 = &#34;Control+3&#34;
+    CTRL_4 = &#34;Control+4&#34;
+    CTRL_5 = &#34;Control+5&#34;
+    CTRL_6 = &#34;Control+6&#34;
+    CTRL_7 = &#34;Control+7&#34;
+    CTRL_8 = &#34;Control+8&#34;
+    CTRL_9 = &#34;Control+9&#34;
+    CTRL_0 = &#34;Control+0&#34;
+
+    CTRL_SHIFT_1 = &#34;Control+Shift+1&#34;
+    CTRL_SHIFT_2 = &#34;Control+Shift+2&#34;
+    CTRL_SHIFT_3 = &#34;Control+Shift+3&#34;
+    CTRL_SHIFT_4 = &#34;Control+Shift+4&#34;
+    CTRL_SHIFT_5 = &#34;Control+Shift+5&#34;
+    CTRL_SHIFT_6 = &#34;Control+Shift+6&#34;
+    CTRL_SHIFT_7 = &#34;Control+Shift+7&#34;
+    CTRL_SHIFT_8 = &#34;Control+Shift+8&#34;
+    CTRL_SHIFT_9 = &#34;Control+Shift+9&#34;
+    CTRL_SHIFT_0 = &#34;Control+Shift+0&#34;
+
+    SUPER_U = &#34;Mod4+u&#34;
+    SUPER_E = &#34;Mod4+e&#34;
+    CAPS_E = &#34;Mod3+e&#34;
+    SUPER_SHIFT_E = &#34;Mod4+Shift+e&#34;
+    SUPER_SHIFT_C = &#34;Mod4+Shift+c&#34;
+    SUPER_SHIFT_T = &#34;Mod4+Shift+t&#34;
+    SUPER_G = &#34;Mod4+g&#34;
+    SUPER_SHIFT_G = &#34;Mod4+Shift+g&#34;
+    SUPER_Y = &#34;Mod4+y&#34;
+    SUPER_I = &#34;Mod4+i&#34;
+    SUPER_SHIFT_I = &#34;Mod4+Shift+i&#34;
+    SUPER_SHIFT_O = &#34;Mod4+Shift+o&#34;
+    SUPER_S = &#34;Mod4+s&#34;
+    SUPER_C = &#34;Mod4+c&#34;
+
+    SUPER_R = &#34;Mod4+r&#34;
+    SUPER_SHIFT_R = &#34;Mod4+Shift+r&#34;
+
+    ALT_R = &#34;Mod1+r&#34;
+    ALT_SHIFT_R = &#34;Mod1+Shift+r&#34;
+    ALT_SHIFT_V = &#34;Mod1+Shift+v&#34;
+
+    @staticmethod
+    @property
+    def SUPER_L():
+        raise Exception(&#34;Key mapped by system, should not be used&#34;)
+
+    @staticmethod
+    @property
+    def SUPER_O():
+        raise Exception(&#34;Key mapped by system, should not be used&#34;)
+
+    @staticmethod
+    @property
+    def SUPER_V():
+        raise Exception(&#34;Key mapped by system, should not be used&#34;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="python_search.shortcuts.Shortcuts"><code class="flex name class">
+<span>class <span class="ident">Shortcuts</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>@todo move this out of the repo
+List of mapped i3 shortcuts, in gnome the syntax is different.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Shortcuts:
+    &#34;&#34;&#34;
+    @todo move this out of the repo
+    List of mapped i3 shortcuts, in gnome the syntax is different.
+    &#34;&#34;&#34;
+
+    CTRL_W = &#34;Control+w&#34;
+    CTRL_V = &#34;Control+v&#34;
+    CTRL_SPACE = &#34;Control+space&#34;
+    SUPER_SPACE = &#34;Mod4+space&#34;
+    SUPER_A = &#34;Mod4+A&#34;
+    SUPER_W = &#34;Mod4+w&#34;
+    SUPER_D = &#34;Mod4+d&#34;
+    SUPER_P = &#34;Mod4+p&#34;
+
+    ALT_SPACE = &#34;Mod1+space&#34;
+    ALT_SHIFT_SPACE = &#34;Mod1+Shift+space&#34;
+    ALT_SHIFT_D = &#34;Mod1+Shift+d&#34;
+    ALT_SHIFT_S = &#34;Mod1+Shift+s&#34;
+    ALT_SHIFT_J = &#34;Mod1+Shift+j&#34;
+    ALT_SHIFT_L = &#34;Mod1+Shift+l&#34;
+    SUPER_H = &#34;Mod4+h&#34;
+    SUPER_SHIFT_H = &#34;Mod4+Shift+h&#34;
+    CTRL_SHIFT_H = &#34;Control+Shift+h&#34;
+    CTRL_H = &#34;Control+h&#34;
+    ALT_H = &#34;Mod1+h&#34;
+    ALT_A = &#34;Mod1+a&#34;
+    ALT_V = &#34;Mod1+v&#34;
+    ALT_SHIFT_A = &#34;Mod1+Shift+a&#34;
+    ALT_SHIFT_H = &#34;Mod1+Shift+h&#34;
+    CTRL_B = &#34;Control+b&#34;
+    CTRL_E = &#34;Control+e&#34;
+    CTRL_P = &#34;Control+p&#34;
+    CTRL_I = &#34;Control+i&#34;
+    CTRL_K = &#34;Control+k&#34;
+    CTRL_D = &#34;Control+d&#34;
+    CTRL_L = &#34;Control+l&#34;
+    CTRL_SHIFT_D = &#34;Control+Shift+d&#34;
+    CTRL_SHIFT_K = &#34;Control+Shift+k&#34;
+    CTRL_SHIFT_E = &#34;Control+Shift+e&#34;
+    ALT_SHIFT_X = &#34;Mod1+Shift+x&#34;
+    CTRL_5 = &#34;Control+5&#34;
+    CTRL_Q = &#34;Control+q&#34;
+    SUPER_T = &#34;Mod4+t&#34;
+    SUPER_0 = &#34;Mod4+0&#34;
+    SUPER_9 = &#34;Mod4+9&#34;
+    SUPER_8 = &#34;Mod4+8&#34;
+    SUPER_7 = &#34;Mod4+7&#34;
+
+    SUPER_SHIFT_W = &#34;Mod4+Shift+w&#34;
+    SUPER_SHIFT_V = &#34;Mod4+Shift+v&#34;
+
+    CTRL_SHIFT_N = &#34;Control+Shift+n&#34;
+    CTRL_SHIFT_9 = &#34;Control+Shift+9&#34;
+    CTRL_SHIFT_X = &#34;Control+Shift+x&#34;
+    CTRL_SHIFT_F = &#34;Control+Shift+f&#34;
+    CTRL_SHIFT_8 = &#34;Control+Shift+8&#34;
+    CTRL_SHIFT_7 = &#34;Control+Shift+7&#34;
+    CTRL_SHIFT_6 = &#34;Control+Shift+6&#34;
+    CTRL_SHIFT_5 = &#34;Control+Shift+5&#34;
+    CTRL_SHIFT_4 = &#34;Control+Shift+4&#34;
+    CTRL_SHIFT_3 = &#34;Control+Shift+3&#34;
+    CTRL_SHIFT_1 = &#34;Control+Shift+1&#34;
+
+    CTRL_SHIFT_G = &#34;Control+Shift+g&#34;
+    CTRL_SHIFT_P = &#34;Control+Shift+p&#34;
+    CTRL_SHIFT_W = &#34;Control+Shift+w&#34;
+    CTRL_ALT_T = &#34;Control+Mod1+t&#34;
+    ALT_SHIFT_T = &#34;Mod1+Shift+t&#34;
+
+    ALT_SHIFT_I = &#34;Mod1+Shift+i&#34;
+    ALT_SHIFT_0 = &#34;Mod1+Shift+0&#34;
+    CTRL_SHIFT_0 = &#34;Control+Shift+0&#34;
+    ALT_SHIFT_Z = &#34;Mod1+Shift+z&#34;
+    ALT_K = &#34;Mod1+k&#34;
+    ALT_O = &#34;Mod1+o&#34;
+    ALT_T = &#34;Mod1+t&#34;
+    ALT_SHIFT_K = &#34;Mod1+Shift+k&#34;
+    ALT_D = &#34;Mod1+d&#34;
+    ALT_I = &#34;Mod1+i&#34;
+    ALT_P = &#34;Mod1+p&#34;
+    ALT_SHIFT_P = &#34;Mod1+Shift+p&#34;
+    ALT_W = &#34;Mod1+w&#34;
+    ALT_SHIFT_W = &#34;Mod1+Shift+w&#34;
+    ALT_U = &#34;Mod1+u&#34;
+    ALT_N = &#34;Mod1+n&#34;
+    ALT_M = &#34;Mod1+m&#34;
+    SUPER_M = &#34;Mod4+m&#34;
+    ALT_SHIFT_M = &#34;Mod1+Shift+m&#34;
+    ALT_F = &#34;Mod1+f&#34;
+    ALT_SHIFT_F = &#34;Mod1+Shift+f&#34;
+    ALT_E = &#34;Mod1+e&#34;
+    ALT_C = &#34;Mod1+c&#34;
+    ALT_SHIFT_J = &#34;Mod1+Shift+j&#34;
+    CTRL_J = &#34;Control+j&#34;
+    CTRL_SHIFT_J = &#34;Control+Shift+j&#34;
+    ALT_SHIFT_E = &#34;Mod1+Shift+e&#34;
+    ALT_SHIFT_N = &#34;Mod1+Shift+n&#34;
+
+    ALT_J = &#34;Mod1+j&#34;
+    ALT_G = &#34;Mod1+g&#34;
+    ALT_B = &#34;Mod1+b&#34;
+    ALT_SHIFT_B = &#34;Mod1+Shift+b&#34;
+    SUPER_B = &#34;Mod4+b&#34;
+    SUPER_SHIFT_B = &#34;Mod4+Shift+b&#34;
+    SUPER_SHIFT_1 = &#34;Mod4+Shift+1&#34;
+    SUPER_SHIFT_2 = &#34;Mod4+Shift+2&#34;
+    SUPER_SHIFT_3 = &#34;Mod4+Shift+3&#34;
+    SUPER_SHIFT_4 = &#34;Mod4+Shift+4&#34;
+    ALT_L = &#34;Mod1+l&#34;
+    ALT_SHIFT_L = &#34;Mod1+Shift+l&#34;
+    ALT_SHIFT_G = &#34;Mod1+Shift+g&#34;
+
+    CTRL_1 = &#34;Control+1&#34;
+    CTRL_2 = &#34;Control+2&#34;
+    CTRL_3 = &#34;Control+3&#34;
+    CTRL_4 = &#34;Control+4&#34;
+    CTRL_5 = &#34;Control+5&#34;
+    CTRL_6 = &#34;Control+6&#34;
+    CTRL_7 = &#34;Control+7&#34;
+    CTRL_8 = &#34;Control+8&#34;
+    CTRL_9 = &#34;Control+9&#34;
+    CTRL_0 = &#34;Control+0&#34;
+
+    ALT_1 = &#34;Mod1+1&#34;
+    ALT_2 = &#34;Mod1+2&#34;
+    ALT_3 = &#34;Mod1+3&#34;
+    ALT_4 = &#34;Mod1+4&#34;
+    ALT_5 = &#34;Mod1+5&#34;
+    ALT_6 = &#34;Mod1+6&#34;
+    ALT_7 = &#34;Mod1+7&#34;
+    ALT_8 = &#34;Mod1+8&#34;
+    ALT_9 = &#34;Mod1+9&#34;
+    ALT_0 = &#34;Mod1+0&#34;
+
+    ALT_SHIFT_1 = &#34;Mod1+Shift+1&#34;
+    ALT_SHIFT_2 = &#34;Mod1+Shift+2&#34;
+    ALT_SHIFT_3 = &#34;Mod1+Shift+3&#34;
+    ALT_SHIFT_4 = &#34;Mod1+Shift+4&#34;
+    ALT_SHIFT_5 = &#34;Mod1+Shift+5&#34;
+    ALT_SHIFT_6 = &#34;Mod1+Shift+6&#34;
+    ALT_SHIFT_7 = &#34;Mod1+Shift+7&#34;
+    ALT_SHIFT_8 = &#34;Mod1+Shift+8&#34;
+    ALT_SHIFT_9 = &#34;Mod1+Shift+9&#34;
+    ALT_SHIFT_0 = &#34;Mod1+Shift+0&#34;
+
+    CTRL_1 = &#34;Control+1&#34;
+    CTRL_2 = &#34;Control+2&#34;
+    CTRL_3 = &#34;Control+3&#34;
+    CTRL_4 = &#34;Control+4&#34;
+    CTRL_5 = &#34;Control+5&#34;
+    CTRL_6 = &#34;Control+6&#34;
+    CTRL_7 = &#34;Control+7&#34;
+    CTRL_8 = &#34;Control+8&#34;
+    CTRL_9 = &#34;Control+9&#34;
+    CTRL_0 = &#34;Control+0&#34;
+
+    CTRL_SHIFT_1 = &#34;Control+Shift+1&#34;
+    CTRL_SHIFT_2 = &#34;Control+Shift+2&#34;
+    CTRL_SHIFT_3 = &#34;Control+Shift+3&#34;
+    CTRL_SHIFT_4 = &#34;Control+Shift+4&#34;
+    CTRL_SHIFT_5 = &#34;Control+Shift+5&#34;
+    CTRL_SHIFT_6 = &#34;Control+Shift+6&#34;
+    CTRL_SHIFT_7 = &#34;Control+Shift+7&#34;
+    CTRL_SHIFT_8 = &#34;Control+Shift+8&#34;
+    CTRL_SHIFT_9 = &#34;Control+Shift+9&#34;
+    CTRL_SHIFT_0 = &#34;Control+Shift+0&#34;
+
+    SUPER_U = &#34;Mod4+u&#34;
+    SUPER_E = &#34;Mod4+e&#34;
+    CAPS_E = &#34;Mod3+e&#34;
+    SUPER_SHIFT_E = &#34;Mod4+Shift+e&#34;
+    SUPER_SHIFT_C = &#34;Mod4+Shift+c&#34;
+    SUPER_SHIFT_T = &#34;Mod4+Shift+t&#34;
+    SUPER_G = &#34;Mod4+g&#34;
+    SUPER_SHIFT_G = &#34;Mod4+Shift+g&#34;
+    SUPER_Y = &#34;Mod4+y&#34;
+    SUPER_I = &#34;Mod4+i&#34;
+    SUPER_SHIFT_I = &#34;Mod4+Shift+i&#34;
+    SUPER_SHIFT_O = &#34;Mod4+Shift+o&#34;
+    SUPER_S = &#34;Mod4+s&#34;
+    SUPER_C = &#34;Mod4+c&#34;
+
+    SUPER_R = &#34;Mod4+r&#34;
+    SUPER_SHIFT_R = &#34;Mod4+Shift+r&#34;
+
+    ALT_R = &#34;Mod1+r&#34;
+    ALT_SHIFT_R = &#34;Mod1+Shift+r&#34;
+    ALT_SHIFT_V = &#34;Mod1+Shift+v&#34;
+
+    @staticmethod
+    @property
+    def SUPER_L():
+        raise Exception(&#34;Key mapped by system, should not be used&#34;)
+
+    @staticmethod
+    @property
+    def SUPER_O():
+        raise Exception(&#34;Key mapped by system, should not be used&#34;)
+
+    @staticmethod
+    @property
+    def SUPER_V():
+        raise Exception(&#34;Key mapped by system, should not be used&#34;)</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="python_search.shortcuts.Shortcuts.ALT_0"><code class="name">var <span class="ident">ALT_0</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_1"><code class="name">var <span class="ident">ALT_1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_2"><code class="name">var <span class="ident">ALT_2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_3"><code class="name">var <span class="ident">ALT_3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_4"><code class="name">var <span class="ident">ALT_4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_5"><code class="name">var <span class="ident">ALT_5</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_6"><code class="name">var <span class="ident">ALT_6</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_7"><code class="name">var <span class="ident">ALT_7</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_8"><code class="name">var <span class="ident">ALT_8</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_9"><code class="name">var <span class="ident">ALT_9</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_A"><code class="name">var <span class="ident">ALT_A</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_B"><code class="name">var <span class="ident">ALT_B</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_C"><code class="name">var <span class="ident">ALT_C</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_D"><code class="name">var <span class="ident">ALT_D</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_E"><code class="name">var <span class="ident">ALT_E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_F"><code class="name">var <span class="ident">ALT_F</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_G"><code class="name">var <span class="ident">ALT_G</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_H"><code class="name">var <span class="ident">ALT_H</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_I"><code class="name">var <span class="ident">ALT_I</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_J"><code class="name">var <span class="ident">ALT_J</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_K"><code class="name">var <span class="ident">ALT_K</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_L"><code class="name">var <span class="ident">ALT_L</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_M"><code class="name">var <span class="ident">ALT_M</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_N"><code class="name">var <span class="ident">ALT_N</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_O"><code class="name">var <span class="ident">ALT_O</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_P"><code class="name">var <span class="ident">ALT_P</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_R"><code class="name">var <span class="ident">ALT_R</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_0"><code class="name">var <span class="ident">ALT_SHIFT_0</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_1"><code class="name">var <span class="ident">ALT_SHIFT_1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_2"><code class="name">var <span class="ident">ALT_SHIFT_2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_3"><code class="name">var <span class="ident">ALT_SHIFT_3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_4"><code class="name">var <span class="ident">ALT_SHIFT_4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_5"><code class="name">var <span class="ident">ALT_SHIFT_5</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_6"><code class="name">var <span class="ident">ALT_SHIFT_6</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_7"><code class="name">var <span class="ident">ALT_SHIFT_7</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_8"><code class="name">var <span class="ident">ALT_SHIFT_8</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_9"><code class="name">var <span class="ident">ALT_SHIFT_9</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_A"><code class="name">var <span class="ident">ALT_SHIFT_A</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_B"><code class="name">var <span class="ident">ALT_SHIFT_B</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_D"><code class="name">var <span class="ident">ALT_SHIFT_D</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_E"><code class="name">var <span class="ident">ALT_SHIFT_E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_F"><code class="name">var <span class="ident">ALT_SHIFT_F</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_G"><code class="name">var <span class="ident">ALT_SHIFT_G</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_H"><code class="name">var <span class="ident">ALT_SHIFT_H</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_I"><code class="name">var <span class="ident">ALT_SHIFT_I</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_J"><code class="name">var <span class="ident">ALT_SHIFT_J</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_K"><code class="name">var <span class="ident">ALT_SHIFT_K</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_L"><code class="name">var <span class="ident">ALT_SHIFT_L</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_M"><code class="name">var <span class="ident">ALT_SHIFT_M</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_N"><code class="name">var <span class="ident">ALT_SHIFT_N</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_P"><code class="name">var <span class="ident">ALT_SHIFT_P</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_R"><code class="name">var <span class="ident">ALT_SHIFT_R</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_S"><code class="name">var <span class="ident">ALT_SHIFT_S</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_SPACE"><code class="name">var <span class="ident">ALT_SHIFT_SPACE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_T"><code class="name">var <span class="ident">ALT_SHIFT_T</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_V"><code class="name">var <span class="ident">ALT_SHIFT_V</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_W"><code class="name">var <span class="ident">ALT_SHIFT_W</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_X"><code class="name">var <span class="ident">ALT_SHIFT_X</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SHIFT_Z"><code class="name">var <span class="ident">ALT_SHIFT_Z</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_SPACE"><code class="name">var <span class="ident">ALT_SPACE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_T"><code class="name">var <span class="ident">ALT_T</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_U"><code class="name">var <span class="ident">ALT_U</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_V"><code class="name">var <span class="ident">ALT_V</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.ALT_W"><code class="name">var <span class="ident">ALT_W</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CAPS_E"><code class="name">var <span class="ident">CAPS_E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_0"><code class="name">var <span class="ident">CTRL_0</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_1"><code class="name">var <span class="ident">CTRL_1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_2"><code class="name">var <span class="ident">CTRL_2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_3"><code class="name">var <span class="ident">CTRL_3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_4"><code class="name">var <span class="ident">CTRL_4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_5"><code class="name">var <span class="ident">CTRL_5</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_6"><code class="name">var <span class="ident">CTRL_6</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_7"><code class="name">var <span class="ident">CTRL_7</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_8"><code class="name">var <span class="ident">CTRL_8</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_9"><code class="name">var <span class="ident">CTRL_9</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_ALT_T"><code class="name">var <span class="ident">CTRL_ALT_T</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_B"><code class="name">var <span class="ident">CTRL_B</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_D"><code class="name">var <span class="ident">CTRL_D</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_E"><code class="name">var <span class="ident">CTRL_E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_H"><code class="name">var <span class="ident">CTRL_H</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_I"><code class="name">var <span class="ident">CTRL_I</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_J"><code class="name">var <span class="ident">CTRL_J</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_K"><code class="name">var <span class="ident">CTRL_K</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_L"><code class="name">var <span class="ident">CTRL_L</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_P"><code class="name">var <span class="ident">CTRL_P</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_Q"><code class="name">var <span class="ident">CTRL_Q</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_0"><code class="name">var <span class="ident">CTRL_SHIFT_0</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_1"><code class="name">var <span class="ident">CTRL_SHIFT_1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_2"><code class="name">var <span class="ident">CTRL_SHIFT_2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_3"><code class="name">var <span class="ident">CTRL_SHIFT_3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_4"><code class="name">var <span class="ident">CTRL_SHIFT_4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_5"><code class="name">var <span class="ident">CTRL_SHIFT_5</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_6"><code class="name">var <span class="ident">CTRL_SHIFT_6</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_7"><code class="name">var <span class="ident">CTRL_SHIFT_7</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_8"><code class="name">var <span class="ident">CTRL_SHIFT_8</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_9"><code class="name">var <span class="ident">CTRL_SHIFT_9</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_D"><code class="name">var <span class="ident">CTRL_SHIFT_D</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_E"><code class="name">var <span class="ident">CTRL_SHIFT_E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_F"><code class="name">var <span class="ident">CTRL_SHIFT_F</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_G"><code class="name">var <span class="ident">CTRL_SHIFT_G</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_H"><code class="name">var <span class="ident">CTRL_SHIFT_H</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_J"><code class="name">var <span class="ident">CTRL_SHIFT_J</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_K"><code class="name">var <span class="ident">CTRL_SHIFT_K</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_N"><code class="name">var <span class="ident">CTRL_SHIFT_N</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_P"><code class="name">var <span class="ident">CTRL_SHIFT_P</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_W"><code class="name">var <span class="ident">CTRL_SHIFT_W</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SHIFT_X"><code class="name">var <span class="ident">CTRL_SHIFT_X</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_SPACE"><code class="name">var <span class="ident">CTRL_SPACE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_V"><code class="name">var <span class="ident">CTRL_V</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.CTRL_W"><code class="name">var <span class="ident">CTRL_W</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_0"><code class="name">var <span class="ident">SUPER_0</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_7"><code class="name">var <span class="ident">SUPER_7</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_8"><code class="name">var <span class="ident">SUPER_8</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_9"><code class="name">var <span class="ident">SUPER_9</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_A"><code class="name">var <span class="ident">SUPER_A</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_B"><code class="name">var <span class="ident">SUPER_B</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_C"><code class="name">var <span class="ident">SUPER_C</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_D"><code class="name">var <span class="ident">SUPER_D</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_E"><code class="name">var <span class="ident">SUPER_E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_G"><code class="name">var <span class="ident">SUPER_G</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_H"><code class="name">var <span class="ident">SUPER_H</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_I"><code class="name">var <span class="ident">SUPER_I</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_M"><code class="name">var <span class="ident">SUPER_M</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_P"><code class="name">var <span class="ident">SUPER_P</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_R"><code class="name">var <span class="ident">SUPER_R</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_S"><code class="name">var <span class="ident">SUPER_S</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_1"><code class="name">var <span class="ident">SUPER_SHIFT_1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_2"><code class="name">var <span class="ident">SUPER_SHIFT_2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_3"><code class="name">var <span class="ident">SUPER_SHIFT_3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_4"><code class="name">var <span class="ident">SUPER_SHIFT_4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_B"><code class="name">var <span class="ident">SUPER_SHIFT_B</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_C"><code class="name">var <span class="ident">SUPER_SHIFT_C</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_E"><code class="name">var <span class="ident">SUPER_SHIFT_E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_G"><code class="name">var <span class="ident">SUPER_SHIFT_G</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_H"><code class="name">var <span class="ident">SUPER_SHIFT_H</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_I"><code class="name">var <span class="ident">SUPER_SHIFT_I</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_O"><code class="name">var <span class="ident">SUPER_SHIFT_O</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_R"><code class="name">var <span class="ident">SUPER_SHIFT_R</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_T"><code class="name">var <span class="ident">SUPER_SHIFT_T</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_V"><code class="name">var <span class="ident">SUPER_SHIFT_V</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SHIFT_W"><code class="name">var <span class="ident">SUPER_SHIFT_W</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_SPACE"><code class="name">var <span class="ident">SUPER_SPACE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_T"><code class="name">var <span class="ident">SUPER_T</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_U"><code class="name">var <span class="ident">SUPER_U</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_W"><code class="name">var <span class="ident">SUPER_W</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_Y"><code class="name">var <span class="ident">SUPER_Y</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_L"><code class="name">var <span class="ident">SUPER_L</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+@property
+def SUPER_L():
+    raise Exception(&#34;Key mapped by system, should not be used&#34;)</code></pre>
+</details>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_O"><code class="name">var <span class="ident">SUPER_O</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+@property
+def SUPER_O():
+    raise Exception(&#34;Key mapped by system, should not be used&#34;)</code></pre>
+</details>
+</dd>
+<dt id="python_search.shortcuts.Shortcuts.SUPER_V"><code class="name">var <span class="ident">SUPER_V</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+@property
+def SUPER_V():
+    raise Exception(&#34;Key mapped by system, should not be used&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="python_search" href="index.html">python_search</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="python_search.shortcuts.Shortcuts" href="#python_search.shortcuts.Shortcuts">Shortcuts</a></code></h4>
+<ul class="two-column">
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_0" href="#python_search.shortcuts.Shortcuts.ALT_0">ALT_0</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_1" href="#python_search.shortcuts.Shortcuts.ALT_1">ALT_1</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_2" href="#python_search.shortcuts.Shortcuts.ALT_2">ALT_2</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_3" href="#python_search.shortcuts.Shortcuts.ALT_3">ALT_3</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_4" href="#python_search.shortcuts.Shortcuts.ALT_4">ALT_4</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_5" href="#python_search.shortcuts.Shortcuts.ALT_5">ALT_5</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_6" href="#python_search.shortcuts.Shortcuts.ALT_6">ALT_6</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_7" href="#python_search.shortcuts.Shortcuts.ALT_7">ALT_7</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_8" href="#python_search.shortcuts.Shortcuts.ALT_8">ALT_8</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_9" href="#python_search.shortcuts.Shortcuts.ALT_9">ALT_9</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_A" href="#python_search.shortcuts.Shortcuts.ALT_A">ALT_A</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_B" href="#python_search.shortcuts.Shortcuts.ALT_B">ALT_B</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_C" href="#python_search.shortcuts.Shortcuts.ALT_C">ALT_C</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_D" href="#python_search.shortcuts.Shortcuts.ALT_D">ALT_D</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_E" href="#python_search.shortcuts.Shortcuts.ALT_E">ALT_E</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_F" href="#python_search.shortcuts.Shortcuts.ALT_F">ALT_F</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_G" href="#python_search.shortcuts.Shortcuts.ALT_G">ALT_G</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_H" href="#python_search.shortcuts.Shortcuts.ALT_H">ALT_H</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_I" href="#python_search.shortcuts.Shortcuts.ALT_I">ALT_I</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_J" href="#python_search.shortcuts.Shortcuts.ALT_J">ALT_J</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_K" href="#python_search.shortcuts.Shortcuts.ALT_K">ALT_K</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_L" href="#python_search.shortcuts.Shortcuts.ALT_L">ALT_L</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_M" href="#python_search.shortcuts.Shortcuts.ALT_M">ALT_M</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_N" href="#python_search.shortcuts.Shortcuts.ALT_N">ALT_N</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_O" href="#python_search.shortcuts.Shortcuts.ALT_O">ALT_O</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_P" href="#python_search.shortcuts.Shortcuts.ALT_P">ALT_P</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_R" href="#python_search.shortcuts.Shortcuts.ALT_R">ALT_R</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_0" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_0">ALT_SHIFT_0</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_1" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_1">ALT_SHIFT_1</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_2" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_2">ALT_SHIFT_2</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_3" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_3">ALT_SHIFT_3</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_4" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_4">ALT_SHIFT_4</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_5" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_5">ALT_SHIFT_5</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_6" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_6">ALT_SHIFT_6</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_7" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_7">ALT_SHIFT_7</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_8" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_8">ALT_SHIFT_8</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_9" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_9">ALT_SHIFT_9</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_A" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_A">ALT_SHIFT_A</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_B" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_B">ALT_SHIFT_B</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_D" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_D">ALT_SHIFT_D</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_E" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_E">ALT_SHIFT_E</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_F" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_F">ALT_SHIFT_F</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_G" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_G">ALT_SHIFT_G</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_H" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_H">ALT_SHIFT_H</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_I" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_I">ALT_SHIFT_I</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_J" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_J">ALT_SHIFT_J</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_K" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_K">ALT_SHIFT_K</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_L" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_L">ALT_SHIFT_L</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_M" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_M">ALT_SHIFT_M</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_N" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_N">ALT_SHIFT_N</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_P" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_P">ALT_SHIFT_P</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_R" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_R">ALT_SHIFT_R</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_S" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_S">ALT_SHIFT_S</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_SPACE" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_SPACE">ALT_SHIFT_SPACE</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_T" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_T">ALT_SHIFT_T</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_V" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_V">ALT_SHIFT_V</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_W" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_W">ALT_SHIFT_W</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_X" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_X">ALT_SHIFT_X</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SHIFT_Z" href="#python_search.shortcuts.Shortcuts.ALT_SHIFT_Z">ALT_SHIFT_Z</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_SPACE" href="#python_search.shortcuts.Shortcuts.ALT_SPACE">ALT_SPACE</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_T" href="#python_search.shortcuts.Shortcuts.ALT_T">ALT_T</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_U" href="#python_search.shortcuts.Shortcuts.ALT_U">ALT_U</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_V" href="#python_search.shortcuts.Shortcuts.ALT_V">ALT_V</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.ALT_W" href="#python_search.shortcuts.Shortcuts.ALT_W">ALT_W</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CAPS_E" href="#python_search.shortcuts.Shortcuts.CAPS_E">CAPS_E</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_0" href="#python_search.shortcuts.Shortcuts.CTRL_0">CTRL_0</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_1" href="#python_search.shortcuts.Shortcuts.CTRL_1">CTRL_1</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_2" href="#python_search.shortcuts.Shortcuts.CTRL_2">CTRL_2</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_3" href="#python_search.shortcuts.Shortcuts.CTRL_3">CTRL_3</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_4" href="#python_search.shortcuts.Shortcuts.CTRL_4">CTRL_4</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_5" href="#python_search.shortcuts.Shortcuts.CTRL_5">CTRL_5</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_6" href="#python_search.shortcuts.Shortcuts.CTRL_6">CTRL_6</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_7" href="#python_search.shortcuts.Shortcuts.CTRL_7">CTRL_7</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_8" href="#python_search.shortcuts.Shortcuts.CTRL_8">CTRL_8</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_9" href="#python_search.shortcuts.Shortcuts.CTRL_9">CTRL_9</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_ALT_T" href="#python_search.shortcuts.Shortcuts.CTRL_ALT_T">CTRL_ALT_T</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_B" href="#python_search.shortcuts.Shortcuts.CTRL_B">CTRL_B</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_D" href="#python_search.shortcuts.Shortcuts.CTRL_D">CTRL_D</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_E" href="#python_search.shortcuts.Shortcuts.CTRL_E">CTRL_E</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_H" href="#python_search.shortcuts.Shortcuts.CTRL_H">CTRL_H</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_I" href="#python_search.shortcuts.Shortcuts.CTRL_I">CTRL_I</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_J" href="#python_search.shortcuts.Shortcuts.CTRL_J">CTRL_J</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_K" href="#python_search.shortcuts.Shortcuts.CTRL_K">CTRL_K</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_L" href="#python_search.shortcuts.Shortcuts.CTRL_L">CTRL_L</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_P" href="#python_search.shortcuts.Shortcuts.CTRL_P">CTRL_P</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_Q" href="#python_search.shortcuts.Shortcuts.CTRL_Q">CTRL_Q</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_0" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_0">CTRL_SHIFT_0</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_1" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_1">CTRL_SHIFT_1</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_2" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_2">CTRL_SHIFT_2</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_3" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_3">CTRL_SHIFT_3</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_4" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_4">CTRL_SHIFT_4</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_5" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_5">CTRL_SHIFT_5</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_6" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_6">CTRL_SHIFT_6</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_7" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_7">CTRL_SHIFT_7</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_8" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_8">CTRL_SHIFT_8</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_9" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_9">CTRL_SHIFT_9</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_D" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_D">CTRL_SHIFT_D</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_E" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_E">CTRL_SHIFT_E</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_F" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_F">CTRL_SHIFT_F</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_G" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_G">CTRL_SHIFT_G</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_H" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_H">CTRL_SHIFT_H</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_J" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_J">CTRL_SHIFT_J</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_K" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_K">CTRL_SHIFT_K</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_N" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_N">CTRL_SHIFT_N</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_P" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_P">CTRL_SHIFT_P</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_W" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_W">CTRL_SHIFT_W</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SHIFT_X" href="#python_search.shortcuts.Shortcuts.CTRL_SHIFT_X">CTRL_SHIFT_X</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_SPACE" href="#python_search.shortcuts.Shortcuts.CTRL_SPACE">CTRL_SPACE</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_V" href="#python_search.shortcuts.Shortcuts.CTRL_V">CTRL_V</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.CTRL_W" href="#python_search.shortcuts.Shortcuts.CTRL_W">CTRL_W</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_0" href="#python_search.shortcuts.Shortcuts.SUPER_0">SUPER_0</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_7" href="#python_search.shortcuts.Shortcuts.SUPER_7">SUPER_7</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_8" href="#python_search.shortcuts.Shortcuts.SUPER_8">SUPER_8</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_9" href="#python_search.shortcuts.Shortcuts.SUPER_9">SUPER_9</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_A" href="#python_search.shortcuts.Shortcuts.SUPER_A">SUPER_A</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_B" href="#python_search.shortcuts.Shortcuts.SUPER_B">SUPER_B</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_C" href="#python_search.shortcuts.Shortcuts.SUPER_C">SUPER_C</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_D" href="#python_search.shortcuts.Shortcuts.SUPER_D">SUPER_D</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_E" href="#python_search.shortcuts.Shortcuts.SUPER_E">SUPER_E</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_G" href="#python_search.shortcuts.Shortcuts.SUPER_G">SUPER_G</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_H" href="#python_search.shortcuts.Shortcuts.SUPER_H">SUPER_H</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_I" href="#python_search.shortcuts.Shortcuts.SUPER_I">SUPER_I</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_L" href="#python_search.shortcuts.Shortcuts.SUPER_L">SUPER_L</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_M" href="#python_search.shortcuts.Shortcuts.SUPER_M">SUPER_M</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_O" href="#python_search.shortcuts.Shortcuts.SUPER_O">SUPER_O</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_P" href="#python_search.shortcuts.Shortcuts.SUPER_P">SUPER_P</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_R" href="#python_search.shortcuts.Shortcuts.SUPER_R">SUPER_R</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_S" href="#python_search.shortcuts.Shortcuts.SUPER_S">SUPER_S</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_1" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_1">SUPER_SHIFT_1</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_2" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_2">SUPER_SHIFT_2</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_3" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_3">SUPER_SHIFT_3</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_4" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_4">SUPER_SHIFT_4</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_B" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_B">SUPER_SHIFT_B</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_C" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_C">SUPER_SHIFT_C</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_E" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_E">SUPER_SHIFT_E</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_G" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_G">SUPER_SHIFT_G</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_H" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_H">SUPER_SHIFT_H</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_I" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_I">SUPER_SHIFT_I</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_O" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_O">SUPER_SHIFT_O</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_R" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_R">SUPER_SHIFT_R</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_T" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_T">SUPER_SHIFT_T</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_V" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_V">SUPER_SHIFT_V</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SHIFT_W" href="#python_search.shortcuts.Shortcuts.SUPER_SHIFT_W">SUPER_SHIFT_W</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_SPACE" href="#python_search.shortcuts.Shortcuts.SUPER_SPACE">SUPER_SPACE</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_T" href="#python_search.shortcuts.Shortcuts.SUPER_T">SUPER_T</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_U" href="#python_search.shortcuts.Shortcuts.SUPER_U">SUPER_U</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_V" href="#python_search.shortcuts.Shortcuts.SUPER_V">SUPER_V</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_W" href="#python_search.shortcuts.Shortcuts.SUPER_W">SUPER_W</a></code></li>
+<li><code><a title="python_search.shortcuts.Shortcuts.SUPER_Y" href="#python_search.shortcuts.Shortcuts.SUPER_Y">SUPER_Y</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
