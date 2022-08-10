@@ -16,4 +16,4 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           poetry build
-          poetry publish  -p "$PYPI_TOKEN" -u "__token__"
+          poetry publish  -p "${{ secrets.PYPI_TOKEN }}" -u "__token__"
