@@ -16,7 +16,7 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           keyring --disable
-          POETRY_HTTP_BASIC_TEST_USERNAME=__token__
+          export POETRY_HTTP_BASIC_TEST_USERNAME=__token__
           export POETRY_HTTP_BASIC_TEST_PASSWORD="${{ secrets.PYPI_TOKEN }}"
           poetry publish --build
 
