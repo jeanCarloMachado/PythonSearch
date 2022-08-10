@@ -2,3 +2,10 @@ name: Publish python poetry package
 uses: JRubics/poetry-publish@v1.12
 with:
   pypi_token: ${{ secrets.PYPI_TOKEN }}
+
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
