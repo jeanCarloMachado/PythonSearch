@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build and publish to pypi
-      - run: | 
+      run: | 
           pip install poetry
           poetry config virtualenvs.create false
           poetry build
