@@ -16,6 +16,7 @@ jobs:
           pip install poetry
           poetry config virtualenvs.create false
           poetry build
-          export POETRY_PYPI_TOKEN_PYPI="${{ secrets.PYPI_TOKEN }}"
+          POETRY_HTTP_BASIC_TEST_USERNAME=__token__
+          export POETRY_HTTP_BASIC_TEST_PASSWORD="${{ secrets.PYPI_TOKEN }}"
           poetry publish
 
