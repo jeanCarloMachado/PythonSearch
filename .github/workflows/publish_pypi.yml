@@ -20,5 +20,7 @@ jobs:
           poetry config virtualenvs.create false
           poetry build
           echo "Publishing now..."
-          poetry publish -p "$PYPI_TOKEN" -u "__token__"
+          echo $PYPI_TOKEN
+          
+          poetry publish -u "__token__" --password "$PYPI_TOKEN" 
         
