@@ -17,6 +17,5 @@ jobs:
           poetry config virtualenvs.create false
           poetry build
           export POETRY_PYPI_TOKEN_PYPI="${{ secrets.PYPI_TOKEN }}"
-          #poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
           poetry publish
 
