@@ -15,7 +15,7 @@ jobs:
         run: | 
           pip install poetry
           poetry config virtualenvs.create false
-          export PYTHON_KEYRING_BACKEND: keyring.backends.null.Keyring
+          export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
           poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
           poetry publish --build
 
