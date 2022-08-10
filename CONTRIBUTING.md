@@ -1,4 +1,4 @@
-# Recommendations 
+# Recommendations
 
 On every change make sure to change the CHANGELOG.md
 
