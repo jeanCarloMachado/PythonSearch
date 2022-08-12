@@ -22,15 +22,16 @@ class FzfInTerminal:
     def build_search_ui(configuration) -> "FzfInTerminal":
         """Assembles what is specific for the search ui exclusively"""
 
-        return FzfInTerminal(title=configuration.APPLICATION_TITLE)
+        return FzfInTerminal(configuration=configuration)
 
-    def __init__(self, *, title=""):
+    def __init__(self, *, configuration: PythonSearchConfiguration):
         self.height = FzfInTerminal.HEIGHT
         self.width = FzfInTerminal.WIDTH
 
         self.preview_cmd = f"python_search _utils preview_entry {{}} "
         self.executable = "python_search"
-        self.title = title
+        self.title = configuration.APPLICATION_TITLE
+        self.configuration = configuration
 
     def run(self) -> None:
         self._launch_terminal(self.internal_cmd())
@@ -78,7 +79,7 @@ class FzfInTerminal:
         '
         """
 
-        print("CMD", cmd)
+        logging.debug("Cmd: ", cmd)
         return cmd
 
     def _run_key(self, shortcut) -> str:
@@ -94,7 +95,7 @@ class FzfInTerminal:
 
     def _get_rankging_generate_cmd(self, reload=False):
         # in mac we need tensorflow to be installed via conda
-        if is_mac():
+        if self.configuration.supported_features.is_dynamic_ranking_supported():
             if reload:
                 return f"curl -s localhost:8000/ranking/reload_and_generate"
 

@@ -56,7 +56,7 @@ class RedisConfig:
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search
-    Everything to customize about the application should be tunneled through this clas
+    Everything to customize about the application is configurable via code through this class
     """
 
     APPLICATION_TITLE = "SearchPythonSearch"
@@ -78,9 +78,9 @@ class PythonSearchConfiguration(EntriesGroup):
             self.aggregate_commands(entries_groups)
 
         if supported_features:
-            self.supported_features = supported_features
+            self.supported_features: FeaturesSupport = supported_features
         else:
-            self.supported_features = FeaturesSupport.default()
+            self.supported_features: FeaturesSupport = FeaturesSupport.default()
 
 
 class ConfigurationLoader:
@@ -105,7 +105,7 @@ class ConfigurationLoader:
 
         import sys
 
-        sys.path.append(folder)
+        sys.path.insert(0, folder)
         from entries_main import config
 
         return config

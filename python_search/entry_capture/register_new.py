@@ -26,7 +26,7 @@ class RegisterNew:
         self.message_broker = MessageBroker("search_run_register_new")
         self.entry_inserter = EntryInserter(configuration)
 
-    def infer_from_clipboard(self):
+    def from_clipboard(self):
         """
         Create a new inferred entry based on the clipboard content
         """

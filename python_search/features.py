@@ -1,4 +1,5 @@
 import os
+import logging
 
 
 class FeaturesSupport:
@@ -7,10 +8,12 @@ class FeaturesSupport:
 
     """
 
+    DYNAMIC_RANKING = "dynamic_ranking"
+
     DEFAULT_SUPPORT = {
         # if the ml ranking should be used or not
         # if user history or is supported
-        "dynamic_ranking": False,
+        DYNAMIC_RANKING: False,
         # turn on if you have a redis instance to improve the ranking
         "redis": False,
         # turn to true if you want data to be collected
@@ -55,8 +58,8 @@ class FeatureToggle:
         result = 0 == os.system(f" test -f {self.BASE_PATH}/{feature_name}")
 
         if result:
-            print(f"Feature toggle {feature_name} is enabled")
+            logging.debug(f"Feature toggle {feature_name} is enabled")
         else:
-            print(f"Feature toggle {feature_name} is disabled")
+            logging.debug(f"Feature toggle {feature_name} is disabled")
 
         return result

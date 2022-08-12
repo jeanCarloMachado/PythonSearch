@@ -18,25 +18,33 @@ class Preview:
 
             entry_data = self.configuration.load_entries()[key]
             print("")
-            if "url" in entry_data:
-                print(f"{Fore.BLUE}{entry_data['url']}{Style.RESET_ALL}")
-                del entry_data["url"]
-                type = "Url"
+            if "url" in entry_data or 'file' in entry_data:
+
+                value = entry_data.get('url', entry_data.get('file'))
+
+                print(f"{Fore.BLUE}{value}{Style.RESET_ALL}")
+                if 'url' in entry_data:
+                    del entry_data['url']
+
+                if 'file' in entry_data:
+                    del entry_data['file']
+                type = "Url" if 'url' in entry_data else "File"
 
             if "snippet" in entry_data:
                 print(f"{Fore.RED}{entry_data['snippet']}{Style.RESET_ALL}")
                 del entry_data["snippet"]
                 type = "Snippet"
 
-            if "cmd" in entry_data:
-                print(f"{Fore.GREEN}{entry_data['cmd']}{Style.RESET_ALL}")
-                type = "Cmd"
-                del entry_data["cmd"]
+            if "cli_cmd" in entry_data or "cmd" in entry_data:
+                value = entry_data.get('cli_cmd', entry_data.get('cmd'))
+                print(f"{Fore.GREEN}{value}{Style.RESET_ALL}")
+                type = "Cmd" if 'cmd' in entry_data else "CliCmd"
 
-            if "cli_cmd" in entry_data:
-                print(f"{Fore.GREEN}{entry_data['cli_cmd']}{Style.RESET_ALL}")
-                type = "CliCmd"
-                del entry_data["cli_cmd"]
+                if 'cli_md' in entry_data:
+                    del entry_data["cli_cmd"]
+                if 'cmd'  in entry_data:
+                    del entry_data["cmd"]
+
             print("")
 
             print(f"Key: {Fore.YELLOW}{key}{Style.RESET_ALL}")

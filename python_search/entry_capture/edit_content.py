@@ -57,7 +57,7 @@ class EditKey:
 
     def edit_default(self):
         self._edit_config(
-            self.configuration.get_project_root() + "/entries/entries_main.py"
+            self.configuration.get_project_root() + "/entries_main.py"
         )
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):

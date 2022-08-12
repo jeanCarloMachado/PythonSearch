@@ -7,20 +7,6 @@ from python_search.environment import is_mac
 from python_search.search_ui.preview import Preview
 
 
-def _error_handler(e):
-    from python_search.observability.logger import initialize_systemd_logging
-
-    logging = initialize_systemd_logging()
-    import sys
-    import traceback
-
-    exc_info = sys.exc_info()
-    logging.warning(
-        f"Unhandled exception: {e}".join(traceback.format_exception(*exc_info))
-    )
-
-    raise e
-
 
 class PythonSearchCli:
     """
@@ -44,34 +30,8 @@ class PythonSearchCli:
 
     @staticmethod
     def init_project(project_name: str):
-        """
-        Initialize a new project to use Python search
-        """
-        import os
-
-        print(f"Initializing project {project_name}")
-
-        os.system(f"mkdir {project_name}")
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        current_directory = os.getcwd()
-
-        os.system(f"cp -r {script_dir}/../examples/entries_main.py {project_name}")
-        os.system(f"cd {project_name} && git init . ")
-
-        result = os.system("which kitty")
-        if result != 0:
-            print(
-                "Looks like kitty is not installed in your platform. Installing it for you..."
-            )
-            os.system(
-                "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
-            )
-
-        print(
-            f"""It worked!
-Now export a variable PS_ENTRIES_HOME in your shell initialization
-export PS_ENTRIES_HOME={current_directory}/{project_name}"""
-        )
+        from python_search.init_project import InitializeProject
+        InitializeProject().initialize(project_name)
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
@@ -83,7 +43,10 @@ export PS_ENTRIES_HOME={current_directory}/{project_name}"""
             try:
                 configuration = ConfigurationLoader().load_config()
             except Exception as e:
-                print("Did not find any config to load.")
+                print(f"Did not find any config to load, error: {e}")
+                import traceback;
+                print(traceback.format_exc())
+
                 return
 
         self.configuration = configuration
@@ -129,7 +92,7 @@ export PS_ENTRIES_HOME={current_directory}/{project_name}"""
 
         return EditKey(self.configuration).search_entries_directory(key)
 
-    def edit_main(self, key=None):
+    def edit_main(self):
         """Edit the main script"""
         from python_search.entry_capture.edit_content import EditKey
 
@@ -138,7 +101,7 @@ export PS_ENTRIES_HOME={current_directory}/{project_name}"""
     def register_clipboard(self):
         from python_search.entry_capture.register_new import RegisterNew
 
-        return RegisterNew(self.configuration).infer_from_clipboard()
+        return RegisterNew(self.configuration).from_clipboard()
 
     def register_new(self):
         from python_search.entry_capture.register_new import RegisterNew
@@ -169,6 +132,7 @@ export PS_ENTRIES_HOME={current_directory}/{project_name}"""
         return Consumers()
 
     def features(self):
+        """ Feature toggle system """
         from python_search.features import FeatureToggle
 
         return FeatureToggle()
@@ -213,6 +177,20 @@ export PS_ENTRIES_HOME={current_directory}/{project_name}"""
         from python_search.infrastructure.report import Report
 
         return Report()
+
+def _error_handler(e):
+    from python_search.observability.logger import initialize_systemd_logging
+
+    logging = initialize_systemd_logging()
+    import sys
+    import traceback
+
+    exc_info = sys.exc_info()
+    logging.warning(
+        f"Unhandled exception: {e}".join(traceback.format_exception(*exc_info))
+    )
+
+    raise e
 
 
 def main():
