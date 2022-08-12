@@ -90,15 +90,8 @@ class ConfigurationLoader:
 
     def load_config(self) -> PythonSearchConfiguration:
 
-        env_name = "PS_ENTRIES_HOME"
-
-        if env_name not in os.environ:
-            raise Exception(f"{env_name} must be set to load the config dynamically")
-
-        logging.debug(f"Env: {env_name}={os.environ[env_name]}")
-        folder = os.environ[env_name]
-
-        config_location = os.path.join(folder, "entries_main.py")
+        folder = self.get_project_root()
+        config_location = f"{folder}/entries_main.py"
 
         if not os.path.exists(config_location):
             raise Exception(f"Could not find config file {config_location}")
@@ -109,6 +102,25 @@ class ConfigurationLoader:
         from entries_main import config
 
         return config
+
+    def get_project_root(self):
+        env_name = "PS_ENTRIES_HOME"
+        current_project_location = os.environ['HOME'] + '/.config/python_search/current_project'
+
+        folder = None
+
+        if env_name in os.environ:
+            logging.debug(f"Env exists and takes precedence: {env_name}={os.environ[env_name]}")
+            folder = os.environ[env_name]
+
+        if os.path.isfile(current_project_location):
+            with open(current_project_location) as f:
+                folder = f.readlines()[0].strip()
+
+        if not folder:
+            raise Exception(f"Either {current_project_location} or {env_name} must be set to find entries")
+        return folder
+
 
     def load_entries(self):
         config = self.load_config()

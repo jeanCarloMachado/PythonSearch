@@ -7,8 +7,6 @@ You will want to versionate your entries
 """
 import datetime
 
-
-
 entries = {
     # NEW_ENTRIES_HERE
     "open google": {"url": "https://google.com"},

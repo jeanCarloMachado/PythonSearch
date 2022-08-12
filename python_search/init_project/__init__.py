@@ -8,7 +8,8 @@ class InitializeProject():
         import os
 
         current_directory = os.getcwd()
-        print(f"Initializing project {project_name} at {current_directory}")
+        project_directory = f'{current_directory}/{project_name}'
+        print(f"Initializing project in: {project_directory}")
 
         os.system(f"mkdir {project_name}")
         script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -17,7 +18,7 @@ class InitializeProject():
         os.system(copy_cmd)
         os.system(f"cd {project_name} && git init . ")
 
-        result = os.system("which kitty")
+        result = os.system("which kitty >/dev/null")
         if result != 0:
             print(
                 "Looks like kitty is not installed in your platform. Installing it for you..."
@@ -26,12 +27,9 @@ class InitializeProject():
                 "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
             )
 
+        os.system('mkdir -p ~/.config/python_search/')
+        os.system(f'echo "{project_directory}" >  ~/.config/python_search/current_project')
+
         print(
-            f"""Project created! Now export the PS_ENTRIES_HOME variable in a init script of your shell, examples: 
-
-echo 'export PS_ENTRIES_HOME={current_directory}/{project_name}'  >> ~/.bashrc
-echo 'export PS_ENTRIES_HOME={current_directory}/{project_name}'  >> ~/.zshrc
-
-Logout and login again so your system can pick up the changes.
-"""
+            f"""Project created successfully and registered as current project at ~/.config/python_search/current_project """
         )

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import os
+import logging
 
 
 class EntriesGroup:
@@ -67,8 +68,8 @@ class EntriesGroup:
 
     def get_project_root(self):
         """
-        Returns the root of the project where the config is
-        @todo substitues PROJECT_ROOT with this
+        @ deprecated use environment loader instead
         """
 
-        return os.environ["PS_ENTRIES_HOME"]
+        from python_search.config import ConfigurationLoader
+        return ConfigurationLoader().get_project_root()
