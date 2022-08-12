@@ -7,7 +7,7 @@ from python_search.environment import is_mac
 from python_search.search_ui.preview import Preview
 
 
-def error_handler(e):
+def _error_handler(e):
     from python_search.observability.logger import initialize_systemd_logging
 
     logging = initialize_systemd_logging()
@@ -33,13 +33,39 @@ class PythonSearchCli:
 
     @staticmethod
     def setup_from_config(config: PythonSearchConfiguration):
+        """ Initialized the cli with the main configuration object """
         try:
             instance = PythonSearchCli(config)
             import fire
 
             fire.Fire(instance)
         except BaseException as e:
-            error_handler(e)
+            _error_handler(e)
+
+    @staticmethod
+    def init_project(project_name: str):
+        """
+        Initialize a new project to use Python search
+        """
+        import os
+
+        print(f"Initializing project {project_name}")
+
+        os.system(f"mkdir {project_name}")
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        current_directory = os.getcwd()
+
+        os.system(f"cp -r {script_dir}/../examples/entries_main.py {project_name}")
+        os.system(f"cd {project_name} && git init . ")
+
+        result = os.system("which kitty")
+        if result != 0:
+            print('Looks like kitty is not installed in your platform. Installing it for you...')
+            os.system("curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin")
+
+        print(f"""It worked!
+Now export a variable PS_ENTRIES_HOME in your shell initialization
+export PS_ENTRIES_HOME={current_directory}/{project_name}""")
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
@@ -48,12 +74,19 @@ class PythonSearchCli:
         """
         if not configuration:
             logging.debug("No configuration provided, using default")
-            configuration = ConfigurationLoader().load_config()
+            try:
+                configuration = ConfigurationLoader().load_config()
+            except Exception as e:
+                print("Did not find any config to load.")
+                return
 
         self.configuration = configuration
 
+
     def search(self):
-        """Main entrypoint of the application"""
+        """
+        Opens the Search UI. Main entrypoint of the application
+        """
         from python_search.search_ui.search import Search
 
         Search(self.configuration).run()
@@ -171,20 +204,11 @@ class PythonSearchCli:
             }
         ).interpret_default()
 
-    def next_item_pipeline(self):
-        from python_search.ranking.next_item_predictor.pipeline import Pipeline
 
-        return Pipeline
-
-    def infra_report(self):
+    def _infra_report(self):
         from python_search.infrastructure.report import Report
 
         return Report()
-
-    def capture_input(self):
-        from python_search.apps.capture_input import CollectInput
-
-        return CollectInput.launch
 
 
 def main():

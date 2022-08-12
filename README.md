@@ -3,8 +3,8 @@
 - collect pieces of actionable text in the internet and add them to python dictionaries
 - search them using text similarity based on bert and many other ranking methods
 - Run the searched entries, with customizeable actions
-- add shortcuts to actions
 - add custom types and actions
+- add shortcuts to actions
 
 ## Minimal installation
 
@@ -17,69 +17,28 @@ Write a python script like this, and call it.
 pip install python-search
 ```
 
-### 2. Create a repo for your entries
+### 2. Initialize your entries project
 
 ```sh
-mkdir $HOME/PythonSearchEntries
-export PS_ENTRIES_HOME=$HOME/PythonSearchEntries
-
-# also save this variable in a startup script, examples below
-# echo "export PS_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.bashrc
-# echo "export PS_ENTRIES_HOME=$HOME/PythonSearchEntries" >> ~/.zsh_profile
+python-search init_project "MyEntries"
 ```
+It will create a new git project for you for your entries.
 
-### 3 Create an startup script
+### 3. Using
 
-```py
-# Name it entries_main.py
-import datetime
-
-
-entries = {
-    # snippets when executed copy the content to the clipboard
-    "date current today now copy": {
-        # anything can be even python code
-        "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "mac_shortcut": "Control+Shift+0",
-        "gnome_shortcut": "Control+Shift+0",
-        "i3_shortcut": "Control+Shift+0",
-    },
-    "matplotlib python import": {"snippet": "import matplotlib.pyplot as plt"},
-    # a url
-    "open browser": {"url": "https://google.com"},
-    # a shell command
-    "top": {
-        "cli_cmd": "htop",
-    },
-    # generate multiple entries based on different values
-    **{
-        f"get pods for {env}": {"cli_cmd": f"kubectl --context {env} get pods"}
-        for env in ["production", "testing"]
-    },
-}
-
-from python_search.config import PythonSearchConfiguration
-from python_search.cli import PythonSearchCli
-
-config = PythonSearchConfiguration(entries=entries)
-PythonSearchCli.setup_from_config(config)
-```
-
-Done!
-You can run the search UI by running
+Done! You can run the search UI by running.
 
 ```shell
 python_search search
 ```
 
-Basically everythign in python search you do through the cli tool.
+Basically everything in python search you do through the cli tool.
 To understand the options run:
 
 ```sh
 python_search --help
 ```
 
-Complete installation instructions can be found in the [installation manual](docs/installation.md).
 You can also find the [code documentation here](https://jeancarlomachado.net/PythonSearch/).
 
 ## Legal

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5
+
+Created a init_project "project_name" command to finalize the setup.
+
 ## 0.4.0
 
 Minimal intallation supported.

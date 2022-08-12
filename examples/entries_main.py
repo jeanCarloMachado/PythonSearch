@@ -1,4 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
+"""
+This is a working sample of the entries module.
+You will want to versionate your entries using git.
+"""
 import datetime
 
 entries = {
@@ -20,15 +25,6 @@ entries = {
         f"get pods for {env}": {"cli_cmd": f"kubectl --context {env} get pods"}
         for env in ["production", "testing", "local"]
     },
-    # uses the application itself to register new entries from the clipboard
-    "register new entry programatically": {
-        "cmd": "entries_main.py register_clipboard",
-    },
-    # use search run to help you to learn language
-    "letter ending viele grusse": {
-        "snippet": "Viele Grüße",
-    },
-    "zeigt": {"snippet": "indicates / show / demonstrate", "language": "German"},
 }
 
 

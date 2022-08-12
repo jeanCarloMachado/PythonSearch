@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "python-search"
-version = "0.4.2"
-description = "Digitalize everything in python and retrieve it efficiently"
+version = "0.5.0"
+description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
 
 [tool.poetry.dependencies]
