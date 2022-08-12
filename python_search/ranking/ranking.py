@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from collections import namedtuple
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from python_search.acronyms import generate_acronyms
 from python_search.config import PythonSearchConfiguration
@@ -15,27 +15,27 @@ from python_search.observability.logger import logging
 
 class RankingGenerator:
     """
-    Write to the file all the commands and generates shortcuts
+    Generates the ranking for python search
     """
 
     ModelInfo = namedtuple("ModelInfo", "features label")
-    model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
+    _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
-    def __init__(self, configuration: PythonSearchConfiguration):
+    def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self.configuration = configuration
         self.feature_toggle = FeatureToggle()
-        self.is_redis_supported = self.configuration.supported_features.is_enabled(
-            "redis"
-        )
         self.model = None
         self.debug = os.getenv("DEBUG", False)
 
-        if self.is_redis_supported:
+        if self.configuration.supported_features.is_redis_supported():
             self.redis_client = PythonSearchRedis.get_client()
 
         self.used_entries: List[Tuple[str, dict]] = []
 
-        if self.feature_toggle.is_enabled("ranking_next"):
+        if (
+            self.configuration.supported_features.is_dynamic_ranking_supported()
+            and self.feature_toggle.is_enabled("ranking_next")
+        ):
             from python_search.ranking.next_item_predictor.inference import \
                 Inference
 
@@ -60,7 +60,10 @@ class RankingGenerator:
         self._build_rank(recompute_ranking)
         result, only_list = self._merge_and_build_result()
 
-        if self.is_redis_supported and recompute_ranking:
+        if (
+            self.configuration.supported_features.is_redis_supported()
+            and recompute_ranking
+        ):
             try:
                 self._save_ranking_order_in_cache(only_list)
             except Exception as e:
@@ -76,7 +79,7 @@ class RankingGenerator:
 
     def _build_rank(self, recompute_ranking):
         """Mutate self.ranked keys with teh results, supports caching"""
-        if self.is_redis_supported and not recompute_ranking:
+        if self._can_load_from_cache() and not recompute_ranking:
             if self.debug:
                 print("Results being loaded from cache")
 
@@ -91,7 +94,10 @@ class RankingGenerator:
         if self.debug:
             print("Results not being loaded from cache")
 
-        if self.feature_toggle.is_enabled("ranking_next"):
+        if (
+            self.configuration.supported_features.is_dynamic_ranking_supported()
+            and self.feature_toggle.is_enabled("ranking_next")
+        ):
             try:
                 self.ranked_keys = self.inference.get_ranking()
             except Exception as e:
@@ -100,6 +106,12 @@ class RankingGenerator:
                 )
 
         self._fetch_latest_entries()
+
+    def _can_load_from_cache(self):
+        return (
+            self.configuration.supported_features.is_redis_supported()
+            and self.configuration.supported_features.is_dynamic_ranking_supported()
+        )
 
     def _merge_and_build_result(self) -> List[Tuple[str, dict]]:
         """ "

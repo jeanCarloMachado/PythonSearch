@@ -33,7 +33,7 @@ class PythonSearchCli:
 
     @staticmethod
     def setup_from_config(config: PythonSearchConfiguration):
-        """ Initialized the cli with the main configuration object """
+        """Initialized the cli with the main configuration object"""
         try:
             instance = PythonSearchCli(config)
             import fire
@@ -60,12 +60,18 @@ class PythonSearchCli:
 
         result = os.system("which kitty")
         if result != 0:
-            print('Looks like kitty is not installed in your platform. Installing it for you...')
-            os.system("curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin")
+            print(
+                "Looks like kitty is not installed in your platform. Installing it for you..."
+            )
+            os.system(
+                "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
+            )
 
-        print(f"""It worked!
+        print(
+            f"""It worked!
 Now export a variable PS_ENTRIES_HOME in your shell initialization
-export PS_ENTRIES_HOME={current_directory}/{project_name}""")
+export PS_ENTRIES_HOME={current_directory}/{project_name}"""
+        )
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
@@ -81,7 +87,6 @@ export PS_ENTRIES_HOME={current_directory}/{project_name}""")
                 return
 
         self.configuration = configuration
-
 
     def search(self):
         """
@@ -203,7 +208,6 @@ export PS_ENTRIES_HOME={current_directory}/{project_name}""")
                 "url": f"http://www.google.com/search?q={query}",
             }
         ).interpret_default()
-
 
     def _infra_report(self):
         from python_search.infrastructure.report import Report

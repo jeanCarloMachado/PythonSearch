@@ -8,6 +8,9 @@ class FeaturesSupport:
     """
 
     DEFAULT_SUPPORT = {
+        # if the ml ranking should be used or not
+        # if user history or is supported
+        "dynamic_ranking": False,
         # turn on if you have a redis instance to improve the ranking
         "redis": False,
         # turn to true if you want data to be collected
@@ -19,8 +22,7 @@ class FeaturesSupport:
         return FeaturesSupport(FeaturesSupport.DEFAULT_SUPPORT)
 
     def __init__(self, config: dict):
-
-        self.supported_config = config
+        self.supported_config = {**FeaturesSupport.DEFAULT_SUPPORT, **config}
 
     def is_enabled(self, feature_name) -> bool:
         if feature_name not in self.supported_config:
@@ -28,10 +30,16 @@ class FeaturesSupport:
 
         return self.supported_config[feature_name]
 
+    def is_dynamic_ranking_supported(self):
+        return self.is_enabled("dynamic_ranking")
+
+    def is_redis_supported(self):
+        return self.is_enabled("redis")
+
 
 class FeatureToggle:
     """
-    A simple feature toggle abstraction that allows one to turn on/off features.
+    A simple feature toggle abstraction that allows one to turn on/off features for their environment without touching code.
     """
 
     def __init__(self):
