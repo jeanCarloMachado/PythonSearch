@@ -17,6 +17,8 @@ Write a python script like this, and call it.
 pip install python-search
 ```
 
+We support Mac and Linux.
+
 ### 2. Initialize your entries project
 
 ```sh
