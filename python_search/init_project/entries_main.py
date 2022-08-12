@@ -9,21 +9,21 @@ import datetime
 
 entries = {
     # NEW_ENTRIES_HERE
-    "open google": {"url": "https://google.com"},
+    "open google": {"url": "htto s://google.com"},
+    "register new entry": {
+        "cmd": "python_search register_new from_clipboard",
+    },
+    "edit entries python file": {
+        "cli_cmd": f'python_search edit_main',
+    },
     # snippets when executed copy the content to the clipboard
     "date current today now copy": {
         # anything can be even python code
         "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         "i3_shortcut": "Control+Shift+0",
     },
-    "register new entry": {
-        "cmd": "python_search register_new from_clipboard",
-    },
     "os hosts file": {
         "file": '/etc/hosts',
-    },
-    "edit entries": {
-        "cli_cmd": f'python_search edit_main',
     },
     "resources monitoring": {
         # a shell command that open in a new window
