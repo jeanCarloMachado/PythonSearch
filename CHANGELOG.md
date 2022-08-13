@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+Streamlined init_project script with better docs
+
 ## 0.5
 
 Created a init_project "project_name" command to finalize the setup.
