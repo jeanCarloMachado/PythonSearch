@@ -22,7 +22,7 @@ class Preview:
 
                 value = entry_data.get('url', entry_data.get('file'))
 
-                print(f"{Fore.BLUE}{value}{Style.RESET_ALL}")
+                print(f"{Fore.GREEN}{value}{Style.RESET_ALL}")
                 if 'url' in entry_data:
                     del entry_data['url']
 
@@ -31,13 +31,13 @@ class Preview:
                 type = "Url" if 'url' in entry_data else "File"
 
             if "snippet" in entry_data:
-                print(f"{Fore.RED}{entry_data['snippet']}{Style.RESET_ALL}")
+                print(f"{Fore.BLUE}{entry_data['snippet']}{Style.RESET_ALL}")
                 del entry_data["snippet"]
                 type = "Snippet"
 
             if "cli_cmd" in entry_data or "cmd" in entry_data:
                 value = entry_data.get('cli_cmd', entry_data.get('cmd'))
-                print(f"{Fore.GREEN}{value}{Style.RESET_ALL}")
+                print(f"{Fore.RED}{value}{Style.RESET_ALL}")
                 type = "Cmd" if 'cmd' in entry_data else "CliCmd"
 
                 if 'cli_md' in entry_data:

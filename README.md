@@ -1,10 +1,11 @@
 # PythonSearch
 
-- collect pieces of actionable text in the internet and add them to python dictionaries
-- search them using text similarity based on bert and many other ranking methods
-- Run the searched entries, with customizeable actions
-- add custom types and actions
-- add shortcuts to actions
+<!-- ![](https://i.imgur.com/86foqnf.gif) -->
+
+
+- collect commands, scripts, snippets, urls, files, efficiently into your python entries database
+- search them using a ml driven search or add shortcuts to them
+- Execute the registered entries possibly customizing the execution behaviour
 
 ## Minimal installation
 
@@ -43,6 +44,14 @@ python_search --help
 ```
 
 You can also find the [code documentation here](https://jeancarlomachado.net/PythonSearch/).
+
+## Got an issue?
+
+Create a github issue to report it or send a patch.
+
+## Contributing
+
+Feature contributions are also welcomed! If you want to be part of the roadmap discussions reach out.
 
 ## Legal
 
