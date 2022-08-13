@@ -1,6 +1,6 @@
 # PythonSearch
 
-![](https://imgur.com/a/FHdf0q8)
+![](https://imgur.com/a/FHdf0q8.gif)
 
 
 - collect commands, scripts, snippets, urls, files, efficiently into your python entries database
