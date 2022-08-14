@@ -1,12 +1,13 @@
 # PythonSearch
 
-<img src="https://i.imgur.com/pECSsjc.gif" width="720"/>
-
-
+With python search you collect and retrieve and refine information efficiently.
 
 - collect commands, scripts, snippets, urls, files, efficiently into your python entries database
 - search them using a ml driven search or add shortcuts to them
 - Execute the registered entries possibly customizing the execution behaviour
+
+<img src="https://i.imgur.com/pECSsjc.gif" width="720"/>
+
 
 ## Minimal installation
 
