@@ -10,6 +10,8 @@ With python search you collect and retrieve and refactor information efficiently
 <img src="https://i.imgur.com/pECSsjc.gif" width="720"/>
 
 
+An example of how an entries database look [here](https://github.com/jeanCarloMachado/PythonSearch/blob/main/python_search/init_project/entries_main.py).
+
 ## Minimal installation
 
 This installation covers the minimun functionality of Python search.
