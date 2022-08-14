@@ -15,9 +15,9 @@ class EntryCaptureGUI:
         font_size = config.simple_gui_font_size
 
         layout = [
-            [sg.Text("Enter Description:")],
+            [sg.Text("Descriptive key name")],
             [sg.Input(key="key")],
-            [sg.Text("Content:")],
+            [sg.Text("Entry content")],
             [sg.Input(key="content", default_text=default_content)],
             [sg.Button("Write", key="write")],
         ]

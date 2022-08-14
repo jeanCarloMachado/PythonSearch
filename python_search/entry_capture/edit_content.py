@@ -56,14 +56,12 @@ class EditKey:
         CmdEntry(entry).interpret_default()
 
     def edit_default(self):
-        self._edit_config(
-            self.configuration.get_project_root() + "/entries_main.py"
-        )
+        self._edit_config(self.configuration.get_project_root() + "/entries_main.py")
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
         """ "edit a configuration file given the name and line"""
         cmd: str = (
-            f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.DEFAULT_TERMINAL_PARAMS} bash -c 'cd"
+            f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
             f"; {config.EDITOR} {file_name} +{line}' "
         )

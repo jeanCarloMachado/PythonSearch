@@ -1,6 +1,7 @@
 import datetime
 import os
 
+from python_search.apps.terminal import Terminal
 from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
 from python_search.observability.logger import logging
@@ -13,8 +14,8 @@ class FzfInTerminal:
 
     FONT_SIZE = 14
     PREVIEW_PERCENTAGE_SIZE = 50
-    HEIGHT = 250
-    WIDTH = 1050
+    HEIGHT = 240
+    WIDTH = 950
 
     configuration: PythonSearchConfiguration
 
@@ -109,15 +110,16 @@ class FzfInTerminal:
         if is_mac():
             font = "Monaco"
 
+        #--start-as=fullscreen \
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title}"\
-        -o remember_window_size=n \
+        -o macos_hide_from_tasks=yes \
+        -o hide_window_decorations=yes  \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
-        -o macos_quit_when_last_window_closed=yes \
         -o font_family="{font}" \
-         -o font_size={FzfInTerminal.FONT_SIZE} \
-        -o confirm_os_window_close=0 \
+        -o font_size={FzfInTerminal.FONT_SIZE} \
+        {Terminal.GLOBAL_TERMINAL_PARAMS} \
          {internal_cmd}
         """
         logging.info(f"Command performed:\n {internal_cmd}")

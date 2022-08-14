@@ -7,7 +7,6 @@ from python_search.environment import is_mac
 from python_search.search_ui.preview import Preview
 
 
-
 class PythonSearchCli:
     """
     The command line application, entry point of the program.
@@ -29,8 +28,10 @@ class PythonSearchCli:
             _error_handler(e)
 
     @staticmethod
-    def init_project(project_name: str):
+    def new_project(project_name: str):
+        """ Create a new project in the current directory with the given name  """
         from python_search.init_project import InitializeProject
+
         InitializeProject().initialize(project_name)
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
@@ -44,7 +45,8 @@ class PythonSearchCli:
                 configuration = ConfigurationLoader().load_config()
             except Exception as e:
                 print(f"Did not find any config to load, error: {e}")
-                import traceback;
+                import traceback
+
                 print(traceback.format_exc())
 
                 return
@@ -132,7 +134,7 @@ class PythonSearchCli:
         return Consumers()
 
     def features(self):
-        """ Feature toggle system """
+        """Feature toggle system"""
         from python_search.features import FeatureToggle
 
         return FeatureToggle()
@@ -177,6 +179,7 @@ class PythonSearchCli:
         from python_search.infrastructure.report import Report
 
         return Report()
+
 
 def _error_handler(e):
     from python_search.observability.logger import initialize_systemd_logging

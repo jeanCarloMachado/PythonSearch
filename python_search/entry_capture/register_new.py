@@ -31,7 +31,7 @@ class RegisterNew:
         Create a new inferred entry based on the clipboard content
         """
         clipboard_content, key = self._get_clipboard_content_and_ask_key(
-            "Name your entry"
+            "New Entry Details"
         )
         self.infer_content(clipboard_content, key)
 

@@ -1,6 +1,4 @@
-
-
-class InitializeProject():
+class InitializeProject:
     def initialize(self, project_name):
         """
         Initialize a new project to use Python search
@@ -8,7 +6,7 @@ class InitializeProject():
         import os
 
         current_directory = os.getcwd()
-        project_directory = f'{current_directory}/{project_name}'
+        project_directory = f"{current_directory}/{project_name}"
         print(f"Initializing project in: {project_directory}")
 
         os.system(f"mkdir {project_name} 2>/dev/null")
@@ -27,12 +25,16 @@ class InitializeProject():
                 "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
             )
 
-        os.system('mkdir -p ~/.config/python_search/')
-        os.system(f'echo "{project_directory}" >  ~/.config/python_search/current_project')
+        os.system("mkdir -p ~/.config/python_search/")
+        os.system(
+            f'echo "{project_directory}" >  ~/.config/python_search/current_project'
+        )
 
         print(
             f"""Project created successfully! 
+
 Your main config script can be found at {project_directory}/entries_main.py
-You can now start using python search by issuing: python_search search
-"""
+
+You can now start using python search by issuing:
+python_search search"""
         )

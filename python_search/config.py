@@ -105,12 +105,16 @@ class ConfigurationLoader:
 
     def get_project_root(self):
         env_name = "PS_ENTRIES_HOME"
-        current_project_location = os.environ['HOME'] + '/.config/python_search/current_project'
+        current_project_location = (
+            os.environ["HOME"] + "/.config/python_search/current_project"
+        )
 
         folder = None
 
         if env_name in os.environ:
-            logging.debug(f"Env exists and takes precedence: {env_name}={os.environ[env_name]}")
+            logging.debug(
+                f"Env exists and takes precedence: {env_name}={os.environ[env_name]}"
+            )
             folder = os.environ[env_name]
 
         if os.path.isfile(current_project_location):
@@ -118,9 +122,10 @@ class ConfigurationLoader:
                 folder = f.readlines()[0].strip()
 
         if not folder:
-            raise Exception(f"Either {current_project_location} or {env_name} must be set to find entries")
+            raise Exception(
+                f"Either {current_project_location} or {env_name} must be set to find entries"
+            )
         return folder
-
 
     def load_entries(self):
         config = self.load_config()

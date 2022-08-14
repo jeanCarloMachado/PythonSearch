@@ -18,17 +18,17 @@ class Preview:
 
             entry_data = self.configuration.load_entries()[key]
             print("")
-            if "url" in entry_data or 'file' in entry_data:
+            if "url" in entry_data or "file" in entry_data:
 
-                value = entry_data.get('url', entry_data.get('file'))
+                value = entry_data.get("url", entry_data.get("file"))
 
                 print(f"{Fore.GREEN}{value}{Style.RESET_ALL}")
-                if 'url' in entry_data:
-                    del entry_data['url']
+                if "url" in entry_data:
+                    del entry_data["url"]
 
-                if 'file' in entry_data:
-                    del entry_data['file']
-                type = "Url" if 'url' in entry_data else "File"
+                if "file" in entry_data:
+                    del entry_data["file"]
+                type = "Url" if "url" in entry_data else "File"
 
             if "snippet" in entry_data:
                 print(f"{Fore.BLUE}{entry_data['snippet']}{Style.RESET_ALL}")
@@ -36,13 +36,13 @@ class Preview:
                 type = "Snippet"
 
             if "cli_cmd" in entry_data or "cmd" in entry_data:
-                value = entry_data.get('cli_cmd', entry_data.get('cmd'))
+                value = entry_data.get("cli_cmd", entry_data.get("cmd"))
                 print(f"{Fore.RED}{value}{Style.RESET_ALL}")
-                type = "Cmd" if 'cmd' in entry_data else "CliCmd"
+                type = "Cmd" if "cmd" in entry_data else "CliCmd"
 
-                if 'cli_md' in entry_data:
+                if "cli_md" in entry_data:
                     del entry_data["cli_cmd"]
-                if 'cmd'  in entry_data:
+                if "cmd" in entry_data:
                     del entry_data["cmd"]
 
             print("")

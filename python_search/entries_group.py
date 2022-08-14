@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import inspect
-import os
 import logging
+import os
 
 
 class EntriesGroup:
@@ -72,4 +72,5 @@ class EntriesGroup:
         """
 
         from python_search.config import ConfigurationLoader
+
         return ConfigurationLoader().get_project_root()

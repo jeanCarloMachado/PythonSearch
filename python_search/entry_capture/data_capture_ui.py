@@ -12,7 +12,7 @@ class AskQuestion:
         if os.path.exists(content_file):
             os.remove(content_file)
 
-        cmd = f"""kitty {Terminal.DEFAULT_TERMINAL_PARAMS} bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
+        cmd = f"""kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
         os.system(cmd)
 
         while not os.path.exists(content_file):
