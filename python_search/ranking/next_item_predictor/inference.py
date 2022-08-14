@@ -72,6 +72,7 @@ class Inference:
                 return result
 
             only_keys = [entry[0] for entry in result]
+            print("Ranking inference succeeded")
         except Exception as e:
             print(
                 "Error while performing inference, returning baseline ranking. Details: "

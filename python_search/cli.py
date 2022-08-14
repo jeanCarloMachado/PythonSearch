@@ -29,7 +29,7 @@ class PythonSearchCli:
 
     @staticmethod
     def new_project(project_name: str):
-        """ Create a new project in the current directory with the given name  """
+        """Create a new project in the current directory with the given name"""
         from python_search.init_project import InitializeProject
 
         InitializeProject().initialize(project_name)

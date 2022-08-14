@@ -21,7 +21,9 @@ entries = {
     "documentation about entities python search": {
         "url": "https://github.com/jeanCarloMachado/PythonSearch/blob/main/docs/entities.md"
     },
-    "python search cli source code online reference": {"url": "https://shorturl.at/bdeK6"},
+    "python search cli source code online reference": {
+        "url": "https://shorturl.at/bdeK6"
+    },
     # snippets copy  the content of the snippet to the clipboard when executed
     "date current today now copy": {
         "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),

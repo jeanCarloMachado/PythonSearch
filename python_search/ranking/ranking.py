@@ -32,10 +32,7 @@ class RankingGenerator:
 
         self.used_entries: List[Tuple[str, dict]] = []
 
-        if (
-            self.configuration.supported_features.is_dynamic_ranking_supported()
-            and self.feature_toggle.is_enabled("ranking_next")
-        ):
+        if self.feature_toggle.is_enabled("ranking_next"):
             from python_search.ranking.next_item_predictor.inference import \
                 Inference
 

@@ -110,7 +110,7 @@ class FzfInTerminal:
         if is_mac():
             font = "Monaco"
 
-        #--start-as=fullscreen \
+        # --start-as=fullscreen \
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title}"\
         -o macos_hide_from_tasks=yes \
