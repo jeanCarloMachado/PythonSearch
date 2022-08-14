@@ -3,7 +3,7 @@
 With python search you collect and retrieve and refactor information efficiently.
 
 - collect commands, scripts, snippets, urls, files, efficiently into your python entries database
-- search them using a smart, ML based ranking or add shortcuts to them
+- search them using a smart, ML based, ranking or add shortcuts to them
 - refactor, reuse, generate and further automate entries as they are code
 - execute the registered entries possibly customizing the execution behaviour
 
