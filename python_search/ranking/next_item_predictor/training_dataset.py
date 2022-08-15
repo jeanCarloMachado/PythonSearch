@@ -7,6 +7,7 @@ import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.window import Window
 
+from python_search.config import ConfigurationLoader
 from python_search.datasets.searchesperformed import SearchesPerformed
 from python_search.infrastructure.performance import timeit
 
@@ -17,13 +18,14 @@ class TrainingDataset:
     """
 
     columns = "key", "previous_key", "month", "hour", "label", "entry_number"
-    DATASET_CACHE_FILE = "/tmp/dataset"
+    _DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
         self._spark = SparkSession.builder.getOrCreate()
         logging.basicConfig(
             level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)]
         ),
+        self._dataframe = None
 
     @timeit
     def build(self, use_cache=False, write_cache=True) -> DataFrame:
@@ -42,8 +44,8 @@ class TrainingDataset:
         search_performed_df_filtered = search_performed_df.filter(
             ~F.col("key").isin(excluded_keys)
         )
-        logging.info("Loading searches performed")
 
+        logging.info("Loading searches performed")
         df_with_previous = self._join_with_previous(search_performed_df_filtered)
 
         logging.info("Group by month")
@@ -74,7 +76,12 @@ class TrainingDataset:
 
         logging.info("Printing a sample of the dataset")
         dataset.show(10)
+
+        self._dataframe = dataset
         return dataset
+
+    def __repr__(self):
+        return self._dataframe.show(10)
 
     @timeit
     def _add_label(self, grouped):
@@ -114,17 +121,17 @@ class TrainingDataset:
 
     def _write_cache(self, dataset) -> None:
         print("Writing cache dataset to disk")
-        if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
+        if os.path.exists(TrainingDataset._DATASET_CACHE_FILE):
             import shutil
 
-            shutil.rmtree(TrainingDataset.DATASET_CACHE_FILE)
+            shutil.rmtree(TrainingDataset._DATASET_CACHE_FILE)
 
-        dataset.write.parquet(TrainingDataset.DATASET_CACHE_FILE)
+        dataset.write.parquet(TrainingDataset._DATASET_CACHE_FILE)
 
     def _read_cache(self) -> Optional[DataFrame]:
-        if os.path.exists(TrainingDataset.DATASET_CACHE_FILE):
+        if os.path.exists(TrainingDataset._DATASET_CACHE_FILE):
             print("Reading cache dataset")
-            return self._spark.read.parquet(TrainingDataset.DATASET_CACHE_FILE)
+            return self._spark.read.parquet(TrainingDataset._DATASET_CACHE_FILE)
         else:
             print("Cache does not exist, creating dataset")
 
@@ -132,4 +139,4 @@ class TrainingDataset:
 if __name__ == "__main__":
     import fire
 
-    fire.Fire()
+    fire.Fire(TrainingDataset)

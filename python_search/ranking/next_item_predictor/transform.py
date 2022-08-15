@@ -9,6 +9,7 @@ from python_search.ranking.next_item_predictor.training_dataset import \
 
 class Transform:
     """
+    @todo Use this same transform for inference
     Transform pattern
     From training dataset to -> model input
     And from inference dataset -> model input

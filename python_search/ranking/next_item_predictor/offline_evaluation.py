@@ -3,6 +3,7 @@ from python_search.ranking.next_item_predictor.inference import (
 
 
 class OfflineEvaluation:
+    """Evaluate the model with a part of the training data"""
     def run(self, model, dataset, X_test):
         """
         Computes the average position of the entray in the validation set

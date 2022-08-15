@@ -9,4 +9,5 @@ dist/*
 nohup.out
 *.rdb
 .DS_Store
-
+**.ipynb
+notebooks/*

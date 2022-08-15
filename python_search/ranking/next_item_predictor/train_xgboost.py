@@ -31,7 +31,7 @@ class TrainXGBoost:
 
     def train(self, dataset):
 
-        X_train, X_test, Y_train, Y_test = self._split(dataset)
+        X_train, X_test, Y_train, Y_test = self._transform_and_split(dataset)
 
         X_test_p = X_test
         X_test = np.delete(X_test, 0, axis=1)
@@ -54,7 +54,7 @@ class TrainXGBoost:
 
         return model, offline_evaluation
 
-    def _split(self, dataset):
+    def _transform_and_split(self, dataset):
 
         X, Y = Transform().transform(dataset)
 
