@@ -47,7 +47,7 @@ class FzfInTerminal:
         --no-hscroll \
         --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
-        --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap \
+        --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
         --reverse -i --exact --no-sort \
         --border=none \
         --margin=0% \
@@ -113,8 +113,6 @@ class FzfInTerminal:
         # --start-as=fullscreen \
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title}"\
-        -o macos_hide_from_tasks=yes \
-        -o hide_window_decorations=yes  \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
         -o font_family="{font}" \
