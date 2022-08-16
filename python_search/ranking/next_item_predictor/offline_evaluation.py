@@ -1,9 +1,8 @@
-from python_search.ranking.next_item_predictor.inference import (
-    Inference, InferenceInput)
-
 
 class OfflineEvaluation:
-    """Evaluate the model with a part of the training data"""
+    """
+    Evaluate the model with a part of the training data
+    """
     def run(self, model, dataset, X_test):
         """
         Computes the average position of the entray in the validation set
@@ -14,8 +13,9 @@ class OfflineEvaluation:
         test_df = df[df["entry_number"].isin(ids)]
         print("TestDF shape: ", test_df.shape)
 
-        from python_search.ranking.next_item_predictor.inference import (
-            Inference, InferenceInput)
+        from python_search.ranking.next_item_predictor.inference.inference import (
+            Inference)
+        from python_search.ranking.next_item_predictor.inference.input import InferenceInput
 
         inference = Inference(model=model)
 

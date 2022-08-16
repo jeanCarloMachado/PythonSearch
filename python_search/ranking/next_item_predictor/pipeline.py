@@ -18,7 +18,6 @@ from python_search.ranking.next_item_predictor.training_dataset import \
 
 initialize_logging()
 
-
 class Pipeline:
     """
     Exposes the whole ML pipeline, the runs everything

@@ -33,7 +33,7 @@ class RankingGenerator:
         self.used_entries: List[Tuple[str, dict]] = []
 
         if self.feature_toggle.is_enabled("ranking_next"):
-            from python_search.ranking.next_item_predictor.inference import \
+            from python_search.ranking.next_item_predictor.inference.inference import \
                 Inference
 
             self.inference = Inference(self.configuration)

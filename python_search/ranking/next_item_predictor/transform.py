@@ -7,10 +7,12 @@ from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
 
 
+from pyspark.sql import DataFrame
+
 class Transform:
     """
-    @todo Use this same transform for inference
-    Transform pattern
+    Transform takes an input and make it ready for inference
+
     From training dataset to -> model input
     And from inference dataset -> model input
     """
@@ -19,48 +21,53 @@ class Transform:
     # + 1 for entry number
     DIMENSIONS = 2 * 384 + 1 + 1 + 1
 
-    def transform(self, dataset, keep_ids=False) -> Tuple[np.ndarray, np.ndarray]:
+    def transform_train(self, dataset: DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y
         Returns a pair with X, Y
         """
         print("Number of rows in the dataset: ", dataset.count())
         print(f"Dimensions of dataset = {Transform.DIMENSIONS}")
-        embeddings_keys = self.create_embeddings_training_dataset(dataset)
+
+        embeddings_keys = self._create_embeddings_training_dataset(dataset)
         X = np.zeros([dataset.count(), Transform.DIMENSIONS])
         Y = np.empty(dataset.count())
 
         print("X shape:", X.shape)
 
-        collected_keys = dataset.select(*TrainingDataset.columns).collect()
+        # transform the spark dataframe into a python iterable
+        collected_rows = dataset.select(*TrainingDataset.columns).collect()
 
-        for i, collected_key in enumerate(collected_keys):
+        for i, row in enumerate(collected_rows):
             X[i] = np.concatenate(
                 [
-                    np.asarray([collected_key.entry_number]),
-                    embeddings_keys[collected_key.key],
-                    embeddings_keys[collected_key.previous_key],
-                    np.asarray([collected_key.month]),
-                    np.asarray([collected_key.hour]),
+                    # adds entry number so we can index and select the rigth row afterwards
+                    # it gets deleted before training
+                    np.asarray([row.entry_number]),
+                    embeddings_keys[row.key],
+                    embeddings_keys[row.previous_key],
+                    np.asarray([row.month]),
+                    np.asarray([row.hour]),
                 ]
             )
 
-            Y[i] = collected_key.label
+            Y[i] = row.label
 
         return X, Y
 
-    def create_embeddings_training_dataset(
+    def transform_inference(self):
+        pass
+
+    def _create_embeddings_training_dataset(
         self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
-        create embeddings
+        create embeddings and keep them in memory
         """
         print("Creating embeddings of traning dataset")
 
         # add embeddings to the dataset
         all_keys = self._get_all_keys_dataset(dataset)
-
-        print("Sample of historical keys: ", all_keys[0:10])
 
         return create_indexed_embeddings(all_keys)
 

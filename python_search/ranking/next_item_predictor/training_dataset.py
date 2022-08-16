@@ -7,7 +7,6 @@ import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.window import Window
 
-from python_search.config import ConfigurationLoader
 from python_search.datasets.searchesperformed import SearchesPerformed
 from python_search.infrastructure.performance import timeit
 

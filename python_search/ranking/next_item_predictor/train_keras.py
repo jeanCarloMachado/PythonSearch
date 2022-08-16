@@ -55,7 +55,7 @@ class Train:
         """
 
         # prepare the data
-        X, Y = Transform().transform(dataset)
+        X, Y = Transform().transform_train(dataset)
         X_train, X_test, Y_train, Y_test = self.split(X, Y)
 
         X_test = np.where(np.isnan(X_test), 0.5, X_test)

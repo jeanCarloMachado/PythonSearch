@@ -5,7 +5,7 @@ import sys
 from python_search.config import ConfigurationLoader
 from python_search.ranking.entries_loader import EntriesLoader
 from python_search.ranking.entry_embeddings import RedisEmbeddingsReader
-from python_search.ranking.next_item_predictor.inference import Inference
+from python_search.ranking.next_item_predictor.inference.inference import Inference
 
 
 class Evaluate:
