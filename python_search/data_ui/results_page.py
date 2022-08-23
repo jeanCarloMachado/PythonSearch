@@ -8,9 +8,10 @@ def load_results_page():
 
     keys = config.commands.keys()
 
-    from python_search.ranking.next_item_predictor.inference.inference import (
-        Inference)
-    from python_search.ranking.next_item_predictor.inference.input import InferenceInput
+    from python_search.ranking.next_item_predictor.inference.inference import \
+        Inference
+    from python_search.ranking.next_item_predictor.inference.input import \
+        InferenceInput
 
     st.write("### Prediction results")
     st.write("##### Model run: " + Inference.PRODUCTION_RUN_ID)

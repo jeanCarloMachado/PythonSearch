@@ -18,13 +18,13 @@ def reload():
 
 
 @app.get("/ranking/generate", response_class=PlainTextResponse)
-def root():
+def generate_ranking():
     global generator
     return generator.generate()
 
 
 @app.get("/_health")
-def root():
+def health():
     global generator
 
     from python_search.events.latest_used_entries import LatestUsedEntries

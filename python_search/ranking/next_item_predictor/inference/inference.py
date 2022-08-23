@@ -10,8 +10,10 @@ import numpy as np
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.models import PythonSearchMLFlow
-from python_search.ranking.next_item_predictor.inference.embeddings_loader import InferenceEmbeddingsLoader
-from python_search.ranking.next_item_predictor.inference.input import InferenceInput
+from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
+    InferenceEmbeddingsLoader
+from python_search.ranking.next_item_predictor.inference.input import \
+    InferenceInput
 from python_search.ranking.next_item_predictor.transform import Transform
 
 
@@ -86,8 +88,9 @@ class Inference:
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
             inference_input.previous_key
         )
-        X = np.zeros([len(self.all_keys), Transform.DIMENSIONS])
 
+        # create an inference array for all keys
+        X = np.zeros([len(self.all_keys), Transform.DIMENSIONS])
         for i, key in enumerate(self.all_keys):
             key_embedding = self.inference_embeddings.get_embedding_from_key(key)
             if key_embedding is None:
@@ -113,5 +116,3 @@ class Inference:
     def _load_mlflow_model(self, run_id=None):
         model = PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
         return model
-
-

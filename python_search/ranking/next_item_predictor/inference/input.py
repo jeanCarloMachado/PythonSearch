@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import datetime
 
-from python_search.ranking.next_item_predictor.inference.embeddings_loader import InferenceEmbeddingsLoader
+from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
+    InferenceEmbeddingsLoader
 
 
 class InferenceInput:

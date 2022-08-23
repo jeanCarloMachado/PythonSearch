@@ -1,13 +1,12 @@
 from typing import Dict, List, Tuple
 
 import numpy as np
+from pyspark.sql import DataFrame
 
 from python_search.ranking.entry_embeddings import create_indexed_embeddings
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
 
-
-from pyspark.sql import DataFrame
 
 class Transform:
     """
@@ -17,9 +16,10 @@ class Transform:
     And from inference dataset -> model input
     """
 
+    # 2 embeddings of 384 dimensions
     # + 1 is for the month number
     # + 1 for entry number
-    DIMENSIONS = 2 * 384 + 1 + 1 + 1
+    DIMENSIONS = 2 * 384 + 1 + 1
 
     def transform_train(self, dataset: DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -30,7 +30,8 @@ class Transform:
         print(f"Dimensions of dataset = {Transform.DIMENSIONS}")
 
         embeddings_keys = self._create_embeddings_training_dataset(dataset)
-        X = np.zeros([dataset.count(), Transform.DIMENSIONS])
+        # one extra for the row number
+        X = np.zeros([dataset.count(), Transform.DIMENSIONS + 1])
         Y = np.empty(dataset.count())
 
         print("X shape:", X.shape)
@@ -41,7 +42,7 @@ class Transform:
         for i, row in enumerate(collected_rows):
             X[i] = np.concatenate(
                 [
-                    # adds entry number so we can index and select the rigth row afterwards
+                    # adds entry number so we can index and select the right row afterwards
                     # it gets deleted before training
                     np.asarray([row.entry_number]),
                     embeddings_keys[row.key],
@@ -62,7 +63,7 @@ class Transform:
         self, dataset: TrainingDataset
     ) -> Dict[str, np.ndarray]:
         """
-        create embeddings and keep them in memory
+        create embeddings with all training keys and keep them in memory
         """
         print("Creating embeddings of traning dataset")
 

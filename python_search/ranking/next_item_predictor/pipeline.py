@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# using ipython interfers with fire arguments passing
+# using ipython interferes with fire arguments passing
 import logging
 import os
 from typing import Optional
@@ -17,6 +17,7 @@ from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
 
 initialize_logging()
+
 
 class Pipeline:
     """

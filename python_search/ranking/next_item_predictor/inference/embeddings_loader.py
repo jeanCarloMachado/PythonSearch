@@ -3,13 +3,16 @@ from __future__ import annotations
 import copy
 
 from python_search.events.latest_used_entries import LatestUsedEntries
-from python_search.ranking.entry_embeddings import RedisEmbeddingsReader, RedisEmbeddingsWriter, EmbeddingSerialization
+from python_search.ranking.entry_embeddings import (EmbeddingSerialization,
+                                                    RedisEmbeddingsReader,
+                                                    RedisEmbeddingsWriter)
 
 
 class InferenceEmbeddingsLoader:
     """
     @Todo, unify embeddings loading for inference but not training
     """
+
     def __init__(self, all_keys):
         self.all_keys = copy.copy(list(all_keys))
         self.latest_used_entries = LatestUsedEntries()
