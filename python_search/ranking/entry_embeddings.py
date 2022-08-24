@@ -73,7 +73,6 @@ class RedisEmbeddingsWriter:
 
         embeddings = create_key_indexed_embedding(empty_keys)
 
-
         for key, embedding in embeddings.items():
             self.write_embedding(key, embedding)
 
@@ -114,6 +113,7 @@ class EmbeddingSerialization:
 
 def create_embeddings_from_strings(keys: List[str]) -> ndarray:
     from sentence_transformers import SentenceTransformer
+
     transformer = SentenceTransformer("nreimers/MiniLM-L6-H384-uncased")
     return transformer.encode(keys, batch_size=128, show_progress_bar=True)
 
@@ -131,11 +131,10 @@ def create_key_indexed_embedding(keys) -> dict[str, str]:
         if key in entries:
             body = str(entries[key])
             print(f"For key '{key}', found body to encode: {body}")
-            unique_bodies.append(key + ' ' + body)
+            unique_bodies.append(key + " " + body)
         else:
             print(f"Could not find body for key: {key}")
             unique_bodies.append(key)
-
 
     embeddings = create_embeddings_from_strings(unique_bodies)
     embeddings_keys = dict(zip(unique_keys, embeddings))
