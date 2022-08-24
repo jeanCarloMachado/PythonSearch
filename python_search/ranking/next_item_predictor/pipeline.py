@@ -58,7 +58,7 @@ class Pipeline:
 
         return dataset
 
-    def train(self, use_cache=False, log_model=True):
+    def train(self, use_cache=True, log_model=True):
         """
         Trains both xgboost and keras models
 
@@ -105,7 +105,7 @@ class Pipeline:
             }
         )
 
-    def train_xgboost(self, use_cache=False, log_model=True):
+    def train_xgboost(self, use_cache=True, log_model=True):
         """
         Train the XGBoost model
         """

@@ -36,7 +36,7 @@ class InferenceEmbeddingsLoader:
 
         return EmbeddingSerialization.read(self.embedding_mapping[key])
 
-    def get_recent_key(self) -> str:
+    def get_recent_key_with_embedding(self) -> str:
         """
         Look into the recently used keys and return the most recent for which there are embeddings
         """

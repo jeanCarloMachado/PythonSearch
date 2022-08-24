@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import logging
 import os
 import traceback
 from typing import Any, List, Optional
 
-import numpy as np
 
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
@@ -38,13 +36,13 @@ class Inference:
             print("Using custom passed model")
         else:
             print("Using run id: " + self.run_id)
-        self.configuration = (
+        configuration = (
             configuration if configuration else ConfigurationLoader().load_config()
         )
         # previous key should be setted in runtime
         self.previous_key = None
-        self.all_keys = self.configuration.commands.keys()
-        self.inference_embeddings = InferenceEmbeddingsLoader(self.all_keys)
+        self.all_keys = configuration.commands.keys()
+        self._transform = Transform()
 
         self.model = model if model else self._load_mlflow_model(run_id=self.run_id)
 
@@ -59,11 +57,11 @@ class Inference:
         inference_input = (
             predefined_input
             if predefined_input
-            else InferenceInput.from_context(self.inference_embeddings)
+            else InferenceInput.with_key(self._transform.inference_embeddings.get_recent_key_with_embedding())
         )
 
         try:
-            X = self._build_dataset(inference_input)
+            X = self._transform.transform_inference(inference_input)
             Y = self._predict(X)
             result = list(zip(self.all_keys, Y))
             result.sort(key=lambda x: x[1], reverse=True)
@@ -83,30 +81,6 @@ class Inference:
 
         return only_keys
 
-    def _build_dataset(self, inference_input: InferenceInput):
-
-        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
-            inference_input.previous_key
-        )
-
-        # create an inference array for all keys
-        X = np.zeros([len(self.all_keys), Transform.DIMENSIONS])
-        for i, key in enumerate(self.all_keys):
-            key_embedding = self.inference_embeddings.get_embedding_from_key(key)
-            if key_embedding is None:
-                logging.warning(f"No content for key ({key})")
-                continue
-
-            X[i] = np.concatenate(
-                (
-                    key_embedding,
-                    previous_key_embedding,
-                    np.asarray([inference_input.month]),
-                    np.asarray([inference_input.hour]),
-                )
-            )
-
-        return X
 
     @timeit
     def _predict(self, X):

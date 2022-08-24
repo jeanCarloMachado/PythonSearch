@@ -17,7 +17,7 @@ class InferenceInput:
         self.previous_key = previous_key
 
     @staticmethod
-    def from_context(embedding_loader: InferenceEmbeddingsLoader) -> "InferenceInput":
+    def with_key(recent_key: str) -> "InferenceInput":
         """
         Do inference based on the current time and the recent used keys
         """
@@ -26,7 +26,7 @@ class InferenceInput:
         instance = InferenceInput(
             hour=now.hour,
             month=now.month,
-            previous_key=embedding_loader.get_recent_key(),
+            previous_key=recent_key
         )
 
         print("Inference input: ", instance.__dict__)

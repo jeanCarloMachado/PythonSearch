@@ -1,9 +1,13 @@
 from typing import Dict, List, Tuple
 
+import logging
 import numpy as np
 from pyspark.sql import DataFrame
 
+from python_search.config import ConfigurationLoader
 from python_search.ranking.entry_embeddings import create_indexed_embeddings
+from python_search.ranking.next_item_predictor.inference.embeddings_loader import InferenceEmbeddingsLoader
+from python_search.ranking.next_item_predictor.inference.input import InferenceInput
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
 
@@ -20,6 +24,11 @@ class Transform:
     # + 1 is for the month number
     # + 1 for entry number
     DIMENSIONS = 2 * 384 + 1 + 1
+
+    def __init__(self):
+        configuration = ConfigurationLoader().load_config()
+        self._all_keys = configuration.commands.keys()
+        self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
     def transform_train(self, dataset: DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -56,8 +65,33 @@ class Transform:
 
         return X, Y
 
-    def transform_inference(self):
-        pass
+    def transform_inference(self, inference_input: InferenceInput) -> np.ndarray:
+        """
+        Transform the inference input into something that can be inferred
+        """
+
+        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
+            inference_input.previous_key
+        )
+
+        # create an inference array for all keys
+        X = np.zeros([len(self._all_keys), Transform.DIMENSIONS])
+        for i, key in enumerate(self._all_keys):
+            key_embedding = self.inference_embeddings.get_embedding_from_key(key)
+            if key_embedding is None:
+                logging.warning(f"No content for key ({key})")
+                continue
+
+            X[i] = np.concatenate(
+                (
+                    key_embedding,
+                    previous_key_embedding,
+                    np.asarray([inference_input.month]),
+                    np.asarray([inference_input.hour]),
+                )
+            )
+
+        return X
 
     def _create_embeddings_training_dataset(
         self, dataset: TrainingDataset
@@ -68,11 +102,11 @@ class Transform:
         print("Creating embeddings of traning dataset")
 
         # add embeddings to the dataset
-        all_keys = self._get_all_keys_dataset(dataset)
+        all_keys = self._get_all_keys_from_dataset(dataset)
 
         return create_indexed_embeddings(all_keys)
 
-    def _get_all_keys_dataset(self, dataset: TrainingDataset) -> List[str]:
+    def _get_all_keys_from_dataset(self, dataset: TrainingDataset) -> List[str]:
         collected_keys = dataset.select("key", "previous_key").collect()
 
         keys = []

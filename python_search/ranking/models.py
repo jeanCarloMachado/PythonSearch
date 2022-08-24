@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Literal, Optional
 
 from mlflow.entities import RunInfo
 
@@ -33,6 +33,8 @@ class PythonSearchMLFlow:
         return runs[0]
 
     def get_next_predictor_model(self, run_id: Optional[str] = None):
+        from typing import Literal
+        model_type: Literal["xgboost", "keras"] = "xgboost"
 
         if not run_id:
             run_id = self.get_latest_next_predictor_run().run_id
@@ -40,5 +42,9 @@ class PythonSearchMLFlow:
         if self.debug:
             print(f"Loading run id: {run_id}")
 
-        model = self.mlflow_instance.xgboost.load_model(f"runs:/{run_id}/model")
+        if model_type == "keras":
+            model = self.mlflow_instance.keras.load_model(f"runs:/{run_id}/model")
+        else:
+            model = self.mlflow_instance.xgboost.load_model(f"runs:/{run_id}/model")
+
         return model

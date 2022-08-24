@@ -45,7 +45,7 @@ class RankingGenerator:
         self.generate(recompute_ranking=False)
 
     @timeit
-    def generate(self, recompute_ranking: bool = True, do_not_print_entries=False):
+    def generate(self, recompute_ranking: bool = True, print_entries=True):
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -65,7 +65,8 @@ class RankingGenerator:
                 self._save_ranking_order_in_cache(only_list)
             except Exception as e:
                 print(f"Error saving ranking to cache: {e}")
-        if do_not_print_entries:
+
+        if not print_entries:
             return
 
         return self.print_entries(result)

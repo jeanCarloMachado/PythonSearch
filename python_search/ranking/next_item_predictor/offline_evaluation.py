@@ -1,3 +1,11 @@
+from python_search.config import ConfigurationLoader
+
+from python_search.ranking.next_item_predictor.inference.inference import \
+    Inference
+from python_search.ranking.next_item_predictor.inference.input import \
+    InferenceInput
+
+
 class OfflineEvaluation:
     """
     Evaluate the model with a part of the training data
@@ -7,26 +15,22 @@ class OfflineEvaluation:
         """
         Computes the average position of the entray in the validation set
         """
-        print("Starting offline evaluation!")
+        configuration = ConfigurationLoader().load_config()
+        print("Starting offline evaluation")
         ids = [int(x) for x in X_test[:, 0].tolist()]
         df = dataset.toPandas()
         test_df = df[df["entry_number"].isin(ids)]
         print("TestDF shape: ", test_df.shape)
 
-        from python_search.ranking.next_item_predictor.inference.inference import \
-            Inference
-        from python_search.ranking.next_item_predictor.inference.input import \
-            InferenceInput
-
         inference = Inference(model=model)
 
         def key_exists(key):
-            return key in inference.configuration.commands.keys()
+            return key in configuration.commands.keys()
 
         total_found = 0
         number_of_tests = 20
         avg_position = 0
-        number_of_existing_keys = len(inference.configuration.commands.keys())
+        number_of_existing_keys = len(configuration.commands.keys())
         for index, row in test_df.iterrows():
             if not key_exists(row["previous_key"]) or not key_exists(row["key"]):
                 print(
