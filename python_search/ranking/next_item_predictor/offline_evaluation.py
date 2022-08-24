@@ -1,5 +1,4 @@
 from python_search.config import ConfigurationLoader
-
 from python_search.ranking.next_item_predictor.inference.inference import \
     Inference
 from python_search.ranking.next_item_predictor.inference.input import \

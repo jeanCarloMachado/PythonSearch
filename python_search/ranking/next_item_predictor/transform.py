@@ -1,13 +1,15 @@
+import logging
 from typing import Dict, List, Tuple
 
-import logging
 import numpy as np
 from pyspark.sql import DataFrame
 
 from python_search.config import ConfigurationLoader
 from python_search.ranking.entry_embeddings import create_indexed_embeddings
-from python_search.ranking.next_item_predictor.inference.embeddings_loader import InferenceEmbeddingsLoader
-from python_search.ranking.next_item_predictor.inference.input import InferenceInput
+from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
+    InferenceEmbeddingsLoader
+from python_search.ranking.next_item_predictor.inference.input import \
+    InferenceInput
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
 

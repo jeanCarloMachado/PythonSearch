@@ -34,6 +34,7 @@ class PythonSearchMLFlow:
 
     def get_next_predictor_model(self, run_id: Optional[str] = None):
         from typing import Literal
+
         model_type: Literal["xgboost", "keras"] = "xgboost"
 
         if not run_id:

@@ -4,7 +4,6 @@ import os
 import traceback
 from typing import Any, List, Optional
 
-
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.models import PythonSearchMLFlow
@@ -57,7 +56,9 @@ class Inference:
         inference_input = (
             predefined_input
             if predefined_input
-            else InferenceInput.with_key(self._transform.inference_embeddings.get_recent_key_with_embedding())
+            else InferenceInput.with_key(
+                self._transform.inference_embeddings.get_recent_key_with_embedding()
+            )
         )
 
         try:
@@ -80,7 +81,6 @@ class Inference:
             only_keys = self.all_keys
 
         return only_keys
-
 
     @timeit
     def _predict(self, X):

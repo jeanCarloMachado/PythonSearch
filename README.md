@@ -9,7 +9,6 @@ With python search you collect and retrieve and refactor information efficiently
 
 <img src="https://i.imgur.com/pECSsjc.gif" width="720"/>
 
-
 For an example of how an entries could look like see [here](https://github.com/jeanCarloMachado/PythonSearch/blob/main/python_search/init_project/entries_main.py).
 
 ## Minimal installation

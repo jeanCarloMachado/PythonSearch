@@ -24,9 +24,7 @@ class InferenceInput:
         now = datetime.datetime.now()
 
         instance = InferenceInput(
-            hour=now.hour,
-            month=now.month,
-            previous_key=recent_key
+            hour=now.hour, month=now.month, previous_key=recent_key
         )
 
         print("Inference input: ", instance.__dict__)
