@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-from typing import List
+from typing import List, Tuple
 
 import msgpack_numpy as m
 import numpy as np
 from numpy import ndarray
 
+from python_search.config import ConfigurationLoader
 from python_search.infrastructure.performance import timeit
 from python_search.infrastructure.redis import PythonSearchRedis
 from python_search.ranking.entries_loader import EntriesLoader
@@ -70,7 +71,8 @@ class RedisEmbeddingsWriter:
             print("No keys missing sync, exit early")
             return
 
-        embeddings = create_indexed_embeddings(empty_keys)
+        embeddings = create_key_indexed_embedding(empty_keys)
+
 
         for key, embedding in embeddings.items():
             self.write_embedding(key, embedding)
@@ -90,7 +92,7 @@ class RedisEmbeddingsWriter:
         Generate embeddings for all currently existing entries
         """
         keys = EntriesLoader.load_all_keys()
-        embeddings = create_indexed_embeddings(keys)
+        embeddings = create_key_indexed_embedding(keys)
 
         for key, embedding in embeddings.items():
             self.write_embedding(key, embedding)
@@ -110,16 +112,32 @@ class EmbeddingSerialization:
         return m.packb(embedding)
 
 
-def create_embeddings(keys: List[str]) -> ndarray:
+def create_embeddings_from_strings(keys: List[str]) -> ndarray:
     from sentence_transformers import SentenceTransformer
-
     transformer = SentenceTransformer("nreimers/MiniLM-L6-H384-uncased")
     return transformer.encode(keys, batch_size=128, show_progress_bar=True)
 
 
-def create_indexed_embeddings(keys):
+def create_key_indexed_embedding(keys) -> dict[str, str]:
+    """
+    Create an embedding dict
+    """
     unique_keys = list(set(keys))
-    embeddings = create_embeddings(unique_keys)
+
+    entries = ConfigurationLoader().load_entries()
+    unique_bodies = []
+
+    for key in unique_keys:
+        if key in entries:
+            body = str(entries[key])
+            print(f"For key '{key}', found body to encode: {body}")
+            unique_bodies.append(key + ' ' + body)
+        else:
+            print(f"Could not find body for key: {key}")
+            unique_bodies.append(key)
+
+
+    embeddings = create_embeddings_from_strings(unique_bodies)
     embeddings_keys = dict(zip(unique_keys, embeddings))
     return embeddings_keys
 

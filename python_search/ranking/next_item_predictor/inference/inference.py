@@ -7,8 +7,6 @@ from typing import Any, List, Optional
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.models import PythonSearchMLFlow
-from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
-    InferenceEmbeddingsLoader
 from python_search.ranking.next_item_predictor.inference.input import \
     InferenceInput
 from python_search.ranking.next_item_predictor.transform import Transform
@@ -19,7 +17,7 @@ class Inference:
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "de432f5e006b425283f18741c6b22429"
+    PRODUCTION_RUN_ID = "7f84f955ebfe429faec18efbd68a7842"
 
     def __init__(
         self,

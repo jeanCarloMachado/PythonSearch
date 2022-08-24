@@ -5,7 +5,7 @@ import numpy as np
 from pyspark.sql import DataFrame
 
 from python_search.config import ConfigurationLoader
-from python_search.ranking.entry_embeddings import create_indexed_embeddings
+from python_search.ranking.entry_embeddings import create_key_indexed_embedding
 from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
     InferenceEmbeddingsLoader
 from python_search.ranking.next_item_predictor.inference.input import \
@@ -106,7 +106,7 @@ class Transform:
         # add embeddings to the dataset
         all_keys = self._get_all_keys_from_dataset(dataset)
 
-        return create_indexed_embeddings(all_keys)
+        return create_key_indexed_embedding(all_keys)
 
     def _get_all_keys_from_dataset(self, dataset: TrainingDataset) -> List[str]:
         collected_keys = dataset.select("key", "previous_key").collect()
