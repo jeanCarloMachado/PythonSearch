@@ -1,10 +1,16 @@
 import fire
 
 from python_search.config import ConfigurationLoader
+from dataclasses import dataclass
+
+@dataclass
+class EntryData:
+    key: str
+    value: str
 
 
 class EntryCaptureGUI:
-    def launch(self, title="Capture Entry", default_content=""):
+    def launch(self, title: str = "Capture Entry", default_content: str = "", serialize_output=False) -> EntryData:
         """
         Launch the data capture GUI.
         """
@@ -19,6 +25,11 @@ class EntryCaptureGUI:
             [sg.Input(key="key")],
             [sg.Text("Entry content")],
             [sg.Input(key="content", default_text=default_content)],
+            [sg.Text("Type")],
+            [sg.Combo(["Automatic", "Snippet",  "CliCmd", "Cmd", "URL", "File", "Anonymous"], key="type", default_value="Automatic")],
+            [sg.Text("Tags")],
+            [[sg.Checkbox("German", key="german", default=False)],
+            [sg.Checkbox("Reminder", key="reminder", default=False)]],
             [sg.Button("Write", key="write")],
         ]
 
@@ -39,14 +50,20 @@ class EntryCaptureGUI:
 
         while True:
             event, values = window.read()
-            if event == "write" or event.endswith("_Enter"):
+            if event and (event == "write" or event.endswith("_Enter")):
                 break
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 break
 
         window.close()
+        print('values', values)
 
-        return values["key"], values["content"], "type"
+        result = EntryData(values["key"], values["content"])
+
+        if serialize_output:
+            result = result.__dict__
+
+        return result
 
 
 if __name__ == "__main__":

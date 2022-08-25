@@ -34,7 +34,7 @@ class BaseEntry:
         self._call_after()
 
     def _confirmed_continue(self) -> bool:
-        from python_search.entry_capture.data_capture_ui import AskQuestion
+        from python_search.entry_capture.ui import AskQuestion
 
         result = AskQuestion().ask(
             f"Type (y) if you wanna to proceed to run command: {self.cmd['cmd']}"

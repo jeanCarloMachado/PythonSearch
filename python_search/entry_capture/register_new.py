@@ -8,8 +8,8 @@ from grimoire.event_sourcing.message import MessageBroker
 from grimoire.string import emptish
 
 from python_search.apps.clipboard import Clipboard
-from python_search.entry_capture.data_capture_ui import AskQuestion
 from python_search.entry_capture.entry_inserter import EntryInserter
+from python_search.entry_capture.gui import EntryData
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseEntry
 from python_search.interpreter.interpreter import Interpreter
@@ -112,15 +112,15 @@ class RegisterNew:
         Get content from clipboard and from input
         AND produces the event
         """
-        from python_search.entry_capture.data_capture_gui import \
+        from python_search.entry_capture.gui import \
             EntryCaptureGUI
 
         clipboard_content = self._get_clippboard_content()
-        key, clipboard_content, _ = EntryCaptureGUI().launch(
+        entry_data: EntryData =  EntryCaptureGUI().launch(
             title, default_content=clipboard_content
         )
 
-        return clipboard_content, key
+        return entry_data.value, entry_data.key
 
     def _get_clippboard_content(self) -> str:
         clipboard_content = Clipboard().get_content()
