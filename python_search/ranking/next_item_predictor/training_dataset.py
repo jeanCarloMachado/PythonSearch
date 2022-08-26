@@ -16,7 +16,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = "key", "previous_key", "month", "hour", "label", "entry_number"
+    columns = "key", "previous_key", 'previous_previous_key', "month", "hour", "label", "entry_number"
     _DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -36,33 +36,10 @@ class TrainingDataset:
             if cache:
                 return cache
 
-        search_performed_df = SearchesPerformed().load()
-
-        # filter out too common keys
-        excluded_keys = ["startsearchrunsearch", "search run search focus or open", ""]
-        search_performed_df_filtered = search_performed_df.filter(
-            ~F.col("key").isin(excluded_keys)
-        )
-
-        logging.info("Loading searches performed")
-        df_with_previous = self._join_with_previous(search_performed_df_filtered)
-
-        logging.info("Group by month")
-        with_month = df_with_previous.withColumn("month", F.month("timestamp"))
-        with_hour = with_month.withColumn("hour", F.hour("timestamp"))
-
-        # keep only the necessary columns
-        pair = with_hour.select("month", "hour", "key", "previous_key", "timestamp")
-
-        logging.info("Adding number of times the pair was executed together")
-        grouped = (
-            pair.groupBy("month", "hour", "key", "previous_key")
-            .agg(F.count("previous_key").alias("times"))
-            .sort("key", "times")
-        )
-
-        grouped.cache()
-        grouped.count()
+        search_performed_df = self._load_base()
+        search_performed_df_filtered = self._filter(search_performed_df)
+        pair = self._select_dimenions(search_performed_df_filtered)
+        grouped = self._aggregate(pair)
 
         logging.info("Adding label")
 
@@ -79,19 +56,54 @@ class TrainingDataset:
         self._dataframe = dataset
         return dataset
 
+    def _load_base(self):
+        return SearchesPerformed().load()
+
+    def _select_dimenions(self, df):
+        """ Return a dataframe with the hole features it will need but not aggregated """
+        logging.info("Loading searches performed")
+        df_with_previous = self._join_with_previous(df)
+        print("Add date dimensions")
+        with_month = df_with_previous.withColumn("month", F.month("timestamp"))
+        with_hour = with_month.withColumn("hour", F.hour("timestamp"))
+
+        # keep only the necessary columns
+        return with_hour.select("month", "hour", "key", "previous_key", "previous_previous_key", "timestamp")
+
+    def _filter(self, df):
+        # filter out too common keys
+        EXCLUDED_ENTRIES = ["startsearchrunsearch", "search run search focus or open", ""]
+        return df.filter(
+            ~F.col("key").isin(EXCLUDED_ENTRIES)
+        )
+
+    def _aggregate(self, df):
+        logging.info("Adding number of times the pair was executed together")
+        grouped = (
+            df.groupBy("month", "hour", "key", "previous_key", "previous_previous_key")
+            .agg(F.count('*').alias("times"))
+            .sort("key", "times")
+        )
+
+        grouped.cache()
+        grouped.count()
+        return grouped
+
     def __repr__(self):
         return self._dataframe.show(10)
 
     @timeit
     def _add_label(self, grouped):
+        # @todo figure out if this formula really makes sense
         dataset = grouped.withColumn(
             "label",
             (
                 F.col("times")
                 * F.sum("times").over(Window.partitionBy("month", "hour", "key"))
             ),
-        ).orderBy("month", "hour", "key", "label")
+        )
 
+        # @todo move this to outside the label function
         # add an auto-increment id
         window = Window.orderBy(F.col("key"))
         dataset = dataset.withColumn("entry_number", F.row_number().over(window))
@@ -100,7 +112,9 @@ class TrainingDataset:
 
     @timeit
     def _join_with_previous(self, df):
-        """Adds the previou_key as an entry"""
+        """
+        Adds the previou_key as an entry
+        """
         # build pair dataset with label
         # add literal column
         search_performed_df_tmpcol = df.withColumn("tmp", F.lit("toremove"))
@@ -114,9 +128,16 @@ class TrainingDataset:
         # add previous key to the dataset
         search_performed_df_with_previous = search_performed_df_row_number.withColumn(
             "previous_key", F.lag("key", 1, None).over(window)
-        ).sort("timestamp", ascending=False)
+        )
+        search_performed_df_with_previous_previous = search_performed_df_with_previous.withColumn(
+            "previous_previous_key", F.lag("key", 2, None).over(window)
+        )
 
-        return search_performed_df_with_previous
+        result = search_performed_df_with_previous_previous.sort("timestamp", ascending=False)
+        print("Showing it merged with 2 previous keys")
+        result.show(10)
+
+        return result
 
     def _write_cache(self, dataset) -> None:
         print("Writing cache dataset to disk")

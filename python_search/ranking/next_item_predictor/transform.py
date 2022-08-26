@@ -25,7 +25,7 @@ class Transform:
     # 2 embeddings of 384 dimensions
     # + 1 is for the month number
     # + 1 for entry number
-    DIMENSIONS = 2 * 384 + 1 + 1
+    DIMENSIONS = 3 * 384 + 1 + 1
 
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
@@ -58,6 +58,7 @@ class Transform:
                     np.asarray([row.entry_number]),
                     embeddings_keys[row.key],
                     embeddings_keys[row.previous_key],
+                    embeddings_keys[row.previous_previous_key],
                     np.asarray([row.month]),
                     np.asarray([row.hour]),
                 ]
@@ -75,6 +76,10 @@ class Transform:
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
             inference_input.previous_key
         )
+        previous_previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
+            inference_input.previous_previous_key
+        )
+
 
         # create an inference array for all keys
         X = np.zeros([len(self._all_keys), Transform.DIMENSIONS])
@@ -88,6 +93,7 @@ class Transform:
                 (
                     key_embedding,
                     previous_key_embedding,
+                    previous_previous_key_embedding,
                     np.asarray([inference_input.month]),
                     np.asarray([inference_input.hour]),
                 )

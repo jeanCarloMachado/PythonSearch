@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # using ipython interferes with fire arguments passing
-import logging
+
 import os
 from typing import Optional
 
@@ -27,36 +27,7 @@ class Pipeline:
     def __init__(self):
         os.environ["TIME_IT"] = "1"
 
-    @timeit
-    def run(self, disable_mlflow=False, use_cached_dataset=True):
-        """
-        Runs the whole pipeline
-        """
-        logging.info("End to end ranking")
-        dataset = self.build_dataset(use_cache=use_cached_dataset)
 
-        if not disable_mlflow:
-            model, _ = self.train_and_log(dataset)
-        else:
-            print("MLFLow disabled")
-            model, _ = self.train_keras(dataset)
-
-        Evaluate().evaluate(model)
-
-    @timeit
-    def build_dataset(self, use_cache=False, view_only=False):
-        """
-        Builds the dataset ready for training
-        """
-        dataset = TrainingDataset().build(use_cache)
-
-        print("Training dataset is ready, printing top 10", dataset.show(n=10))
-
-        if view_only:
-            print("View only enabled will early return")
-            return
-
-        return dataset
 
     def train(self, use_cache=True, log_model=True):
         """
@@ -115,6 +86,21 @@ class Pipeline:
             TrainXGBoost().train_and_log(dataset)
         else:
             TrainXGBoost().train(dataset)
+
+    @timeit
+    def build_dataset(self, use_cache=False, view_only=False):
+        """
+        Builds the dataset ready for training
+        """
+        dataset = TrainingDataset().build(use_cache)
+
+        print("Training dataset is ready, printing top 10", dataset.show(n=10))
+
+        if view_only:
+            print("View only enabled will early return")
+            return
+
+        return dataset
 
     def evaluate(self):
         """

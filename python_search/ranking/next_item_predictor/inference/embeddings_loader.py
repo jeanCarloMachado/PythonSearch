@@ -36,7 +36,7 @@ class InferenceEmbeddingsLoader:
 
         return EmbeddingSerialization.read(self.embedding_mapping[key])
 
-    def get_recent_key_with_embedding(self) -> str:
+    def get_recent_key_with_embedding(self, second_recent=False) -> str:
         """
         Look into the recently used keys and return the most recent for which there are embeddings
         """
@@ -45,12 +45,17 @@ class InferenceEmbeddingsLoader:
         print("Number of latest used keys: " + str(len(iterator)))
 
         print("Mapping size: " + str(len(self.embedding_mapping)))
+        first_found = False
         for previous_key in iterator:
             if previous_key not in self.embedding_mapping:
                 print(f"Key {previous_key} not found in mapping")
                 continue
             if not self.embedding_mapping[previous_key]:
                 print("Key found but no content in: ", previous_key)
+                continue
+
+            if second_recent and not first_found:
+                first_found = True
                 continue
 
             return previous_key

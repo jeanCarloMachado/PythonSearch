@@ -38,7 +38,7 @@ class OfflineEvaluation:
                 continue
 
             input = InferenceInput(
-                hour=row["hour"], month=row["month"], previous_key=row["previous_key"]
+                hour=row["hour"], month=row["month"], previous_key=row["previous_key"], previous_previous_key=row['previous_previous_key']
             )
             result = inference.get_ranking(predefined_input=input, return_weights=False)
 
