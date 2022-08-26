@@ -1,22 +1,34 @@
 import sys
 
 import fire
+from python_search.apps.clipboard import Clipboard
 
 
 class CollectInput:
-    def launch(self, name="Enter Data"):
+    """
+    Ask the user for input and return the entered data
+    """
+    def launch(self, name="Enter Data", prefill_with_clipboard: bool=False):
         """
         Launch the data capture GUI.
         """
         import PySimpleGUI as sg
 
+        default_text = ""
+        if prefill_with_clipboard:
+            default_text = Clipboard().get_content()
+
         font_size = 12
         sg.theme("SystemDefault1")
+
+        input_field =  sg.Input(
+            key="content", default_text=default_text, expand_x=True,
+            expand_y=True
+        )
+
         layout = [
             [
-                sg.Input(
-                    key="content",
-                )
+                input_field
             ],
             [sg.Button("Continue", key="write")],
         ]
@@ -31,6 +43,7 @@ class CollectInput:
 
         # workaround for mac bug
         window.read(timeout=1000)
+        input_field.update(select=True)
         window.set_alpha(1.0)
 
         window["content"].bind("<Return>", "_Enter")
@@ -38,7 +51,8 @@ class CollectInput:
 
         while True:
             event, values = window.read()
-            if event == "write" or event.endswith("_Enter"):
+
+            if event and ( event == "write" or event.endswith("_Enter")):
                 break
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 sys.exit(1)

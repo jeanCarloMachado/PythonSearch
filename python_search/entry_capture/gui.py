@@ -1,7 +1,9 @@
+from dataclasses import dataclass
+
 import fire
 
 from python_search.config import ConfigurationLoader
-from dataclasses import dataclass
+
 
 @dataclass
 class EntryData:
@@ -10,7 +12,12 @@ class EntryData:
 
 
 class EntryCaptureGUI:
-    def launch(self, title: str = "Capture Entry", default_content: str = "", serialize_output=False) -> EntryData:
+    def launch(
+        self,
+        title: str = "Capture Entry",
+        default_content: str = "",
+        serialize_output=False,
+    ) -> EntryData:
         """
         Launch the data capture GUI.
         """
@@ -26,10 +33,26 @@ class EntryCaptureGUI:
             [sg.Text("Entry content")],
             [sg.Input(key="content", default_text=default_content)],
             [sg.Text("Type")],
-            [sg.Combo(["Automatic", "Snippet",  "CliCmd", "Cmd", "URL", "File", "Anonymous"], key="type", default_value="Automatic")],
+            [
+                sg.Combo(
+                    [
+                        "Automatic",
+                        "Snippet",
+                        "CliCmd",
+                        "Cmd",
+                        "URL",
+                        "File",
+                        "Anonymous",
+                    ],
+                    key="type",
+                    default_value="Automatic",
+                )
+            ],
             [sg.Text("Tags")],
-            [[sg.Checkbox("German", key="german", default=False)],
-            [sg.Checkbox("Reminder", key="reminder", default=False)]],
+            [
+                [sg.Checkbox("German", key="german", default=False)],
+                [sg.Checkbox("Reminder", key="reminder", default=False)],
+            ],
             [sg.Button("Write", key="write")],
         ]
 
@@ -56,7 +79,7 @@ class EntryCaptureGUI:
                 break
 
         window.close()
-        print('values', values)
+        print("values", values)
 
         result = EntryData(values["key"], values["content"])
 

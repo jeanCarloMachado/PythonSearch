@@ -92,7 +92,7 @@ class RegisterNew:
         Url(cmd).interpret_default()
         time.sleep(1)
 
-        from python_search.apps.capture_input import CollectInput
+        from python_search.apps.collect_input import CollectInput
 
         meaning = CollectInput().launch(f"Please type the meaning of ({key})")
 
@@ -112,11 +112,10 @@ class RegisterNew:
         Get content from clipboard and from input
         AND produces the event
         """
-        from python_search.entry_capture.gui import \
-            EntryCaptureGUI
+        from python_search.entry_capture.gui import EntryCaptureGUI
 
         clipboard_content = self._get_clippboard_content()
-        entry_data: EntryData =  EntryCaptureGUI().launch(
+        entry_data: EntryData = EntryCaptureGUI().launch(
             title, default_content=clipboard_content
         )
 
