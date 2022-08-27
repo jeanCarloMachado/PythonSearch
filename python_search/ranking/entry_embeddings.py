@@ -78,15 +78,7 @@ class RedisEmbeddingsWriter:
 
         print("Done!")
 
-    def write_embedding(self, key: str, embedding: np.ndarray):
-        self.client.hset(
-            f"k_{key}", "embedding", EmbeddingSerialization.serialize(embedding)
-        )
-
-    def read_embedding(self, key):
-        return EmbeddingSerialization.read(self.client.hget(key, "embedding"))
-
-    def create_all(self):
+    def sync_all(self):
         """
         Generate embeddings for all currently existing entries
         """
@@ -97,6 +89,15 @@ class RedisEmbeddingsWriter:
             self.write_embedding(key, embedding)
 
         print("Done!")
+
+    def write_embedding(self, key: str, embedding: np.ndarray):
+        self.client.hset(
+            f"k_{key}", "embedding", EmbeddingSerialization.serialize(embedding)
+        )
+
+    def read_embedding(self, key):
+        return EmbeddingSerialization.read(self.client.hget(key, "embedding"))
+
 
 
 class EmbeddingSerialization:

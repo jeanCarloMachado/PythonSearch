@@ -14,7 +14,7 @@ class OfflineEvaluation:
         """
         Computes the average position of the entray in the validation set
         """
-        configuration = ConfigurationLoader().load_config()
+        self._configuration = ConfigurationLoader().load_config()
         print("Starting offline evaluation")
         ids = [int(x) for x in X_test[:, 0].tolist()]
         df = dataset.toPandas()
@@ -23,15 +23,14 @@ class OfflineEvaluation:
 
         inference = Inference(model=model)
 
-        def key_exists(key):
-            return key in configuration.commands.keys()
 
         total_found = 0
         number_of_tests = 20
         avg_position = 0
-        number_of_existing_keys = len(configuration.commands.keys())
+        number_of_existing_keys = len(self._configuration.commands.keys())
         for index, row in test_df.iterrows():
-            if not key_exists(row["previous_key"]) or not key_exists(row["key"]):
+
+            if not self._key_exists(row["key"]) or not self._key_exists(row["previous_key"]) or not self._key_exists(row["previous_previous_key"]):
                 print(
                     f"Key pair does not exist any longer ({row['previous_key']}, {row['key']})"
                 )
@@ -64,3 +63,6 @@ class OfflineEvaluation:
         print(result)
 
         return result
+
+    def _key_exists(self, key):
+        return key in self._configuration.commands.keys()

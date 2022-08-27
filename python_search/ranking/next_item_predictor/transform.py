@@ -25,7 +25,10 @@ class Transform:
     # 2 embeddings of 384 dimensions
     # + 1 is for the month number
     # + 1 for entry number
-    DIMENSIONS = 3 * 384 + 1 + 1
+    PREVIOUS_PREVIOUS_ENABLED = False
+    KEYS = 3 if PREVIOUS_PREVIOUS_ENABLED else 2
+
+    DIMENSIONS = KEYS * 384 + 1 + 1
 
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
@@ -76,9 +79,11 @@ class Transform:
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
             inference_input.previous_key
         )
-        previous_previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
-            inference_input.previous_previous_key
-        )
+        previous_previous_key_embedding = None
+        if Transform.PREVIOUS_PREVIOUS_ENABLED:
+            previous_previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
+                inference_input.previous_previous_key
+            )
 
 
         # create an inference array for all keys
@@ -89,15 +94,25 @@ class Transform:
                 logging.warning(f"No content for key ({key})")
                 continue
 
-            X[i] = np.concatenate(
-                (
-                    key_embedding,
-                    previous_key_embedding,
-                    previous_previous_key_embedding,
-                    np.asarray([inference_input.month]),
-                    np.asarray([inference_input.hour]),
+            if Transform.PREVIOUS_PREVIOUS_ENABLED:
+                X[i] = np.concatenate(
+                    (
+                        key_embedding,
+                        previous_key_embedding,
+                        previous_previous_key_embedding,
+                        np.asarray([inference_input.month]),
+                        np.asarray([inference_input.hour]),
+                    )
                 )
-            )
+            else:
+                X[i] = np.concatenate(
+                    (
+                        key_embedding,
+                        previous_key_embedding,
+                        np.asarray([inference_input.month]),
+                        np.asarray([inference_input.hour]),
+                    )
+                )
 
         return X
 
