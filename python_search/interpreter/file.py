@@ -21,7 +21,7 @@ class FileInterpreter(BaseInterpreter):
             self.cmd = cmd
             return
 
-        if type(cmd) is str and (os.path.isfile(cmd) or os.path.isdir(cmd)):
+        if type(cmd) is str and FileInterpreter.file_exists(cmd):
             self.cmd["file"] = cmd
             return
 
@@ -64,3 +64,12 @@ class FileInterpreter(BaseInterpreter):
 
     def copiable_part(self):
         return self.cmd["file"]
+
+
+    @staticmethod
+    def file_exists(candidate: str):
+        return os.path.isfile(candidate) or os.path.isdir(candidate)
+
+
+
+

@@ -20,9 +20,12 @@ class EntryData:
 
 
 class EntryCaptureGUI:
+    TAGS = ["German", "Reminder", "Politics", "Self", "Others", "Career"]
+
     def launch(
         self,
         title: str = "Capture Entry",
+        default_key="",
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
@@ -36,20 +39,20 @@ class EntryCaptureGUI:
         sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
 
-        tags = ['German', 'Reminder', 'Politics']
 
+        content_input = sg.Input(
+            key="content",
+            default_text=default_content,
+            expand_x=True,
+            expand_y=True,
+        )
         layout = [
-            [sg.Text("Descriptive key name")],
-            [sg.Input(key="key", expand_x=True, expand_y=True)],
             [sg.Text("Entry content")],
             [
-                sg.Input(
-                    key="content",
-                    default_text=default_content,
-                    expand_x=True,
-                    expand_y=True,
-                )
+                content_input
             ],
+            [sg.Text("Descriptive key name")],
+            [sg.Input(key="key", default_text=default_key, expand_x=True, expand_y=True)],
             [sg.Text("Type")],
             [
                 sg.Combo(
@@ -65,9 +68,7 @@ class EntryCaptureGUI:
                 )
             ],
             [sg.Text("Tags")],
-            [
-                sg.Checkbox(tag, key=tag, default=False) for tag in tags
-            ],
+            [sg.Checkbox(tag, key=tag, default=False) for tag in EntryCaptureGUI.TAGS],
             [sg.Button("Write", key="write")],
         ]
 
@@ -82,8 +83,11 @@ class EntryCaptureGUI:
         # workaround for mac bug
         window.read(timeout=100)
         window.set_alpha(1.0)
+        content_input.update(select=True)
 
         window["key"].bind("<Return>", "_Enter")
+        window["content"].bind("<Return>", "_Enter")
+        window["type"].bind("<Return>", "_Enter")
         window["key"].bind("<Escape>", "_Esc")
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
@@ -100,10 +104,12 @@ class EntryCaptureGUI:
 
         selected_tags = []
         for key, value in values.items():
-            if key in tags and value == True:
+            if key in EntryCaptureGUI.TAGS and value == True:
                 selected_tags.append(key)
 
-        result = EntryData(values["key"], values["content"], values["type"], selected_tags)
+        result = EntryData(
+            values["key"], values["content"], values["type"], selected_tags
+        )
 
         if serialize_output:
             result = result.__dict__

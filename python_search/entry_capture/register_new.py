@@ -13,6 +13,8 @@ from python_search.entry_capture.gui import EntryCaptureGUI, EntryData
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+from python_search.interpreter.url import UrlInterpreter
+from python_search.interpreter.file import FileInterpreter
 
 
 class RegisterNew:
@@ -25,14 +27,22 @@ class RegisterNew:
         self.message_broker = MessageBroker("search_run_register_new")
         self.entry_inserter = EntryInserter(configuration)
 
-    def from_clipboard(self):
+    def launch_ui(self, default_type=None, default_key=None, default_content=None):
         """
         Create a new inferred entry based on the clipboard content
         """
+
+        if not default_content:
+            default_content = Clipboard().get_content()
+
+        if not default_type:
+            default_type = self._infer_default_type(default_content)
+
         entry_data: EntryData = EntryCaptureGUI().launch(
             "New Entry Details",
-            default_content=Clipboard().get_content(),
-            default_type="Snippet",
+            default_content=default_content,
+            default_key=default_key,
+            default_type=default_type,
         )
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self.configuration
@@ -40,20 +50,29 @@ class RegisterNew:
 
         dict_entry = interpreter(entry_data.value).to_dict()
         if entry_data.tags:
-            dict_entry['tags'] = entry_data.tags
+            dict_entry["tags"] = entry_data.tags
 
         self.entry_inserter.insert(entry_data.key, dict_entry)
 
-    def anonymous_snippet(self, content: str):
+    def _infer_default_type(self, content):
+        if UrlInterpreter.is_url(content):
+            return "Url"
+
+        if FileInterpreter.file_exists(content):
+            return "File"
+
+        return "Cmd"
+
+    def anonymous_snippet(self):
         """
         Create an anonymous snippet entry
         """
 
-        if emptish(content):
-            raise RegisterNewException.empty_content()
+        now = datetime.datetime.now()
+        key = f"no key {now.strftime('%Y %M %d %H %M %S')}"
 
-        key, as_dict = transform_into_anonymous_entry(content)
-        self.entry_inserter.insert(key, as_dict)
+        self.launch_ui(default_key=key, default_type="Snippet")
+
 
     def german_from_text(self, key):
         """
@@ -63,7 +82,7 @@ class RegisterNew:
         if emptish(key):
             raise RegisterNewException.empty_content()
 
-        from python_search.interpreter.urlinterpreter import UrlInterpreter
+        from python_search.interpreter.url import UrlInterpreter
 
         cmd = {
             "url": f"https://translate.google.com/?sl=de&tl=en&text={key}&op=translate"
@@ -85,19 +104,4 @@ class RegisterNew:
 
         self.entry_inserter.insert(key, as_dict)
 
-    def _get_clipboard_content_and_ask_key(self, title) -> Tuple[str, str]:
-        """
-        @todo find a better name here
-        Get content from clipboard and from input
-        AND produces the event
-        """
 
-        return entry_data.value, entry_data.key
-
-
-def transform_into_anonymous_entry(given_input: str) -> Tuple[str, dict]:
-    now = datetime.datetime.now()
-    key = f"no key {now.strftime('%Y %M %d %H %M %S')}"
-    return key, {
-        "snippet": given_input,
-    }

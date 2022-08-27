@@ -5,7 +5,7 @@ from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.interpreter.snippet import SnippetInterpreter
-from python_search.interpreter.urlinterpreter import UrlInterpreter
+from python_search.interpreter.url import UrlInterpreter
 from tests.utils import build_config
 
 

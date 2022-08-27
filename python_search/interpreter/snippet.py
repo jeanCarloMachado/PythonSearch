@@ -11,7 +11,7 @@ class SnippetInterpreter(BaseInterpreter):
     @todo rename to entry.Snippet
     """
 
-    def __init__(self, cmd, context = None):
+    def __init__(self, cmd, context=None):
         self.context = context
 
         if type(cmd) == str:

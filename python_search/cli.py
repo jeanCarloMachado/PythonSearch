@@ -104,7 +104,7 @@ class PythonSearchCli:
     def register_clipboard(self):
         from python_search.entry_capture.register_new import RegisterNew
 
-        return RegisterNew(self.configuration).from_clipboard()
+        return RegisterNew(self.configuration).launch_ui()
 
     def register_new(self):
         from python_search.entry_capture.register_new import RegisterNew
@@ -168,7 +168,7 @@ class PythonSearchCli:
         return Utils(self.configuration)
 
     def google_it(self, query):
-        from python_search.interpreter.urlinterpreter import UrlInterpreter
+        from python_search.interpreter.url import UrlInterpreter
 
         UrlInterpreter(
             {

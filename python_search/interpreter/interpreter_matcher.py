@@ -8,7 +8,7 @@ from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.group import GroupInterpreter
 from python_search.interpreter.snippet import SnippetInterpreter
-from python_search.interpreter.urlinterpreter import UrlInterpreter
+from python_search.interpreter.url import UrlInterpreter
 
 INTERPRETERS_IN_ORDER = [
     UrlInterpreter,
@@ -80,7 +80,6 @@ class InterpreterMatcher:
             return FileInterpreter
 
         raise Exception(f"Could not find a matching interpreter for string {type}")
-
 
     def default(self, given_input: str):
         """

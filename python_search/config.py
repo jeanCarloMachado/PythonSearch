@@ -62,7 +62,7 @@ class PythonSearchConfiguration(EntriesGroup):
     APPLICATION_TITLE = "SearchPythonSearch"
     commands: dict
     simple_gui_theme = "SystemDefault1"
-    simple_gui_font_size = 12
+    simple_gui_font_size = 14
 
     def __init__(
         self,
