@@ -28,9 +28,9 @@ class Browser:
         del params["self"]
         cmd_to_run = self.open_cmd(**params)
         print("Comand to run:", cmd_to_run)
-        from python_search.interpreter.cmd import CmdEntry
+        from python_search.interpreter.cmd import CmdInterpreter
 
-        CmdEntry({"cmd": cmd_to_run}).interpret_default()
+        CmdInterpreter({"cmd": cmd_to_run}).interpret_default()
 
     def open_cmd(self, url: str, app_mode=False, incognito=False) -> str:
         """

@@ -72,7 +72,8 @@ class PythonSearchCli:
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
         """
-        from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+        from python_search.interpreter.interpreter_matcher import \
+            InterpreterMatcher
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
 

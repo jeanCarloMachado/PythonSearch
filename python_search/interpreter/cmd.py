@@ -1,11 +1,11 @@
 import logging
 from typing import Optional
 
-#@ todo remove this dependencies on grimoire
-from python_search.apps.notification_ui import send_notification
 from grimoire.shell import shell
 from grimoire.string import remove_special_chars
 
+# @ todo remove this dependencies on grimoire
+from python_search.apps.notification_ui import send_notification
 from python_search.apps.terminal import Terminal
 from python_search.context import Context
 from python_search.exceptions import CommandDoNotMatchException
@@ -15,7 +15,7 @@ from python_search.interpreter.base import BaseInterpreter
 WRAP_IN_TERMINAL = "new-window-non-cli"
 
 
-class CmdEntry(BaseInterpreter):
+class CmdInterpreter(BaseInterpreter):
     """
     Represents a bash command entry. It can be used anywhere to run bash commends.
     """

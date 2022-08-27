@@ -11,8 +11,12 @@ class SnippetInterpreter(BaseInterpreter):
     @todo rename to entry.Snippet
     """
 
-    def __init__(self, cmd, context):
+    def __init__(self, cmd, context = None):
         self.context = context
+
+        if type(cmd) == str:
+            self.cmd = {"snippet": cmd}
+            return
 
         if type(cmd) is dict and "snippet" in cmd:
             self.cmd = cmd

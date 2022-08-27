@@ -9,11 +9,10 @@ from grimoire.string import emptish
 
 from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.entry_inserter import EntryInserter
-from python_search.entry_capture.gui import EntryData
+from python_search.entry_capture.gui import EntryCaptureGUI, EntryData
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.entry_capture.gui import EntryCaptureGUI
 
 
 class RegisterNew:
@@ -31,20 +30,19 @@ class RegisterNew:
         Create a new inferred entry based on the clipboard content
         """
         entry_data: EntryData = EntryCaptureGUI().launch(
-            "New Entry Details", default_content=Clipboard().get_content(), default_type="Snippet"
+            "New Entry Details",
+            default_content=Clipboard().get_content(),
+            default_type="Snippet",
         )
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self.configuration
-        ).get_interpreter(entry_data.value)
+        ).get_interpreter_from_type(entry_data.type)
 
-        as_dict = interpreter.to_dict()
+        dict_entry = interpreter(entry_data.value).to_dict()
+        if entry_data.tags:
+            dict_entry['tags'] = entry_data.tags
 
-        self.entry_inserter.insert(entry_data.key, as_dict)
-
-
-    def snippet_from_clipboard(self):
-        self.from_clipboard()
-
+        self.entry_inserter.insert(entry_data.key, dict_entry)
 
     def anonymous_snippet(self, content: str):
         """
@@ -56,7 +54,6 @@ class RegisterNew:
 
         key, as_dict = transform_into_anonymous_entry(content)
         self.entry_inserter.insert(key, as_dict)
-
 
     def german_from_text(self, key):
         """
@@ -94,7 +91,6 @@ class RegisterNew:
         Get content from clipboard and from input
         AND produces the event
         """
-
 
         return entry_data.value, entry_data.key
 

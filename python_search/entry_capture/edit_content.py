@@ -7,7 +7,7 @@ from grimoire.shell import shell
 
 from python_search.apps.terminal import Terminal
 from python_search.config import config
-from python_search.interpreter.cmd import CmdEntry
+from python_search.interpreter.cmd import CmdInterpreter
 
 
 class EditKey:
@@ -53,7 +53,7 @@ class EditKey:
             "directory": self.configuration.get_project_root(),
         }
 
-        CmdEntry(entry).interpret_default()
+        CmdInterpreter(entry).interpret_default()
 
     def edit_default(self):
         self._edit_config(self.configuration.get_project_root() + "/entries_main.py")

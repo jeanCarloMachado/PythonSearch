@@ -4,7 +4,7 @@ import re
 from python_search.context import Context
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
-from python_search.interpreter.cmd import CmdEntry
+from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.group import GroupInterpreter
 from python_search.interpreter.snippet import SnippetInterpreter
@@ -15,7 +15,7 @@ INTERPRETERS_IN_ORDER = [
     FileInterpreter,
     GroupInterpreter,
     SnippetInterpreter,
-    CmdEntry,
+    CmdInterpreter,
 ]
 
 
@@ -61,6 +61,27 @@ class InterpreterMatcher:
 
         return self._match_interpreter(given_input)
 
+    def get_interpreter_from_type(self, type: str):
+        """
+        From a type given in the ui via string returns the matching interpreter type
+
+        """
+
+        if type == "Snippet":
+            return SnippetInterpreter
+
+        if type == "Url":
+            return UrlInterpreter
+
+        if type == "Cmd":
+            return CmdInterpreter
+
+        if type == "File":
+            return FileInterpreter
+
+        raise Exception(f"Could not find a matching interpreter for string {type}")
+
+
     def default(self, given_input: str):
         """
         Applies the default behaviour to an interpreter
@@ -69,7 +90,6 @@ class InterpreterMatcher:
         specific_interpreter = self.get_interpreter(given_input)
 
         return specific_interpreter.default()
-
 
     def clipboard(self, given_input: str):
         specific_interpreter: BaseInterpreter = self.get_interpreter(given_input)

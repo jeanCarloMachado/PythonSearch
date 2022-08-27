@@ -1,7 +1,7 @@
 import unittest
 
 from python_search.context import Context
-from python_search.interpreter.cmd import CmdEntry
+from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.interpreter.snippet import SnippetInterpreter
@@ -13,7 +13,7 @@ class MatchingTestCase(unittest.TestCase):
     def test_cmd(self):
         config = build_config({"test jean": "pwd"})
         interpreter = InterpreterMatcher(config, Context()).get_interpreter("test jean")
-        assert type(interpreter) is CmdEntry
+        assert type(interpreter) is CmdInterpreter
         assert "pwd" == interpreter.cmd["cmd"]
 
     def test_url(self):

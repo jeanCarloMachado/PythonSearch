@@ -28,9 +28,9 @@ class Gnome:
     def _reset(self):
         """reset existing shortcuts, necessary only for gnome"""
 
-        from python_search.interpreter.cmd import CmdEntry
+        from python_search.interpreter.cmd import CmdInterpreter
 
-        CmdEntry(
+        CmdInterpreter(
             {
                 "cmd": "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
             }

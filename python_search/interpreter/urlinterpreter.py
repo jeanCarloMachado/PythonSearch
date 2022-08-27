@@ -3,7 +3,7 @@ import logging
 from python_search.apps.browser import Browser
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
-from python_search.interpreter.cmd import CmdEntry
+from python_search.interpreter.cmd import CmdInterpreter
 
 
 class UrlInterpreter(BaseInterpreter):
@@ -30,7 +30,7 @@ class UrlInterpreter(BaseInterpreter):
         final_cmd["cmd"] = shell_cmd
 
         print(f"Final command={final_cmd}")
-        return CmdEntry(final_cmd, self.context).interpret_default()
+        return CmdInterpreter(final_cmd, self.context).interpret_default()
 
     def copiable_part(self):
         return self.cmd["url"]

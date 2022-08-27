@@ -8,7 +8,7 @@ from python_search.apps.notification_ui import send_notification
 from python_search.config import PythonSearchConfiguration
 from python_search.context import Context
 from python_search.events.producer import EventProducer
-from python_search.interpreter.cmd import CmdEntry
+from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.observability.logger import (initialize_systemd_logging,
                                                 logging)
@@ -60,7 +60,7 @@ class EntryRunner:
 
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
-            CmdEntry({"cli_cmd": query_used}).interpret_default()
+            CmdInterpreter({"cli_cmd": query_used}).interpret_default()
             return
 
         matches = self._matching_keys(key)

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
+from typing import List
 
 import fire
-from typing import List
 
 from python_search.config import ConfigurationLoader
 
@@ -12,6 +12,7 @@ class EntryData:
     Entry data schema
 
     """
+
     key: str
     value: str
     type: str
@@ -24,7 +25,7 @@ class EntryCaptureGUI:
         title: str = "Capture Entry",
         default_content: str = "",
         serialize_output=False,
-        default_type="Snippet"
+        default_type="Snippet",
     ) -> EntryData:
         """
         Launch the data capture GUI.
@@ -35,19 +36,27 @@ class EntryCaptureGUI:
         sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
 
+        tags = ['German', 'Reminder', 'Politics']
+
         layout = [
             [sg.Text("Descriptive key name")],
             [sg.Input(key="key", expand_x=True, expand_y=True)],
             [sg.Text("Entry content")],
-            [sg.Input(key="content", default_text=default_content, expand_x=True, expand_y=True)],
+            [
+                sg.Input(
+                    key="content",
+                    default_text=default_content,
+                    expand_x=True,
+                    expand_y=True,
+                )
+            ],
             [sg.Text("Type")],
             [
                 sg.Combo(
                     [
                         "Snippet",
-                        "CliCmd",
                         "Cmd",
-                        "URL",
+                        "Url",
                         "File",
                         "Anonymous",
                     ],
@@ -57,8 +66,7 @@ class EntryCaptureGUI:
             ],
             [sg.Text("Tags")],
             [
-                [sg.Checkbox("German", key="german", default=False)],
-                [sg.Checkbox("Reminder", key="reminder", default=False)],
+                sg.Checkbox(tag, key=tag, default=False) for tag in tags
             ],
             [sg.Button("Write", key="write")],
         ]
@@ -76,20 +84,26 @@ class EntryCaptureGUI:
         window.set_alpha(1.0)
 
         window["key"].bind("<Return>", "_Enter")
+        window["key"].bind("<Escape>", "_Esc")
         window["content"].bind("<Escape>", "_Esc")
+        window["type"].bind("<Escape>", "_Esc")
 
         while True:
             event, values = window.read()
             if event and (event == "write" or event.endswith("_Enter")):
                 break
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
-                break
+                raise Exception("Quitting window")
 
         window.close()
         print("values", values)
 
-        tags = []
-        result = EntryData(values["key"], values["content"], values['type'], tags)
+        selected_tags = []
+        for key, value in values.items():
+            if key in tags and value == True:
+                selected_tags.append(key)
+
+        result = EntryData(values["key"], values["content"], values["type"], selected_tags)
 
         if serialize_output:
             result = result.__dict__

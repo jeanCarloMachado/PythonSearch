@@ -39,9 +39,9 @@ class EntryInserter:
 
         # refresh the configuration
         if enable_shortcuts_generation:
-            from python_search.interpreter.cmd import CmdEntry
+            from python_search.interpreter.cmd import CmdInterpreter
 
-            CmdEntry({"cmd": "python_search generate_shortcuts"})
+            CmdInterpreter({"cmd": "python_search generate_shortcuts"})
 
     def _append_entry(self, line_to_add: str):
         """

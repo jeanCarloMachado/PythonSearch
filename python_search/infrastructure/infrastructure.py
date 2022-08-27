@@ -72,15 +72,15 @@ class Infrastructure:
         return self._RUNNING_INFO
 
     def status_window(self):
-        from python_search.interpreter.cmd import CmdEntry
+        from python_search.interpreter.cmd import CmdInterpreter
 
         os.system(f" echo '{self.status(json=True)}' > /tmp/infra_status")
-        CmdEntry({"cli_cmd": f"  cat /tmp/infra_status | jq . "}).interpret_default()
+        CmdInterpreter({"cli_cmd": f"  cat /tmp/infra_status | jq . "}).interpret_default()
 
     def follow_logs(self, service):
-        from python_search.interpreter.cmd import CmdEntry
+        from python_search.interpreter.cmd import CmdInterpreter
 
-        CmdEntry(
+        CmdInterpreter(
             {"cli_cmd": f"tail +1f {self._RUNNING_INFO[service]['log']}"}
         ).interpret_default()
 

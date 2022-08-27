@@ -5,13 +5,17 @@ from python_search.context import Context
 from python_search.environment import is_mac
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
-from python_search.interpreter.cmd import CmdEntry
+from python_search.interpreter.cmd import CmdInterpreter
 
 
 class FileInterpreter(BaseInterpreter):
-    def __init__(self, cmd: Any, context: Context):
+    def __init__(self, cmd: Any, context: Context = None):
         self.context = context
         self.cmd = {}
+
+        if type(cmd) == str:
+            self.cmd = {"file": cmd}
+            return
 
         if type(cmd) is dict and "file" in cmd:
             self.cmd = cmd
@@ -56,7 +60,7 @@ class FileInterpreter(BaseInterpreter):
         else:
             final_cmd["cmd"] = cmd
 
-        return CmdEntry(final_cmd, self.context).interpret_default()
+        return CmdInterpreter(final_cmd, self.context).interpret_default()
 
     def copiable_part(self):
         return self.cmd["file"]
