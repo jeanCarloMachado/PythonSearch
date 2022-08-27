@@ -20,7 +20,7 @@ class EntryData:
 
 
 class EntryCaptureGUI:
-    TAGS = ["German", "Reminder", "Politics", "Self", "Others", "Career"]
+    TAGS = ["German", "Reminder", "Politics", "Self", "Others", "Career", "Commitment", "StrategicDecision"]
 
     def launch(
         self,
@@ -39,7 +39,6 @@ class EntryCaptureGUI:
         sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
 
-
         content_input = sg.Input(
             key="content",
             default_text=default_content,
@@ -48,11 +47,13 @@ class EntryCaptureGUI:
         )
         layout = [
             [sg.Text("Entry content")],
-            [
-                content_input
-            ],
+            [content_input],
             [sg.Text("Descriptive key name")],
-            [sg.Input(key="key", default_text=default_key, expand_x=True, expand_y=True)],
+            [
+                sg.Input(
+                    key="key", default_text=default_key, expand_x=True, expand_y=True
+                )
+            ],
             [sg.Text("Type")],
             [
                 sg.Combo(

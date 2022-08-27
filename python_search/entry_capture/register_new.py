@@ -12,9 +12,9 @@ from python_search.entry_capture.entry_inserter import EntryInserter
 from python_search.entry_capture.gui import EntryCaptureGUI, EntryData
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
+from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.interpreter.url import UrlInterpreter
-from python_search.interpreter.file import FileInterpreter
 
 
 class RegisterNew:
@@ -73,7 +73,6 @@ class RegisterNew:
 
         self.launch_ui(default_key=key, default_type="Snippet")
 
-
     def german_from_text(self, key):
         """
         Register german workds you dont know by saving them to the clipboard and storing in python search
@@ -103,5 +102,3 @@ class RegisterNew:
         }
 
         self.entry_inserter.insert(key, as_dict)
-
-

@@ -65,11 +65,6 @@ class FileInterpreter(BaseInterpreter):
     def copiable_part(self):
         return self.cmd["file"]
 
-
     @staticmethod
     def file_exists(candidate: str):
         return os.path.isfile(candidate) or os.path.isdir(candidate)
-
-
-
-
