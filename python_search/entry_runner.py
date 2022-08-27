@@ -9,7 +9,7 @@ from python_search.config import PythonSearchConfiguration
 from python_search.context import Context
 from python_search.events.producer import EventProducer
 from python_search.interpreter.cmd import CmdEntry
-from python_search.interpreter.interpreter import Interpreter
+from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.observability.logger import (initialize_systemd_logging,
                                                 logging)
 
@@ -98,7 +98,7 @@ class EntryRunner:
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
-        return Interpreter.build_instance(self.configuration).default(real_key)
+        return InterpreterMatcher.build_instance(self.configuration).default(real_key)
 
     def _matching_keys(self, key: str) -> List[str]:
         """

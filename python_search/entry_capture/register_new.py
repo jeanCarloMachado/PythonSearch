@@ -11,9 +11,9 @@ from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.entry_inserter import EntryInserter
 from python_search.entry_capture.gui import EntryData
 from python_search.exceptions import RegisterNewException
-from python_search.interpreter.base import BaseEntry
-from python_search.interpreter.interpreter import Interpreter
-from python_search.observability.logger import logging
+from python_search.interpreter.base import BaseInterpreter
+from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+from python_search.entry_capture.gui import EntryCaptureGUI
 
 
 class RegisterNew:
@@ -30,20 +30,21 @@ class RegisterNew:
         """
         Create a new inferred entry based on the clipboard content
         """
-        clipboard_content, key = self._get_clipboard_content_and_ask_key(
-            "New Entry Details"
+        entry_data: EntryData = EntryCaptureGUI().launch(
+            "New Entry Details", default_content=Clipboard().get_content(), default_type="Snippet"
         )
-        self.infer_content(clipboard_content, key)
-
-    def infer_content(self, content: str, key: str):
-        """Add an entry inferring the type"""
-        interpreter: BaseEntry = Interpreter.build_instance(
+        interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self.configuration
-        ).get_interpreter(content)
+        ).get_interpreter(entry_data.value)
 
         as_dict = interpreter.to_dict()
 
-        self.entry_inserter.insert(key, as_dict)
+        self.entry_inserter.insert(entry_data.key, as_dict)
+
+
+    def snippet_from_clipboard(self):
+        self.from_clipboard()
+
 
     def anonymous_snippet(self, content: str):
         """
@@ -56,25 +57,6 @@ class RegisterNew:
         key, as_dict = transform_into_anonymous_entry(content)
         self.entry_inserter.insert(key, as_dict)
 
-    def snippet_from_clipboard(self):
-        """
-        Create a snippet entry based on the clipboard content
-        """
-        snippet_content, key = self._get_clipboard_content_and_ask_key(
-            "Name your string snippet"
-        )
-
-        self.register_snippet(snippet_content, key)
-
-    def register_snippet(self, content, key):
-
-        as_dict = {
-            "snippet": content,
-        }
-
-        print(f"Dict: {as_dict}")
-
-        self.entry_inserter.insert(key, as_dict)
 
     def german_from_text(self, key):
         """
@@ -84,12 +66,12 @@ class RegisterNew:
         if emptish(key):
             raise RegisterNewException.empty_content()
 
-        from python_search.interpreter.url import Url
+        from python_search.interpreter.urlinterpreter import UrlInterpreter
 
         cmd = {
             "url": f"https://translate.google.com/?sl=de&tl=en&text={key}&op=translate"
         }
-        Url(cmd).interpret_default()
+        UrlInterpreter(cmd).interpret_default()
         time.sleep(1)
 
         from python_search.apps.collect_input import CollectInput
@@ -112,22 +94,9 @@ class RegisterNew:
         Get content from clipboard and from input
         AND produces the event
         """
-        from python_search.entry_capture.gui import EntryCaptureGUI
 
-        clipboard_content = self._get_clippboard_content()
-        entry_data: EntryData = EntryCaptureGUI().launch(
-            title, default_content=clipboard_content
-        )
 
         return entry_data.value, entry_data.key
-
-    def _get_clippboard_content(self) -> str:
-        clipboard_content = Clipboard().get_content()
-        logging.info(f"Current clipboard content '{clipboard_content}'")
-        if len(clipboard_content) == 0:
-            raise RegisterNewException.empty_content()
-
-        return clipboard_content
 
 
 def transform_into_anonymous_entry(given_input: str) -> Tuple[str, dict]:

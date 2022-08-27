@@ -10,8 +10,8 @@ from python_search.context import Context
 from python_search.environment import is_mac
 
 
-class BaseEntry:
-    """parent of all interpreters, Cannot instantiate directly"""
+class BaseInterpreter:
+    """parent of all _interpreters, Cannot instantiate directly"""
 
     def __init__(self, cmd, context: Optional[Context] = None):
         self.cmd = cmd

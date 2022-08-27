@@ -27,8 +27,6 @@ class Pipeline:
     def __init__(self):
         os.environ["TIME_IT"] = "1"
 
-
-
     def train(self, use_cache=True, log_model=True):
         """
         Trains both xgboost and keras models

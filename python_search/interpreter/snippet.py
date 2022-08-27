@@ -2,10 +2,10 @@ from grimoire.shell import shell
 
 from python_search.apps.clipboard import Clipboard
 from python_search.exceptions import CommandDoNotMatchException
-from python_search.interpreter.base import BaseEntry
+from python_search.interpreter.base import BaseInterpreter
 
 
-class SnippetInterpreter(BaseEntry):
+class SnippetInterpreter(BaseInterpreter):
     """
     Snippet handler
     @todo rename to entry.Snippet

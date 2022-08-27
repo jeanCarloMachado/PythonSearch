@@ -26,7 +26,10 @@ class InferenceInput:
         now = datetime.datetime.now()
 
         instance = InferenceInput(
-            hour=now.hour, month=now.month, previous_key=previous_key, previous_previous_key=previous_previous_key
+            hour=now.hour,
+            month=now.month,
+            previous_key=previous_key,
+            previous_previous_key=previous_previous_key,
         )
 
         print("Inference input: ", instance.__dict__)

@@ -2,15 +2,15 @@ import logging
 
 from python_search.apps.browser import Browser
 from python_search.exceptions import CommandDoNotMatchException
-from python_search.interpreter.base import BaseEntry
+from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdEntry
 
 
-class Url(BaseEntry):
+class UrlInterpreter(BaseInterpreter):
     def __init__(self, cmd, context=None):
         self.context = context
 
-        if type(cmd) == str and Url.is_url(cmd):
+        if type(cmd) == str and UrlInterpreter.is_url(cmd):
             self.cmd = {"url": cmd}
             return
 

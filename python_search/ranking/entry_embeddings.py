@@ -99,7 +99,6 @@ class RedisEmbeddingsWriter:
         return EmbeddingSerialization.read(self.client.hget(key, "embedding"))
 
 
-
 class EmbeddingSerialization:
     """Responsible to encode the numpy embeddings in a format readis can read and write from and to"""
 

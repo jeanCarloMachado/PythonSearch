@@ -1,14 +1,21 @@
 from dataclasses import dataclass
 
 import fire
+from typing import List
 
 from python_search.config import ConfigurationLoader
 
 
 @dataclass
 class EntryData:
+    """
+    Entry data schema
+
+    """
     key: str
     value: str
+    type: str
+    tags: List[str]
 
 
 class EntryCaptureGUI:
@@ -17,6 +24,7 @@ class EntryCaptureGUI:
         title: str = "Capture Entry",
         default_content: str = "",
         serialize_output=False,
+        default_type="Snippet"
     ) -> EntryData:
         """
         Launch the data capture GUI.
@@ -29,14 +37,13 @@ class EntryCaptureGUI:
 
         layout = [
             [sg.Text("Descriptive key name")],
-            [sg.Input(key="key")],
+            [sg.Input(key="key", expand_x=True, expand_y=True)],
             [sg.Text("Entry content")],
-            [sg.Input(key="content", default_text=default_content)],
+            [sg.Input(key="content", default_text=default_content, expand_x=True, expand_y=True)],
             [sg.Text("Type")],
             [
                 sg.Combo(
                     [
-                        "Automatic",
                         "Snippet",
                         "CliCmd",
                         "Cmd",
@@ -45,7 +52,7 @@ class EntryCaptureGUI:
                         "Anonymous",
                     ],
                     key="type",
-                    default_value="Automatic",
+                    default_value=default_type,
                 )
             ],
             [sg.Text("Tags")],
@@ -65,7 +72,7 @@ class EntryCaptureGUI:
         )
 
         # workaround for mac bug
-        window.read(timeout=1000)
+        window.read(timeout=100)
         window.set_alpha(1.0)
 
         window["key"].bind("<Return>", "_Enter")
@@ -81,7 +88,8 @@ class EntryCaptureGUI:
         window.close()
         print("values", values)
 
-        result = EntryData(values["key"], values["content"])
+        tags = []
+        result = EntryData(values["key"], values["content"], values['type'], tags)
 
         if serialize_output:
             result = result.__dict__

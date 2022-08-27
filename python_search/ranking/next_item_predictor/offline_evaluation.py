@@ -23,21 +23,27 @@ class OfflineEvaluation:
 
         inference = Inference(model=model)
 
-
         total_found = 0
         number_of_tests = 20
         avg_position = 0
         number_of_existing_keys = len(self._configuration.commands.keys())
         for index, row in test_df.iterrows():
 
-            if not self._key_exists(row["key"]) or not self._key_exists(row["previous_key"]) or not self._key_exists(row["previous_previous_key"]):
+            if (
+                not self._key_exists(row["key"])
+                or not self._key_exists(row["previous_key"])
+                or not self._key_exists(row["previous_previous_key"])
+            ):
                 print(
                     f"Key pair does not exist any longer ({row['previous_key']}, {row['key']})"
                 )
                 continue
 
             input = InferenceInput(
-                hour=row["hour"], month=row["month"], previous_key=row["previous_key"], previous_previous_key=row['previous_previous_key']
+                hour=row["hour"],
+                month=row["month"],
+                previous_key=row["previous_key"],
+                previous_previous_key=row["previous_previous_key"],
             )
             result = inference.get_ranking(predefined_input=input, return_weights=False)
 

@@ -28,7 +28,7 @@ class Preview:
 
                 if "file" in entry_data:
                     del entry_data["file"]
-                type = "Url" if "url" in entry_data else "File"
+                type = "UrlInterpreter" if "url" in entry_data else "File"
 
             if "snippet" in entry_data:
                 print(f"{Fore.BLUE}{entry_data['snippet']}{Style.RESET_ALL}")

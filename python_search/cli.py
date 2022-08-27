@@ -72,9 +72,9 @@ class PythonSearchCli:
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
         """
-        from python_search.interpreter.interpreter import Interpreter
+        from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 
-        Interpreter.build_instance(self.configuration).clipboard(key)
+        InterpreterMatcher.build_instance(self.configuration).clipboard(key)
 
     def copy_key_only(self, key_str: str):
         """
@@ -167,9 +167,9 @@ class PythonSearchCli:
         return Utils(self.configuration)
 
     def google_it(self, query):
-        from python_search.interpreter.url import Url
+        from python_search.interpreter.urlinterpreter import UrlInterpreter
 
-        Url(
+        UrlInterpreter(
             {
                 "url": f"http://www.google.com/search?q={query}",
             }

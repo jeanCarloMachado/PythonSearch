@@ -42,7 +42,7 @@ class CollectInput:
 
         # workaround for mac bug
         window.read(timeout=100)
-        if default_text != '':
+        if default_text != "":
             input_field.update(select=True)
         window.set_alpha(1.0)
 

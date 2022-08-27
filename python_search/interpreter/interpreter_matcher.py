@@ -3,15 +3,15 @@ import re
 
 from python_search.context import Context
 from python_search.exceptions import CommandDoNotMatchException
-from python_search.interpreter.base import BaseEntry
+from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdEntry
 from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.group import GroupInterpreter
 from python_search.interpreter.snippet import SnippetInterpreter
-from python_search.interpreter.url import Url
+from python_search.interpreter.urlinterpreter import UrlInterpreter
 
-INTERPETER_ORDER = [
-    Url,
+INTERPRETERS_IN_ORDER = [
+    UrlInterpreter,
     FileInterpreter,
     GroupInterpreter,
     SnippetInterpreter,
@@ -19,8 +19,10 @@ INTERPETER_ORDER = [
 ]
 
 
-class Interpreter:
-    """Matches a query with a entry"""
+class InterpreterMatcher:
+    """
+    Matches a query with an entry interpreter
+    """
 
     _instance = None
 
@@ -31,17 +33,33 @@ class Interpreter:
 
         :return:
         """
-        if not Interpreter._instance:
+        if not InterpreterMatcher._instance:
             context = Context.get_instance()
-            Interpreter._instance = Interpreter(configuration, context)
+            InterpreterMatcher._instance = InterpreterMatcher(configuration, context)
 
-        return Interpreter._instance
+        return InterpreterMatcher._instance
 
     def __init__(self, configuration, context: Context):
         self._configuration = configuration
         self.context = context
         self.context.set_interpreter(self)
-        self.interpreters = INTERPETER_ORDER
+        self._interpreters = INTERPRETERS_IN_ORDER
+
+    def get_interpreter(self, given_input: str) -> BaseInterpreter:
+        """
+        Given the string content, returns the best matched interpreter.
+        Returns the instance of the matched interpreter given an text input
+        """
+        self.context.set_input(given_input)
+
+        try:
+            # tries to get the real key if it exists
+            key = self._get_key(given_input)
+            given_input = self._configuration.get_command(key)
+        except Exception as e:
+            logging.error(e)
+
+        return self._match_interpreter(given_input)
 
     def default(self, given_input: str):
         """
@@ -52,27 +70,13 @@ class Interpreter:
 
         return specific_interpreter.default()
 
+
     def clipboard(self, given_input: str):
-        specific_interpreter: BaseEntry = self.get_interpreter(given_input)
+        specific_interpreter: BaseInterpreter = self.get_interpreter(given_input)
         return specific_interpreter.interpret_clipboard()
 
-    def get_interpreter(self, given_input: str) -> BaseEntry:
-        """
-        Given the content, returns the best matched interpreter.
-        Returns the instance of the matched interpreter given an text input
-        """
-        self.context.set_input(given_input)
-        key = self.get_key(given_input)
-
-        try:
-            given_input = self._configuration.get_command(key)
-        except Exception as e:
-            logging.error(e)
-
-        return self._match_interpreter(given_input)
-
-    def _match_interpreter(self, cmd):
-        for interpreter in self.interpreters:
+    def _match_interpreter(self, cmd) -> BaseInterpreter:
+        for interpreter in self._interpreters:
             try:
                 logging.info(f"Trying to construct {interpreter}")
                 command_instance = interpreter(cmd, self.context)
@@ -83,7 +87,7 @@ class Interpreter:
 
         raise Exception("Received a dict but did not match any type")
 
-    def get_key(self, given_input) -> str:
+    def _get_key(self, given_input) -> str:
         """
         @todo have a global way to match the keys and move the logic out of here
         this already caused a bug on key contents not being able to be copied

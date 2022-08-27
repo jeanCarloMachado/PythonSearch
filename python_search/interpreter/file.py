@@ -4,11 +4,11 @@ from typing import Any
 from python_search.context import Context
 from python_search.environment import is_mac
 from python_search.exceptions import CommandDoNotMatchException
-from python_search.interpreter.base import BaseEntry
+from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdEntry
 
 
-class FileInterpreter(BaseEntry):
+class FileInterpreter(BaseInterpreter):
     def __init__(self, cmd: Any, context: Context):
         self.context = context
         self.cmd = {}
@@ -38,7 +38,6 @@ class FileInterpreter(BaseEntry):
             return "nautilus"
 
         if file_extension == ".pdf":
-            # executable = "okular"
             return "zathura"
 
         elif file_extension == ".ipynb":

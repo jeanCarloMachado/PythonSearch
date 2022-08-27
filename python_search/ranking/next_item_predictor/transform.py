@@ -81,10 +81,11 @@ class Transform:
         )
         previous_previous_key_embedding = None
         if Transform.PREVIOUS_PREVIOUS_ENABLED:
-            previous_previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
-                inference_input.previous_previous_key
+            previous_previous_key_embedding = (
+                self.inference_embeddings.get_embedding_from_key(
+                    inference_input.previous_previous_key
+                )
             )
-
 
         # create an inference array for all keys
         X = np.zeros([len(self._all_keys), Transform.DIMENSIONS])

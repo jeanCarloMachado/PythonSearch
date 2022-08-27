@@ -56,7 +56,9 @@ class Inference:
             if predefined_input
             else InferenceInput.with_keys(
                 self._transform.inference_embeddings.get_recent_key_with_embedding(),
-                self._transform.inference_embeddings.get_recent_key_with_embedding(second_recent=True)
+                self._transform.inference_embeddings.get_recent_key_with_embedding(
+                    second_recent=True
+                ),
             )
         )
 
