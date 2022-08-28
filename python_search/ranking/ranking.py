@@ -78,8 +78,7 @@ class RankingGenerator:
     def _build_rank(self, recompute_ranking):
         """Mutate self.ranked keys with teh results, supports caching"""
         if self._can_load_from_cache() and not recompute_ranking:
-            if self.debug:
-                print("Results being loaded from cache")
+            print("Results being loaded from cache")
 
             keys = self.redis_client.get("cache_ranking_result")
             keys = keys.decode("utf-8").split("|")
