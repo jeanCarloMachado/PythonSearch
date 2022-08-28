@@ -62,7 +62,6 @@ class PythonSearchCli:
 
         Search(self.configuration).run()
 
-
     def copy_entry_content(self, key: str):
         """
         Copies the content of the provided key to the clipboard.
@@ -192,9 +191,12 @@ def _error_handler(e):
 
     raise e
 
+
 def _run_key_bin():
     import fire
+
     fire.Fire(PythonSearchCli().run_key)
+
 
 def main():
     import fire
