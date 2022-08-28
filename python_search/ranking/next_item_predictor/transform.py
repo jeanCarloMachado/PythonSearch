@@ -25,8 +25,7 @@ class Transform:
     # 2 embeddings of 384 dimensions
     # + 1 is for the month number
     # + 1 for entry number
-    PREVIOUS_PREVIOUS_ENABLED = True
-    KEYS = 3 if PREVIOUS_PREVIOUS_ENABLED else 2
+    KEYS = 3
 
     DIMENSIONS = KEYS * 384 + 1 + 1
 
@@ -71,7 +70,7 @@ class Transform:
 
         return X, Y
 
-    def transform_inference(self, inference_input: InferenceInput) -> np.ndarray:
+    def transform_inference(self, inference_input: InferenceInput, all_keys) -> np.ndarray:
         """
         Transform the inference input into something that can be inferred
         """
@@ -79,41 +78,29 @@ class Transform:
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
             inference_input.previous_key
         )
-        previous_previous_key_embedding = None
-        if Transform.PREVIOUS_PREVIOUS_ENABLED:
-            previous_previous_key_embedding = (
-                self.inference_embeddings.get_embedding_from_key(
-                    inference_input.previous_previous_key
-                )
+        previous_previous_key_embedding = (
+            self.inference_embeddings.get_embedding_from_key(
+                inference_input.previous_previous_key
             )
+        )
 
         # create an inference array for all keys
         X = np.zeros([len(self._all_keys), Transform.DIMENSIONS])
-        for i, key in enumerate(self._all_keys):
+        for i, key in enumerate(all_keys):
             key_embedding = self.inference_embeddings.get_embedding_from_key(key)
             if key_embedding is None:
                 logging.warning(f"No content for key ({key})")
                 continue
 
-            if Transform.PREVIOUS_PREVIOUS_ENABLED:
-                X[i] = np.concatenate(
-                    (
-                        key_embedding,
-                        previous_key_embedding,
-                        previous_previous_key_embedding,
-                        np.asarray([inference_input.month]),
-                        np.asarray([inference_input.hour]),
-                    )
+            X[i] = np.concatenate(
+                (
+                    key_embedding,
+                    previous_key_embedding,
+                    previous_previous_key_embedding,
+                    np.asarray([inference_input.month]),
+                    np.asarray([inference_input.hour]),
                 )
-            else:
-                X[i] = np.concatenate(
-                    (
-                        key_embedding,
-                        previous_key_embedding,
-                        np.asarray([inference_input.month]),
-                        np.asarray([inference_input.hour]),
-                    )
-                )
+            )
 
         return X
 

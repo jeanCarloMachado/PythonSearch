@@ -45,7 +45,7 @@ class Inference:
 
     @timeit
     def get_ranking(
-        self, predefined_input: Optional[InferenceInput] = None, return_weights=False
+        self, predefined_input: Optional[InferenceInput] = None, print_weights=False
     ) -> List[str]:
         """
         Gets the ranking from the next item model
@@ -63,13 +63,13 @@ class Inference:
         )
 
         try:
-            X = self._transform.transform_inference(inference_input)
+            X = self._transform.transform_inference(inference_input, self.all_keys)
             Y = self._predict(X)
             print(Y)
             result = list(zip(self.all_keys, Y))
             result.sort(key=lambda x: x[1], reverse=True)
-            if return_weights:
-                return result
+            if print_weights:
+                print(result)
 
             only_keys = [entry[0] for entry in result]
             print("Ranking inference succeeded")
@@ -82,6 +82,7 @@ class Inference:
             print(traceback.format_exc())
             only_keys = self.all_keys
 
+        print("ONlye keys: ", only_keys)
         return only_keys
 
     @timeit

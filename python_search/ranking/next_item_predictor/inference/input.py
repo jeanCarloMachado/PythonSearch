@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import datetime
+import os
 
 from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
     InferenceEmbeddingsLoader
-import os
 
 
 class InferenceInput:
@@ -25,8 +25,10 @@ class InferenceInput:
         Do inference based on the current time and the recent used keys
         """
         now = datetime.datetime.now()
-        hour = int(os.environ['FORCE_HOUR']) if 'FORCE_HOUR' in  os.environ else now.hour
-        month = int(os.environ['FORCE_MONTH']) if 'FORCE_MONTH' in  os.environ else now.month
+        hour = int(os.environ["FORCE_HOUR"]) if "FORCE_HOUR" in os.environ else now.hour
+        month = (
+            int(os.environ["FORCE_MONTH"]) if "FORCE_MONTH" in os.environ else now.month
+        )
 
         instance = InferenceInput(
             hour=hour,

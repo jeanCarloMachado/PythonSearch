@@ -45,7 +45,7 @@ class RankingGenerator:
         self.generate(recompute_ranking=False)
 
     @timeit
-    def generate(self, recompute_ranking: bool = True, print_entries=True):
+    def generate(self, print_entries=True, print_weights=False):
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -54,17 +54,17 @@ class RankingGenerator:
         # by default the rank is just in the order they are persisted in the file
         self.ranked_keys: List[str] = self.entries.keys()
 
-        self._build_rank(recompute_ranking)
-        result, only_list = self._merge_and_build_result()
+        try:
+            """Mutate self.ranked keys with the results"""
+            self.ranked_keys = self.inference.get_ranking(print_weights=print_weights)
+        except Exception as e:
+            print(
+                f"Inference failed with error {e} falling back to default ranking"
+            )
 
-        if (
-            self.configuration.supported_features.is_redis_supported()
-            and recompute_ranking
-        ):
-            try:
-                self._save_ranking_order_in_cache(only_list)
-            except Exception as e:
-                print(f"Error saving ranking to cache: {e}")
+        """Populate the variable used_entries  with the results from redis"""
+        self._fetch_latest_entries()
+        result, only_list = self._merge_and_build_result()
 
         if not print_entries:
             return
@@ -74,35 +74,6 @@ class RankingGenerator:
     def _save_ranking_order_in_cache(self, ranking: List[str]):
         encoded_list = "|".join(ranking)
         self.redis_client.set("cache_ranking_result", encoded_list)
-
-    def _build_rank(self, recompute_ranking):
-        """Mutate self.ranked keys with teh results, supports caching"""
-        if self._can_load_from_cache() and not recompute_ranking:
-            print("Results being loaded from cache")
-
-            keys = self.redis_client.get("cache_ranking_result")
-            keys = keys.decode("utf-8").split("|")
-
-            missing_keys = set(self.ranked_keys) - set(keys)
-            self.ranked_keys = list(missing_keys) + keys
-            raise Exception("This should not be called now")
-            return
-
-        if self.debug:
-            print("Results not being loaded from cache")
-
-        if (
-            self.configuration.supported_features.is_dynamic_ranking_supported()
-            and self.feature_toggle.is_enabled("ranking_next")
-        ):
-            try:
-                self.ranked_keys = self.inference.get_ranking()
-            except Exception as e:
-                print(
-                    f"Inference failed with error {e} falling back to default ranking"
-                )
-
-        self._fetch_latest_entries()
 
     def _can_load_from_cache(self):
         return (
