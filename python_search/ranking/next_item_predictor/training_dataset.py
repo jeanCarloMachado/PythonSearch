@@ -7,6 +7,7 @@ import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.window import Window
 
+
 from python_search.datasets.searchesperformed import SearchesPerformed
 from python_search.infrastructure.performance import timeit
 
@@ -45,14 +46,15 @@ class TrainingDataset:
                 return cache
 
         search_performed_df = self._load_base()
-        search_performed_df_filtered = self._filter(search_performed_df)
-        pair = self._select_dimenions(search_performed_df_filtered)
-        grouped = self._aggregate(pair)
+        search_performed_df_filtered = self._filter_blacklisted(search_performed_df)
+        all_dimensions = self._add_all_features(search_performed_df_filtered)
+        base_dataset = self._base_dataset(all_dimensions)
+
+        dataset_with_aggregations = self._compute_aggregations(all_dimensions, base_dataset)
 
         logging.info("Adding label")
-
         # add the label
-        dataset = self._add_label(grouped)
+        dataset = self._compute_label_and_cleanup_columns(dataset_with_aggregations)
 
         logging.info("TrainingDataset ready, writing it to disk")
         if write_cache:
@@ -64,10 +66,71 @@ class TrainingDataset:
         self._dataframe = dataset
         return dataset
 
-    def _load_base(self):
+    def _compute_aggregations(self, all_dimensions, base_features) -> DataFrame:
+        """
+        Adds aggregations of the data that supports the label formula
+        Args:
+            all_dimensions:
+            base_features:
+
+        Returns:
+
+        """
+        import pyspark.sql.functions as F
+
+        # adds performance in the dimension of the triple key,previous key,previous previous key
+        grouped3 = (
+            all_dimensions.groupBy("month", "hour", "key", "previous_key", "previous_previous_key")
+            .agg(F.count('*').alias("times_3"))
+            .sort("times_3", ascending=False)
+        )
+        base_new = base_features.join(grouped3, on=['month', 'hour', 'key', 'previous_key', 'previous_previous_key'])
+
+        # adds performance in the time dimension of the pair key-previous key
+        grouped2 = (
+            all_dimensions.groupBy("month", "hour", "key", "previous_key")
+            .agg(F.count('*').alias("times_2"))
+            .sort("times_2", ascending=False)
+        )
+        base_new = base_new.join(grouped2, on=['month', 'hour', 'key', 'previous_key'])
+
+        # adds global performance of the pair
+        global_pair = (
+            all_dimensions.groupBy("key", "previous_key")
+            .agg(F.count('*').alias("global_pair"))
+            .sort("global_pair", ascending=False)
+        )
+
+        base_new = base_new.join(global_pair, on=['key', 'previous_key'])
+
+        return base_new
+
+    def _base_dataset(self, all_dimensions) -> DataFrame:
+        """
+        This is the base dataset that will be send to train
+        but before we will add some aggregations to it so we can generate the desired label
+        Args:
+            all_dimensions:
+
+        Returns:
+
+        """
+        base_features = all_dimensions.select('month', 'hour', 'key', 'previous_key',
+                                              'previous_previous_key').distinct()
+
+        window = Window.orderBy(F.col("key"))
+        # @todo verify if this number is correct auto-incremented and unique
+        base_features = base_features.withColumn("entry_number", F.row_number().over(window))
+
+        print('Base feature')
+        base_features.show()
+
+        return base_features
+
+    def _load_base(self) -> DataFrame:
         return SearchesPerformed().load()
 
-    def _select_dimenions(self, df):
+    def _add_all_features(self, df: DataFrame) -> DataFrame:
         """Return a dataframe with the hole features it will need but not aggregated"""
         logging.info("Loading searches performed")
         df_with_previous = self._join_with_previous(df)
@@ -80,7 +143,7 @@ class TrainingDataset:
             "month", "hour", "key", "previous_key", "previous_previous_key", "timestamp"
         )
 
-    def _filter(self, df):
+    def _filter_blacklisted(self, df) -> DataFrame:
         # filter out too common keys
         EXCLUDED_ENTRIES = [
             "startsearchrunsearch",
@@ -89,38 +152,22 @@ class TrainingDataset:
         ]
         return df.filter(~F.col("key").isin(EXCLUDED_ENTRIES))
 
-    def _aggregate(self, df):
-        logging.info("Adding number of times the pair was executed together")
-        grouped = (
-            df.groupBy("month", "hour", "key", "previous_key", "previous_previous_key")
-            .agg(F.count("*").alias("times"))
-            .sort("key", "times")
-        )
-
-        grouped.cache()
-        grouped.count()
-        return grouped
 
     def __repr__(self):
         return self._dataframe.show(10)
 
     @timeit
-    def _add_label(self, grouped):
-        # @todo figure out if this formula really makes sense
-        dataset = grouped.withColumn(
-            "label",
-            (
-                F.col("times")
-                * F.sum("times").over(Window.partitionBy("month", "hour", "key"))
-            ),
-        )
+    def _compute_label_and_cleanup_columns(self, all_features: DataFrame) -> DataFrame:
+        from pyspark.sql.functions import udf, struct
 
-        # @todo move this to outside the label function
-        # add an auto-increment id
-        window = Window.orderBy(F.col("key"))
-        dataset = dataset.withColumn("entry_number", F.row_number().over(window))
+        def label(row):
+            return row['times_3'] + row['times_2'] * 0.5 + row['global_pair'] * 0.01
 
-        return dataset.select(*self.columns)
+        udf_f = udf(label)
+        with_label = all_features.withColumn('label', udf_f(struct([all_features[x] for x in all_features.columns])))
+
+
+        return with_label.select(*self.columns)
 
     @timeit
     def _join_with_previous(self, df):
@@ -150,8 +197,7 @@ class TrainingDataset:
         result = search_performed_df_with_previous_previous.sort(
             "timestamp", ascending=False
         )
-        print("Showing it merged with 2 previous keys")
-        result.show(10)
+        logging.debug("Showing it merged with 2 previous keys", result.show(10))
 
         return result
 

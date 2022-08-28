@@ -25,7 +25,7 @@ class Transform:
     # 2 embeddings of 384 dimensions
     # + 1 is for the month number
     # + 1 for entry number
-    PREVIOUS_PREVIOUS_ENABLED = False
+    PREVIOUS_PREVIOUS_ENABLED = True
     KEYS = 3 if PREVIOUS_PREVIOUS_ENABLED else 2
 
     DIMENSIONS = KEYS * 384 + 1 + 1
