@@ -20,7 +20,16 @@ class EntryData:
 
 
 class EntryCaptureGUI:
-    TAGS = ["German", "Reminder", "Politics", "Self", "Others", "Career", "Commitment", "StrategicDecision"]
+    TAGS = [
+        "German",
+        "Reminder",
+        "Politics",
+        "Self",
+        "Others",
+        "Career",
+        "Commitment",
+        "StrategicDecision",
+    ]
 
     def launch(
         self,

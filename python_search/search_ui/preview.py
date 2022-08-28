@@ -4,6 +4,7 @@ from python_search.config import ConfigurationLoader
 
 
 class Preview:
+    """ Preview the entry in the search ui """
     def __init__(self):
         self.configuration = ConfigurationLoader()
 
@@ -42,8 +43,20 @@ class Preview:
 
                 if "cli_md" in entry_data:
                     del entry_data["cli_cmd"]
+
                 if "cmd" in entry_data:
                     del entry_data["cmd"]
+
+
+            if "callable" in entry_data:
+                value = entry_data.get("callable")
+                import dill
+
+                print(f"{Fore.RED}{dill.source.getsource(value)}{Style.RESET_ALL}")
+                type = "Callable"
+                if "callable" in entry_data:
+                    del entry_data["callable"]
+
 
             print("")
 

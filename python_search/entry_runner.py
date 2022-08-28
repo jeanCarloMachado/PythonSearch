@@ -23,7 +23,7 @@ class EntryRunner:
         self.configuration = configuration
         self.logging = initialize_systemd_logging()
 
-    def run_key(
+    def run(
         self,
         key: str,
         query_used: str = "",
@@ -32,11 +32,12 @@ class EntryRunner:
         from_shortcut=False,
     ):
         """
-        from_shortcut means that the key execution was triggered by a desktop shortcut
+        Runs an entry given its name or its partial name.
 
         Parameters:
             key: As it comes from FZF they is a str pair of key_name : {metadata}
             entry_rank_position: accounts for where the entry was when it was executed, if passed it will be used for
+            from_shortcut means that the key execution was triggered by a desktop shortcut
         """
 
         # if there are : in the line just take all before it as it is

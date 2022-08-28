@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.5.2"
+version = "0.5.3"
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
 
@@ -47,3 +47,4 @@ python_search_infra = 'python_search.infrastructure.infrastructure:main'
 browser = 'python_search.apps.browser:main'
 python_search_webapi = 'python_search.web_api:main'
 entry_embeddings='python_search.ranking.entry_embeddings:main'
+run_entry = 'python_search.cli:_run_key_bin'

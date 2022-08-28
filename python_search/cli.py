@@ -52,6 +52,7 @@ class PythonSearchCli:
                 return
 
         self.configuration = configuration
+        self.run_key = EntryRunner(self.configuration).run
 
     def search(self):
         """
@@ -61,11 +62,6 @@ class PythonSearchCli:
 
         Search(self.configuration).run()
 
-    def run_key(self):
-        import sys
-
-        print(sys.version_info)
-        return EntryRunner(self.configuration).run_key
 
     def copy_entry_content(self, key: str):
         """
@@ -196,6 +192,9 @@ def _error_handler(e):
 
     raise e
 
+def _run_key_bin():
+    import fire
+    fire.Fire(PythonSearchCli().run_key)
 
 def main():
     import fire

@@ -30,8 +30,10 @@ class BaseInterpreter:
             logging.info("Disable sequential execution flag enabled")
 
         self._call_before()
-        self.interpret_default()
+        result = self.interpret_default()
         self._call_after()
+
+        return result
 
     def _confirmed_continue(self) -> bool:
         from python_search.entry_capture.ui import AskQuestion
