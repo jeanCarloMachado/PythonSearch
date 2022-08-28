@@ -7,7 +7,6 @@ import pyspark.sql.functions as F
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.window import Window
 
-
 from python_search.datasets.searchesperformed import SearchesPerformed
 from python_search.infrastructure.performance import timeit
 
@@ -50,7 +49,9 @@ class TrainingDataset:
         all_dimensions = self._add_all_features(search_performed_df_filtered)
         base_dataset = self._base_dataset(all_dimensions)
 
-        dataset_with_aggregations = self._compute_aggregations(all_dimensions, base_dataset)
+        dataset_with_aggregations = self._compute_aggregations(
+            all_dimensions, base_dataset
+        )
 
         logging.info("Adding label")
         # add the label
@@ -80,28 +81,33 @@ class TrainingDataset:
 
         # adds performance in the dimension of the triple key,previous key,previous previous key
         grouped3 = (
-            all_dimensions.groupBy("month", "hour", "key", "previous_key", "previous_previous_key")
-            .agg(F.count('*').alias("times_3"))
+            all_dimensions.groupBy(
+                "month", "hour", "key", "previous_key", "previous_previous_key"
+            )
+            .agg(F.count("*").alias("times_3"))
             .sort("times_3", ascending=False)
         )
-        base_new = base_features.join(grouped3, on=['month', 'hour', 'key', 'previous_key', 'previous_previous_key'])
+        base_new = base_features.join(
+            grouped3,
+            on=["month", "hour", "key", "previous_key", "previous_previous_key"],
+        )
 
         # adds performance in the time dimension of the pair key-previous key
         grouped2 = (
             all_dimensions.groupBy("month", "hour", "key", "previous_key")
-            .agg(F.count('*').alias("times_2"))
+            .agg(F.count("*").alias("times_2"))
             .sort("times_2", ascending=False)
         )
-        base_new = base_new.join(grouped2, on=['month', 'hour', 'key', 'previous_key'])
+        base_new = base_new.join(grouped2, on=["month", "hour", "key", "previous_key"])
 
         # adds global performance of the pair
         global_pair = (
             all_dimensions.groupBy("key", "previous_key")
-            .agg(F.count('*').alias("global_pair"))
+            .agg(F.count("*").alias("global_pair"))
             .sort("global_pair", ascending=False)
         )
 
-        base_new = base_new.join(global_pair, on=['key', 'previous_key'])
+        base_new = base_new.join(global_pair, on=["key", "previous_key"])
 
         return base_new
 
@@ -115,14 +121,17 @@ class TrainingDataset:
         Returns:
 
         """
-        base_features = all_dimensions.select('month', 'hour', 'key', 'previous_key',
-                                              'previous_previous_key').distinct()
+        base_features = all_dimensions.select(
+            "month", "hour", "key", "previous_key", "previous_previous_key"
+        ).distinct()
 
         window = Window.orderBy(F.col("key"))
         # @todo verify if this number is correct auto-incremented and unique
-        base_features = base_features.withColumn("entry_number", F.row_number().over(window))
+        base_features = base_features.withColumn(
+            "entry_number", F.row_number().over(window)
+        )
 
-        print('Base feature')
+        print("Base feature")
         base_features.show()
 
         return base_features
@@ -152,20 +161,20 @@ class TrainingDataset:
         ]
         return df.filter(~F.col("key").isin(EXCLUDED_ENTRIES))
 
-
     def __repr__(self):
         return self._dataframe.show(10)
 
     @timeit
     def _compute_label_and_cleanup_columns(self, all_features: DataFrame) -> DataFrame:
-        from pyspark.sql.functions import udf, struct
+        from pyspark.sql.functions import struct, udf
 
         def label(row):
-            return row['times_3'] + row['times_2'] * 0.5 + row['global_pair'] * 0.01
+            return row["times_3"] + row["times_2"] * 0.5 + row["global_pair"] * 0.01
 
         udf_f = udf(label)
-        with_label = all_features.withColumn('label', udf_f(struct([all_features[x] for x in all_features.columns])))
-
+        with_label = all_features.withColumn(
+            "label", udf_f(struct([all_features[x] for x in all_features.columns]))
+        )
 
         return with_label.select(*self.columns)
 
