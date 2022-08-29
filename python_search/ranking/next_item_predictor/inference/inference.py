@@ -28,8 +28,8 @@ class Inference:
 
         self.debug = os.getenv("DEBUG", False)
         self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
-        if 'FORCE_RUN_ID' in os.environ:
-            self.run_id =  os.environ['FORCE_RUN_ID']
+        if "FORCE_RUN_ID" in os.environ:
+            self.run_id = os.environ["FORCE_RUN_ID"]
 
         if model:
             print("Using custom passed model")
@@ -47,8 +47,10 @@ class Inference:
 
     @timeit
     def get_ranking(
-        self, predefined_input: Optional[InferenceInput] = None, print_weights=False,
-            return_weights=False,
+        self,
+        predefined_input: Optional[InferenceInput] = None,
+        print_weights=False,
+        return_weights=False,
     ) -> List[str]:
         """
         Gets the ranking from the next item model

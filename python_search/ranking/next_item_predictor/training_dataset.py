@@ -1,12 +1,12 @@
 import logging
+import math
 import os.path
 import sys
 from typing import Optional
-import math
 
 import pyspark.sql.functions as F
-from pyspark.sql.functions import struct, udf
 from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.functions import struct, udf
 from pyspark.sql.types import FloatType
 from pyspark.sql.window import Window
 
@@ -77,8 +77,13 @@ class TrainingDataset:
         """
 
         logging.info("Adding label")
+
         def label_formula(row):
-            return math.log(row["times_3"]) + math.log(row["times_2"] * 0.5) + math.log(row["global_pair"] * 0.01)
+            return (
+                math.log(row["times_3"])
+                + math.log(row["times_2"] * 0.5)
+                + math.log(row["global_pair"] * 0.01)
+            )
 
         udf_f = udf(label_formula, FloatType())
         with_label = all_features.withColumn(
@@ -87,21 +92,31 @@ class TrainingDataset:
 
         with_label.cache()
         # normalize label
-        max_label = with_label.agg({'label': 'max'}).withColumnRenamed('max(label)', 'max_label').collect()[0].max_label
+        max_label = (
+            with_label.agg({"label": "max"})
+            .withColumnRenamed("max(label)", "max_label")
+            .collect()[0]
+            .max_label
+        )
         max_label = float(max_label)
         print(f"Max value for label: {max_label}")
 
-        min_label = with_label.agg({'label': 'min'}).withColumnRenamed('min(label)', 'min_label').collect()[0].min_label
+        min_label = (
+            with_label.agg({"label": "min"})
+            .withColumnRenamed("min(label)", "min_label")
+            .collect()[0]
+            .min_label
+        )
         min_label = float(min_label)
         print(f"Min value for label: {min_label}")
 
-        normalized = with_label.withColumn("label_normalized", (F.col("label") - min_label) / (
-                max_label - min_label))
+        normalized = with_label.withColumn(
+            "label_normalized", (F.col("label") - min_label) / (max_label - min_label)
+        )
 
         print("Replacing the label colum for the normalized version")
         normalized = normalized.withColumnRenamed("label", "label_original")
         result = normalized.withColumnRenamed("label_normalized", "label")
-
 
         final_result = result.select(*self.columns)
 
@@ -208,7 +223,6 @@ class TrainingDataset:
         return self._dataframe.show(10)
 
     @timeit
-
     @timeit
     def _join_with_previous(self, df):
         """

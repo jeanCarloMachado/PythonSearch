@@ -69,7 +69,9 @@ def load_results_page():
         return InferenceInput(**input_data)
 
     def perform_inference(inference_input):
-        results = Inference(configuration=config).get_ranking(inference_input, return_weights=True)
+        results = Inference(configuration=config).get_ranking(
+            inference_input, return_weights=True
+        )
         return pd.DataFrame.from_dict(results)
 
     colA.write("##### Input A")

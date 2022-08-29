@@ -43,7 +43,7 @@ class TrainXGBoost:
             objective="reg:squarederror",
             eval_set=[(X_train, Y_train), (X_test, Y_test)],
             booster="gbtree",
-            verbose = True
+            verbose=True,
         )
 
         eval_set = [(X_train, Y_train), (X_test, Y_test)]
