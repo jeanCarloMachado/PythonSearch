@@ -42,7 +42,8 @@ class TrainXGBoost:
             eval_metric=mean_absolute_error,
             objective="reg:squarederror",
             eval_set=[(X_train, Y_train), (X_test, Y_test)],
-            booster="gblinear",
+            booster="gbtree",
+            verbose = True
         )
 
         eval_set = [(X_train, Y_train), (X_test, Y_test)]

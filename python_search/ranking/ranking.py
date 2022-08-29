@@ -58,9 +58,7 @@ class RankingGenerator:
             """Mutate self.ranked keys with the results"""
             self.ranked_keys = self.inference.get_ranking(print_weights=print_weights)
         except Exception as e:
-            print(
-                f"Inference failed with error {e} falling back to default ranking"
-            )
+            print(f"Inference failed with error {e} falling back to default ranking")
 
         """Populate the variable used_entries  with the results from redis"""
         self._fetch_latest_entries()
@@ -128,6 +126,8 @@ class RankingGenerator:
             return
 
         self.used_entries = self.get_used_entries_from_redis(self.entries)
+        # only use the latest 7 entries for the top of the ranking
+        self.used_entries = self.used_entries[-7:]
 
         if self.debug:
             print(f"Used entries: {self.used_entries}")

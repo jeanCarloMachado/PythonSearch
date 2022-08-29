@@ -7,7 +7,7 @@ import streamlit as st
 from python_search.data_ui.training_page import load_training_page
 from python_search.datasets.searchesperformed import SearchesPerformed
 
-open_page = "training"
+open_page = "results"
 
 os.putenv("SPARK_LOCAL_IP", "localhost")
 with st.sidebar:

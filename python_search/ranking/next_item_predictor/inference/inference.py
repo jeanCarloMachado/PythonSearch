@@ -17,7 +17,7 @@ class Inference:
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "c608be3921e44fccad230bfc991b47a1"
+    PRODUCTION_RUN_ID = "78dacecfcab544e391e76ff25a21c012"
 
     def __init__(
         self,
@@ -28,6 +28,8 @@ class Inference:
 
         self.debug = os.getenv("DEBUG", False)
         self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
+        if 'FORCE_RUN_ID' in os.environ:
+            self.run_id =  os.environ['FORCE_RUN_ID']
 
         if model:
             print("Using custom passed model")
@@ -45,7 +47,8 @@ class Inference:
 
     @timeit
     def get_ranking(
-        self, predefined_input: Optional[InferenceInput] = None, print_weights=False
+        self, predefined_input: Optional[InferenceInput] = None, print_weights=False,
+            return_weights=False,
     ) -> List[str]:
         """
         Gets the ranking from the next item model
@@ -68,6 +71,8 @@ class Inference:
             print(Y)
             result = list(zip(self.all_keys, Y))
             result.sort(key=lambda x: x[1], reverse=True)
+            if return_weights:
+                return result
             if print_weights:
                 print(result)
 

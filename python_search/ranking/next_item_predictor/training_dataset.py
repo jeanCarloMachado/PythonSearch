@@ -2,9 +2,12 @@ import logging
 import os.path
 import sys
 from typing import Optional
+import math
 
 import pyspark.sql.functions as F
+from pyspark.sql.functions import struct, udf
 from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.types import FloatType
 from pyspark.sql.window import Window
 
 from python_search.datasets.searchesperformed import SearchesPerformed
@@ -44,18 +47,8 @@ class TrainingDataset:
             if cache:
                 return cache
 
-        search_performed_df = self._load_base()
-        search_performed_df_filtered = self._filter_blacklisted(search_performed_df)
-        all_dimensions = self._add_all_features(search_performed_df_filtered)
-        base_dataset = self._base_dataset(all_dimensions)
-
-        dataset_with_aggregations = self._compute_aggregations(
-            all_dimensions, base_dataset
-        )
-
-        logging.info("Adding label")
-        # add the label
-        dataset = self._compute_label_and_cleanup_columns(dataset_with_aggregations)
+        dataset_with_aggregations = self._prepare_dataset_with_aggregations()
+        dataset = self._add_label_and_cleanup(dataset_with_aggregations)
 
         logging.info("TrainingDataset ready, writing it to disk")
         if write_cache:
@@ -67,6 +60,56 @@ class TrainingDataset:
         self._dataframe = dataset
         return dataset
 
+    def _prepare_dataset_with_aggregations(self):
+        search_performed_df = self._load_base()
+        search_performed_df_filtered = self._filter_blacklisted(search_performed_df)
+        all_dimensions = self._add_all_features(search_performed_df_filtered)
+        base_dataset = self._base_dataset(all_dimensions)
+        dataset_with_aggregations = self._compute_aggregations(
+            all_dimensions, base_dataset
+        )
+
+        return dataset_with_aggregations
+
+    def _add_label_and_cleanup(self, all_features: DataFrame) -> DataFrame:
+        """
+        Remove all columns which the purpose is to calculate the label
+        """
+
+        logging.info("Adding label")
+        def label_formula(row):
+            return math.log(row["times_3"]) + math.log(row["times_2"] * 0.5) + math.log(row["global_pair"] * 0.01)
+
+        udf_f = udf(label_formula, FloatType())
+        with_label = all_features.withColumn(
+            "label", udf_f(struct([all_features[x] for x in all_features.columns]))
+        )
+
+        with_label.cache()
+        # normalize label
+        max_label = with_label.agg({'label': 'max'}).withColumnRenamed('max(label)', 'max_label').collect()[0].max_label
+        max_label = float(max_label)
+        print(f"Max value for label: {max_label}")
+
+        min_label = with_label.agg({'label': 'min'}).withColumnRenamed('min(label)', 'min_label').collect()[0].min_label
+        min_label = float(min_label)
+        print(f"Min value for label: {min_label}")
+
+        normalized = with_label.withColumn("label_normalized", (F.col("label") - min_label) / (
+                max_label - min_label))
+
+        print("Replacing the label colum for the normalized version")
+        normalized = normalized.withColumnRenamed("label", "label_original")
+        result = normalized.withColumnRenamed("label_normalized", "label")
+
+
+        final_result = result.select(*self.columns)
+
+        print("Schema of final dataframe")
+        final_result.printSchema()
+
+        return final_result
+
     def _compute_aggregations(self, all_dimensions, base_features) -> DataFrame:
         """
         Adds aggregations of the data that supports the label formula
@@ -77,7 +120,6 @@ class TrainingDataset:
         Returns:
 
         """
-        import pyspark.sql.functions as F
 
         # adds performance in the dimension of the triple key,previous key,previous previous key
         grouped3 = (
@@ -126,6 +168,7 @@ class TrainingDataset:
         ).distinct()
 
         window = Window.orderBy(F.col("key"))
+
         # @todo verify if this number is correct auto-incremented and unique
         base_features = base_features.withColumn(
             "entry_number", F.row_number().over(window)
@@ -165,18 +208,6 @@ class TrainingDataset:
         return self._dataframe.show(10)
 
     @timeit
-    def _compute_label_and_cleanup_columns(self, all_features: DataFrame) -> DataFrame:
-        from pyspark.sql.functions import struct, udf
-
-        def label(row):
-            return row["times_3"] + row["times_2"] * 0.5 + row["global_pair"] * 0.01
-
-        udf_f = udf(label)
-        with_label = all_features.withColumn(
-            "label", udf_f(struct([all_features[x] for x in all_features.columns]))
-        )
-
-        return with_label.select(*self.columns)
 
     @timeit
     def _join_with_previous(self, df):

@@ -70,7 +70,9 @@ class Transform:
 
         return X, Y
 
-    def transform_inference(self, inference_input: InferenceInput, all_keys) -> np.ndarray:
+    def transform_inference(
+        self, inference_input: InferenceInput, all_keys
+    ) -> np.ndarray:
         """
         Transform the inference input into something that can be inferred
         """

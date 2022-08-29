@@ -4,7 +4,7 @@ def load_results_page():
 
     from python_search.config import ConfigurationLoader
 
-    config = ConfigurationLoader().load()
+    config = ConfigurationLoader().load_config()
 
     keys = config.commands.keys()
 
@@ -14,17 +14,19 @@ def load_results_page():
         InferenceInput
 
     st.write("### Prediction results")
-    st.write("##### Model run: " + Inference.PRODUCTION_RUN_ID)
+    st.write("##### Production run: " + Inference.PRODUCTION_RUN_ID)
 
     scenarios = {
         "work vs non work typical hours": {
             "a": {
                 "previous_key": "ml platform roadmap team event session",
+                "previous_previous_key": "ml platform teams spotify",
                 "hour": 14,
                 "month": 6,
             },
             "b": {
                 "previous_key": "but tickets to brazil",
+                "previous_previous_key": "ml platform teams spotify",
                 "hour": 21,
                 "month": 6,
             },
@@ -32,11 +34,13 @@ def load_results_page():
         "work vs non work typical hours 2": {
             "a": {
                 "previous_key": "git log in catalog",
+                "previous_previous_key": "ml platform teams spotify",
                 "hour": 14,
                 "month": 6,
             },
             "b": {
                 "previous_key": "precos agosto enviado ao pai",
+                "previous_previous_key": "ml platform teams spotify",
                 "hour": 21,
                 "month": 6,
             },
@@ -44,11 +48,13 @@ def load_results_page():
         "work in and not business hours": {
             "a": {
                 "previous_key": "ml platform roadmap team event session",
+                "previous_previous_key": "ml platform teams spotify",
                 "hour": 11,
                 "month": 6,
             },
             "b": {
                 "previous_key": "ml platform roadmap team event session",
+                "previous_previous_key": "ml platform teams spotify",
                 "hour": 23,
                 "month": 6,
             },
@@ -63,7 +69,7 @@ def load_results_page():
         return InferenceInput(**input_data)
 
     def perform_inference(inference_input):
-        results = Inference(configuration=config).get_ranking(inference_input, True)
+        results = Inference(configuration=config).get_ranking(inference_input, return_weights=True)
         return pd.DataFrame.from_dict(results)
 
     colA.write("##### Input A")
