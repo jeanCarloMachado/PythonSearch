@@ -61,8 +61,8 @@ class Preview:
 
             print("")
 
-            print(f"Key: {Fore.YELLOW}{key}{Style.RESET_ALL}")
-            print("Type: " + type)
+            print(f"key: {Fore.YELLOW}{key}{Style.RESET_ALL}")
+            print("type: " + type)
 
 
 
@@ -74,7 +74,7 @@ class Preview:
 
                 creation_date = parser.parse(entry_data["created_at"])
                 today = datetime.now()
-                print(f"Entry age: {today - creation_date}")
+                print(f"entry age: {today - creation_date}")
 
 
             try:
