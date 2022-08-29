@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import json
 from python_search.config import ConfigurationLoader
 
 
@@ -13,7 +13,9 @@ class Preview:
         """
         Prints the entry in the preview window
         """
-        key = entry_text.split(":")[0]
+        data = entry_text.split(":")
+        key = data[0]
+        entry_content = entry_text[len(key)+1:]
         from colorama import Fore, Style
 
         try:
@@ -62,6 +64,8 @@ class Preview:
             print(f"Key: {Fore.YELLOW}{key}{Style.RESET_ALL}")
             print("Type: " + type)
 
+
+
             for key, value in entry_data.items():
                 print(f"{key}: {value}")
 
@@ -71,6 +75,14 @@ class Preview:
                 creation_date = parser.parse(entry_data["created_at"])
                 today = datetime.now()
                 print(f"Entry age: {today - creation_date}")
+
+
+            try:
+                decoded_content = json.loads(entry_content)
+                print(f"position: {decoded_content['position']}")
+            except Exception as e:
+                print(e)
+                pass
 
         except BaseException as e:
             print(entry_text)

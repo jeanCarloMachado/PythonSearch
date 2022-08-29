@@ -29,6 +29,8 @@ class EntryCaptureGUI:
         "Career",
         "Commitment",
         "StrategicDecision",
+        "Linux",
+        "Mac",
     ]
 
     def launch(
