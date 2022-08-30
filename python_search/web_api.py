@@ -8,19 +8,22 @@ from python_search.ranking.ranking import RankingGenerator
 config = ConfigurationLoader().load_config()
 generator = RankingGenerator(config)
 
-
-@app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
-def reload():
-    global generator
-    config = ConfigurationLoader().reload()
-    generator = RankingGenerator(config)
-    return generator.generate()
-
-
 @app.get("/ranking/generate", response_class=PlainTextResponse)
 def generate_ranking():
     global generator
     return generator.generate()
+
+
+@app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
+def reload():
+    global generator
+    global config
+    del config
+    del generator
+    config = ConfigurationLoader().reload()
+    generator = RankingGenerator(config)
+    return generator.generate()
+
 
 
 @app.get("/_health")

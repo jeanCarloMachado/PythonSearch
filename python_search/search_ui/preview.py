@@ -1,23 +1,31 @@
 import json
 from datetime import datetime
-
+from colorama import Fore, Style
 from python_search.config import ConfigurationLoader
+import logging
 
 
 class Preview:
-    """Preview the entry in the search ui"""
+    """
+    Preview the entry in the search ui
+    """
 
     def __init__(self):
         self.configuration = ConfigurationLoader()
+        self.logger = logging.getLogger('preview_entry')
+        # do not send the errors to stderr, in the future we should send to kibana or a file
+        self.logger.propagate = False
 
-    def display(self, entry_text):
+
+    def display(self, entry_text: str):
         """
         Prints the entry in the preview window
         """
         data = entry_text.split(":")
         key = data[0]
-        entry_content = entry_text[len(key) + 1 :]
-        from colorama import Fore, Style
+        # the entry content is after the key + a ":" character
+        serialized_content = entry_text[len(key) + 1:]
+        type = 'Unknown'
 
         try:
 
@@ -76,13 +84,12 @@ class Preview:
                 print(f"entry age: {today - creation_date}")
 
             try:
-                decoded_content = json.loads(entry_content)
+                decoded_content = json.loads(serialized_content)
                 print(f"position: {decoded_content['position']}")
             except Exception as e:
-                print(e)
+                self.logger.error(str(e))
                 pass
 
         except BaseException as e:
-            print(entry_text)
-            print(f"""Error while decoding: {e}""")
-            raise e
+            print(e)
+            self.logger.error(str(e))

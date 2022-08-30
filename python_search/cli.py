@@ -30,9 +30,9 @@ class PythonSearchCli:
     @staticmethod
     def new_project(project_name: str):
         """Create a new project in the current directory with the given name"""
-        from python_search.init_project import InitializeProject
+        from python_search.init_project import NewProject
 
-        InitializeProject().initialize(project_name)
+        NewProject().new(project_name)
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
@@ -154,13 +154,14 @@ class PythonSearchCli:
                     self.configuration.APPLICATION_TITLE
                 )
 
-            def preview_entry(self, entry_text: str):
-                """
-                Recieves entries from fzf and show them formatted for the preview window
-                """
-                Preview().display(entry_text)
 
         return Utils(self.configuration)
+
+    def _preview_entry(self, entry_text: str):
+        """
+        Recieves entries from fzf and show them formatted for the preview window
+        """
+        Preview().display(entry_text)
 
     def google_it(self, query):
         from python_search.interpreter.url import UrlInterpreter

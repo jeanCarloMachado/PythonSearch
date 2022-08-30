@@ -1,4 +1,3 @@
-import datetime
 import os
 
 from python_search.apps.terminal import Terminal
@@ -29,7 +28,7 @@ class FzfInTerminal:
         self.height = FzfInTerminal.HEIGHT
         self.width = FzfInTerminal.WIDTH
 
-        self.preview_cmd = f"python_search _utils preview_entry {{}} "
+        self.preview_cmd = f"python_search _preview_entry {{}} "
         self.executable = "python_search"
         self.title = configuration.APPLICATION_TITLE
         self.configuration = configuration
