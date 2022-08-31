@@ -50,7 +50,7 @@ name = "certifi"
 version = "2022.6.15"
 description = "Python package for providing Mozilla's CA Bundle."
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.6"
 
 [[package]]
@@ -1076,7 +1076,7 @@ all = ["pyspark"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "d785417e214c25f44ac9c2b93dd8daa1da9d14450ecb0cda48ccdacb77748f79"
+content-hash = "3033e34487a53e2447d0851ff7b5e5e04d4707a26c5c99827d27682d9b43e359"
 
 [metadata.files]
 anyio = []

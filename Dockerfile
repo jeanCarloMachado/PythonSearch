@@ -1,7 +1,11 @@
 FROM python:3.10-buster
 
-RUN pip install python-search
+RUN pip install --upgrade pip
+#RUN pip install poetry && poetry config virtualenvs.create false
 
-RUN python_search new_project MyFunctions && python_search search
-#COPY .:/src
-#WORKDIR /src
+COPY . /src
+WORKDIR /src
+
+#RUN poetry install -E full
+
+
