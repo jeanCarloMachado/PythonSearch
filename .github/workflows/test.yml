@@ -26,6 +26,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install dependencies
         run: | 
+          apt update -y
+          api install gnome-keyring
           pip install --upgrade pip
           pip install poetry
           poetry install -E all
