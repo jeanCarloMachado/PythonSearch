@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: | 
           sudo apt update -y
-          sudo api install gnome-keyring
+          sudo apt install gnome-keyring
           pip install --upgrade pip
           pip install poetry
           poetry install -E all
