@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.8
+
+- Use HOME from env variables to setup new project
+
 ## 0.5.7
 
 - New project now takes the full path

@@ -33,9 +33,11 @@ python_search search"""
         )
 
     def _set_current_project(self, project_directory):
-        os.system("mkdir -p ~/.config/python_search/")
+        import os
+        home = os.environ['HOME']
+        os.system(f"mkdir -p {home}/.config/python_search/")
         os.system(
-            f'echo "{project_directory}" >  ~/.config/python_search/current_project'
+            f'echo "{project_directory}" >  {home}/.config/python_search/current_project'
         )
 
     def _install_fzf(self):
