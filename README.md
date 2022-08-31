@@ -27,7 +27,7 @@ We support **Mac and Linux**.
 ### 2. Initialize your entries project
 
 ```sh
-python_search new_project "MyEntries"
+python_search new_project "$HOME/projects/MyEntries"
 ```
 
 It will create a new git project for you for your entries.
