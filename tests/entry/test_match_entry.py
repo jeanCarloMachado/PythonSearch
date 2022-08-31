@@ -11,7 +11,7 @@ from tests.utils import build_config
 
 class MatchingTestCase(unittest.TestCase):
     def test_cmd(self):
-        config = build_config({"test jean": "pwd"})
+        config = build_config({"test jean": {"cmd": "pwd"}})
         interpreter = InterpreterMatcher(config, Context()).get_interpreter("test jean")
         assert type(interpreter) is CmdInterpreter
         assert "pwd" == interpreter.cmd["cmd"]
