@@ -1,8 +1,10 @@
 import json
-from datetime import datetime
-from colorama import Fore, Style
-from python_search.config import ConfigurationLoader
 import logging
+from datetime import datetime
+
+from colorama import Fore, Style
+
+from python_search.config import ConfigurationLoader
 
 
 class Preview:
@@ -12,10 +14,9 @@ class Preview:
 
     def __init__(self):
         self.configuration = ConfigurationLoader()
-        self.logger = logging.getLogger('preview_entry')
+        self.logger = logging.getLogger("preview_entry")
         # do not send the errors to stderr, in the future we should send to kibana or a file
         self.logger.propagate = False
-
 
     def display(self, entry_text: str):
         """
@@ -24,8 +25,8 @@ class Preview:
         data = entry_text.split(":")
         key = data[0]
         # the entry content is after the key + a ":" character
-        serialized_content = entry_text[len(key) + 1:]
-        type = 'Unknown'
+        serialized_content = entry_text[len(key) + 1 :]
+        type = "Unknown"
 
         try:
 

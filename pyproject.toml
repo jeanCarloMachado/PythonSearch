@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "python-search"
-version = "0.5.3"
+version = "0.5.6"
 description = "Build your knowledge database in python and retrieve it efficiently"
-authors = ["Jean Carlo Machado <jean.machado@getyourguide.com>"]
+authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
@@ -10,7 +10,7 @@ fire = "^0.4.0"
 pydantic = "^1.9.1"
 numpy = "1.23.*"
 pandas = "^1.4.3"
-pyspark = "^3.3.0"
+pyspark = { version = "^3.3.0", optional = true }
 personal-grimoire = "1.6"
 kafka-python = "^2.0.2"
 findspark = "^2.0.1"
@@ -48,3 +48,7 @@ browser = 'python_search.apps.browser:main'
 python_search_webapi = 'python_search.web_api:main'
 entry_embeddings='python_search.ranking.entry_embeddings:main'
 run_entry = 'python_search.cli:_run_key_bin'
+
+
+[tool.poetry.extras]
+all = ["pyspark"]

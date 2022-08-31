@@ -3,7 +3,7 @@ import os
 from python_search.environment import is_mac
 
 
-class NewProject:
+class Project:
     def new(self, project_name):
         """
         Initialize a new project to use Python search and make sure all remaining dependencies exist
@@ -24,7 +24,6 @@ class NewProject:
         self._install_fzf()
         self._set_current_project(project_directory)
 
-
         print(
             f"""Project created successfully! 
 
@@ -33,7 +32,6 @@ Your main config script can be found at {project_directory}/entries_main.py
 You can now start using python search by issuing:
 python_search search"""
         )
-
 
     def _set_current_project(self, project_directory):
         os.system("mkdir -p ~/.config/python_search/")
@@ -44,19 +42,17 @@ python_search search"""
     def _install_fzf(self):
         result = os.system("which fzf >/dev/null")
         if result == 0:
-            print('Great, you have fzf alread installed')
+            print("Great, you have fzf alread installed")
             return
 
-        print(
-            "Looks like kitty is not installed in your platform. "
-        )
+        print("Looks like kitty is not installed in your platform. ")
         if is_mac():
             print("Installing it for you...")
-            os.system(
-                "brew install fzf"
-            )
+            os.system("brew install fzf")
         else:
-            print("Dont know how to install fzf for your platform, please do so manually")
+            print(
+                "Dont know how to install fzf for your platform, please do so manually"
+            )
 
     def _install_kitty(self):
         result = os.system("which kitty >/dev/null")

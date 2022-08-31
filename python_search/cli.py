@@ -30,9 +30,9 @@ class PythonSearchCli:
     @staticmethod
     def new_project(project_name: str):
         """Create a new project in the current directory with the given name"""
-        from python_search.init_project import NewProject
+        from python_search.init_project import Project
 
-        NewProject().new(project_name)
+        Project().new(project_name)
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
@@ -153,7 +153,6 @@ class PythonSearchCli:
                 WindowManager.load_from_environment().hide_window(
                     self.configuration.APPLICATION_TITLE
                 )
-
 
         return Utils(self.configuration)
 

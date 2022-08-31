@@ -8,6 +8,7 @@ from python_search.ranking.ranking import RankingGenerator
 config = ConfigurationLoader().load_config()
 generator = RankingGenerator(config)
 
+
 @app.get("/ranking/generate", response_class=PlainTextResponse)
 def generate_ranking():
     global generator
@@ -23,7 +24,6 @@ def reload():
     config = ConfigurationLoader().reload()
     generator = RankingGenerator(config)
     return generator.generate()
-
 
 
 @app.get("/_health")
