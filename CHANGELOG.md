@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.7
+
+- New project now takes the full path
+
 ## 0.5.6
 
 - Remove systemd dependency for linux

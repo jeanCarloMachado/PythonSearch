@@ -6,7 +6,7 @@ class End2End:
     """ """
 
     def run(self):
-        self._cleanup()
+        self.cleanup()
         self._run_shell("pip install python-search")
         self._run_shell("python_search new_project /tmp/test1")
         self._run_shell("python_search search")
