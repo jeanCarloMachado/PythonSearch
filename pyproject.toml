@@ -5,7 +5,7 @@ description = "Build your knowledge database in python and retrieve it efficient
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.8,<3.11"
 fire = "^0.4.0"
 pydantic = "^1.9.1"
 numpy = "1.23.*"
@@ -13,21 +13,19 @@ pandas = "^1.4.3"
 pyspark = { version = "^3.3.0", optional = true }
 personal-grimoire = "1.6"
 kafka-python = "^2.0.2"
-findspark = "^2.0.1"
 redis = "^4.3.4"
-typed-pyspark = "~=0.0.4"
 xgboost = "^1.6.1"
 PyYAML = "^6.0"
 fastapi = "^0.79.0"
 msgpack-numpy = "^0.4.8"
-mlflow = "^1.27.0"
-sklearn = "^0.0"
+mlflow-skinny = { version = "^1", optional = true }
 uvicorn = "^0.18.2"
 PySimpleGUI = "^4.60.1"
-sentence-transformers = "^2.2.2"
+sentence-transformers = {version = "^2.2.2", optional = true}
 matplotlib = "^3.5.2"
 pdoc3 = {version = "^0.10.0", optional = true}
 colorama = "^0.4.5"
+scipy = ">=1.8.1"
 
 
 [tool.poetry.dev-dependencies]

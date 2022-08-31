@@ -6,8 +6,6 @@ from python_search.environment import is_mac
 SYSLOG_IDENTIFIER = "python-search"
 
 
-
-
 def initialize_logging():
 
     """Updates the global logging module"""

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.6
+
+- Remove systemd dependency for linux
+
 ## 0.5.1
 
 Streamlined init_project script with better docs
