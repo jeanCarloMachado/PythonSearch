@@ -4,30 +4,29 @@ from python_search.environment import is_mac
 
 
 class Project:
-    def new(self, project_name):
+    def new(self, new_project_location):
         """
         Initialize a new project to use Python search and make sure all remaining dependencies exist
         """
 
-        current_directory = os.getcwd()
-        project_directory = f"{current_directory}/{project_name}"
-        print(f"Initializing project in: {project_directory}")
+        if os.path.exists(new_project_location):
+            raise Exception(f"{new_project_location} already exists")
 
-        os.system(f"mkdir {project_name} 2>/dev/null")
+        os.system(f"mkdir -p {new_project_location} 2>/dev/null")
+
         script_dir = os.path.dirname(os.path.realpath(__file__))
-
-        copy_cmd = f"cp -r {script_dir}/entries_main.py {project_name}"
+        copy_cmd = f"cp -r {script_dir}/entries_main.py {new_project_location}"
         os.system(copy_cmd)
-        os.system(f"cd {project_name} && git init . 1>/dev/null ")
+        os.system(f"cd {new_project_location} && git init . 1>/dev/null ")
 
         self._install_kitty()
         self._install_fzf()
-        self._set_current_project(project_directory)
+        self._set_current_project(new_project_location)
 
         print(
             f"""Project created successfully! 
 
-Your main config script can be found at {project_directory}/entries_main.py
+Your main config script can be found at {new_project_location}/entries_main.py
 
 You can now start using python search by issuing:
 python_search search"""
