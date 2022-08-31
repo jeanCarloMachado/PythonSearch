@@ -28,7 +28,7 @@ jobs:
         run: | 
           pip install --upgrade pip
           pip install poetry
-          poetry install -E full
+          poetry install -E all
         
 
       # Runs a set of commands using the runners shell
