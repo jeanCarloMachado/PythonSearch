@@ -32,7 +32,7 @@ class Preview:
         print(self._color_str(data["value"], self._get_color_for_type(data["type"])))
         print("")
         print(f"Key: {self._color_str(data['key'], Fore.YELLOW)}")
-        print("Type: " + data['type'])
+        print("Type: " + data["type"])
         if "position" in data:
             print("Position: " + data["position"])
 
@@ -42,7 +42,6 @@ class Preview:
 
         if "tags" in data:
             print("Tags: " + data["tags"])
-
 
     def _get_color_for_type(self, type):
         if type == "Cmd":

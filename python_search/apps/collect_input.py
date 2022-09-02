@@ -15,7 +15,6 @@ class CollectInput:
         Launch the data capture GUI.
         """
         import contextlib
-
         with contextlib.redirect_stdout(None):
             import PySimpleGUI as sg
 
@@ -61,7 +60,6 @@ class CollectInput:
                     sys.exit(1)
 
             window.close()
-
         return values["content"]
 
 
