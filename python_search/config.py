@@ -63,6 +63,8 @@ class PythonSearchConfiguration(EntriesGroup):
     commands: dict
     simple_gui_theme = "SystemDefault1"
     simple_gui_font_size = 14
+    _default_tags = None
+
 
     def __init__(
         self,
@@ -70,6 +72,7 @@ class PythonSearchConfiguration(EntriesGroup):
         entries: Optional[dict] = None,
         entries_groups: Optional[List[EntriesGroup]] = None,
         supported_features: Optional[FeaturesSupport] = None,
+        default_tags = None
     ):
         if entries:
             self.commands = entries
@@ -81,6 +84,10 @@ class PythonSearchConfiguration(EntriesGroup):
             self.supported_features: FeaturesSupport = supported_features
         else:
             self.supported_features: FeaturesSupport = FeaturesSupport.default()
+
+
+        if default_tags:
+            self._default_tags = default_tags
 
 
 class ConfigurationLoader:

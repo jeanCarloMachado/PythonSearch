@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import datetime
 import time
-from typing import Tuple
 
 from grimoire.event_sourcing.message import MessageBroker
 from grimoire.string import emptish
 
 from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.entry_inserter import EntryInserter
-from python_search.entry_capture.entry_inserter_gui import EntryCaptureGUI, EntryData
+from python_search.entry_capture.entry_inserter_gui import (EntryCaptureGUI,
+                                                            EntryData)
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.file import FileInterpreter
