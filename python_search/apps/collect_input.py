@@ -15,6 +15,7 @@ class CollectInput:
         Launch the data capture GUI.
         """
         import contextlib
+
         with contextlib.redirect_stdout(None):
             import PySimpleGUI as sg
 

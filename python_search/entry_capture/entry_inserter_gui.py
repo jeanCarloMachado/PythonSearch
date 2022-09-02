@@ -21,17 +21,25 @@ class EntryData:
 
 class EntryCaptureGUI:
     TAGS = [
-        "German",
-        "Reminder",
-        "Politics",
+        "Career",
         "Self",
         "Others",
-        "Career",
-        "Commitment",
+
+        "German",
+        "Reminder",
         "StrategicDecision",
+
+        "Commitment",
+        "Conferences",
+        "Politics",
+
         "Linux",
         "Mac",
+        "Python",
+
+        "Recipe",
     ]
+
 
     def launch(
         self,
@@ -46,6 +54,8 @@ class EntryCaptureGUI:
         """
         import PySimpleGUI as sg
 
+        self._sg =sg
+
         config = ConfigurationLoader().load_config()
         sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
@@ -56,6 +66,8 @@ class EntryCaptureGUI:
             expand_x=True,
             expand_y=True,
         )
+
+        tags_chucks = self._chunks(EntryCaptureGUI.TAGS, 3)
         layout = [
             [sg.Text("Entry content")],
             [content_input],
@@ -80,7 +92,7 @@ class EntryCaptureGUI:
                 )
             ],
             [sg.Text("Tags")],
-            [sg.Checkbox(tag, key=tag, default=False) for tag in EntryCaptureGUI.TAGS],
+            [self._checkbox_list(i) for i in tags_chucks],
             [sg.Button("Write", key="write")],
         ]
 
@@ -127,6 +139,14 @@ class EntryCaptureGUI:
             result = result.__dict__
 
         return result
+
+    def _checkbox_list(self, tags):
+        return [self._sg.Checkbox(tag, key=tag, default=False) for tag in tags],
+
+    def _chunks(self, lst, n):
+        """Yield successive n-sized chunks from lst."""
+        for i in range(0, len(lst), n):
+            yield lst[i:i + n]
 
 
 if __name__ == "__main__":
