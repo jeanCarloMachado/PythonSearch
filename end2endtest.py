@@ -7,8 +7,13 @@ class End2End:
 
     def run(self):
         self.cleanup()
-        self._run_shell("pip install python-search")
-        self._run_shell("echo 'Python search version installed: '; pip show python-search")
+        self._run_shell(
+            "echo 'Python search version installed: '; pip show python-search"
+        )
+        self._run_shell("pip install 'python-search>=0.5.8' --upgrade ")
+        self._run_shell(
+            "echo 'Python search version installed: '; pip show python-search"
+        )
         self._run_shell("python_search new_project /tmp/test1")
         self._run_shell("python_search search")
 

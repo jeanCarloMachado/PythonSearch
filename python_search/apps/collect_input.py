@@ -14,50 +14,53 @@ class CollectInput:
         """
         Launch the data capture GUI.
         """
-        import PySimpleGUI as sg
+        import contextlib
 
-        default_text = ""
-        if prefill_with_clipboard:
-            default_text = Clipboard().get_content()
+        with contextlib.redirect_stdout(None):
+            import PySimpleGUI as sg
 
-        font_size = 12
-        sg.theme("SystemDefault1")
+            default_text = ""
+            if prefill_with_clipboard:
+                default_text = Clipboard().get_content()
 
-        input_field = sg.Input(
-            key="content", default_text=default_text, expand_x=True, expand_y=True
-        )
+            font_size = 12
+            sg.theme("SystemDefault1")
 
-        layout = [
-            [input_field],
-            [sg.Button("Continue", key="write")],
-        ]
+            input_field = sg.Input(
+                key="content", default_text=default_text, expand_x=True, expand_y=True
+            )
 
-        window = sg.Window(
-            name,
-            layout,
-            finalize=True,
-            font=("Helvetica", font_size),
-            alpha_channel=0.9,
-        )
+            layout = [
+                [input_field],
+                [sg.Button("Continue", key="write")],
+            ]
 
-        # workaround for mac bug
-        window.read(timeout=100)
-        if default_text != "":
-            input_field.update(select=True)
-        window.set_alpha(1.0)
+            window = sg.Window(
+                name,
+                layout,
+                finalize=True,
+                font=("Helvetica", font_size),
+                alpha_channel=0.99,
+            )
 
-        window["content"].bind("<Return>", "_Enter")
-        window["content"].bind("<Escape>", "_Esc")
+            if default_text != "":
+                input_field.update(select=True)
+            # workaround for mac bug
+            window.read(timeout=100)
+            window.set_alpha(1.0)
 
-        while True:
-            event, values = window.read()
+            window["content"].bind("<Return>", "_Enter")
+            window["content"].bind("<Escape>", "_Esc")
 
-            if event and (event == "write" or event.endswith("_Enter")):
-                break
-            if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
-                sys.exit(1)
+            while True:
+                event, values = window.read()
 
-        window.close()
+                if event and (event == "write" or event.endswith("_Enter")):
+                    break
+                if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
+                    sys.exit(1)
+
+            window.close()
 
         return values["content"]
 

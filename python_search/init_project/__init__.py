@@ -4,7 +4,7 @@ from python_search.environment import is_mac
 
 
 class Project:
-    def new(self, new_project_location):
+    def new_project(self, new_project_location):
         """
         Initialize a new project to use Python search and make sure all remaining dependencies exist
         """
@@ -34,10 +34,14 @@ python_search search"""
 
     def _set_current_project(self, project_directory):
         import os
-        home = os.environ['HOME']
+
+        home = os.environ["HOME"]
+        current_project_config = f"{home}/.config/python_search/current_project"
+        print(f"Writing the current project in {current_project_config}")
+
         os.system(f"mkdir -p {home}/.config/python_search/")
         os.system(
-            f'echo "{project_directory}" >  {home}/.config/python_search/current_project'
+            f'echo "{project_directory}" >  {current_project_config}'
         )
 
     def _install_fzf(self):

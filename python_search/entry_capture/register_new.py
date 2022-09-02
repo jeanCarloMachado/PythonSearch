@@ -73,25 +73,26 @@ class RegisterNew:
 
         self.launch_ui(default_key=key, default_type="Snippet")
 
-    def german_from_text(self, key):
+    def german_from_text(self, german_term: str):
         """
         Register german workds you dont know by saving them to the clipboard and storing in python search
         """
 
-        if emptish(key):
+        if len(german_term) == 0:
             raise RegisterNewException.empty_content()
 
         from python_search.interpreter.url import UrlInterpreter
 
+        print(f"german term: {german_term}")
         cmd = {
-            "url": f"https://translate.google.com/?sl=de&tl=en&text={key}&op=translate"
+            "url": f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate"
         }
         UrlInterpreter(cmd).interpret_default()
         time.sleep(1)
 
         from python_search.apps.collect_input import CollectInput
 
-        meaning = CollectInput().launch(f"Please type the meaning of ({key})")
+        meaning = CollectInput().launch(f"Please type the meaning of ({german_term})")
 
         if emptish(meaning):
             raise RegisterNewException.empty_content()
@@ -101,4 +102,4 @@ class RegisterNew:
             "language": "German",
         }
 
-        self.entry_inserter.insert(key, as_dict)
+        self.entry_inserter.insert(german_term, as_dict)

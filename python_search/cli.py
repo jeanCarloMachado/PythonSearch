@@ -32,7 +32,7 @@ class PythonSearchCli:
         """Create a new project in the current directory with the given name"""
         from python_search.init_project import Project
 
-        Project().new(project_name)
+        Project().new_project(project_name)
 
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
