@@ -37,7 +37,6 @@ class EntryInserter:
 
         send_notification(f"Entry {row_entry} inserted successfully")
 
-
     def _append_entry(self, line_to_add: str):
         """
         This script does the following:

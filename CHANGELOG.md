@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+
+- Support customized tags while registering
+- Preview window now also shows time slices of the created entry
+
 ## 0.5.8
 
 - Use HOME from env variables to setup new project

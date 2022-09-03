@@ -54,7 +54,7 @@ class RegisterNew:
 
         self.entry_inserter.insert(entry_data.key, dict_entry)
 
-    def register(self,*, key: str, value: str, tag: str = None):
+    def register(self, *, key: str, value: str, tag: str = None):
         """
         The non ui driven registering api
         Args:
