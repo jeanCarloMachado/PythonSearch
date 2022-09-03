@@ -34,6 +34,8 @@ class Preview:
         print("")
         print(f"Key: {self._color_str(data['key'], Fore.YELLOW)}")
         print("Type: " + data["type"])
+        if 'description' in data:
+            print(f"Description: {data['description']}")
         if "position" in data:
             print("Position: " + data["position"])
 
@@ -94,6 +96,9 @@ class Preview:
             today = datetime.now()
             print_values["created_at"] = str(creation_date)
             print_values["entry_age"] = str(today - creation_date)
+
+        if "description" in entry_data:
+            print_values["description"] = entry_data['description']
 
         if "tags" in entry_data:
             print_values["tags"] = " ".join(entry_data["tags"])

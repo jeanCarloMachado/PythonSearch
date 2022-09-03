@@ -27,7 +27,7 @@ class RankingGenerator:
         self._feature_toggle = FeatureToggle()
         self._model = None
         self._debug = os.getenv("DEBUG", False)
-        self._entries_result = EntriesResult()
+        self._entries_result = SearchableEntriesResult()
 
         if self._configuration.supported_features.is_redis_supported():
             self.redis_client = PythonSearchRedis.get_client()
@@ -159,7 +159,7 @@ import datetime
 from dateutil import parser
 
 
-class EntriesResult:
+class SearchableEntriesResult:
     """Builds the list of results ready to be consumed by fzf"""
 
     def __init__(self):
@@ -192,13 +192,12 @@ class EntriesResult:
                         content["tags"].append(f"previous_week_created")
                     if days_ago < 30:
                         content["tags"].append(f"this_month_created")
-                    if days_ago > 30 and days_ago <60:
+                    if days_ago > 30 and days_ago < 60:
                         content["tags"].append(f"previous_month_created")
                     if days_ago < 365:
                         content["tags"].append(f"this_year_created")
                     if days_ago > 365:
                         content["tags"].append(f"previous_year_created")
-
 
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
