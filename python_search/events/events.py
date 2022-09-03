@@ -1,4 +1,4 @@
-""" Centralize all events definitions to help in the data discovery """
+""" Centralize all events definitions to help in the entries discovery """
 from dataclasses import dataclass
 
 from pydantic import BaseModel

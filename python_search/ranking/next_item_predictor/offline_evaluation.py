@@ -7,7 +7,7 @@ from python_search.ranking.next_item_predictor.inference.input import \
 
 class OfflineEvaluation:
     """
-    Evaluate the model with a part of the training data
+    Evaluate the _model with a part of the training entries
     """
 
     def run(self, model, dataset, X_test):

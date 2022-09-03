@@ -1,5 +1,5 @@
 """
-Clients should depend on a configuration instance (config) rather than in the class,
+Clients should depend on a _configuration instance (config) rather than in the class,
 the class should only be used for type annotation.
 This way we can have multiple configs depending of the enviroment.
 """
@@ -20,11 +20,11 @@ class SearchRunConfiguration:
 
 class DataConfig:
     """
-    Configuration with locations of data, models and names of files.
+    Configuration with locations of entries, models and names of files.
     """
 
-    # output of the model
-    base_data_folder = "/data/python_search"
+    # output of the _model
+    base_data_folder = "/entries/python_search"
     prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
     # a copy of the search run entries for the feature store
     entries_dump = base_data_folder + "/entries_dumped/latest"
@@ -39,7 +39,7 @@ class DataConfig:
     )
 
 
-# @todo do not depend on this config directly rather depend on the base configuration
+# @todo do not depend on this config directly rather depend on the base _configuration
 config = SearchRunConfiguration()
 
 
@@ -55,7 +55,7 @@ class RedisConfig:
 
 class PythonSearchConfiguration(EntriesGroup):
     """
-    The main configuration of Python Search
+    The main _configuration of Python Search
     Everything to customize about the application is configurable via code through this class
     """
 

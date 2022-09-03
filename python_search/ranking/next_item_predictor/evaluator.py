@@ -11,7 +11,7 @@ from python_search.ranking.next_item_predictor.inference.inference import \
 
 class Evaluate:
     """
-    Central place to evaluate the quality of the model
+    Central place to evaluate the quality of the _model
     """
 
     def __init__(self):
@@ -26,9 +26,9 @@ class Evaluate:
 
     def evaluate(self, run_id=None):
         """
-        Evaluate a model against our ranking
+        Evaluate a _model against our ranking
         """
-        logging.info("Evaluate model")
+        logging.info("Evaluate _model")
         print("Run id ", run_id)
         self.all_latest_keys = EntriesLoader.load_all_keys()
         self.embeddings_keys_latest = RedisEmbeddingsReader().load(self.all_latest_keys)

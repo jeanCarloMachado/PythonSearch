@@ -32,7 +32,7 @@ class Inference:
             self.run_id = os.environ["FORCE_RUN_ID"]
 
         if model:
-            print("Using custom passed model")
+            print("Using custom passed _model")
         else:
             print("Using run id: " + self.run_id)
         configuration = (
@@ -53,7 +53,7 @@ class Inference:
         return_weights=False,
     ) -> List[str]:
         """
-        Gets the ranking from the next item model
+        Gets the ranking from the next item _model
         """
         print("Number of existing keys: ", str(len(self.all_keys)))
         inference_input = (

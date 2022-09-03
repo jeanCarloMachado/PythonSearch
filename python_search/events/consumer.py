@@ -17,7 +17,7 @@ def consume_search_run_performed():
 
 class SparkEventConsumer:
     """
-    Listen to kafka events and store then in the data-wharehouse
+    Listen to kafka events and store then in the entries-wharehouse
     """
 
     def __init__(self, disable_await_termination=False):
@@ -46,7 +46,7 @@ class SparkEventConsumer:
             .option("subscribe", topic_name)
             .load()
         )
-        # process the data here
+        # process the entries here
         df = df.selectExpr("CAST(value as STRING) as value_decoded", "timestamp")
         df = df.withColumn(
             "value_as_json",

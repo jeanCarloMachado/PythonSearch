@@ -53,7 +53,7 @@ class Pipeline:
         use_cache=True,
         log_model=True,
     ):
-        print("Start training Keras model")
+        print("Start training Keras _model")
         if not dataset:
             print(f"Using data with cache: {use_cache} type: {type(use_cache)}")
             dataset = self.build_dataset(use_cache=use_cache)
@@ -76,9 +76,9 @@ class Pipeline:
 
     def train_xgboost(self, use_cache=True, log_model=True):
         """
-        Train the XGBoost model
+        Train the XGBoost _model
         """
-        print("Start training XGBoost model")
+        print("Start training XGBoost _model")
         dataset = self.build_dataset(use_cache=use_cache)
         if log_model:
             TrainXGBoost().train_and_log(dataset)
@@ -108,7 +108,7 @@ class Pipeline:
 
     def baseline_mse(self, dataset=None):
         """
-        naive approach of setting the same as input and output, used as baseline to measure the real model against
+        naive approach of setting the same as input and output, used as baseline to measure the real _model against
         """
         import pyspark.sql.functions as F
         from sklearn.metrics import mean_squared_error

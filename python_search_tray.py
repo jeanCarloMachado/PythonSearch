@@ -53,7 +53,7 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
         from subprocess import Popen
 
         Popen(
-            'python_search run_key "pythonsearch data app ui run new evaluator streamlit main"',
+            'python_search run_key "pythonsearch entries app ui run new evaluator streamlit main"',
             shell=True,
             stdin=None,
             stdout=None,

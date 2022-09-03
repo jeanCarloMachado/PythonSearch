@@ -9,7 +9,7 @@ from python_search.config import ConfigurationLoader
 @dataclass
 class EntryData:
     """
-    Entry data schema
+    Entry entries schema
 
     """
 
@@ -33,7 +33,7 @@ class EntryCaptureGUI:
         default_type="Snippet",
     ) -> EntryData:
         """
-        Launch the data capture GUI.
+        Launch the entries capture GUI.
         """
         import PySimpleGUI as sg
 

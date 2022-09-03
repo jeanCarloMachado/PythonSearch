@@ -12,31 +12,33 @@ from python_search.infrastructure.performance import timeit
 from python_search.infrastructure.redis import PythonSearchRedis
 from python_search.observability.logger import logging
 
+ModelInfo = namedtuple("ModelInfo", "features label")
+
 
 class RankingGenerator:
     """
     Generates the ranking for python search
     """
 
-    ModelInfo = namedtuple("ModelInfo", "features label")
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
-        self.configuration = configuration
-        self.feature_toggle = FeatureToggle()
-        self.model = None
-        self.debug = os.getenv("DEBUG", False)
+        self._configuration = configuration
+        self._feature_toggle = FeatureToggle()
+        self._model = None
+        self._debug = os.getenv("DEBUG", False)
+        self._entries_result = EntriesResult()
 
-        if self.configuration.supported_features.is_redis_supported():
+        if self._configuration.supported_features.is_redis_supported():
             self.redis_client = PythonSearchRedis.get_client()
 
         self.used_entries: List[Tuple[str, dict]] = []
 
-        if self.feature_toggle.is_enabled("ranking_next"):
+        if self._feature_toggle.is_enabled("ranking_next"):
             from python_search.ranking.next_item_predictor.inference.inference import \
                 Inference
 
-            self.inference = Inference(self.configuration)
+            self.inference = Inference(self._configuration)
 
     def generate_with_caching(self):
         """
@@ -50,7 +52,7 @@ class RankingGenerator:
         Recomputes the rank and saves the results on the file to be read
         """
 
-        self.entries: dict = self.configuration.commands
+        self.entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self.ranked_keys: List[str] = self.entries.keys()
 
@@ -67,7 +69,7 @@ class RankingGenerator:
         if not print_entries:
             return
 
-        return self.print_entries(result)
+        return self._entries_result.build_entries_result(result)
 
     def _save_ranking_order_in_cache(self, ranking: List[str]):
         encoded_list = "|".join(ranking)
@@ -75,8 +77,8 @@ class RankingGenerator:
 
     def _can_load_from_cache(self):
         return (
-            self.configuration.supported_features.is_redis_supported()
-            and self.configuration.supported_features.is_dynamic_ranking_supported()
+            self._configuration.supported_features.is_redis_supported()
+            and self._configuration.supported_features.is_dynamic_ranking_supported()
         )
 
     def _merge_and_build_result(self) -> List[Tuple[str, dict]]:
@@ -118,10 +120,10 @@ class RankingGenerator:
     def _fetch_latest_entries(self):
         """Populate the variable used_entries  with the results from redis"""
         self.used_entries: List[Tuple[str, dict]] = []
-        if not self.configuration.supported_features.is_enabled(
+        if not self._configuration.supported_features.is_enabled(
             "redis"
-        ) or not self.feature_toggle.is_enabled("ranking_latest_used"):
-            if self.debug:
+        ) or not self._feature_toggle.is_enabled("ranking_latest_used"):
+            if self._debug:
                 print(f"Disabled latest entries")
             return
 
@@ -129,7 +131,7 @@ class RankingGenerator:
         # only use the latest 7 entries for the top of the ranking
         self.used_entries = self.used_entries[-7:]
 
-        if self.debug:
+        if self._debug:
             print(f"Used entries: {self.used_entries}")
 
     def get_used_entries_from_redis(self, entries) -> List[Tuple[str, dict]]:
@@ -151,25 +153,48 @@ class RankingGenerator:
 
         return LatestUsedEntries().get_latest_used_keys()
 
+from dateutil import parser
+import datetime
+
+
+class EntriesResult:
+    """Builds the list of results ready to be consumed by fzf"""
+
+    def __init__(self):
+        self._today = datetime.datetime.now()
+
     @timeit
-    def print_entries(self, data: List[Tuple[str, dict]]) -> str:
+    def build_entries_result(self, entries: List[Tuple[str, dict]]) -> str:
         """Print results"""
         position = 1
         result = ""
-        for name, content in data:
-            name_clean = name.lower()
+        for name, content in entries:
             try:
-                content["key_name"] = name_clean
+                content["key_name"] = name
                 content["position"] = position
                 content["generated_acronyms"] = generate_acronyms(name)
+                content['tags'] = content['tags'] if 'tags' in content else []
+                if 'created_at' in content:
+                    date_created = parser.parse(content['created_at'])
+                    days_ago = (self._today - date_created).days
+
+                    content['tags'].append(f'created_{days_ago}_days_ago')
+
+                    if days_ago == 0:
+                        content['tags'].append(f'today_created')
+                    elif days_ago == 1:
+                        content['tags'].append(f'yesterday_created')
+
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
                 logging.debug(e)
+                #print(e)
+                #breakpoint()
                 content_str = str(content)
 
             position = position + 1
 
-            content_str = f"{name_clean}:" + content_str
+            content_str = f"{name}:" + content_str
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')

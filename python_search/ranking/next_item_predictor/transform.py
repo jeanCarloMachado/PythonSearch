@@ -18,8 +18,8 @@ class Transform:
     """
     Transform takes an input and make it ready for inference
 
-    From training dataset to -> model input
-    And from inference dataset -> model input
+    From training dataset to -> _model input
+    And from inference dataset -> _model input
     """
 
     # 2 embeddings of 384 dimensions

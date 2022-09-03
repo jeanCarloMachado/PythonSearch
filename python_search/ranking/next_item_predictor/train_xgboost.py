@@ -13,7 +13,7 @@ from python_search.ranking.next_item_predictor.transform import Transform
 class TrainXGBoost:
     def train_and_log(self, dataset):
         """
-        train the model and log it to MLFlow
+        train the _model and log it to MLFlow
         """
         import mlflow
 

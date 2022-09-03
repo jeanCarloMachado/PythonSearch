@@ -18,7 +18,7 @@ class PythonSearchCli:
 
     @staticmethod
     def setup_from_config(config: PythonSearchConfiguration):
-        """Initialized the cli with the main configuration object"""
+        """Initialized the cli with the main _configuration object"""
         try:
             instance = PythonSearchCli(config)
             import fire
@@ -40,7 +40,7 @@ class PythonSearchCli:
         so they keep being fast
         """
         if not configuration:
-            logging.debug("No configuration provided, using default")
+            logging.debug("No _configuration provided, using default")
             try:
                 configuration = ConfigurationLoader().load_config()
             except Exception as e:

@@ -30,7 +30,7 @@ entries = {
         "i3_shortcut": "Control+Shift+0",
     },
     # file will open the file with the standard file handler for the file type in the system
-    "edit current selected project configuration of python search": {
+    "edit current selected project _configuration of python search": {
         # you can have multiple projects in paralel with python search
         "file": f"{os.environ['HOME']}/.config/python_search/current_project",
     },

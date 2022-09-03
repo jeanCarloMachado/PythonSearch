@@ -22,7 +22,7 @@ class I3:
         shortcut_str = self._generate_i3_shortcuts_string()
         i3_config_path = os.path.join(os.environ["HOME"], ".config/i3")
         if not os.path.exists(f"{i3_config_path}/config_part1"):
-            raise Exception("Cannot find part 1 of i3 configuration")
+            raise Exception("Cannot find part 1 of i3 _configuration")
 
         write_file(f"{i3_config_path}/config_part2", shortcut_str)
 

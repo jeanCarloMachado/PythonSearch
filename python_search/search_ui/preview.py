@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from dateutil import parser
 
 from colorama import Fore, Style
 
@@ -88,7 +89,6 @@ class Preview:
             print_values["value"] = dill.source.getsource(value)
 
         if "created_at" in entry_data:
-            from dateutil import parser
 
             creation_date = parser.parse(entry_data["created_at"])
             today = datetime.now()
@@ -99,8 +99,12 @@ class Preview:
             print_values["tags"] = " ".join(entry_data["tags"])
 
         decoded_content = self._decode_serialized_data(serialized_content)
+
         if "position" in decoded_content:
             print_values["position"] = str(decoded_content["position"])
+
+        if "tags" in decoded_content:
+            print_values["tags"] = " ".join(decoded_content["tags"])
 
         return print_values
 

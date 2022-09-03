@@ -37,7 +37,7 @@ class EntryInserter:
 
         send_notification(f"Entry {row_entry} inserted successfully")
 
-        # refresh the configuration
+        # refresh the _configuration
         if enable_shortcuts_generation:
             from python_search.interpreter.cmd import CmdInterpreter
 

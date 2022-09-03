@@ -7,7 +7,7 @@ import os
 
 class EntriesGroup:
     """
-    Main configuration of the application. Customers are supposed to pass their own
+    Main _configuration of the application. Customers are supposed to pass their own
     """
 
     # the location of the dumped index

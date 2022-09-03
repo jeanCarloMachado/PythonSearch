@@ -29,7 +29,7 @@ class Train:
 
     def train_and_log(self, dataset):
         """
-        train the model and log it to MLFlow
+        train the _model and log it to MLFlow
         """
 
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
@@ -54,7 +54,7 @@ class Train:
         :return:
         """
 
-        # prepare the data
+        # prepare the entries
         X, Y = Transform().transform_train(dataset)
         X_train, X_test, Y_train, Y_test = self.split(X, Y)
 

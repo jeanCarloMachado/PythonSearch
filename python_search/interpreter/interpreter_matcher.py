@@ -31,7 +31,7 @@ class InterpreterMatcher:
     @staticmethod
     def build_instance(configuration):
         """
-        Singleton. Initializes a configuration a context and a interpreter
+        Singleton. Initializes a _configuration a context and a interpreter
 
         :return:
         """

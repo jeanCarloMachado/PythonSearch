@@ -20,7 +20,7 @@ class EditKey:
 
     def edit_key(self, key, dry_run=False):
         """
-        Edits the configuration files by searching the text
+        Edits the _configuration files by searching the text
         """
         if not key:
             self._edit_default()
@@ -59,7 +59,7 @@ class EditKey:
         self._edit_config(self.configuration.get_project_root() + "/entries_main.py")
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
-        """ "edit a configuration file given the name and line"""
+        """ "edit a _configuration file given the name and line"""
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
