@@ -50,7 +50,7 @@ class EntryCaptureGUI:
             expand_y=True,
         )
 
-        tags_chucks = self._chunks(self._tags, 3)
+        tags_chucks = self._chunks(self._tags, 4)
         layout = [
             [sg.Text("Entry content")],
             [content_input],
