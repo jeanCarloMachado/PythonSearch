@@ -1,9 +1,9 @@
 import json
 import logging
 from datetime import datetime
-from dateutil import parser
 
 from colorama import Fore, Style
+from dateutil import parser
 
 from python_search.config import ConfigurationLoader
 
