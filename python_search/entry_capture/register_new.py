@@ -54,14 +54,26 @@ class RegisterNew:
 
         self.entry_inserter.insert(entry_data.key, dict_entry)
 
-    def _infer_default_type(self, content):
-        if UrlInterpreter.is_url(content):
-            return "Url"
+    def register(self,*, key: str, value: str, tag: str = None):
+        """
+        The non ui driven registering api
+        Args:
+            key:
+            value:
+            tag:
 
-        if FileInterpreter.file_exists(content):
-            return "File"
+        Returns:
 
-        return "Cmd"
+        """
+
+        interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
+            self.configuration
+        ).get_interpreter(value)
+        dict_entry = interpreter.to_dict()
+        if tag:
+            dict_entry["tags"] = [tag]
+
+        self.entry_inserter.insert(key, dict_entry)
 
     def anonymous_snippet(self):
         """
@@ -75,6 +87,7 @@ class RegisterNew:
 
     def german_from_text(self, german_term: str):
         """
+        @todo move this out of here to a plugin system
         Register german workds you dont know by saving them to the clipboard and storing in python search
         """
 
@@ -103,3 +116,12 @@ class RegisterNew:
         }
 
         self.entry_inserter.insert(german_term, as_dict)
+
+    def _infer_default_type(self, content):
+        if UrlInterpreter.is_url(content):
+            return "Url"
+
+        if FileInterpreter.file_exists(content):
+            return "File"
+
+        return "Cmd"

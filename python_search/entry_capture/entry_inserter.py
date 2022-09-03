@@ -17,7 +17,7 @@ class EntryInserter:
         self.configuration = configuration
         self.file_to_append = self.configuration.get_project_root() + "/entries_main.py"
 
-    def insert(self, key: str, entry: dict, enable_shortcuts_generation=False):
+    def insert(self, key: str, entry: dict):
 
         entry["created_at"] = datetime.now().isoformat()
 
@@ -37,11 +37,6 @@ class EntryInserter:
 
         send_notification(f"Entry {row_entry} inserted successfully")
 
-        # refresh the _configuration
-        if enable_shortcuts_generation:
-            from python_search.interpreter.cmd import CmdInterpreter
-
-            CmdInterpreter({"cmd": "python_search generate_shortcuts"})
 
     def _append_entry(self, line_to_add: str):
         """
