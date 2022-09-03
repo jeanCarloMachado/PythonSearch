@@ -20,7 +20,6 @@ class EntryData:
 
 
 class EntryCaptureGUI:
-
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
