@@ -124,4 +124,4 @@ class RegisterNew:
         if FileInterpreter.file_exists(content):
             return "File"
 
-        return "Cmd"
+        return "Snippet"
