@@ -43,7 +43,12 @@ class Inference:
         self.all_keys = configuration.commands.keys()
         self._transform = Transform()
 
-        self.model = model if model else self._load_mlflow_model(run_id=self.run_id)
+        try:
+            self.model = model if model else self._load_mlflow_model(run_id=self.run_id)
+        except Exception as e:
+            print("Failed to load mlflow model")
+            self.model = None
+            raise e
 
     @timeit
     def get_ranking(
@@ -98,5 +103,6 @@ class Inference:
 
     @timeit
     def _load_mlflow_model(self, run_id=None):
+
         model = PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
         return model

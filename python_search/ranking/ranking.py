@@ -38,7 +38,12 @@ class RankingGenerator:
             from python_search.ranking.next_item_predictor.inference.inference import \
                 Inference
 
-            self.inference = Inference(self._configuration)
+
+            try:
+                self.inference = Inference(self._configuration)
+            except Exception as e:
+                print("Could not initialize inference. will run without")
+                self.inference = None
 
     def generate_with_caching(self):
         """
