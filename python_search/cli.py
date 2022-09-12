@@ -4,6 +4,7 @@ from python_search.apps.window_manager import WindowManager
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
+from python_search.search_ui.fzf_terminal import FzfInTerminal
 from python_search.search_ui.preview import Preview
 
 
@@ -58,9 +59,7 @@ class PythonSearchCli:
         """
         Opens the Search UI. Main entrypoint of the application
         """
-        from python_search.search_ui.search import Search
-
-        Search(self.configuration).run()
+        FzfInTerminal.build_search_ui(self.configuration).run()
 
     def copy_entry_content(self, key: str):
         """

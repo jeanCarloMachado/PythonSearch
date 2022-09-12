@@ -3,7 +3,6 @@ import os
 from python_search.apps.terminal import Terminal
 from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
-from python_search.observability.logger import logging
 
 
 class FzfInTerminal:
@@ -32,6 +31,14 @@ class FzfInTerminal:
         self.executable = "python_search"
         self.title = configuration.APPLICATION_TITLE
         self.configuration = configuration
+
+
+        import sys, logging
+        logger = logging.getLogger(name="search_ui")
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+        logger.setLevel(logging.DEBUG)
+
+        self._logger = logger
 
     def run(self) -> None:
         self._launch_terminal(self.internal_cmd())
@@ -79,7 +86,7 @@ class FzfInTerminal:
         '
         """
 
-        logging.debug("Cmd: ", cmd)
+        self._logger.info("Cmd: ", cmd)
         return cmd
 
     def _run_key(self, shortcut) -> str:
@@ -109,7 +116,6 @@ class FzfInTerminal:
         if is_mac():
             font = "Monaco"
 
-        # --start-as=fullscreen \
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title}"\
         -o initial_window_width={self.width}  \
@@ -119,7 +125,7 @@ class FzfInTerminal:
         {Terminal.GLOBAL_TERMINAL_PARAMS} \
          {internal_cmd}
         """
-        logging.info(f"Command performed:\n {internal_cmd}")
+        self._logger.info(f"Command performed:\n {internal_cmd}")
         result = os.system(launch_cmd)
         if result != 0:
             raise Exception("Search run fzf projection failed")
