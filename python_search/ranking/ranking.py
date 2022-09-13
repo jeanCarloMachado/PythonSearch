@@ -38,7 +38,6 @@ class RankingGenerator:
             from python_search.ranking.next_item_predictor.inference.inference import \
                 Inference
 
-
             try:
                 self.inference = Inference(self._configuration)
             except Exception as e:

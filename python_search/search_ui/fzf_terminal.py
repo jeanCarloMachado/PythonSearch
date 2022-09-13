@@ -32,8 +32,9 @@ class FzfInTerminal:
         self.title = configuration.APPLICATION_TITLE
         self.configuration = configuration
 
+        import logging
+        import sys
 
-        import sys, logging
         logger = logging.getLogger(name="search_ui")
         logger.addHandler(logging.StreamHandler(sys.stdout))
         logger.setLevel(logging.DEBUG)
