@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
+PORT = 8000
 
 app = FastAPI()
 from python_search.config import ConfigurationLoader
@@ -7,23 +8,31 @@ from python_search.ranking.ranking import RankingGenerator
 
 config = ConfigurationLoader().load_config()
 generator = RankingGenerator(config)
+ranking_result = generator.generate()
 
-
-@app.get("/ranking/generate", response_class=PlainTextResponse)
-def generate_ranking():
+def reload_ranking():
     global generator
-    return generator.generate()
-
-
-@app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
-def reload():
-    global generator
+    global ranking_result
     global config
     del config
     del generator
     config = ConfigurationLoader().reload()
     generator = RankingGenerator(config)
-    return generator.generate()
+    ranking_result = generator.generate()
+    return ranking_result
+
+@app.get("/ranking/generate", response_class=PlainTextResponse)
+def generate_ranking():
+    global ranking_result
+    return ranking_result
+
+@app.get("/ranking/reload", response_class=PlainTextResponse)
+def reload():
+    reload_ranking()
+
+@app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
+def reload():
+    return reload_ranking()
 
 
 @app.get("/_health")
@@ -54,7 +63,7 @@ def main():
     else:
         print("Debug mode is OFF")
 
-    uvicorn.run("python_search.web_api:app", host="0.0.0.0", port=8000, reload=reload)
+    uvicorn.run("python_search.web_api:app", host="0.0.0.0", port=PORT, reload=reload)
 
 
 if __name__ == "__main__":

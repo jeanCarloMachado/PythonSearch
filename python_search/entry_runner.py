@@ -99,6 +99,9 @@ class EntryRunner:
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
+        import os
+        os.system("curl http://localhost:8000/ranking/reload")
+
         return InterpreterMatcher.build_instance(self.configuration).default(real_key)
 
     def _matching_keys(self, key: str) -> List[str]:

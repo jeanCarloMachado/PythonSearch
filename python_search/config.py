@@ -24,7 +24,7 @@ class DataConfig:
     """
 
     # output of the _model
-    base_data_folder = "/entries/python_search"
+    base_data_folder = "/data/python_search"
     prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
     # a copy of the search run entries for the feature store
     entries_dump = base_data_folder + "/entries_dumped/latest"
