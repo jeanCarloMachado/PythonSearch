@@ -47,6 +47,7 @@ browser = 'python_search.apps.browser:main'
 python_search_webapi = 'python_search.web_api:main'
 entry_embeddings='python_search.ranking.entry_embeddings:main'
 run_entry = 'python_search.cli:_run_key_bin'
+reminders = 'python_search.plugins.reminders:main'
 
 
 [tool.poetry.extras]

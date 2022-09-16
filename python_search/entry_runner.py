@@ -100,7 +100,8 @@ class EntryRunner:
             )
 
         import os
-        os.system("curl http://localhost:8000/ranking/reload")
+
+        os.system("curl http://localhost:8000/ranking/reload &")
 
         return InterpreterMatcher.build_instance(self.configuration).default(real_key)
 

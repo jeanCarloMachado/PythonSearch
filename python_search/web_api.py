@@ -1,34 +1,34 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
+
 PORT = 8000
 
 app = FastAPI()
 from python_search.config import ConfigurationLoader
 from python_search.ranking.ranking import RankingGenerator
 
-config = ConfigurationLoader().load_config()
-generator = RankingGenerator(config)
+generator = RankingGenerator(ConfigurationLoader().load_config())
 ranking_result = generator.generate()
+
 
 def reload_ranking():
     global generator
     global ranking_result
-    global config
-    del config
-    del generator
-    config = ConfigurationLoader().reload()
-    generator = RankingGenerator(config)
+    generator = RankingGenerator(ConfigurationLoader().reload())
     ranking_result = generator.generate()
     return ranking_result
+
 
 @app.get("/ranking/generate", response_class=PlainTextResponse)
 def generate_ranking():
     global ranking_result
     return ranking_result
 
+
 @app.get("/ranking/reload", response_class=PlainTextResponse)
 def reload():
     reload_ranking()
+
 
 @app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
 def reload():
