@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple
 
 from python_search.acronyms import generate_acronyms
 from python_search.config import PythonSearchConfiguration
-from python_search.features import FeatureToggle
+from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
 from python_search.infrastructure.redis import PythonSearchRedis
 from python_search.observability.logger import logging

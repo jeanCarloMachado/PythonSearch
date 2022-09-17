@@ -9,6 +9,10 @@ class Infrastructure:
     def __init__(self):
         self._RUNNING_INFO = {
             "web_api": {"cmd": "python_search_webapi", "log": "/tmp/log_webserver"},
+            "reminders": {
+                "cmd": "reminders run_daemon",
+                "log": "/tmp/log_reminders",
+            },
             "zookeeper": {
                 "cmd": "zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties",
                 "log": "/tmp/log_zoookeeper",

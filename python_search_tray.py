@@ -31,6 +31,7 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
         self.create_menu_item(menu, "Redis consumer", self.latest_redis_consumer)
         self.create_menu_item(menu, "Kafka", self.kafka)
         self.create_menu_item(menu, "Redis", self.redis)
+        self.create_menu_item(menu, "Reminders", self.reminders)
         self.create_menu_item(menu, "Zookeeper", self.zookeeper)
         menu.AppendSeparator()
         self.create_menu_item(menu, "Exit", self.on_exit)
@@ -75,6 +76,9 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
 
     def zookeeper(self, event):
         self.infra.run_service("zookeeper")
+
+    def reminders(self, event):
+        self.infra.run_service("reminders")
 
     def redis(self, event):
         self.infra.run_service("redis")

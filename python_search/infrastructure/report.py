@@ -1,4 +1,4 @@
-from python_search.features import FeatureToggle
+from python_search.feature_toggle import FeatureToggle
 
 
 class Report:
