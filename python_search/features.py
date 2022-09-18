@@ -34,5 +34,3 @@ class FeaturesSupport:
 
     def is_redis_supported(self):
         return self.is_enabled("redis")
-
-

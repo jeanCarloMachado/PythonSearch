@@ -9,7 +9,8 @@ class FeatureToggle:
 
     @staticmethod
     def main():
-        import fire;
+        import fire
+
         fire.Fire(FeatureToggle)
 
     def __init__(self):
@@ -20,7 +21,6 @@ class FeatureToggle:
 
     def disable(self, feature_name: str):
         os.system(f"rm {self.BASE_PATH}/{feature_name}")
-
 
     def toggle(self, feature_name):
         is_enabled = self.is_enabled(feature_name)
