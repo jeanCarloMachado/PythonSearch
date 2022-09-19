@@ -51,7 +51,7 @@ class RankingGenerator:
         self.generate(recompute_ranking=False)
 
     @timeit
-    def generate(self, print_entries=True, print_weights=False):
+    def generate(self, print_entries=True, print_weights=False) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
         """

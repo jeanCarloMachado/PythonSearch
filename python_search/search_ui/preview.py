@@ -55,63 +55,65 @@ class Preview:
 
         return Fore.BLUE
 
-    def _color_str(self, a_string, a_color) -> str:
-        return f"{a_color}{a_string}{Fore.RESET}"
-
-    def _build_values_to_print(self, entry_text):
+    def _build_values_to_print(self, entry_text) -> dict:
         print_values = entry_text.split(":")
         key = print_values[0]
         # the entry content is after the key + a ":" character
         serialized_content = entry_text[len(key) + 1 :]
 
-        print_values = {}
-        print_values["type"] = "Unknown"
-        print_values["key"] = key
+        result = {}
+        result["type"] = "Unknown"
+        result["key"] = key
         entry_data = self._load_key_data(key)
         if "url" in entry_data:
-            print_values["value"] = entry_data.get("url")
-            print_values["type"] = "Url"
+            result["value"] = entry_data.get("url")
+            result["type"] = "Url"
 
         if "file" in entry_data:
-            print_values["value"] = entry_data.get("file")
-            print_values["type"] = "File"
+            result["value"] = entry_data.get("file")
+            result["type"] = "File"
 
         if "snippet" in entry_data:
-            print_values["value"] = entry_data.get("snippet")
-            print_values["type"] = "Snippet"
+            result["value"] = entry_data.get("snippet")
+            result["type"] = "Snippet"
 
         if "cli_cmd" in entry_data or "cmd" in entry_data:
-            print_values["value"] = entry_data.get("cli_cmd", entry_data.get("cmd"))
-            print_values["type"] = "Cmd"
+            result["value"] = entry_data.get("cli_cmd", entry_data.get("cmd"))
+            result["type"] = "Cmd"
 
         if "callable" in entry_data:
             value = entry_data.get("callable")
             import dill
 
-            print_values["value"] = dill.source.getsource(value)
+            result["value"] = dill.source.getsource(value)
 
         if "created_at" in entry_data:
 
             creation_date = parser.parse(entry_data["created_at"])
             today = datetime.now()
-            print_values["created_at"] = str(creation_date)
-            print_values["entry_age"] = str(today - creation_date)
+            result["created_at"] = str(creation_date)
+            result["entry_age"] = str(today - creation_date)
 
         if "description" in entry_data:
-            print_values["description"] = entry_data["description"]
-
-        if "tags" in entry_data:
-            print_values["tags"] = " ".join(entry_data["tags"])
+            result["description"] = entry_data["description"]
 
         decoded_content = self._decode_serialized_data(serialized_content)
 
         if "position" in decoded_content:
-            print_values["position"] = str(decoded_content["position"])
+            result["position"] = str(decoded_content["position"])
+
+        result['tags'] = []
+        if "tags" in entry_data:
+            result["tags"] = " ".join(entry_data["tags"])
 
         if "tags" in decoded_content:
-            print_values["tags"] = " ".join(decoded_content["tags"])
+            result["tags"] = " ".join(decoded_content["tags"])
 
-        return print_values
+        return result
+
+    def _color_str(self, a_string, a_color) -> str:
+        return f"{a_color}{a_string}{Fore.RESET}"
+
 
     def _decode_serialized_data(self, serialized_content):
         try:
