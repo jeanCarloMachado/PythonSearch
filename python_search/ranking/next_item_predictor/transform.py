@@ -50,7 +50,7 @@ class Transform:
         print("X shape:", X.shape)
 
         # transform the spark dataframe into a python iterable
-        collected_rows = dataset.select(*TrainingDataset.columns).collect()
+        collected_rows = dataset.select(*TrainingDataset.FEATURES).collect()
 
         for i, row in enumerate(collected_rows):
             X[i] = np.concatenate(

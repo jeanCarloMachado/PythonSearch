@@ -19,7 +19,7 @@ class TrainingDataset:
     Builds the dataset ready for training
     """
 
-    columns = (
+    FEATURES = (
         "key",
         "previous_key",
         "previous_previous_key",
@@ -73,7 +73,7 @@ class TrainingDataset:
 
     def _add_label_and_cleanup(self, all_features: DataFrame) -> DataFrame:
         """
-        Remove all columns which the purpose is to calculate the label
+        Remove all FEATURES which the purpose is to calculate the label
         """
 
         logging.info("Adding label")
@@ -118,7 +118,7 @@ class TrainingDataset:
         normalized = normalized.withColumnRenamed("label", "label_original")
         result = normalized.withColumnRenamed("label_normalized", "label")
 
-        final_result = result.select(*self.columns)
+        final_result = result.select(*self.FEATURES)
 
         print("Schema of final dataframe")
         final_result.printSchema()
@@ -205,7 +205,7 @@ class TrainingDataset:
         with_month = df_with_previous.withColumn("month", F.month("timestamp"))
         with_hour = with_month.withColumn("hour", F.hour("timestamp"))
 
-        # keep only the necessary columns
+        # keep only the necessary FEATURES
         return with_hour.select(
             "month", "hour", "key", "previous_key", "previous_previous_key", "timestamp"
         )

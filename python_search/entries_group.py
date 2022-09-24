@@ -52,7 +52,7 @@ class EntriesGroup:
                 if "tags" not in command:
                     command["tags"] = [class_name_tag]
                 else:
-                    if class_name_tag not in command['tags']:
+                    if class_name_tag not in command["tags"]:
                         command["tags"].append(class_name_tag)
 
             result[key] = command
