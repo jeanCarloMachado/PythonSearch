@@ -13,7 +13,7 @@ from python_search.infrastructure.redis import PythonSearchRedis
 class LatestUsedEntries:
     """
     Contains the logic to read and write the  latest used keys from redis
-    These entries are then applied to the ranking.
+    These _entries are then applied to the ranking.
     """
 
     MAX_PERSISTED_ITEMS = 1000

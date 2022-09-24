@@ -1,4 +1,4 @@
-""" Centralize all exceptions definitions to help in the entries discovery """
+""" Centralize all exceptions definitions to help in the _entries discovery """
 
 
 class MenuException(Exception):

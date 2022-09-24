@@ -157,7 +157,7 @@ class PythonSearchCli:
 
     def _preview_entry(self, entry_text: str):
         """
-        Recieves entries from fzf and show them formatted for the preview window
+        Recieves _entries from fzf and show them formatted for the preview window
         """
         Preview().display(entry_text)
 

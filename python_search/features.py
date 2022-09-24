@@ -12,7 +12,7 @@ class FeaturesSupport:
         DYNAMIC_RANKING: False,
         # turn on if you have a redis instance to improve the ranking
         "redis": False,
-        # turn to true if you want entries to be collected
+        # turn to true if you want _entries to be collected
         "event_tracking": False,
     }
 

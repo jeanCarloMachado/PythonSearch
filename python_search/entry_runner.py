@@ -16,7 +16,7 @@ from python_search.observability.logger import (initialize_systemd_logging,
 
 class EntryRunner:
     """
-    Responsible to execute the entries matched
+    Responsible to execute the _entries matched
     """
 
     def __init__(self, configuration: PythonSearchConfiguration):

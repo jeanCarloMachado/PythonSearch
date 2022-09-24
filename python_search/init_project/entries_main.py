@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 """
-This is a initial version of python_search entries to give you a sense of what is possible.
-Feel free to delete all the entries here. You will want to versionate your entries
+This is a initial version of python_search _entries to give you a sense of what is possible.
+Feel free to delete all the _entries here. You will want to versionate your _entries
 """
 import datetime
 import os
@@ -14,7 +14,7 @@ entries = {
         "cmd": "python_search register_new from_clipboard",
     },
     # cli cmds will additional open a new terminal window and execute the  command
-    "edit current project entries source code": {
+    "edit current project _entries source code": {
         "cli_cmd": f"python_search edit_main",
     },
     # urls will be opened in the browser
@@ -39,9 +39,9 @@ entries = {
         # that collects_input to questions and returns the string answered
         "cli_cmd": """python3 -c 'help($(collect_input giveTheObjectName))' """
     },
-    # entries are python code, you can import them from other python scripts
+    # _entries are python code, you can import them from other python scripts
     # or you can generate them dynamically like in the example below
-    # here we are generating different entries for different environments (production, testing, development)
+    # here we are generating different _entries for different environments (production, testing, development)
     "help python search manual": {"cli_cmd": "python_search --help"},
     **{
         f"get pods for {env}": {"cli_cmd": f"kubectl --context {env} get pods"}

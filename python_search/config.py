@@ -14,19 +14,19 @@ from python_search.features import FeaturesSupport
 
 class SearchRunConfiguration:
     NLP_PICKLED_EMBEDDINGS: str = f"{os.getenv('HOME')}/.python_search_nlp_embeddings"
-    # editor used to edit the entries
+    # editor used to edit the _entries
     EDITOR = "vim"
 
 
 class DataConfig:
     """
-    Configuration with locations of entries, models and names of files.
+    Configuration with locations of _entries, models and names of files.
     """
 
     # output of the _model
     base_data_folder = "/data/python_search"
     prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
-    # a copy of the search run entries for the feature store
+    # a copy of the search run _entries for the feature store
     entries_dump = base_data_folder + "/entries_dumped/latest"
     entries_dump_file = base_data_folder + "/entries_dumped/latest/000.parquet"
     cached_configuration = "/tmp/search_and_run_configuration_cached"
@@ -108,6 +108,14 @@ class ConfigurationLoader:
 
         return config
 
+    def reload(self):
+        """ reload _entries for when we change it """
+        import importlib
+        import entries_main
+
+        importlib.reload(entries_main)
+        return entries_main.config
+
     def get_project_root(self):
         env_name = "PS_ENTRIES_HOME"
         current_project_location = (
@@ -128,7 +136,7 @@ class ConfigurationLoader:
 
         if not folder:
             raise Exception(
-                f"Either {current_project_location} or {env_name} must be set to find entries"
+                f"Either {current_project_location} or {env_name} must be set to find _entries"
             )
         return folder
 
@@ -136,12 +144,3 @@ class ConfigurationLoader:
         config = self.load_config()
         return config.commands
 
-    def reload(self):
-        import importlib
-
-        import entries_main
-
-        importlib.reload(entries_main)
-        config = entries_main.config
-
-        return config

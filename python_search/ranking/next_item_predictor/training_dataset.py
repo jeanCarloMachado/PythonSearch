@@ -127,7 +127,7 @@ class TrainingDataset:
 
     def _compute_aggregations(self, all_dimensions, base_features) -> DataFrame:
         """
-        Adds aggregations of the entries that supports the label formula
+        Adds aggregations of the _entries that supports the label formula
         Args:
             all_dimensions:
             base_features:

@@ -56,9 +56,9 @@ class RankingGenerator:
         Recomputes the rank and saves the results on the file to be read
         """
 
-        self.entries: dict = self._configuration.commands
+        self._entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
-        self.ranked_keys: List[str] = self.entries.keys()
+        self.ranked_keys: List[str] = self._entries.keys()
 
         try:
             """Mutate self.ranked keys with the results"""
@@ -87,7 +87,7 @@ class RankingGenerator:
 
     def _merge_and_build_result(self) -> List[Tuple[str, dict]]:
         """ "
-        Merge the ranking with the latest entries and make it ready to be printed
+        Merge the ranking with the latest _entries and make it ready to be printed
         """
         result = []
         increment = 0
@@ -96,11 +96,11 @@ class RankingGenerator:
         while self.used_entries:
             used_entry = self.used_entries.pop()
             key = used_entry[0]
-            if key not in self.entries:
-                # key not found in entries
+            if key not in self._entries:
+                # key not found in _entries
                 continue
 
-            # sometimes there can be a bug of saving somethign other than dicts as entries
+            # sometimes there can be a bug of saving somethign other than dicts as _entries
             if type(used_entry[1]) != dict:
                 logging.warning(f"Entry is not a dict {used_entry[1]}")
                 continue
@@ -110,11 +110,11 @@ class RankingGenerator:
             increment += 1
 
         for key in self.ranked_keys:
-            if key not in self.entries:
-                # key not found in entries
+            if key not in self._entries:
+                # key not found in _entries
                 continue
 
-            result.append((key, self.entries[key]))
+            result.append((key, self._entries[key]))
             final_key_list.append(key)
             increment += 1
 
@@ -128,19 +128,19 @@ class RankingGenerator:
             "redis"
         ) or not self._feature_toggle.is_enabled("ranking_latest_used"):
             if self._debug:
-                print(f"Disabled latest entries")
+                print(f"Disabled latest _entries")
             return
 
-        self.used_entries = self.get_used_entries_from_redis(self.entries)
-        # only use the latest 7 entries for the top of the ranking
+        self.used_entries = self.get_used_entries_from_redis(self._entries)
+        # only use the latest 7 _entries for the top of the ranking
         self.used_entries = self.used_entries[-7:]
 
         if self._debug:
-            print(f"Used entries: {self.used_entries}")
+            print(f"Used _entries: {self.used_entries}")
 
     def get_used_entries_from_redis(self, entries) -> List[Tuple[str, dict]]:
         """
-        returns a list of used entries to be placed on top of the ranking
+        returns a list of used _entries to be placed on top of the ranking
         """
         used_entries = []
         latest_used = self._get_latest_used_keys()
@@ -159,7 +159,6 @@ class RankingGenerator:
 
 
 import datetime
-
 from dateutil import parser
 
 

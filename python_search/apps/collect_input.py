@@ -7,12 +7,12 @@ from python_search.apps.clipboard import Clipboard
 
 class CollectInput:
     """
-    Ask the user for input and return the entered entries
+    Ask the user for input and return the entered _entries
     """
 
     def launch(self, name="Enter Data", prefill_with_clipboard: bool = False):
         """
-        Launch the entries capture GUI.
+        Launch the _entries capture GUI.
         """
         import contextlib
 

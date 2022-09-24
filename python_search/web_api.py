@@ -10,7 +10,6 @@ from python_search.ranking.ranking import RankingGenerator
 generator = RankingGenerator(ConfigurationLoader().load_config())
 ranking_result = generator.generate()
 
-
 def reload_ranking():
     global generator
     global ranking_result

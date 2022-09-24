@@ -41,7 +41,7 @@ class RedisEmbeddingsReader:
 
     def load_all_keys(self):
         """
-        Generate embeddings for all currently existing entries
+        Generate embeddings for all currently existing _entries
         """
         keys = EntriesLoader.load_all_keys()
 
@@ -80,7 +80,7 @@ class RedisEmbeddingsWriter:
 
     def sync_all(self):
         """
-        Generate embeddings for all currently existing entries
+        Generate embeddings for all currently existing _entries
         """
         keys = EntriesLoader.load_all_keys()
         embeddings = create_key_indexed_embedding(keys)

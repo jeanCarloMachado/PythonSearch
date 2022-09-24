@@ -12,7 +12,7 @@ from python_search.interpreter.cmd import CmdInterpreter
 
 class EditKey:
     """
-    Set of commands to edit the entries
+    Set of commands to edit the _entries
     """
 
     def __init__(self, configuration):

@@ -54,7 +54,7 @@ class Train:
         :return:
         """
 
-        # prepare the entries
+        # prepare the _entries
         X, Y = Transform().transform_train(dataset)
         X_train, X_test, Y_train, Y_test = self.split(X, Y)
 
