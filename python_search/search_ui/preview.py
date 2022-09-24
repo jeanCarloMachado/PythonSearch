@@ -102,7 +102,7 @@ class Preview:
         if "position" in decoded_content:
             result["position"] = str(decoded_content["position"])
 
-        result['tags'] = []
+        result["tags"] = []
         if "tags" in entry_data:
             result["tags"] = " ".join(entry_data["tags"])
 
@@ -113,7 +113,6 @@ class Preview:
 
     def _color_str(self, a_string, a_color) -> str:
         return f"{a_color}{a_string}{Fore.RESET}"
-
 
     def _decode_serialized_data(self, serialized_content):
         try:

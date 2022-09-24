@@ -1,6 +1,5 @@
 """
 run it like this:
-
 """
 import wx.adv
 
