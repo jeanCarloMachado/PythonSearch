@@ -44,7 +44,7 @@ class Preview:
             print("Entry Age: " + data["entry_age"])
 
         if "tags" in data:
-            print("Tags: " + data["tags"])
+            print(f"Tags: {data['tags']}")
 
     def _get_color_for_type(self, type):
         if type == "Cmd":

@@ -109,8 +109,9 @@ class ConfigurationLoader:
         return config
 
     def reload(self):
-        """ reload _entries for when we change it """
+        """reload _entries for when we change it"""
         import importlib
+
         import entries_main
 
         importlib.reload(entries_main)
@@ -143,4 +144,3 @@ class ConfigurationLoader:
     def load_entries(self):
         config = self.load_config()
         return config.commands
-

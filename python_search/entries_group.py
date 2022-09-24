@@ -46,13 +46,14 @@ class EntriesGroup:
 
     def get_hydrated_commands(self):
         result = {}
-
+        class_name_tag = self.__class__.__name__
         for key, command in self.commands.items():
             if type(command) is dict:
                 if "tags" not in command:
-                    command["tags"] = [self.__class__.__name__]
+                    command["tags"] = [class_name_tag]
                 else:
-                    command["tags"].append(self.__class__.__name__)
+                    if class_name_tag not in command['tags']:
+                        command["tags"].append(class_name_tag)
 
             result[key] = command
 

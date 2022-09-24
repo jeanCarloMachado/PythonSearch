@@ -4,6 +4,7 @@ from python_search.apps.terminal import Terminal
 from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
 
+
 class FzfInTerminal:
     """
     Renders the search ui using fzf + termite terminal
