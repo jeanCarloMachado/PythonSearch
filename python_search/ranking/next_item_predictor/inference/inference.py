@@ -11,13 +11,15 @@ from python_search.ranking.next_item_predictor.inference.input import \
     InferenceInput
 from python_search.ranking.next_item_predictor.transform import Transform
 
+import logging
+
 
 class Inference:
     """
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "3750e7a080d54a7196df9d988f2a698a"
+    PRODUCTION_RUN_ID = "6f5a643214c54fb1976e1723d6c5a29d"
 
     def __init__(
         self,
@@ -64,11 +66,11 @@ class Inference:
         inference_input = (
             predefined_input
             if predefined_input
-            else InferenceInput.with_keys(
+            else InferenceInput.with_given_keys(
                 self._transform.inference_embeddings.get_recent_key_with_embedding(),
                 self._transform.inference_embeddings.get_recent_key_with_embedding(
                     second_recent=True
-                ),
+                )
             )
         )
 
@@ -94,7 +96,7 @@ class Inference:
             print(traceback.format_exc())
             only_keys = self.all_keys
 
-        print("ONlye keys: ", only_keys)
+        logging.debug("Only keys: ", only_keys)
         return only_keys
 
     @timeit

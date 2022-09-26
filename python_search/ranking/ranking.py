@@ -19,6 +19,7 @@ class RankingGenerator:
     """
     Generates the ranking for python search
     """
+    NUMBER_OF_LATEST_ENTRIES = 7
 
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
 
@@ -43,12 +44,6 @@ class RankingGenerator:
             except Exception as e:
                 print("Could not initialize inference. will run without")
                 self.inference = None
-
-    def generate_with_caching(self):
-        """
-        Uses cached rank if available and only add new keys on top
-        """
-        self.generate(recompute_ranking=False)
 
     @timeit
     def generate(self, print_entries=True, print_weights=False) -> str:
@@ -133,7 +128,7 @@ class RankingGenerator:
 
         self.used_entries = self.get_used_entries_from_redis(self._entries)
         # only use the latest 7 _entries for the top of the ranking
-        self.used_entries = self.used_entries[-7:]
+        self.used_entries = self.used_entries[-self.NUMBER_OF_LATEST_ENTRIES:]
 
         if self._debug:
             print(f"Used _entries: {self.used_entries}")

@@ -25,9 +25,10 @@ class Transform:
     # 2 embeddings of 384 dimensions
     # + 1 is for the month number
     # + 1 for entry number
+    # + 1 for global popularity of previous key
     KEYS = 3
 
-    DIMENSIONS = KEYS * 384 + 1 + 1
+    DIMENSIONS = KEYS * 384 + 1 + 1 + 1
 
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
@@ -50,7 +51,7 @@ class Transform:
         print("X shape:", X.shape)
 
         # transform the spark dataframe into a python iterable
-        collected_rows = dataset.select(*TrainingDataset.FEATURES).collect()
+        collected_rows = dataset.select(*TrainingDataset.COLUMNS).collect()
 
         for i, row in enumerate(collected_rows):
             X[i] = np.concatenate(
@@ -63,6 +64,7 @@ class Transform:
                     embeddings_keys[row.previous_previous_key],
                     np.asarray([row.month]),
                     np.asarray([row.hour]),
+                    np.asarray([row.times_used_previous]),
                 ]
             )
 
@@ -101,6 +103,7 @@ class Transform:
                     previous_previous_key_embedding,
                     np.asarray([inference_input.month]),
                     np.asarray([inference_input.hour]),
+                    np.asarray([inference_input.times_used_previous]),
                 )
             )
 

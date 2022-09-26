@@ -12,6 +12,7 @@ from pyspark.sql.window import Window
 
 from python_search.datasets.searchesperformed import SearchesPerformed
 from python_search.infrastructure.performance import timeit
+from python_search.ranking.next_item_predictor.features.times_used import TimesUsed
 
 
 class TrainingDataset:
@@ -25,9 +26,11 @@ class TrainingDataset:
         "previous_previous_key",
         "month",
         "hour",
-        "label",
         "entry_number",
+        "times_used_previous",
     )
+    COLUMNS = list(FEATURES) + ["label"]
+
     _DATASET_CACHE_FILE = "/tmp/dataset"
 
     def __init__(self):
@@ -47,7 +50,7 @@ class TrainingDataset:
             if cache:
                 return cache
 
-        dataset_with_aggregations = self._prepare_dataset_with_aggregations()
+        dataset_with_aggregations = self._prepare_features()
         dataset = self._add_label_and_cleanup(dataset_with_aggregations)
 
         logging.info("TrainingDataset ready, writing it to disk")
@@ -60,16 +63,27 @@ class TrainingDataset:
         self._dataframe = dataset
         return dataset
 
-    def _prepare_dataset_with_aggregations(self):
-        search_performed_df = self._load_base()
+    def _prepare_features(self):
+        """
+         High level feature composition
+
+        Returns:
+
+        """
+        search_performed_df = self._load_searches_performed()
         search_performed_df_filtered = self._filter_blacklisted(search_performed_df)
         all_dimensions = self._add_all_features(search_performed_df_filtered)
-        base_dataset = self._base_dataset(all_dimensions)
-        dataset_with_aggregations = self._compute_aggregations(
+
+        base_dataset = self._filter_unused_cols_and_add_autoincrement(all_dimensions)
+
+
+        features = self._compute_aggregations(
             all_dimensions, base_dataset
         )
 
-        return dataset_with_aggregations
+
+
+        return features
 
     def _add_label_and_cleanup(self, all_features: DataFrame) -> DataFrame:
         """
@@ -118,7 +132,7 @@ class TrainingDataset:
         normalized = normalized.withColumnRenamed("label", "label_original")
         result = normalized.withColumnRenamed("label_normalized", "label")
 
-        final_result = result.select(*self.FEATURES)
+        final_result = result.select(*self.COLUMNS)
 
         print("Schema of final dataframe")
         final_result.printSchema()
@@ -168,7 +182,7 @@ class TrainingDataset:
 
         return base_new
 
-    def _base_dataset(self, all_dimensions) -> DataFrame:
+    def _filter_unused_cols_and_add_autoincrement(self, all_dimensions) -> DataFrame:
         """
         This is the base dataset that will be send to train
         but before we will add some aggregations to it so we can generate the desired label
@@ -179,7 +193,7 @@ class TrainingDataset:
 
         """
         base_features = all_dimensions.select(
-            "month", "hour", "key", "previous_key", "previous_previous_key"
+            "month", "hour", "key", "previous_key", "previous_previous_key", "times_used_previous"
         ).distinct()
 
         window = Window.orderBy(F.col("key"))
@@ -194,20 +208,28 @@ class TrainingDataset:
 
         return base_features
 
-    def _load_base(self) -> DataFrame:
+    def _load_searches_performed(self) -> DataFrame:
         return SearchesPerformed().load()
 
     def _add_all_features(self, df: DataFrame) -> DataFrame:
-        """Return a dataframe with the hole features it will need but not aggregated"""
+        """
+        Return a dataframe with the hole features it will need but not aggregated
+        """
         logging.info("Loading searches performed")
         df_with_previous = self._join_with_previous(df)
         print("Add date dimensions")
         with_month = df_with_previous.withColumn("month", F.month("timestamp"))
         with_hour = with_month.withColumn("hour", F.hour("timestamp"))
 
-        # keep only the necessary FEATURES
-        return with_hour.select(
-            "month", "hour", "key", "previous_key", "previous_previous_key", "timestamp"
+
+        times_used = TimesUsed().get_dataframe()
+        times_used = times_used.withColumnRenamed("key", "times_used_key")
+        features = with_hour.join(times_used, times_used.times_used_key == with_hour.previous_key, 'left')
+        features = features.withColumnRenamed("times_used", "times_used_previous")
+
+        # keep only the necessary columns
+        return features.select(
+            "month", "hour", "key", "previous_key", "previous_previous_key", "timestamp", "times_used_previous"
         )
 
     def _filter_blacklisted(self, df) -> DataFrame:
@@ -219,10 +241,6 @@ class TrainingDataset:
         ]
         return df.filter(~F.col("key").isin(EXCLUDED_ENTRIES))
 
-    def __repr__(self):
-        return self._dataframe.show(10)
-
-    @timeit
     @timeit
     def _join_with_previous(self, df):
         """

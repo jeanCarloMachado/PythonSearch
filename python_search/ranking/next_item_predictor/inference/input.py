@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import datetime
 import os
+from typing import Optional
 
+from python_search.ranking.next_item_predictor.features.times_used import TimesUsed
 from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
     InferenceEmbeddingsLoader
 
@@ -12,15 +14,27 @@ class InferenceInput:
     month: int
     previous_key: str
     previous_previous_key: str
+    times_used_previous: int
 
-    def __init__(self, *, hour, month, previous_key, previous_previous_key):
+    _times_used : Optional[TimesUsed] = None
+
+
+
+    def __init__(self, *, hour, month, previous_key, previous_previous_key, times_used_previous = None):
         self.hour = hour
         self.month = month
         self.previous_key = previous_key
         self.previous_previous_key = previous_previous_key
+        self.times_used_previous = times_used_previous
+
+        if not times_used_previous:
+            if not InferenceInput._times_used:
+                InferenceInput._times_used = TimesUsed()
+            InferenceInput._times_used.item_popularity(previous_key)
+
 
     @staticmethod
-    def with_keys(previous_key: str, previous_previous_key: str) -> "InferenceInput":
+    def with_given_keys(previous_key: str, previous_previous_key: str) -> "InferenceInput":
         """
         Do inference based on the current time and the recent used keys
         """
