@@ -26,9 +26,10 @@ class Transform:
     # + 1 is for the month number
     # + 1 for entry number
     # + 1 for global popularity of previous key
+    # + 1 for global popularity of previous_previous key
     KEYS = 3
 
-    DIMENSIONS = KEYS * 384 + 1 + 1 + 1
+    DIMENSIONS = KEYS * 384 + 1 + 1 + 1 + 1
 
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
@@ -65,6 +66,7 @@ class Transform:
                     np.asarray([row.month]),
                     np.asarray([row.hour]),
                     np.asarray([row.times_used_previous]),
+                    np.asarray([row.times_used_previous_previous]),
                 ]
             )
 
@@ -104,6 +106,7 @@ class Transform:
                     np.asarray([inference_input.month]),
                     np.asarray([inference_input.hour]),
                     np.asarray([inference_input.times_used_previous]),
+                    np.asarray([inference_input.times_used_previous_previous]),
                 )
             )
 

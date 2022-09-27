@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import traceback
 from typing import Any, List, Optional
@@ -11,15 +12,13 @@ from python_search.ranking.next_item_predictor.inference.input import \
     InferenceInput
 from python_search.ranking.next_item_predictor.transform import Transform
 
-import logging
-
 
 class Inference:
     """
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "6f5a643214c54fb1976e1723d6c5a29d"
+    PRODUCTION_RUN_ID = "dda8371f3e0a43779ff09dba67a5f510"
 
     def __init__(
         self,
@@ -70,7 +69,7 @@ class Inference:
                 self._transform.inference_embeddings.get_recent_key_with_embedding(),
                 self._transform.inference_embeddings.get_recent_key_with_embedding(
                     second_recent=True
-                )
+                ),
             )
         )
 

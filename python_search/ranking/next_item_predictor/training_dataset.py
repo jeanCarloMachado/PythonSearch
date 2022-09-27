@@ -12,7 +12,8 @@ from pyspark.sql.window import Window
 
 from python_search.datasets.searchesperformed import SearchesPerformed
 from python_search.infrastructure.performance import timeit
-from python_search.ranking.next_item_predictor.features.times_used import TimesUsed
+from python_search.ranking.next_item_predictor.features.times_used import \
+    TimesUsed
 
 
 class TrainingDataset:
@@ -28,6 +29,7 @@ class TrainingDataset:
         "hour",
         "entry_number",
         "times_used_previous",
+        "times_used_previous_previous",
     )
     COLUMNS = list(FEATURES) + ["label"]
 
@@ -76,12 +78,7 @@ class TrainingDataset:
 
         base_dataset = self._filter_unused_cols_and_add_autoincrement(all_dimensions)
 
-
-        features = self._compute_aggregations(
-            all_dimensions, base_dataset
-        )
-
-
+        features = self._compute_aggregations(all_dimensions, base_dataset)
 
         return features
 
@@ -193,7 +190,13 @@ class TrainingDataset:
 
         """
         base_features = all_dimensions.select(
-            "month", "hour", "key", "previous_key", "previous_previous_key", "times_used_previous"
+            "month",
+            "hour",
+            "key",
+            "previous_key",
+            "previous_previous_key",
+            "times_used_previous",
+            "times_used_previous_previous",
         ).distinct()
 
         window = Window.orderBy(F.col("key"))
@@ -221,15 +224,34 @@ class TrainingDataset:
         with_month = df_with_previous.withColumn("month", F.month("timestamp"))
         with_hour = with_month.withColumn("hour", F.hour("timestamp"))
 
-
         times_used = TimesUsed().get_dataframe()
         times_used = times_used.withColumnRenamed("key", "times_used_key")
-        features = with_hour.join(times_used, times_used.times_used_key == with_hour.previous_key, 'left')
+        times_used = times_used.withColumnRenamed("times_used", "times_used_previous")
+
+        # add previous times used
+        features = with_hour.join(
+            times_used, times_used.times_used_key == with_hour.previous_key, "left"
+        )
         features = features.withColumnRenamed("times_used", "times_used_previous")
+
+        times_used = times_used.withColumnRenamed("times_used_previous", "times_used_previous_previous")
+        times_used = times_used.withColumnRenamed("times_used_key", "times_used_previous_key")
+
+        # add previous previous times used
+        features = features.join(
+            times_used, times_used.times_used_previous_key == features.previous_previous_key, "left"
+        )
 
         # keep only the necessary columns
         return features.select(
-            "month", "hour", "key", "previous_key", "previous_previous_key", "timestamp", "times_used_previous"
+            "month",
+            "hour",
+            "key",
+            "previous_key",
+            "previous_previous_key",
+            "timestamp",
+            "times_used_previous",
+            "times_used_previous_previous",
         )
 
     def _filter_blacklisted(self, df) -> DataFrame:

@@ -5,8 +5,7 @@ from python_search.datasets.searchesperformed import SearchesPerformed
 
 
 class TimesUsed:
-    """
-    """
+    """ """
 
     def __init__(self):
         _df = SearchesPerformed().load()
@@ -27,6 +26,7 @@ class TimesUsed:
             return 0
 
         return result["times_used"].values[0]
+
 
 if __name__ == "__main__":
     import fire

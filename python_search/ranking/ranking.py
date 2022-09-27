@@ -19,6 +19,7 @@ class RankingGenerator:
     """
     Generates the ranking for python search
     """
+
     NUMBER_OF_LATEST_ENTRIES = 7
 
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
@@ -128,7 +129,7 @@ class RankingGenerator:
 
         self.used_entries = self.get_used_entries_from_redis(self._entries)
         # only use the latest 7 _entries for the top of the ranking
-        self.used_entries = self.used_entries[-self.NUMBER_OF_LATEST_ENTRIES:]
+        self.used_entries = self.used_entries[-self.NUMBER_OF_LATEST_ENTRIES :]
 
         if self._debug:
             print(f"Used _entries: {self.used_entries}")
