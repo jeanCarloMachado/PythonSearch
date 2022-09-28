@@ -5,14 +5,14 @@ from typing import Any, List, Optional
 
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
+from python_search.logger import setup_inference_logger
 from python_search.ranking.models import PythonSearchMLFlow
 from python_search.ranking.next_item_predictor.inference.input import \
     InferenceInput
 from python_search.ranking.next_item_predictor.transform import Transform
 
-from python_search.logger import setup_inference_logger
-
 logger = setup_inference_logger()
+
 
 class Inference:
     """

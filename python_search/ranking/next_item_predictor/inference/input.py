@@ -45,7 +45,7 @@ class InferenceInput:
                 previous_key
             )
         if not times_used_previous_previous:
-                self.times_used_previous_previous = (
+            self.times_used_previous_previous = (
                 InferenceInput._times_used.item_popularity(previous_previous_key)
             )
 
