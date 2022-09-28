@@ -234,12 +234,18 @@ class TrainingDataset:
         )
         features = features.withColumnRenamed("times_used", "times_used_previous")
 
-        times_used = times_used.withColumnRenamed("times_used_previous", "times_used_previous_previous")
-        times_used = times_used.withColumnRenamed("times_used_key", "times_used_previous_key")
+        times_used = times_used.withColumnRenamed(
+            "times_used_previous", "times_used_previous_previous"
+        )
+        times_used = times_used.withColumnRenamed(
+            "times_used_key", "times_used_previous_key"
+        )
 
         # add previous previous times used
         features = features.join(
-            times_used, times_used.times_used_previous_key == features.previous_previous_key, "left"
+            times_used,
+            times_used.times_used_previous_key == features.previous_previous_key,
+            "left",
         )
 
         # keep only the necessary columns

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import logging
 import os
-import traceback
 from typing import Any, List, Optional
 
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
@@ -12,6 +10,9 @@ from python_search.ranking.next_item_predictor.inference.input import \
     InferenceInput
 from python_search.ranking.next_item_predictor.transform import Transform
 
+from python_search.logger import setup_inference_logger
+
+logger = setup_inference_logger()
 
 class Inference:
     """
@@ -33,9 +34,9 @@ class Inference:
             self.run_id = os.environ["FORCE_RUN_ID"]
 
         if model:
-            print("Using custom passed _model")
+            logger.info("Using custom passed _model")
         else:
-            print("Using run id: " + self.run_id)
+            logger.info("Using run id: " + self.run_id)
         configuration = (
             configuration if configuration else ConfigurationLoader().load_config()
         )
@@ -61,7 +62,7 @@ class Inference:
         """
         Gets the ranking from the next item _model
         """
-        print("Number of existing keys: ", str(len(self.all_keys)))
+        logger.info("Number of existing keys for inference: " + str(len(self.all_keys)))
         inference_input = (
             predefined_input
             if predefined_input
@@ -72,30 +73,22 @@ class Inference:
                 ),
             )
         )
+        logger.info("Inference input: " + str(inference_input.__dict__))
 
-        try:
-            X = self._transform.transform_inference(inference_input, self.all_keys)
-            Y = self._predict(X)
-            print(Y)
-            result = list(zip(self.all_keys, Y))
-            result.sort(key=lambda x: x[1], reverse=True)
-            if return_weights:
-                return result
-            if print_weights:
-                print(result)
+        X = self._transform.transform_inference(inference_input, self.all_keys)
+        Y = self._predict(X)
+        print(Y)
+        result = list(zip(self.all_keys, Y))
+        result.sort(key=lambda x: x[1], reverse=True)
+        if return_weights:
+            return result
+        if print_weights:
+            print(result)
 
-            only_keys = [entry[0] for entry in result]
-            print("Ranking inference succeeded")
-        except Exception as e:
-            print(
-                "Error while performing inference, returning baseline ranking. Details: "
-                + e.__str__()
-            )
+        only_keys = [entry[0] for entry in result]
+        logger.info("Ranking inference succeeded")
 
-            print(traceback.format_exc())
-            only_keys = self.all_keys
-
-        logging.debug("Only keys: ", only_keys)
+        logger.debug("Only keys: ", only_keys)
         return only_keys
 
     @timeit

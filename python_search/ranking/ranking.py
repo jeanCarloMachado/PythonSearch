@@ -40,11 +40,7 @@ class RankingGenerator:
             from python_search.ranking.next_item_predictor.inference.inference import \
                 Inference
 
-            try:
-                self.inference = Inference(self._configuration)
-            except Exception as e:
-                print("Could not initialize inference. will run without")
-                self.inference = None
+            self.inference = Inference(self._configuration)
 
     @timeit
     def generate(self, print_entries=True, print_weights=False) -> str:
@@ -56,11 +52,8 @@ class RankingGenerator:
         # by default the rank is just in the order they are persisted in the file
         self.ranked_keys: List[str] = self._entries.keys()
 
-        try:
-            """Mutate self.ranked keys with the results"""
+        if self._feature_toggle.is_enabled("ranking_next"):
             self.ranked_keys = self.inference.get_ranking(print_weights=print_weights)
-        except Exception as e:
-            print(f"Inference failed with error {e} falling back to default ranking")
 
         """Populate the variable used_entries  with the results from redis"""
         self._fetch_latest_entries()

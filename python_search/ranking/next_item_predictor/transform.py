@@ -22,14 +22,14 @@ class Transform:
     And from inference dataset -> _model input
     """
 
+    _EMBEDDINGS_ENTRIES = 3
+
     # 2 embeddings of 384 dimensions
     # + 1 is for the month number
     # + 1 for entry number
     # + 1 for global popularity of previous key
     # + 1 for global popularity of previous_previous key
-    KEYS = 3
-
-    DIMENSIONS = KEYS * 384 + 1 + 1 + 1 + 1
+    DIMENSIONS = _EMBEDDINGS_ENTRIES * 384 + 1 + 1 + 1 + 1
 
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
@@ -118,7 +118,7 @@ class Transform:
         """
         create embeddings with all training keys and keep them in memory
         """
-        print("Creating embeddings of traning dataset")
+        print("Creating embeddings of training dataset")
 
         # add embeddings to the dataset
         all_keys = self._get_all_keys_from_dataset(dataset)
