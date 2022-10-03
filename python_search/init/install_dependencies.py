@@ -25,7 +25,7 @@ class InstallDependencies():
             print("Installing it for you...")
 
             if not self._exists("brew"):
-                raise Exception("Cannot continue without brew to install fzf")
+                raise Exception("Cannot continue without brew to install fzf. Please install brew first (https://brew.sh/)")
 
             os.system("brew install fzf")
         else:
