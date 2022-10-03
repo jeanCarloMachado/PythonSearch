@@ -28,6 +28,14 @@ class PythonSearchCli:
         except BaseException as e:
             _error_handler(e)
 
+
+    @staticmethod
+    def install_dependencies():
+        """Create a new project in the current directory with the given name"""
+        from python_search.init.install_dependencies import InstallDependencies
+
+        InstallDependencies().install_all()
+
     @staticmethod
     def new_project(project_name: str):
         """Create a new project in the current directory with the given name"""
@@ -53,6 +61,8 @@ class PythonSearchCli:
                 configuration = ConfigurationLoader().load_config()
             except Exception as e:
                 print(f"Did not find any config to load, error: {e}")
+
+                # early return so we dont set the remaining attributes 
                 return
 
         self.configuration = configuration

@@ -19,8 +19,6 @@ class Project:
         os.system(copy_cmd)
         os.system(f"cd {new_project_location} && git init . 1>/dev/null ")
 
-        self._install_kitty()
-        self._install_fzf()
         self.set_current_project(new_project_location)
 
         print(
@@ -33,6 +31,9 @@ python_search search"""
         )
 
     def set_current_project(self, project_location: str):
+        """
+        Sets an existing project as the one python search is using.
+        """
         import os
 
         home = os.environ["HOME"]
@@ -44,27 +45,4 @@ python_search search"""
         print(f"Successfuly set current project as: {project_location}")
 
 
-    def _install_fzf(self):
-        result = os.system("which fzf >/dev/null")
-        if result == 0:
-            print("Great, you have fzf alread installed")
-            return
-
-        print("Looks like kitty is not installed in your platform. ")
-        if is_mac():
-            print("Installing it for you...")
-            os.system("brew install fzf")
-        else:
-            print(
-                "Dont know how to install fzf for your platform, please do so manually"
-            )
-
-    def _install_kitty(self):
-        result = os.system("which kitty >/dev/null")
-        if result != 0:
-            print(
-                "Looks like kitty is not installed in your platform. Installing it for you..."
-            )
-            os.system(
-                "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
-            )
+    
