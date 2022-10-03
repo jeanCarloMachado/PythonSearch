@@ -21,7 +21,7 @@ class Project:
 
         self._install_kitty()
         self._install_fzf()
-        self._set_current_project(new_project_location)
+        self.set_current_project(new_project_location)
 
         print(
             f"""Project created successfully! 
@@ -32,15 +32,17 @@ You can now start using python search by issuing:
 python_search search"""
         )
 
-    def _set_current_project(self, project_directory):
+    def set_current_project(self, project_location: str):
         import os
 
         home = os.environ["HOME"]
         current_project_config = f"{home}/.config/python_search/current_project"
-        print(f"Writing the current project in {current_project_config}")
 
         os.system(f"mkdir -p {home}/.config/python_search/")
-        os.system(f'echo "{project_directory}" >  {current_project_config}')
+        os.system(f'echo "{project_location}" >  {current_project_config}')
+
+        print(f"Successfuly set current project as: {project_location}")
+
 
     def _install_fzf(self):
         result = os.system("which fzf >/dev/null")

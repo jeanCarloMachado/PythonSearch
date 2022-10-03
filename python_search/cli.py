@@ -35,6 +35,13 @@ class PythonSearchCli:
 
         Project().new_project(project_name)
 
+    @staticmethod
+    def set_project_location(location: str):
+        """Create a new project in the current directory with the given name"""
+        from python_search.init_project import Project
+
+        Project().set_current_project(location)
+
     def __init__(self, configuration: PythonSearchConfiguration = None):
         """
         Keep this constructor small and import dependencies inside the functions
@@ -46,10 +53,6 @@ class PythonSearchCli:
                 configuration = ConfigurationLoader().load_config()
             except Exception as e:
                 print(f"Did not find any config to load, error: {e}")
-                import traceback
-
-                print(traceback.format_exc())
-
                 return
 
         self.configuration = configuration

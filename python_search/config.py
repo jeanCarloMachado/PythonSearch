@@ -144,3 +144,9 @@ class ConfigurationLoader:
     def load_entries(self):
         config = self.load_config()
         return config.commands
+
+
+class MissingConfigException:
+    @staticmethod
+    def configuration_not_set():
+        raise MissingConfigException("The python search configuration was not found. Run python_search setup to initialize a new config")
