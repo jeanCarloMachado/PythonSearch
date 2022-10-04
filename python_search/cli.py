@@ -46,7 +46,7 @@ class PythonSearchCli:
     @staticmethod
     def set_project_location(location: str):
         """Create a new project in the current directory with the given name"""
-        from python_search.init_project import Project
+        from python_search.init.project import Project
 
         Project().set_current_project(location)
 

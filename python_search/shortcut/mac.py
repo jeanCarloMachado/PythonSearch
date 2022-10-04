@@ -24,7 +24,7 @@ class Mac:
 
         shortcut_found = False
         # starts with number 2 as number 1 is static in config.part1
-        shortcut_number = 2
+        shortcut_number = 1
         import shutil
 
         shutil.copyfile(
@@ -88,7 +88,7 @@ class Mac:
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command = LOG_FILE=/tmp/log_shortcut log_command.sh python_search run_key "{key}" 
+command =  python_search run_key "{key}" 
 workdir = 
 enabled = yes
 """

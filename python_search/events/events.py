@@ -1,8 +1,6 @@
 """ Centralize all events definitions to help in the _entries discovery """
 from dataclasses import dataclass
 
-from pydantic import BaseModel
-
 
 @dataclass
 class SearchRunPerformed:
@@ -21,8 +19,3 @@ class SearchRunPerformed:
     @staticmethod
     def get_schema():
         return "key string, query_input string, shortcut string"
-
-
-class RegisterExecuted(BaseModel):
-    key: str
-    content: str
