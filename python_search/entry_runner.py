@@ -13,6 +13,10 @@ from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.observability.logger import (initialize_systemd_logging,
                                                 logging)
 
+from python_search.logger import setup_run_key_logger
+
+
+logger = setup_run_key_logger()
 
 class EntryRunner:
     """
@@ -40,6 +44,8 @@ class EntryRunner:
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
 
+        
+        logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is
         # usually the key from fzf, and our keys do not accept :
         metadata = ""

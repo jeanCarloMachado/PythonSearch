@@ -8,9 +8,6 @@ class InstallDependencies():
         Install all depenenceis to make python search work
         """
 
-
-
-
         self._install_fzf()
         self._install_kitty()
 

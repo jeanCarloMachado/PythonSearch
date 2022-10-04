@@ -40,7 +40,7 @@ class EntryCaptureGUI:
         self._sg = sg
 
         config = ConfigurationLoader().load_config()
-        sg.theme(config.simple_gui_theme)
+        #sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
 
         content_input = sg.Input(
@@ -83,13 +83,11 @@ class EntryCaptureGUI:
             title,
             layout,
             font=("Helvetica", font_size),
-            alpha_channel=0.9,
             finalize=True,
         )
 
         # workaround for mac bug
-        window.read(timeout=100)
-        window.set_alpha(1.0)
+    
         content_input.update(select=True)
 
         window["key"].bind("<Return>", "_Enter")
