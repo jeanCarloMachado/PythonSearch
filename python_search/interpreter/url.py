@@ -1,11 +1,11 @@
-import logging
 
 from python_search.apps.browser import Browser
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdInterpreter
+from python_search.logger import setup_run_key_logger
 
-
+logger = setup_run_key_logger()
 class UrlInterpreter(BaseInterpreter):
     def __init__(self, cmd, context=None):
         self.context = context
@@ -21,7 +21,7 @@ class UrlInterpreter(BaseInterpreter):
         raise CommandDoNotMatchException(f"Not Valid URL command {cmd}")
 
     def interpret_default(self):
-        logging.info(f'Processing as url: {self.cmd["url"]}')
+        logger.info(f'Processing as url: {self.cmd["url"]}')
 
         app_mode = self.cmd["app_mode"] if "app_mode" in self.cmd else False
         shell_cmd: str = Browser().open_cmd(self.cmd["url"], app_mode)
@@ -29,7 +29,7 @@ class UrlInterpreter(BaseInterpreter):
         final_cmd = self.cmd
         final_cmd["cmd"] = shell_cmd
 
-        print(f"Final command={final_cmd}")
+        logger.info(f"Final URL command={final_cmd}")
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 
     def copiable_part(self):

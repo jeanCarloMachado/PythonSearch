@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 
 from grimoire.shell import shell
@@ -10,10 +9,12 @@ from python_search.apps.terminal import Terminal
 from python_search.context import Context
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
+from python_search.logger import setup_run_key_logger
 
 # @todo find a better name
 WRAP_IN_TERMINAL = "new-window-non-cli"
 
+logger = setup_run_key_logger()
 
 class CmdInterpreter(BaseInterpreter):
     """
@@ -56,22 +57,19 @@ class CmdInterpreter(BaseInterpreter):
         if "directory" in self.cmd:
             cmd = f'cd {self.cmd["directory"]} && {cmd}'
 
-        if "tmux" in self.cmd:
-            cmd = f'tmux new -s "{self._get_window_title()}" {cmd} '
-
         if WRAP_IN_TERMINAL in self.cmd:
             cmd = self._try_to_wrap_in_terminal(cmd)
 
-        print(f"Command to run: {cmd}")
+        logger.info(f"Command to run: {cmd}")
         result = self._execute(cmd)
-        print(f"Result finished: {result}")
+        logger.info(f"Result finished: {result}")
         return self.return_result(result)
 
     def _try_to_wrap_in_terminal(self, cmd):
         if WRAP_IN_TERMINAL not in self.cmd:
             return cmd
 
-        logging.info("Running it in a new terminal")
+        logger.info("Running it in a new terminal")
 
         hold_terminal = False if "not_hold_terminal" in self.cmd else True
         cmd = Terminal().wrap_cmd_into_terminal(
@@ -79,7 +77,7 @@ class CmdInterpreter(BaseInterpreter):
             title=self._get_window_title(),
             hold_terminal_open_on_end=hold_terminal,
         )
-        logging.info(f"Command to run: {cmd}")
+        logger.info(f"Command to run: {cmd}")
 
         return cmd
 
@@ -94,18 +92,7 @@ class CmdInterpreter(BaseInterpreter):
         return remove_special_chars(title, [" "])
 
     def _execute(self, cmd):
-        logging.info(f"To run: {cmd}")
-
-        hold_terminal = False if "not_hold_terminal" in self.cmd else True
-        if (
-            self.context
-            and self.context.is_group_command()
-            and not self.context.should_execute_sequentially()
-        ) or not hold_terminal:
-            return shell.run_command_no_wait(cmd)
-
-        if self.context and self.context.should_execute_sequentially():
-            return shell.run_with_result(cmd)
+        logger.info(f"To run as subprocess: {cmd}")
 
         import subprocess
 
@@ -116,6 +103,8 @@ class CmdInterpreter(BaseInterpreter):
             stdout=None,
             stderr=None,
             close_fds=True,
+            # make sure the process does not die when python search dies
+            start_new_session=True,
         )
 
         return {"pid": p.pid}

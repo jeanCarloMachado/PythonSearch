@@ -1,6 +1,5 @@
 import logging
 
-
 def setup_inference_logger():
     logger = logging.getLogger("inference")
     logger.setLevel(logging.DEBUG)
