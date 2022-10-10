@@ -2,7 +2,7 @@
 
 from typing import List
 
-class LatestUsedEntries:
+class RecentKeys:
     """
     Contains the latest used keys and the API to add new ones.
     """
@@ -14,15 +14,15 @@ class LatestUsedEntries:
         return a list of unike used keys ordered by the last time they were used
         the most recent in the top.
         """
-        return LatestUsedEntries._used_keys
+        return RecentKeys._used_keys
 
     @staticmethod
     def add_latest_used(key):
         """adds to the list"""
-        LatestUsedEntries._used_keys = [key] + LatestUsedEntries._used_keys
+        RecentKeys._used_keys = [key] + RecentKeys._used_keys
 
 
 if __name__ == "__main__":
     import fire
 
-    fire.Fire(LatestUsedEntries)
+    fire.Fire(RecentKeys)

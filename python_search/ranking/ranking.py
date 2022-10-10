@@ -142,9 +142,9 @@ class RankingGenerator:
         return used_entries
 
     def _get_latest_used_keys(self):
-        from python_search.events.latest_used_entries import LatestUsedEntries
+        from python_search.events.latest_used_entries import RecentKeys
 
-        return LatestUsedEntries().get_latest_used_keys()
+        return RecentKeys().get_latest_used_keys()
 
 
 import datetime

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 
-from python_search.events.latest_used_entries import LatestUsedEntries
+from python_search.events.latest_used_entries import RecentKeys
 from python_search.ranking.entry_embeddings import (EmbeddingSerialization,
                                                     RedisEmbeddingsReader,
                                                     RedisEmbeddingsWriter)
@@ -15,7 +15,7 @@ class InferenceEmbeddingsLoader:
 
     def __init__(self, all_keys):
         self.all_keys = copy.copy(list(all_keys))
-        self.latest_used_entries = LatestUsedEntries()
+        self.latest_used_entries = RecentKeys()
         self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
 
     def get_embedding_from_key(self, key: str):

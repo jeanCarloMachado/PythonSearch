@@ -3,7 +3,7 @@ from fastapi.responses import PlainTextResponse
 
 from python_search.data_collector import GenericDataCollector
 from python_search.events.events import SearchRunPerformed
-from python_search.events.latest_used_entries import LatestUsedEntries
+from python_search.events.latest_used_entries import RecentKeys
 
 PORT = 8000
 
@@ -43,9 +43,9 @@ def reload():
 def health():
     global generator
 
-    from python_search.events.latest_used_entries import LatestUsedEntries
+    from python_search.events.latest_used_entries import RecentKeys
 
-    entries = LatestUsedEntries().get_latest_used_keys()
+    entries = RecentKeys().get_latest_used_keys()
 
     return {
         "keys_count": len(ConfigurationLoader().load_config().commands.keys()),
@@ -58,7 +58,7 @@ def health():
 @app.post("/log_run")
 def log_run(event: SearchRunPerformed):
 
-    LatestUsedEntries.add_latest_used(event.key)
+    RecentKeys.add_latest_used(event.key)
     GenericDataCollector().write(data=event.__dict__, table_name='searches_performed')
 
     # regenerate the ranking after running a key
@@ -68,7 +68,7 @@ def log_run(event: SearchRunPerformed):
 
 @app.get("/recent_history")
 def recent_history_endpoint():
-    return LatestUsedEntries().get_latest_used_keys()
+    return RecentKeys().get_latest_used_keys()
 
 
 def main():
