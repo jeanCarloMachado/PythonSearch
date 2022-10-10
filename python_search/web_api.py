@@ -3,6 +3,7 @@ from fastapi.responses import PlainTextResponse
 
 from python_search.data_collector import GenericDataCollector
 from python_search.events.events import SearchRunPerformed
+from python_search.events.latest_used_entries import LatestUsedEntries
 
 PORT = 8000
 
@@ -52,13 +53,12 @@ def health():
         "latest_used_entries": entries,
     }
 
-recent_history = []
+
 
 @app.post("/log_run")
 def log_run(event: SearchRunPerformed):
-    global recent_history
 
-    recent_history = [event.key] + recent_history
+    LatestUsedEntries.add_latest_used(event.key)
     GenericDataCollector().write(data=event.__dict__, table_name='searches_performed')
 
     # regenerate the ranking after running a key
@@ -68,8 +68,7 @@ def log_run(event: SearchRunPerformed):
 
 @app.get("/recent_history")
 def recent_history_endpoint():
-    global recent_history
-    return recent_history
+    return LatestUsedEntries().get_latest_used_keys()
 
 
 def main():

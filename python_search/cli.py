@@ -129,18 +129,6 @@ class PythonSearchCli:
 
         return RankingGenerator(self.configuration)
 
-    def consumers(self):
-        """
-        Provides access to the event consumers
-        """
-        from python_search.events.latest_used_entries import LatestUsedEntries
-
-        class Consumers:
-            def latest_used_entries(self):
-                LatestUsedEntries().consume()
-
-        return Consumers()
-
     def features(self):
         """Feature toggle system"""
         from python_search.feature_toggle import FeatureToggle
