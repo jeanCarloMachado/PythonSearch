@@ -16,6 +16,9 @@ class FeatureToggle:
     def __init__(self):
         self.BASE_PATH = f"{os.getenv('HOME')}/.PythonSearch/features"
 
+        if not os.path.exists(self.BASE_PATH):
+            os.system(f"mkdir -p '{self.BASE_PATH}'")
+
     def enable(self, feature_name: str):
         os.system(f"touch {self.BASE_PATH}/{feature_name}")
 
