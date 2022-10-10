@@ -1,4 +1,6 @@
 """ Centralize all events definitions to help in the _entries discovery """
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 from pydantic import BaseModel
@@ -21,3 +23,12 @@ class SearchRunPerformed(BaseModel):
     @staticmethod
     def get_schema():
         return "key string, query_input string, shortcut string"
+
+
+class LogSearchRunPerformed():
+    def send(self, data: SearchRunPerformed):
+        import requests
+        try:
+            return requests.post(url="http://localhost:8000/log_run", json=data.__dict__)
+        except BaseException as e:
+            print(f"Logging results failed, reason: {e}")

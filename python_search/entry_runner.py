@@ -7,7 +7,7 @@ from typing import List
 from python_search.apps.notification_ui import send_notification
 from python_search.config import PythonSearchConfiguration
 from python_search.context import Context
-from python_search.events.events import SearchRunPerformed
+from python_search.events.search_run_performed import SearchRunPerformed, LogSearchRunPerformed
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.observability.logger import (initialize_systemd_logging,
@@ -96,18 +96,10 @@ class EntryRunner:
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
-
-        self._send_log(SearchRunPerformed(key=key, query_input=query_used, shortcut=from_shortcut))
+        LogSearchRunPerformed().send(SearchRunPerformed(key=key, query_input=query_used, shortcut=from_shortcut))
 
         return InterpreterMatcher.build_instance(self.configuration).default(real_key)
 
-
-    def _send_log(self, data: SearchRunPerformed):
-        import requests
-        try:
-            return requests.post(url="http://localhost:8000/log_run", json=data.__dict__)
-        except BaseException as e:
-            print(f"Logging results failed, reason: {e}")
 
 
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
 from python_search.data_collector import GenericDataCollector
-from python_search.events.events import SearchRunPerformed
+from python_search.events.search_run_performed import SearchRunPerformed
 from python_search.events.latest_used_entries import RecentKeys
 
 PORT = 8000

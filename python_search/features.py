@@ -10,8 +10,6 @@ class FeaturesSupport:
         # if the ml ranking should be used or not
         # if user history or is supported
         DYNAMIC_RANKING: False,
-        # turn on if you have a redis instance to improve the ranking
-        "redis": False,
         # turn to true if you want _entries to be collected
         "event_tracking": False,
     }
