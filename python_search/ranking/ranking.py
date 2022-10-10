@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-import json
 import os
 from collections import namedtuple
 from typing import List, Optional, Tuple
 
-from python_search.acronyms import generate_acronyms
 from python_search.config import PythonSearchConfiguration
 from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
 from python_search.infrastructure.redis import PythonSearchRedis
 from python_search.observability.logger import logging
+from python_search.ranking.results import FzfOptimizedSearchResults
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
@@ -29,7 +28,7 @@ class RankingGenerator:
         self._feature_toggle = FeatureToggle()
         self._model = None
         self._debug = os.getenv("DEBUG", False)
-        self._entries_result = SearchableEntriesResult()
+        self._entries_result = FzfOptimizedSearchResults()
 
         if self._configuration.supported_features.is_redis_supported():
             self.redis_client = PythonSearchRedis.get_client()
@@ -145,71 +144,6 @@ class RankingGenerator:
         from python_search.events.latest_used_entries import RecentKeys
 
         return RecentKeys().get_latest_used_keys()
-
-
-import datetime
-
-from dateutil import parser
-
-
-class SearchableEntriesResult:
-    """Builds the list of results ready to be consumed by fzf"""
-
-    def __init__(self):
-        self._today = datetime.datetime.now()
-
-    @timeit
-    def build_entries_result(self, entries: List[Tuple[str, dict]]) -> str:
-        """Print results"""
-        position = 1
-        result = ""
-        for name, content in entries:
-            try:
-                content["key_name"] = name
-                content["position"] = position
-                content["generated_acronyms"] = generate_acronyms(name)
-                content["tags"] = content["tags"] if "tags" in content else []
-                if "created_at" in content:
-                    date_created = parser.parse(content["created_at"])
-                    days_ago = (self._today - date_created).days
-
-                    content["tags"].append(f"created_{days_ago}_days_ago")
-
-                    if days_ago == 0:
-                        content["tags"].append(f"today_created")
-                    elif days_ago == 1:
-                        content["tags"].append(f"yesterday_created")
-                    if days_ago < 7:
-                        content["tags"].append(f"this_week_created")
-                    if days_ago > 7 and days_ago < 14:
-                        content["tags"].append(f"previous_week_created")
-                    if days_ago < 30:
-                        content["tags"].append(f"this_month_created")
-                    if days_ago > 30 and days_ago < 60:
-                        content["tags"].append(f"previous_month_created")
-                    if days_ago < 365:
-                        content["tags"].append(f"this_year_created")
-                    if days_ago > 365:
-                        content["tags"].append(f"previous_year_created")
-
-                content_str = json.dumps(content, default=tuple, ensure_ascii=True)
-            except BaseException as e:
-                logging.debug(e)
-                # print(e)
-                # breakpoint()
-                content_str = str(content)
-
-            position = position + 1
-
-            content_str = f"{name}:" + content_str
-            #  replaces all single quotes for double ones
-            #  otherwise the json does not get rendered
-            content_str = content_str.replace("'", '"')
-            if os.getenv("ENABLE_TIME_IT"):
-                # do not print if enable timeit is on
-                continue
-            result += content_str + "\n"
-        return result
 
 
 if __name__ == "__main__":
