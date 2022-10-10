@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+- Moving to an architecture without kafka
+
 ## 0.6.0
 
 - Support customized tags while registering

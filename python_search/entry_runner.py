@@ -87,15 +87,6 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-        if self.configuration.supported_features.is_enabled("event_tracking"):
-            logging.info("Starting event recording procedure")
-            from python_search.events.events import SearchRunPerformed
-
-            EventProducer().send_object(
-                SearchRunPerformed(
-                    key=key, query_input=query_used, shortcut=from_shortcut
-                )
-            )
 
         real_key: str = matches[0]
 
@@ -106,10 +97,12 @@ class EntryRunner:
             )
 
         import os
-
-        os.system("curl http://localhost:8000/ranking/reload &")
+        os.system("curl -XPOST http://localhost:8000/log_run &")
 
         return InterpreterMatcher.build_instance(self.configuration).default(real_key)
+
+
+
 
     def _matching_keys(self, key: str) -> List[str]:
         """

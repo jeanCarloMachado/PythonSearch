@@ -7,7 +7,10 @@ from python_search.config import KafkaConfig
 
 
 class EventProducer:
-    """Produce kafka messages"""
+    """
+    @deprecated
+    Produce kafka messages
+    """
 
     def __init__(self):
 

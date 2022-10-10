@@ -1,19 +1,27 @@
-class DataCollector:
+import json
+import os
+
+class GenericDataCollector:
     """
     A generic data writer component that works tightly integrated with spark
     """
 
-    BASE_DATA_DIR = "/data/data_collection"
+    BASE_DATA_DESTINATION_DIR = os.environ['HOME'] + "/.data/data_collection"
+
+    @staticmethod
+    def initialize():
+
+        import fire
+        return fire.Fire(GenericDataCollector())
 
     def write(self, *, data: dict, table_name: str, date=None):
-        import json
         from datetime import datetime
 
         datetime.now().timestamp()
 
         import os
 
-        os.system(f"mkdir -p {DataCollector.BASE_DATA_DIR}/{table_name}")
+        os.system(f"mkdir -p {GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}")
         import datetime
 
         file_name = f"{self.data_location(table_name)}/{datetime.datetime.now(datetime.timezone.utc).timestamp()}.json"
@@ -24,12 +32,16 @@ class DataCollector:
         print(f"File {file_name} written successfully")
 
     def data_location(self, table_name):
-        return f"{DataCollector.BASE_DATA_DIR}/{table_name}"
+        return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
 
     def show_data(self, table_name):
         from pyspark.sql.session import SparkSession
 
         spark = SparkSession.builder.getOrCreate()
 
-        df = spark.read.json(DataCollector().data_location(table_name))
+        df = spark.read.json(GenericDataCollector().data_location(table_name))
         df.show()
+
+
+if __name__ == '__main__':
+    GenericDataCollector.initialize()
