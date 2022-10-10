@@ -68,15 +68,6 @@ class InvertedIndex:
         pass
 
 
-SearchRunPerformed = Dataframe(
-    schema={
-        "key": "String",
-        "query_input": "String",
-        "shortcut": "Boolean",
-        "timestamp": "Date",
-    }
-)
-SearchRunPerformedType = SearchRunPerformed.type_annotation()
 
 
 Entries = Dataframe(schema={"key": "String", "position": "Integer"})
