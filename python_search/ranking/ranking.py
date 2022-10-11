@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from collections import namedtuple
 from typing import List, Optional, Tuple
 
@@ -8,7 +7,6 @@ from python_search.events.latest_used_entries import RecentKeys
 from python_search.config import PythonSearchConfiguration
 from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
-from python_search.infrastructure.redis import PythonSearchRedis
 from python_search.observability.logger import logging
 from python_search.ranking.results import FzfOptimizedSearchResults
 
@@ -23,6 +21,7 @@ class RankingGenerator:
     NUMBER_OF_LATEST_ENTRIES = 7
 
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
+    _inference = None
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self._configuration = configuration
@@ -36,7 +35,10 @@ class RankingGenerator:
             from python_search.ranking.next_item_predictor.inference.inference import \
                 Inference
 
-            self.inference = Inference(self._configuration)
+            try:
+                self._inference = Inference(self._configuration)
+            except Exception as e:
+                print(f"Could not initialize the inference component. Proceeding without inference, details: {e}")
 
     @timeit
     def generate(self, print_entries=True, print_weights=False) -> str:
@@ -46,10 +48,10 @@ class RankingGenerator:
 
         self._entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
-        self.ranked_keys: List[str] = self._entries.keys()
+        self._ranked_keys: List[str] = self._entries.keys()
 
-        if self._feature_toggle.is_enabled("ranking_next"):
-            self.ranked_keys = self.inference.get_ranking(print_weights=print_weights)
+        if self._feature_toggle.is_enabled("ranking_next") and self._inference:
+            self._ranked_keys = self._inference.get_ranking(print_weights=print_weights)
 
         """Populate the variable used_entries  with the results from redis"""
         self._fetch_latest_entries()
@@ -85,7 +87,7 @@ class RankingGenerator:
             result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
             increment += 1
 
-        for key in self.ranked_keys:
+        for key in self._ranked_keys:
             if key not in self._entries:
                 # key not found in _entries
                 continue

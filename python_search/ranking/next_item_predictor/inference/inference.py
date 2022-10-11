@@ -19,7 +19,7 @@ class Inference:
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "6c26f92d071a45aeac45229d4a69274d"
+    PRODUCTION_RUN_ID = "e5d1e970a4974a2fa1a21e30f9fb297a"
 
     def __init__(
         self,

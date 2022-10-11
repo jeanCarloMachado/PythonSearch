@@ -49,7 +49,7 @@ def health():
 
     return {
         "keys_count": len(ConfigurationLoader().load_config().commands.keys()),
-        "run_id": generator.inference.PRODUCTION_RUN_ID,
+        "run_id": generator._inference.PRODUCTION_RUN_ID,
         "latest_used_entries": entries,
     }
 

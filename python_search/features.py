@@ -1,17 +1,14 @@
 class FeaturesSupport:
     """
-    Enables us to have the core behaviour working without the latest in development features.[
+    Enables us to have the core behaviour working without the latest in development features.
 
     """
 
     DYNAMIC_RANKING = "dynamic_ranking"
 
     DEFAULT_SUPPORT = {
-        # if the ml ranking should be used or not
         # if user history or is supported
         DYNAMIC_RANKING: False,
-        # turn to true if you want _entries to be collected
-        "event_tracking": False,
     }
 
     @staticmethod
