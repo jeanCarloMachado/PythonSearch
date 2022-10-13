@@ -70,17 +70,13 @@ class FzfInTerminal:
         --bind "alt-m:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+first" \
-        --bind "ctrl-k:execute-silent:(nohup {self.executable} copy_key_only {{}} & disown)" \
-        --bind "ctrl-c:execute-silent:(nohup {self.executable} copy_entry_content {{}} & disown)" \
+        --bind "ctrl-k:execute-silent:(nohup {self.executable} _copy_key_only {{}} & disown)" \
+        --bind "ctrl-c:execute-silent:(nohup {self.executable} _copy_entry_content {{}} & disown)" \
         --bind "ctrl-c:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-s:execute-silent:(nohup {self.executable} search_edit {{}} & disown)" \
         --bind "ctrl-s:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-r:reload:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-t:execute-silent:(notify-send testjean)" \
-        --bind "alt-g:execute-silent:( {self.executable} google_it {{q}} )" \
-        --bind "alt-g:+execute-silent:({self.executable} _utils hide_launcher)" \
-        --bind "ctrl-g:execute-silent:( {self.executable} google_it {{q}} )" \
-        --bind "ctrl-g:+execute-silent:({self.executable} _utils hide_launcher)" \
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
         --bind "esc:abort" \

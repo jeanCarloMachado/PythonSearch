@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pydantic import BaseModel
 from pyspark.sql.types import (StringType, StructField, StructType,
                                TimestampType)
@@ -31,7 +33,10 @@ class RunPerformedDataset:
 
 
 class RunPerformedWriter:
-    def write(event: RunPerformed):
+    def write(self, event: RunPerformed):
+        import datetime;
+        event.timestamp  = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
+
         return GenericDataCollector().write(
             data=event.__dict__, table_name="searches_performed"
         )
@@ -50,6 +55,8 @@ class RunPerformed(BaseModel):
     query_input: str
     # for when it is started from a shortcut
     shortcut: str
+    # unix timestamp
+    timestamp: Optional[str] = None
 
     @staticmethod
     def get_schema():

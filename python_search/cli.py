@@ -14,6 +14,8 @@ class PythonSearchCli:
 
     Try to avoid adding direct commands, prefer instead to add objects as parts of functions
     """
+    # all commands that are not self-explanatory should not be part of the main api, thus are marked as private.
+
 
     configuration: PythonSearchConfiguration
 
@@ -62,7 +64,24 @@ class PythonSearchCli:
         """
         FzfInTerminal.build_search_ui(self.configuration).run()
 
-    def copy_entry_content(self, key: str):
+
+    def edit_main(self):
+        """Edit the main script"""
+        from python_search.entry_capture.edit_content import EditKey
+
+        return EditKey(self.configuration).edit_default()
+    def register_new(self):
+        """Starts the UI for collecting a new entry into pythonsearch"""
+        from python_search.entry_capture.register_new import RegisterNew
+
+        return RegisterNew(self.configuration)
+
+    def edit_key(self, key):
+        from python_search.entry_capture.edit_content import EditKey
+
+        return EditKey(self.configuration).edit_key(key, dry_run=False)
+
+    def _copy_entry_content(self, key: str):
         """
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
@@ -72,7 +91,7 @@ class PythonSearchCli:
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
 
-    def copy_key_only(self, key_str: str):
+    def _copy_key_only(self, key_str: str):
         """
         Copies to clipboard the key
         """
@@ -80,45 +99,22 @@ class PythonSearchCli:
 
         Clipboard().set_content(key_str.split(":")[0])
 
-    def edit_key(self, key):
-        from python_search.entry_capture.edit_content import EditKey
-
-        return EditKey(self.configuration).edit_key(key, dry_run=False)
-
-    def search_edit(self, key=None):
-        from python_search.entry_capture.edit_content import EditKey
-
-        return EditKey(self.configuration).search_entries_directory(key)
-
-    def edit_main(self):
-        """Edit the main script"""
-        from python_search.entry_capture.edit_content import EditKey
-
-        return EditKey(self.configuration).edit_default()
-
-    def register_clipboard(self):
-        from python_search.entry_capture.register_new import RegisterNew
-
-        return RegisterNew(self.configuration).launch_ui()
-
-    def register_new(self):
-        """Starts the UI for collecting a new entry into pythonsearch"""
-        from python_search.entry_capture.register_new import RegisterNew
-
-        return RegisterNew(self.configuration)
-
-    def shortcut_generator(self):
+    def _shortcut_generator(self):
         """Generate shorcuts for all environments"""
         from python_search.shortcut.generator import ShortcutGenerator
 
         return ShortcutGenerator(self.configuration)
+    def _search_edit(self, key=None):
+        from python_search.entry_capture.edit_content import EditKey
 
-    def ranking(self):
+        return EditKey(self.configuration).search_entries_directory(key)
+
+    def _ranking(self):
         from python_search.ranking.ranking import RankingGenerator
 
         return RankingGenerator(self.configuration)
 
-    def features(self):
+    def _features(self):
         """Feature toggle system"""
         from python_search.feature_toggle import FeatureToggle
 
