@@ -7,6 +7,7 @@ class Mac:
     Mac support for tool iCanHazShortcut
 
     """
+    START_SHORTCUT_NUMBER = 1
 
     def __init__(self, configuration):
         self.configuration = configuration
@@ -24,7 +25,7 @@ class Mac:
 
         shortcut_found = False
         # starts with number 2 as number 1 is static in config.part1
-        shortcut_number = 1
+
         import shutil
 
         shutil.copyfile(
@@ -39,17 +40,17 @@ class Mac:
             if "mac_shortcut" in content:
                 shortcut_found = True
                 content_to_write += self._add_shortcut(
-                    content["mac_shortcut"], key, shortcut_number
+                    content["mac_shortcut"], key, Mac.START_SHORTCUT_NUMBER
                 )
-                shortcut_number += 1
+                Mac.START_SHORTCUT_NUMBER += 1
 
             if "mac_shortcuts" in content:
                 shortcut_found = True
                 for shortcut in content["mac_shortcuts"]:
                     content_to_write += self._add_shortcut(
-                        shortcut, key, shortcut_number
+                        shortcut, key, Mac.START_SHORTCUT_NUMBER
                     )
-                    shortcut_number += 1
+                    Mac.START_SHORTCUT_NUMBER += 1
 
         if not shortcut_found:
             print("No shortcuts found for mac")
@@ -68,7 +69,7 @@ class Mac:
             print("Restarting shortcut app")
             os.system("open -a iCanHazShortcut")
 
-        print(f"Done! {shortcut_number}  shortcuts generated")
+        print(f"Done! {Mac.START_SHORTCUT_NUMBER}  shortcuts generated")
 
         import subprocess
 

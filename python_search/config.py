@@ -1,5 +1,5 @@
 """
-Clients should depend on a _configuration instance (config) rather than in the class,
+Clients should depend on a configuration instance (config) rather than in the class,
 the class should only be used for type annotation.
 This way we can have multiple configs depending of the enviroment.
 """

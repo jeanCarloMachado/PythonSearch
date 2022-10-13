@@ -18,20 +18,8 @@ class PythonSearchCli:
     configuration: PythonSearchConfiguration
 
     @staticmethod
-    def setup_from_config(config: PythonSearchConfiguration):
-        """Initialized the cli with the main _configuration object"""
-        try:
-            instance = PythonSearchCli(config)
-            import fire
-
-            fire.Fire(instance)
-        except BaseException as e:
-            _error_handler(e)
-
-
-    @staticmethod
     def install_dependencies():
-        """Create a new project in the current directory with the given name"""
+        """install dependenceis """
         from python_search.init.install_dependencies import InstallDependencies
 
         InstallDependencies().install_all()
@@ -39,7 +27,7 @@ class PythonSearchCli:
     @staticmethod
     def new_project(project_name: str):
         """Create a new project in the current directory with the given name"""
-        from python_search.init_project import Project
+        from python_search.init.project import Project
 
         Project().new_project(project_name)
 

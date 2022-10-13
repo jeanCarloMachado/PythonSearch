@@ -96,9 +96,11 @@ class EntryRunner:
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
-        LogSearchRunPerformed().send(SearchRunPerformed(key=key, query_input=query_used, shortcut=from_shortcut))
 
-        return InterpreterMatcher.build_instance(self.configuration).default(real_key)
+        result  = InterpreterMatcher.build_instance(self.configuration).default(real_key)
+
+        LogSearchRunPerformed().send(SearchRunPerformed(key=key, query_input=query_used, shortcut=from_shortcut))
+        return result
 
 
 

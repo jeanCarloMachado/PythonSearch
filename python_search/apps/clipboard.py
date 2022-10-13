@@ -1,5 +1,6 @@
 from grimoire.shell import shell
 from grimoire.string import chomp, remove_new_lines
+from typing import Union
 
 from python_search.environment import is_mac
 
@@ -33,13 +34,18 @@ class Clipboard:
         suffix = " ..." if len(content) > size_of_preview else ""
         return f"{final_content}{suffix}"
 
-    def set_content(self, content: str, enable_notifications=True):
+    def set_content(self, content: Union[str, None] = None, enable_notifications=True):
         """
-        Put a string in the clibboard
+        Put a string in the clibboard.
+        If no string is provided it tries to fetch it from stdin
         :param content:
         :param enable_notifications:
         :return:
         """
+
+        import sys, select
+        if not content and select.select([sys.stdin, ], [], [], 0.0)[0]:
+            content = sys.stdin.read()
 
         def shellquote(s):
             return "'" + s.replace("'", "'\\''") + "'"
