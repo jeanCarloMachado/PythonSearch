@@ -150,14 +150,6 @@ class PythonSearchCli:
         """
         Preview().display(entry_text)
 
-    def google_it(self, query):
-        from python_search.interpreter.url import UrlInterpreter
-
-        UrlInterpreter(
-            {
-                "url": f"http://www.google.com/search?q={query}",
-            }
-        ).interpret_default()
 
     def _infra_report(self):
         from python_search.infrastructure.report import Report
