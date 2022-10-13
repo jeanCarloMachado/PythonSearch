@@ -12,8 +12,6 @@ from python_search.events.run_performed import (LogSearchRunPerformedClient,
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
-from python_search.observability.logger import (initialize_systemd_logging,
-                                                logging)
 
 logger = setup_run_key_logger()
 
@@ -25,7 +23,6 @@ class EntryRunner:
 
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
-        self.logging = initialize_systemd_logging()
 
     def run(
         self,
@@ -50,7 +47,7 @@ class EntryRunner:
         metadata = ""
         if ":" in key:
             key, metadata = key.split(":", 1)
-            self.logging.info(f"metadata: {metadata}")
+            logger.info(f"metadata: {metadata}")
 
         if from_shortcut:
             send_notification(f"{key}")
@@ -62,7 +59,7 @@ class EntryRunner:
                 matadata_dict = json.loads(metadata)
                 rank_position = matadata_dict.get("position")
             except BaseException as e:
-                self.logging.warning(f"Could not decode metadata: {e}")
+                logger.warning(f"Could not decode metadata: {e}")
 
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
@@ -74,7 +71,7 @@ class EntryRunner:
         if not matches:
             raise Exception(f"No key matches you given requested key: {key}")
 
-        self.logging.info(
+        logger.info(
             f"""
             Matches of key: {key}
             matches: {matches}
@@ -114,7 +111,7 @@ class EntryRunner:
             encoded_registered_key = generate_identifier(registered_key)
             matches_kv_encoded = key_regex.search(encoded_registered_key)
             if matches_kv_encoded:
-                logging.info(f"{key} matches {encoded_registered_key}")
+                logger.info(f"{key} matches {encoded_registered_key}")
                 matching_keys.append(registered_key)
 
         return matching_keys

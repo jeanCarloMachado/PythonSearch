@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
-from python_search.data_collector import GenericDataCollector
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.run_performed import RunPerformed, RunPerformedWriter
 
