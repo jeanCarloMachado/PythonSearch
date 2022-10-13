@@ -5,7 +5,7 @@ import os
 import streamlit as st
 
 from python_search.data_ui.training_page import load_training_page
-from python_search.datasets.searchesperformed import SearchesPerformed
+from python_search.events.search_run_performed.searchesperformeddataset import SearchesPerformedDataset
 
 open_page = "results"
 
@@ -32,6 +32,6 @@ if open_page == "results":
 
 if open_page == "searches_performed_dataset":
     st.write("## Searches performed dataset")
-    search_performed_df = SearchesPerformed().load()
+    search_performed_df = SearchesPerformedDataset().load()
     pdf = search_performed_df.toPandas()
     st.dataframe(pdf)

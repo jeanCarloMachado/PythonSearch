@@ -1,4 +1,4 @@
-class FeaturesSupport:
+class PythonSearchFeaturesSupport:
     """
     Enables us to have the core behaviour working without the latest in development features.
 
@@ -13,10 +13,10 @@ class FeaturesSupport:
 
     @staticmethod
     def default():
-        return FeaturesSupport(FeaturesSupport.DEFAULT_SUPPORT)
+        return PythonSearchFeaturesSupport(PythonSearchFeaturesSupport.DEFAULT_SUPPORT)
 
     def __init__(self, config: dict):
-        self.supported_config = {**FeaturesSupport.DEFAULT_SUPPORT, **config}
+        self.supported_config = {**PythonSearchFeaturesSupport.DEFAULT_SUPPORT, **config}
 
     def is_enabled(self, feature_name) -> bool:
         if feature_name not in self.supported_config:

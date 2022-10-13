@@ -2,7 +2,7 @@ from python_search.config import DataConfig
 
 from pyspark.sql.types import *
 
-class SearchesPerformed:
+class SearchesPerformedDataset:
     """
     Poit of acess for the searches performed
     This is the place to keep the source of truth for the schema as well

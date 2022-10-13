@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from python_search.entries_group import EntriesGroup
 from python_search.environment import is_mac
-from python_search.features import FeaturesSupport
+from python_search.features import PythonSearchFeaturesSupport
 
 
 class SearchRunConfiguration:
@@ -70,7 +70,7 @@ class PythonSearchConfiguration(EntriesGroup):
         *,
         entries: Optional[dict] = None,
         entries_groups: Optional[List[EntriesGroup]] = None,
-        supported_features: Optional[FeaturesSupport] = None,
+        supported_features: Optional[PythonSearchFeaturesSupport] = None,
         default_tags=None,
     ):
         if entries:
@@ -80,9 +80,9 @@ class PythonSearchConfiguration(EntriesGroup):
             self.aggregate_commands(entries_groups)
 
         if supported_features:
-            self.supported_features: FeaturesSupport = supported_features
+            self.supported_features: PythonSearchFeaturesSupport = supported_features
         else:
-            self.supported_features: FeaturesSupport = FeaturesSupport.default()
+            self.supported_features: PythonSearchFeaturesSupport = PythonSearchFeaturesSupport.default()
 
         if default_tags:
             self._default_tags = default_tags
