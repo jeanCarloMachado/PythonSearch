@@ -7,8 +7,8 @@ from python_search.config import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
-from python_search.observability.logger import logging
 from python_search.ranking.results import FzfOptimizedSearchResults
+import logging
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
