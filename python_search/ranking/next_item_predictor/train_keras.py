@@ -35,12 +35,12 @@ class Train:
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         # this creates a new experiment
         mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
-        mlflow.keras.autolog()
-        # @todo: try mlflow.keras.autolog()
+        mlflow.autolog()
 
         with mlflow.start_run():
             model, metrics, offline_evaluation = self.train(dataset)
             mlflow.log_params(metrics)
+            mlflow.keras.log_model(model, "model")
             mlflow.log_params(offline_evaluation)
 
         return model, metrics, offline_evaluation

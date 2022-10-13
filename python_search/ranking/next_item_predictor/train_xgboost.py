@@ -20,11 +20,12 @@ class TrainXGBoost:
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         # this creates a new experiment
         mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
-        mlflow.xgboost.autolog()
+        mlflow.autolog()
 
         with mlflow.start_run():
             model, offline_evaluation = self.train(dataset)
             # mlflow.log_params(metrics)
+            mlflow.xgboost.log_model(model, "model")
             mlflow.log_params(offline_evaluation)
 
         return model, offline_evaluation

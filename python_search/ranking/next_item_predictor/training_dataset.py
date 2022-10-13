@@ -212,7 +212,7 @@ class TrainingDataset:
         return base_features
 
     def _load_searches_performed(self) -> DataFrame:
-        return RunPerformedDataset().load()
+        return RunPerformedDataset().load_clean()
 
     def _add_all_features(self, df: DataFrame) -> DataFrame:
         """

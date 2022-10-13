@@ -10,7 +10,7 @@ class TimesUsed:
     """
 
     def __init__(self):
-        _df = RunPerformedDataset().load()
+        _df = RunPerformedDataset().load_clean()
         self._df = (
             _df.groupBy("key")
             .agg(F.count("key").alias("times_used"))

@@ -19,7 +19,7 @@ class Inference:
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "5001474a44c9403a9a97c03efe6f77ed"
+    PRODUCTION_RUN_ID = "d325384f4793467f83e97d10a280eb44"
 
     def __init__(
         self,
@@ -77,7 +77,6 @@ class Inference:
 
         X = self._transform.transform_inference(inference_input, self.all_keys)
         Y = self._predict(X)
-        print(Y)
         result = list(zip(self.all_keys, Y))
         result.sort(key=lambda x: x[1], reverse=True)
         if return_weights:

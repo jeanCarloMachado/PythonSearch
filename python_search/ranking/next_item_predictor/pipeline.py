@@ -8,15 +8,12 @@ from pyspark.sql import SparkSession
 from sklearn.metrics import mean_absolute_error
 
 from python_search.infrastructure.performance import timeit
-from python_search.observability.logger import initialize_logging
 from python_search.ranking.next_item_predictor.evaluator import Evaluate
 from python_search.ranking.next_item_predictor.train_keras import Train
 from python_search.ranking.next_item_predictor.train_xgboost import \
     TrainXGBoost
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
-
-initialize_logging()
 
 
 class Pipeline:

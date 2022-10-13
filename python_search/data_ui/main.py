@@ -33,6 +33,6 @@ if open_page == "results":
 
 if open_page == "searches_performed_dataset":
     st.write("## Searches performed dataset")
-    search_performed_df = SearchesPerformedDataset().load()
+    search_performed_df = SearchesPerformedDataset().load_clean()
     pdf = search_performed_df.toPandas()
     st.dataframe(pdf)

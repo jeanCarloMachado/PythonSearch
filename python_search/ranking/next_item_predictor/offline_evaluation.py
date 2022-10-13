@@ -10,6 +10,8 @@ class OfflineEvaluation:
     Evaluate the _model with a part of the training _entries
     """
 
+
+    NUMBER_OF_TESTS = 50
     def run(self, model, dataset, X_test):
         """
         Computes the average position of the entray in the validation set
@@ -24,7 +26,6 @@ class OfflineEvaluation:
         inference = Inference(model=model)
 
         total_found = 0
-        number_of_tests = 20
         avg_position = 0
         number_of_existing_keys = len(self._configuration.commands.keys())
         for index, row in test_df.iterrows():
@@ -57,13 +58,13 @@ class OfflineEvaluation:
 
             avg_position += metadata["position_target"]
             total_found += 1
-            if total_found == number_of_tests:
+            if total_found == OfflineEvaluation.NUMBER_OF_TESTS:
                 break
 
-        avg_position = avg_position / number_of_tests
+        avg_position = avg_position / OfflineEvaluation.NUMBER_OF_TESTS
         result = {
             "avg_position_for_tests": avg_position,
-            "number_of_tests": number_of_tests,
+            "number_of_tests": OfflineEvaluation.NUMBER_OF_TESTS,
             "number_of_existing_keys": number_of_existing_keys,
         }
         print(result)
