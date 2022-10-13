@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
 from python_search.data_collector import GenericDataCollector
-from python_search.events.run_performed import RunPerformed, RunPerformedWriter
 from python_search.events.latest_used_entries import RecentKeys
+from python_search.events.run_performed import RunPerformed, RunPerformedWriter
 
 PORT = 8000
 
@@ -54,7 +54,6 @@ def health():
     }
 
 
-
 @app.post("/log_run")
 def log_run(event: RunPerformed):
 
@@ -66,6 +65,7 @@ def log_run(event: RunPerformed):
     reload()
 
     return event
+
 
 @app.get("/recent_history")
 def recent_history_endpoint():

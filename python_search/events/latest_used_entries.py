@@ -2,12 +2,13 @@
 
 from typing import List
 
+
 class RecentKeys:
     """
     Contains the latest used keys and the API to add new ones.
     """
 
-    _blacklisted_items = ['python search main entry']
+    _blacklisted_items = ["python search main entry"]
 
     _used_keys = []
 

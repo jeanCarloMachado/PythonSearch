@@ -19,7 +19,7 @@ class PythonSearchCli:
 
     @staticmethod
     def install_dependencies():
-        """install dependenceis """
+        """install dependenceis"""
         from python_search.init.install_dependencies import InstallDependencies
 
         InstallDependencies().install_all()
@@ -50,7 +50,7 @@ class PythonSearchCli:
             except Exception as e:
                 print(f"Did not find any config to load, error: {e}")
 
-                # early return so we dont set the remaining attributes 
+                # early return so we dont set the remaining attributes
                 return
 
         self.configuration = configuration
@@ -102,7 +102,7 @@ class PythonSearchCli:
         return RegisterNew(self.configuration).launch_ui()
 
     def register_new(self):
-        """ Starts the UI for collecting a new entry into pythonsearch """
+        """Starts the UI for collecting a new entry into pythonsearch"""
         from python_search.entry_capture.register_new import RegisterNew
 
         return RegisterNew(self.configuration)
@@ -150,7 +150,6 @@ class PythonSearchCli:
         Recieves _entries from fzf and show them formatted for the preview window
         """
         Preview().display(entry_text)
-
 
     def _infra_report(self):
         from python_search.infrastructure.report import Report

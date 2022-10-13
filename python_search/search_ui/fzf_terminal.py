@@ -47,8 +47,8 @@ class FzfInTerminal:
 
     def _fzf_cmd(self):
         FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f"
-        THEME = f'--color={FZF_LIGHT_THEME}'        # for more fzf options see: https://www.mankier.com/1/fzf#
-        THEME = ''
+        THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
+        THEME = ""
         cmd = f"""bash -c '{self._get_rankging_generate_cmd()} | \
         fzf \
         --tiebreak=length,begin,index \

@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections import namedtuple
 from typing import List, Optional, Tuple
 
-from python_search.events.latest_used_entries import RecentKeys
 from python_search.config import PythonSearchConfiguration
+from python_search.events.latest_used_entries import RecentKeys
 from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
 from python_search.observability.logger import logging
@@ -38,7 +38,9 @@ class RankingGenerator:
             try:
                 self._inference = Inference(self._configuration)
             except Exception as e:
-                print(f"Could not initialize the inference component. Proceeding without inference, details: {e}")
+                print(
+                    f"Could not initialize the inference component. Proceeding without inference, details: {e}"
+                )
 
     @timeit
     def generate(self, print_entries=True, print_weights=False) -> str:
@@ -52,15 +54,14 @@ class RankingGenerator:
 
         if self._feature_toggle.is_enabled("ranking_next") and self._inference:
             try:
-                self._ranked_keys = self._inference.get_ranking(print_weights=print_weights)
+                self._ranked_keys = self._inference.get_ranking(
+                    print_weights=print_weights
+                )
             except Exception as e:
 
                 print(f"Failed to perform inference, reason {e}")
 
-                #raise e
-
-
-
+                # raise e
 
         """Populate the variable used_entries  with the results from redis"""
         self._fetch_latest_entries()
@@ -70,7 +71,6 @@ class RankingGenerator:
             return
 
         return self._entries_result.build_entries_result(result)
-
 
     def _merge_and_build_result(self) -> List[Tuple[str, dict]]:
         """ "
@@ -114,26 +114,32 @@ class RankingGenerator:
         if not self._feature_toggle.is_enabled("ranking_latest_used"):
             return
 
-
-        self._used_entries: ListOfTupleCreator.type = ListOfTupleCreator().get_list_of_tuples(RecentKeys().get_latest_used_keys(), self._entries)
+        self._used_entries: ListOfTupleCreator.type = (
+            ListOfTupleCreator().get_list_of_tuples(
+                RecentKeys().get_latest_used_keys(), self._entries
+            )
+        )
 
         # reverse the list given that we pop from the end
         self._used_entries.reverse()
         # only use the latest 7 _entries for the top of the ranking
-        self._used_entries = self._used_entries[-self.NUMBER_OF_LATEST_ENTRIES:]
+        self._used_entries = self._used_entries[-self.NUMBER_OF_LATEST_ENTRIES :]
 
 
 class ListOfTupleCreator:
     type = List[Tuple[str, dict]]
 
     @staticmethod
-    def get_list_of_tuples(from_keys: List[str], entities: dict) -> ListOfTupleCreator.type:
+    def get_list_of_tuples(
+        from_keys: List[str], entities: dict
+    ) -> ListOfTupleCreator.type:
         used_entries = []
         for used_key in from_keys:
             if used_key not in entities:
                 continue
             used_entries.append((used_key, entities[used_key]))
         return used_entries
+
 
 if __name__ == "__main__":
     import fire

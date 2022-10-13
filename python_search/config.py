@@ -82,7 +82,9 @@ class PythonSearchConfiguration(EntriesGroup):
         if supported_features:
             self.supported_features: PythonSearchFeaturesSupport = supported_features
         else:
-            self.supported_features: PythonSearchFeaturesSupport = PythonSearchFeaturesSupport.default()
+            self.supported_features: PythonSearchFeaturesSupport = (
+                PythonSearchFeaturesSupport.default()
+            )
 
         if default_tags:
             self._default_tags = default_tags
@@ -149,4 +151,6 @@ class ConfigurationLoader:
 class MissingConfigException:
     @staticmethod
     def configuration_not_set():
-        raise MissingConfigException("The python search configuration was not found. Run python_search setup to initialize a new config")
+        raise MissingConfigException(
+            "The python search configuration was not found. Run python_search setup to initialize a new config"
+        )

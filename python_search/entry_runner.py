@@ -7,16 +7,16 @@ from typing import List
 from python_search.apps.notification_ui import send_notification
 from python_search.config import PythonSearchConfiguration
 from python_search.context import Context
-from python_search.events.run_performed import RunPerformed, LogSearchRunPerformedClient
+from python_search.events.run_performed import (LogSearchRunPerformedClient,
+                                                RunPerformed)
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+from python_search.logger import setup_run_key_logger
 from python_search.observability.logger import (initialize_systemd_logging,
                                                 logging)
 
-from python_search.logger import setup_run_key_logger
-
-
 logger = setup_run_key_logger()
+
 
 class EntryRunner:
     """
@@ -44,7 +44,6 @@ class EntryRunner:
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
 
-        
         logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is
         # usually the key from fzf, and our keys do not accept :
@@ -87,7 +86,6 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-
         real_key: str = matches[0]
 
         if len(matches) > 1:
@@ -96,14 +94,12 @@ class EntryRunner:
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
+        result = InterpreterMatcher.build_instance(self.configuration).default(real_key)
 
-        result  = InterpreterMatcher.build_instance(self.configuration).default(real_key)
-
-        LogSearchRunPerformedClient().send(RunPerformed(key=key, query_input=query_used, shortcut=from_shortcut))
+        LogSearchRunPerformedClient().send(
+            RunPerformed(key=key, query_input=query_used, shortcut=from_shortcut)
+        )
         return result
-
-
-
 
     def _matching_keys(self, key: str) -> List[str]:
         """

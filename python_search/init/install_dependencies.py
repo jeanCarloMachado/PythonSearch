@@ -1,8 +1,9 @@
 import os
+
 from python_search.environment import is_mac
 
 
-class InstallDependencies():
+class InstallDependencies:
     def install_all(self):
         """
         Install all depenenceis to make python search work
@@ -13,7 +14,7 @@ class InstallDependencies():
 
     def _install_fzf(self):
         print("Installing FZF")
-        
+
         if self._exists("fzf"):
             return
 
@@ -22,7 +23,9 @@ class InstallDependencies():
             print("Installing it for you...")
 
             if not self._exists("brew"):
-                raise Exception("Cannot continue without brew to install fzf. Please install brew first (https://brew.sh/)")
+                raise Exception(
+                    "Cannot continue without brew to install fzf. Please install brew first (https://brew.sh/)"
+                )
 
             os.system("brew install fzf")
         else:
@@ -40,7 +43,7 @@ class InstallDependencies():
     def _install_kitty(self):
         if self._exists("kitty"):
             return
-        
+
         print(
             "Looks like kitty is not installed in your platform. Installing it for you..."
         )

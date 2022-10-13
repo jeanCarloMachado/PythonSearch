@@ -11,6 +11,7 @@ from dateutil import parser
 from python_search.acronyms import generate_acronyms
 from python_search.infrastructure.performance import timeit
 
+
 class FzfOptimizedSearchResults:
     """
     Builds the list of results ready to be consumed by fzf

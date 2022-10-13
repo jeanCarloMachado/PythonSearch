@@ -4,6 +4,7 @@ from subprocess import Popen
 
 from python_search.apps.notification_ui import send_notification
 
+
 class Infrastructure:
     def __init__(self):
         self._RUNNING_INFO = {

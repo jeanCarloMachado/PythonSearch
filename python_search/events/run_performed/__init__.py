@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from pydantic import BaseModel
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType
+from pyspark.sql.types import (StringType, StructField, StructType,
+                               TimestampType)
 
 from python_search.config import DataConfig
 from python_search.data_collector import GenericDataCollector
@@ -23,18 +24,17 @@ class RunPerformedDataset:
     def load(self):
         data_location = "file://" + DataConfig.SEARCH_RUNS_PERFORMED_FOLDER
         print("Loading data from: {}".format(data_location))
-        return self.spark.read.format("parquet").load(
-            data_location
-
-        )
+        return self.spark.read.format("parquet").load(data_location)
 
     def load_new(self):
         return GenericDataCollector().dataframe("searches_performed")
 
 
-class RunPerformedWriter():
+class RunPerformedWriter:
     def write(event: RunPerformed):
-        return GenericDataCollector().write(data=event.__dict__, table_name='searches_performed')
+        return GenericDataCollector().write(
+            data=event.__dict__, table_name="searches_performed"
+        )
 
 
 class RunPerformed(BaseModel):
@@ -56,10 +56,13 @@ class RunPerformed(BaseModel):
         return "key string, query_input string, shortcut string"
 
 
-class LogSearchRunPerformedClient():
+class LogSearchRunPerformedClient:
     def send(self, data: RunPerformed):
         import requests
+
         try:
-            return requests.post(url="http://localhost:8000/log_run", json=data.__dict__)
+            return requests.post(
+                url="http://localhost:8000/log_run", json=data.__dict__
+            )
         except BaseException as e:
             print(f"Logging results failed, reason: {e}")

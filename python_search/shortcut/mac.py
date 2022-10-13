@@ -7,6 +7,7 @@ class Mac:
     Mac support for tool iCanHazShortcut
 
     """
+
     START_SHORTCUT_NUMBER = 1
 
     def __init__(self, configuration):

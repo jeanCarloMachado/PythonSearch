@@ -1,4 +1,3 @@
-
 from python_search.apps.browser import Browser
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
@@ -6,6 +5,8 @@ from python_search.interpreter.cmd import CmdInterpreter
 from python_search.logger import setup_run_key_logger
 
 logger = setup_run_key_logger()
+
+
 class UrlInterpreter(BaseInterpreter):
     def __init__(self, cmd, context=None):
         self.context = context

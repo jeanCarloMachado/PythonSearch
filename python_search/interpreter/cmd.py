@@ -16,6 +16,7 @@ WRAP_IN_TERMINAL = "new-window-non-cli"
 
 logger = setup_run_key_logger()
 
+
 class CmdInterpreter(BaseInterpreter):
     """
     Represents a bash command entry. It can be used anywhere to run bash commends.

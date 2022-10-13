@@ -43,6 +43,3 @@ python_search search"""
         os.system(f'echo "{project_location}" >  {current_project_config}')
 
         print(f"Successfuly set current project as: {project_location}")
-
-
-    

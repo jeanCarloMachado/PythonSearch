@@ -105,8 +105,8 @@ class Transform:
                     previous_previous_key_embedding,
                     np.asarray([inference_input.month]),
                     np.asarray([inference_input.hour]),
-                    #np.asarray([inference_input.times_used_previous]),
-                    #np.asarray([inference_input.times_used_previous_previous]),
+                    # np.asarray([inference_input.times_used_previous]),
+                    # np.asarray([inference_input.times_used_previous_previous]),
                 )
             )
 

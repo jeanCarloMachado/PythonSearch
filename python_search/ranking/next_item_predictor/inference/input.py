@@ -37,14 +37,14 @@ class InferenceInput:
         self.times_used_previous = times_used_previous
         self.times_used_previous_previous = times_used_previous_previous
 
-        #if not InferenceInput._times_used:
+        # if not InferenceInput._times_used:
         #    InferenceInput._times_used = TimesUsed()
 
-        #if not times_used_previous:
+        # if not times_used_previous:
         #    self.times_used_previous = InferenceInput._times_used.item_popularity(
         #        previous_key
         #    )
-        #if not times_used_previous_previous:
+        # if not times_used_previous_previous:
         #    self.times_used_previous_previous = (
         #        InferenceInput._times_used.item_popularity(previous_previous_key)
         #    )

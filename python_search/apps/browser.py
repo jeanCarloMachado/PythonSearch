@@ -15,7 +15,7 @@ class Browser:
 
     # a tuple with the binary and the type
     _MAC_DEFAULT_BROWSER = (
-        '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome ',
+        "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome ",
         SupportedBrowsers.CHROME,
     )
     _LINUX_DEFAULT_BROWSER = "google-chrome", SupportedBrowsers.CHROME

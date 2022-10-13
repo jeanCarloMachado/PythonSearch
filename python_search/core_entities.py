@@ -68,7 +68,5 @@ class InvertedIndex:
         pass
 
 
-
-
 Entries = Dataframe(schema={"key": "String", "position": "Integer"})
 EntriesType = Entries.type_annotation()

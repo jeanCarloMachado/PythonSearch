@@ -43,11 +43,17 @@ class PythonSearchMLFlow:
         if self.debug:
             print(f"Loading run id: {run_id}")
 
-        BASE_MLFLOW_LOCATON = '/Users/jean.machado@getyourguide.com/projects/PySearchEntries/mlflow/1'
+        BASE_MLFLOW_LOCATON = (
+            "/Users/jean.machado@getyourguide.com/projects/PySearchEntries/mlflow/1"
+        )
 
         if model_type == "keras":
-            model = self.mlflow_instance.keras.load_model(f"{BASE_MLFLOW_LOCATON}/{run_id}/artifacts/model")
+            model = self.mlflow_instance.keras.load_model(
+                f"{BASE_MLFLOW_LOCATON}/{run_id}/artifacts/model"
+            )
         else:
-            model = self.mlflow_instance.xgboost.load_model(f"{BASE_MLFLOW_LOCATON}/{run_id}/artifacts/model")
+            model = self.mlflow_instance.xgboost.load_model(
+                f"{BASE_MLFLOW_LOCATON}/{run_id}/artifacts/model"
+            )
 
         return model

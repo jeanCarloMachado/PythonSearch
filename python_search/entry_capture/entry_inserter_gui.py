@@ -87,7 +87,7 @@ class EntryCaptureGUI:
         )
 
         # workaround for mac bug
-    
+
         content_input.update(select=True)
 
         window["key"].bind("<Return>", "_Enter")

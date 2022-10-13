@@ -1,6 +1,7 @@
+from typing import Union
+
 from grimoire.shell import shell
 from grimoire.string import chomp, remove_new_lines
-from typing import Union
 
 from python_search.environment import is_mac
 
@@ -43,8 +44,20 @@ class Clipboard:
         :return:
         """
 
-        import sys, select
-        if not content and select.select([sys.stdin, ], [], [], 0.0)[0]:
+        import select
+        import sys
+
+        if (
+            not content
+            and select.select(
+                [
+                    sys.stdin,
+                ],
+                [],
+                [],
+                0.0,
+            )[0]
+        ):
             content = sys.stdin.read()
 
         def shellquote(s):
