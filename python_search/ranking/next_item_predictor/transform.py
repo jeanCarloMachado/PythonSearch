@@ -29,7 +29,7 @@ class Transform:
     # + 1 for entry number
     # + 1 for global popularity of previous key
     # + 1 for global popularity of previous_previous key
-    DIMENSIONS = _EMBEDDINGS_ENTRIES * 384 + 1 + 1 + 1 + 1
+    DIMENSIONS = _EMBEDDINGS_ENTRIES * 384 + 1 + 1
 
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
@@ -105,8 +105,8 @@ class Transform:
                     previous_previous_key_embedding,
                     np.asarray([inference_input.month]),
                     np.asarray([inference_input.hour]),
-                    np.asarray([inference_input.times_used_previous]),
-                    np.asarray([inference_input.times_used_previous_previous]),
+                    #np.asarray([inference_input.times_used_previous]),
+                    #np.asarray([inference_input.times_used_previous_previous]),
                 )
             )
 

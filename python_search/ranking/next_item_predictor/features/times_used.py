@@ -5,7 +5,9 @@ from python_search.datasets.searchesperformed import SearchesPerformed
 
 
 class TimesUsed:
-    """ """
+    """
+    Times used feature
+    """
 
     def __init__(self):
         _df = SearchesPerformed().load()
@@ -20,10 +22,12 @@ class TimesUsed:
         return self._df
 
     def item_popularity(self, key) -> int:
+
         result = self._pandas_df[self._pandas_df["key"] == key]
 
-        if result is None:
+        if result is None or result.empty:
             return 0
+        print(result)
 
         return result["times_used"].values[0]
 

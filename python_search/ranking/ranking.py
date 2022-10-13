@@ -51,7 +51,16 @@ class RankingGenerator:
         self._ranked_keys: List[str] = self._entries.keys()
 
         if self._feature_toggle.is_enabled("ranking_next") and self._inference:
-            self._ranked_keys = self._inference.get_ranking(print_weights=print_weights)
+            try:
+                self._ranked_keys = self._inference.get_ranking(print_weights=print_weights)
+            except Exception as e:
+
+                print(f"Failed to perform inference, reason {e}")
+
+                #raise e
+
+
+
 
         """Populate the variable used_entries  with the results from redis"""
         self._fetch_latest_entries()
