@@ -30,7 +30,7 @@ jobs:
           sudo apt install gnome-keyring
           pip install --upgrade pip
           pip install poetry
-          poetry install -E all
+          poetry install 
           
         
 
