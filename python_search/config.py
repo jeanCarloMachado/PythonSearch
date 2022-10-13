@@ -34,6 +34,7 @@ class DataConfig:
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v0"
     DATA_WAREHOUSE_FOLDER = base_data_folder + "/data_warehouse"
+    CLEAN_EVENTS_FOLDER = DATA_WAREHOUSE_FOLDER + "/clean"
     SEARCH_RUNS_PERFORMED_FOLDER = (
         base_data_folder + "/data_warehouse/dataframes/SearchRunPerformed"
     )

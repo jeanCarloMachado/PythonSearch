@@ -17,6 +17,7 @@ class RunPerformedDataset:
     """
 
     columns = ["key", "query_input", "shortcut", "timestamp"]
+    CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/run_performed"
 
     def __init__(self, spark=None):
         from pyspark.sql.session import SparkSession
@@ -27,6 +28,9 @@ class RunPerformedDataset:
         data_location = "file://" + DataConfig.SEARCH_RUNS_PERFORMED_FOLDER
         print("Loading data from: {}".format(data_location))
         return self.spark.read.format("parquet").load(data_location)
+
+    def load_clean(self):
+        return self.spark.read.parquet(self.CLEAN_PATH)
 
     def load_new(self):
         return GenericDataCollector().dataframe("searches_performed")
