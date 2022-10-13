@@ -10,7 +10,7 @@ from pyspark.sql.functions import struct, udf
 from pyspark.sql.types import FloatType
 from pyspark.sql.window import Window
 
-from python_search.events.search_run_performed.searchesperformeddataset import SearchesPerformedDataset
+from python_search.events.run_performed import RunPerformedDataset
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.next_item_predictor.features.times_used import \
     TimesUsed
@@ -212,7 +212,7 @@ class TrainingDataset:
         return base_features
 
     def _load_searches_performed(self) -> DataFrame:
-        return SearchesPerformedDataset().load()
+        return RunPerformedDataset().load()
 
     def _add_all_features(self, df: DataFrame) -> DataFrame:
         """

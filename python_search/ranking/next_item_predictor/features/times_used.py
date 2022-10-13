@@ -1,7 +1,7 @@
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame
 
-from python_search.events.search_run_performed.searchesperformeddataset import SearchesPerformedDataset
+from python_search.events.run_performed import RunPerformedDataset
 
 
 class TimesUsed:
@@ -10,7 +10,7 @@ class TimesUsed:
     """
 
     def __init__(self):
-        _df = SearchesPerformedDataset().load()
+        _df = RunPerformedDataset().load()
         self._df = (
             _df.groupBy("key")
             .agg(F.count("key").alias("times_used"))

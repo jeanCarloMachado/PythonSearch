@@ -3,7 +3,7 @@ import os
 
 class Context:
     """
-    captures information from the enviroment
+    captures information from the environment
     to contextualize how to execute the command
     """
 

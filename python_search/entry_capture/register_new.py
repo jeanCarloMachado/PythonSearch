@@ -19,7 +19,7 @@ from python_search.interpreter.url import UrlInterpreter
 
 class RegisterNew:
     """
-    Responsible for registering new _entries in your catalog
+    Responsible for registering new entries in your catalog
     """
 
     def __init__(self, configuration):

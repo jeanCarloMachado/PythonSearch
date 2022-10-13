@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
 from python_search.data_collector import GenericDataCollector
-from python_search.events.search_run_performed.search_run_performed import SearchRunPerformed
+from python_search.events.run_performed import RunPerformed, RunPerformedWriter
 from python_search.events.latest_used_entries import RecentKeys
 
 PORT = 8000
@@ -56,10 +56,11 @@ def health():
 
 
 @app.post("/log_run")
-def log_run(event: SearchRunPerformed):
+def log_run(event: RunPerformed):
 
     RecentKeys.add_latest_used(event.key)
-    GenericDataCollector().write(data=event.__dict__, table_name='searches_performed')
+
+    RunPerformedWriter().write(event)
 
     # regenerate the ranking after running a key
     reload()

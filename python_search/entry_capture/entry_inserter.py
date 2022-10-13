@@ -4,7 +4,7 @@ import shutil
 from datetime import datetime
 
 from python_search.config import PythonSearchConfiguration
-from python_search.events.search_run_performed import LogSearchRunPerformed, SearchRunPerformed
+from python_search.events.run_performed import LogSearchRunPerformedClient, RunPerformed
 
 
 class EntryInserter:
@@ -26,7 +26,7 @@ class EntryInserter:
         line_to_add = f"    '{key}': {row_entry},"
         self._append_entry(line_to_add)
 
-        LogSearchRunPerformed().send(SearchRunPerformed(key=key, query_input="", shortcut=False))
+        LogSearchRunPerformedClient().send(SearchRunPerformed(key=key, query_input="", shortcut=False))
 
         from python_search.apps.notification_ui import send_notification
 

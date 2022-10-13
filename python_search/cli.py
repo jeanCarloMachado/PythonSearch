@@ -102,6 +102,7 @@ class PythonSearchCli:
         return RegisterNew(self.configuration).launch_ui()
 
     def register_new(self):
+        """ Starts the UI for collecting a new entry into pythonsearch """
         from python_search.entry_capture.register_new import RegisterNew
 
         return RegisterNew(self.configuration)

@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime
 
-from colorama import Fore, Style
+from colorama import Fore
 from dateutil import parser
 
 from python_search.config import ConfigurationLoader

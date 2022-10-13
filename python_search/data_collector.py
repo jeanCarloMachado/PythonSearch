@@ -34,13 +34,15 @@ class GenericDataCollector:
     def data_location(self, table_name):
         return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
 
-    def show_data(self, table_name):
+    def dataframe(self, table_name):
         from pyspark.sql.session import SparkSession
 
         spark = SparkSession.builder.getOrCreate()
 
-        df = spark.read.json(GenericDataCollector().data_location(table_name))
-        df.show()
+        return spark.read.json(GenericDataCollector().data_location(table_name))
+
+    def show_data(self, table_name):
+        return self.dataframe(table_name).show()
 
 
 if __name__ == '__main__':
