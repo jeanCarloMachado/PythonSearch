@@ -154,9 +154,6 @@ class PythonSearchCli:
 
 
 def _error_handler(e):
-    from python_search.observability.logger import initialize_systemd_logging
-
-    logging = initialize_systemd_logging()
     import sys
     import traceback
 
