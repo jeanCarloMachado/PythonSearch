@@ -7,7 +7,7 @@ from typing import List
 from python_search.apps.notification_ui import send_notification
 from python_search.config import PythonSearchConfiguration
 from python_search.context import Context
-from python_search.events.run_performed import (LogSearchRunPerformedClient,
+from python_search.events.run_performed import (LogRunPerformedClient,
                                                 RunPerformed)
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
@@ -93,7 +93,7 @@ class EntryRunner:
 
         result = InterpreterMatcher.build_instance(self.configuration).default(real_key)
 
-        LogSearchRunPerformedClient().send(
+        LogRunPerformedClient().send(
             RunPerformed(key=key, query_input=query_used, shortcut=from_shortcut)
         )
         return result

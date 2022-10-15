@@ -67,7 +67,7 @@ class RunPerformed(BaseModel):
         return "key string, query_input string, shortcut string"
 
 
-class LogSearchRunPerformedClient:
+class LogRunPerformedClient:
     def send(self, data: RunPerformed):
         import requests
 

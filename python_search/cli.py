@@ -4,6 +4,7 @@ from python_search.apps.window_manager import WindowManager
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
+from python_search.events.run_performed import LogRunPerformedClient, RunPerformed
 from python_search.search_ui.fzf_terminal import FzfInTerminal
 from python_search.search_ui.preview import Preview
 
@@ -90,6 +91,9 @@ class PythonSearchCli:
             InterpreterMatcher
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
+        LogRunPerformedClient().send(
+            RunPerformed(key=key, query_input="", shortcut=False)
+        )
 
     def _copy_key_only(self, key_str: str):
         """
@@ -97,7 +101,11 @@ class PythonSearchCli:
         """
         from python_search.apps.clipboard import Clipboard
 
-        Clipboard().set_content(key_str.split(":")[0])
+        only_key = key_str.split(":")[0]
+        Clipboard().set_content(only_key)
+        LogRunPerformedClient().send(
+            RunPerformed(key=only_key, query_input="", shortcut=False)
+        )
 
     def _shortcut_generator(self):
         """Generate shorcuts for all environments"""
@@ -107,7 +115,12 @@ class PythonSearchCli:
     def _search_edit(self, key=None):
         from python_search.entry_capture.edit_content import EditKey
 
-        return EditKey(self.configuration).search_entries_directory(key)
+        result = EditKey(self.configuration).search_entries_directory(key)
+
+        LogRunPerformedClient().send(
+            RunPerformed(key=key, query_input="", shortcut=False)
+        )
+        return result
 
     def _ranking(self):
         from python_search.ranking.ranking import RankingGenerator
