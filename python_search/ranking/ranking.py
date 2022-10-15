@@ -89,11 +89,16 @@ class RankingGenerator:
 
             # sometimes there can be a bug of saving somethign other than dicts as _entries
             if type(used_entry[1]) != dict:
-                logging.warning(f"Entry is not a dict {used_entry[1]}")
+                logging.warning(f"Entryentry_content is not a dict {used_entry[1]}")
                 continue
+
             logging.debug(f"Increment: {increment}  with entry {used_entry}")
             final_key_list.append(used_entry[0])
-            result.append((used_entry[0], {**used_entry[1], "recently_used": True}))
+
+
+            entry_content:dict = used_entry[1]
+            entry_content['tags'] = entry_content.get('tags', []) + ['RecentlyUsed']
+            result.append((used_entry[0], entry_content))
             increment += 1
 
         for key in self._ranked_keys:

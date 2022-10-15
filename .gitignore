@@ -11,6 +11,6 @@ nohup.out
 .DS_Store
 **.ipynb
 notebooks/*
-*.DS_STORE*
+**.DS_STORE*
 *.pyc
 *.swp
