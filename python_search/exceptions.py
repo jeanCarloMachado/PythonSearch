@@ -25,3 +25,11 @@ class RegisterNewException(Exception):
     @staticmethod
     def empty_content():
         return RegisterNewException(f"Will not register as content looks too small")
+
+
+class MissingConfigException:
+    @staticmethod
+    def configuration_not_set():
+        raise MissingConfigException(
+            "The python search configuration was not found. Run python_search setup to initialize a new config"
+        )

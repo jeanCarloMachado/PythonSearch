@@ -5,7 +5,7 @@ This way we can have multiple configs depending of the enviroment.
 """
 import logging
 import os
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from python_search.entries_group import EntriesGroup
 from python_search.environment import is_mac
@@ -65,6 +65,7 @@ class PythonSearchConfiguration(EntriesGroup):
     simple_gui_theme = "SystemDefault1"
     simple_gui_font_size = 14
     _default_tags = None
+    tags_dependent_inserter_marks = None
 
     def __init__(
         self,
@@ -73,6 +74,7 @@ class PythonSearchConfiguration(EntriesGroup):
         entries_groups: Optional[List[EntriesGroup]] = None,
         supported_features: Optional[PythonSearchFeaturesSupport] = None,
         default_tags=None,
+        tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]]=None
     ):
         if entries:
             self.commands = entries
@@ -89,6 +91,8 @@ class PythonSearchConfiguration(EntriesGroup):
 
         if default_tags:
             self._default_tags = default_tags
+
+        self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
 
 class ConfigurationLoader:
@@ -112,7 +116,9 @@ class ConfigurationLoader:
         return config
 
     def reload(self):
-        """reload _entries for when we change it"""
+        """
+        reload _entries for when we change it
+        """
         import importlib
 
         import entries_main
@@ -149,9 +155,3 @@ class ConfigurationLoader:
         return config.commands
 
 
-class MissingConfigException:
-    @staticmethod
-    def configuration_not_set():
-        raise MissingConfigException(
-            "The python search configuration was not found. Run python_search setup to initialize a new config"
-        )

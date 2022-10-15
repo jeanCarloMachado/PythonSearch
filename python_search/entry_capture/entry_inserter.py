@@ -16,12 +16,20 @@ class EntryInserter:
     NEW_ENTRIES_STRING = "# NEW_ENTRIES_HERE"
 
     def __init__(self, configuration: PythonSearchConfiguration):
-        self.configuration = configuration
-        self.file_to_append = self.configuration.get_project_root() + "/entries_main.py"
+        self._configuration = configuration
+        self._file_to_append = self._configuration.get_project_root() + "/entries_main.py"
+        self._new_entries_string = EntryInserter.NEW_ENTRIES_STRING
 
     def insert(self, key: str, entry: dict):
 
         entry["created_at"] = datetime.now().isoformat()
+
+        if 'tags' in entry and self._configuration.tags_dependent_inserter_marks:
+            for tag in entry['tags']:
+                if tag in self._configuration.tags_dependent_inserter_marks.keys():
+                    self._new_entries_string = self._configuration.tags_dependent_inserter_marks[tag][0]
+                    self._file_to_append = self._configuration.get_project_root() + '/' +  self._configuration.tags_dependent_inserter_marks[tag][1]
+
 
         row_entry = str(entry)
         line_to_add = f"    '{key}': {row_entry},"
@@ -30,6 +38,8 @@ class EntryInserter:
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )
+
+
 
         from python_search.apps.notification_ui import send_notification
 
@@ -43,14 +53,15 @@ class EntryInserter:
             Compile to see if it is still valid python
             If so, then replaces it
         """
-        copy_file = self.file_to_append + "cpy"
+        copy_file = self._file_to_append + "cpy"
 
-        shutil.copyfile(self.file_to_append, copy_file)
+        print(f"Copying file as backup {self._file_to_append} => {copy_file}")
+        shutil.copyfile(self._file_to_append, copy_file)
 
-        with open(copy_file, "w") as out, open(self.file_to_append) as source_file:
+        with open(copy_file, "w") as out, open(self._file_to_append) as source_file:
             for line in source_file:
                 out.write(line)
-                if self.NEW_ENTRIES_STRING in line:
+                if self._new_entries_string in line:
                     # insert text.
                     print(f"Writing line: {line_to_add}")
                     out.write(line_to_add + "\n")
@@ -65,4 +76,4 @@ class EntryInserter:
             send_notification(message)
             raise Exception(message)
 
-        shutil.move(copy_file, self.file_to_append)
+        shutil.move(copy_file, self._file_to_append)
