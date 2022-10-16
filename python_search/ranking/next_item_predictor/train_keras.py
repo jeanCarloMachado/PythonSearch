@@ -43,6 +43,7 @@ class Train:
             mlflow.keras.log_model(model, "model")
             mlflow.log_params(offline_evaluation)
 
+        print("Keras was trained successfully!")
         return model, metrics, offline_evaluation
 
     def train(self, dataset: TrainingDataset, plot_history=False):

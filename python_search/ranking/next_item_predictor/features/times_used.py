@@ -1,7 +1,7 @@
 import pyspark.sql.functions as F
 from pyspark.sql import DataFrame
 
-from python_search.events.run_performed import RunPerformedDataset
+from python_search.events.run_performed.dataset import RunPerformedDataset
 
 
 class TimesUsed:

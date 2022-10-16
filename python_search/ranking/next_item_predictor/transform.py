@@ -78,7 +78,8 @@ class Transform:
         self, inference_input: InferenceInput, all_keys
     ) -> np.ndarray:
         """
-        Transform the inference input into something that can be inferred
+        Transform the inference input into something that can be inferred.
+        This is an element wise ranking.
         """
 
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(

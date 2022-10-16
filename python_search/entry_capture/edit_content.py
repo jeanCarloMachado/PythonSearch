@@ -60,6 +60,8 @@ class EditKey:
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
         """ "edit a _configuration file given the name and line"""
+
+        # @ todo make this editor generic
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "

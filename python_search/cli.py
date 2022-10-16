@@ -4,7 +4,8 @@ from python_search.apps.window_manager import WindowManager
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
-from python_search.events.run_performed import LogRunPerformedClient, RunPerformed
+from python_search.events.run_performed import RunPerformed
+from python_search.events.run_performed.client import LogRunPerformedClient
 from python_search.search_ui.fzf_terminal import FzfInTerminal
 from python_search.search_ui.preview import Preview
 
@@ -107,7 +108,7 @@ class PythonSearchCli:
             RunPerformed(key=only_key, query_input="", shortcut=False)
         )
 
-    def _shortcut_generator(self):
+    def shortcut_generator(self):
         """Generate shorcuts for all environments"""
         from python_search.shortcut.generator import ShortcutGenerator
 

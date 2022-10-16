@@ -27,8 +27,8 @@ class InferenceInput:
         month,
         previous_key,
         previous_previous_key,
-        times_used_previous=None,
-        times_used_previous_previous=None,
+        times_used_previous: Optional[int]=None,
+        times_used_previous_previous: Optional[int]=None,
     ):
         self.hour = hour
         self.month = month

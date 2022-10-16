@@ -1,6 +1,5 @@
 from typing import Optional
 
-from grimoire.shell import shell
 from grimoire.string import remove_special_chars
 
 # @ todo remove this dependencies on grimoire

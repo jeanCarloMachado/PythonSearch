@@ -8,14 +8,17 @@ from python_search.config import DataConfig
 from python_search.ranking.next_item_predictor.offline_evaluation import \
     OfflineEvaluation
 from python_search.ranking.next_item_predictor.transform import Transform
+from pyspark.sql import DataFrame
 
 
 class TrainXGBoost:
-    def train_and_log(self, dataset):
+
+    def train_and_log(self, dataset: DataFrame):
         """
         train the _model and log it to MLFlow
         """
         import mlflow
+
 
         mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
         # this creates a new experiment
@@ -23,14 +26,14 @@ class TrainXGBoost:
         mlflow.autolog()
 
         with mlflow.start_run():
-            model, offline_evaluation = self.train(dataset)
+            model, offline_evaluation = self._train(dataset)
             # mlflow.log_params(metrics)
             mlflow.xgboost.log_model(model, "model")
             mlflow.log_params(offline_evaluation)
 
         return model, offline_evaluation
 
-    def train(self, dataset):
+    def _train(self, dataset: DataFrame):
 
         X_train, X_test, Y_train, Y_test = self._transform_and_split(dataset)
 
@@ -54,9 +57,10 @@ class TrainXGBoost:
         offline_evaluation = OfflineEvaluation().run(model, dataset, X_test_p)
         print(offline_evaluation)
 
+        print("Xgboost was trained successfully!")
         return model, offline_evaluation
 
-    def _transform_and_split(self, dataset):
+    def _transform_and_split(self, dataset: DataFrame):
 
         X, Y = Transform().transform_train(dataset)
 

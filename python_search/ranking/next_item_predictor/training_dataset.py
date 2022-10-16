@@ -10,7 +10,7 @@ from pyspark.sql.functions import struct, udf
 from pyspark.sql.types import FloatType
 from pyspark.sql.window import Window
 
-from python_search.events.run_performed import RunPerformedDataset
+from python_search.events.run_performed.dataset import RunPerformedDataset
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.next_item_predictor.features.times_used import \
     TimesUsed
@@ -43,7 +43,7 @@ class TrainingDataset:
         self._dataframe = None
 
     @timeit
-    def build(self, use_cache=False, write_cache=True) -> DataFrame:
+    def build(self, use_cache=False) -> DataFrame:
         """
         When cache is enabled, writes a parquet in a temporary file
         """
@@ -56,8 +56,7 @@ class TrainingDataset:
         dataset = self._add_label_and_cleanup(dataset_with_aggregations)
 
         logging.info("TrainingDataset ready, writing it to disk")
-        if write_cache:
-            self._write_cache(dataset)
+        self._write_cache(dataset)
 
         logging.info("Printing a sample of the dataset")
         dataset.show(10)
@@ -72,7 +71,7 @@ class TrainingDataset:
         Returns:
 
         """
-        search_performed_df = self._load_searches_performed()
+        search_performed_df = RunPerformedDataset().load_clean()
         search_performed_df_filtered = self._filter_blacklisted(search_performed_df)
         all_dimensions = self._add_all_features(search_performed_df_filtered)
 

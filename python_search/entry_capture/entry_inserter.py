@@ -4,8 +4,8 @@ import shutil
 from datetime import datetime
 
 from python_search.config import PythonSearchConfiguration
-from python_search.events.run_performed import (LogRunPerformedClient,
-                                                RunPerformed)
+from python_search.events.run_performed import (RunPerformed)
+from python_search.events.run_performed.client import LogRunPerformedClient
 
 
 class EntryInserter:

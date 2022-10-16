@@ -5,16 +5,17 @@ from python_search.ranking.next_item_predictor.inference.input import \
     InferenceInput
 
 
+from pyspark.sql import DataFrame
+
 class OfflineEvaluation:
     """
     Evaluate the _model with a part of the training _entries
     """
 
-
     NUMBER_OF_TESTS = 50
-    def run(self, model, dataset, X_test):
+    def run(self, model, dataset: DataFrame, X_test):
         """
-        Computes the average position of the entray in the validation set
+        Computes the average position of the entry in the validation set
         """
         self._configuration = ConfigurationLoader().load_config()
         print("Starting offline evaluation")
@@ -66,6 +67,7 @@ class OfflineEvaluation:
             "avg_position_for_tests": avg_position,
             "number_of_tests": OfflineEvaluation.NUMBER_OF_TESTS,
             "number_of_existing_keys": number_of_existing_keys,
+            "dataset_size": dataset.count()
         }
         print(result)
 
