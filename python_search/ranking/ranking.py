@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import namedtuple
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 from python_search.config import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
@@ -30,6 +30,7 @@ class RankingGenerator:
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
         self._used_entries: Optional[List[str]] = None
+        self._ranking_method_used: Literal['RankingNextModel', 'BaselineRank'] = 'BaselineRank'
 
         if self._feature_toggle.is_enabled("ranking_next"):
             from python_search.ranking.next_item_predictor.inference.inference import \
@@ -43,7 +44,7 @@ class RankingGenerator:
                 )
 
     @timeit
-    def generate(self, print_entries=True, print_weights=False) -> str:
+    def generate(self) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -53,29 +54,28 @@ class RankingGenerator:
         self._ranked_keys: List[str] = list(self._entries.keys())
 
         if self._feature_toggle.is_enabled("ranking_next") and self._inference:
-            try:
-                self._ranked_keys = self._inference.get_ranking(
-                    print_weights=print_weights
-                )
-            except Exception as e:
-
-                print(f"Failed to perform inference, reason {e}")
-
-                # raise e
+            self._rerank_via_model()
 
         """Populate the variable used_entries  with the results from redis"""
-        self._fetch_latest_entries()
-        result = self._merge_ranking_and_latest_used()
-
-        if not print_entries:
-            return
+        result = self._merge_with_latest_used()
 
         return self._entries_result.build_entries_result(result)
 
-    def _merge_ranking_and_latest_used(self) -> RankedEntries.type:
+    def _rerank_via_model(self):
+        try:
+            self._ranked_keys = self._inference.get_ranking()
+            self._ranking_method_used = 'RankingNextModel'
+        except Exception as e:
+
+            print(f"Failed to perform inference, reason {e}")
+
+            # raise e
+    def _merge_with_latest_used(self) -> RankedEntries.type:
         """
         Merge the ranking with the latest entries
         """
+        self._fetch_latest_entries()
+
         result = []
 
         while self._used_entries:
@@ -87,7 +87,7 @@ class RankingGenerator:
 
             content = self._entries[key]
 
-            # sometimes there can be a bug of saving somethign other than dicts as _entries
+            # sometimes there can be a bug of saving something other than dicts as _entries
             if type(content) != dict:
                 logging.warning(f"Entryentry_content is not a dict {content}")
                 continue
@@ -103,7 +103,14 @@ class RankingGenerator:
                 # key not found in _entries
                 continue
 
-            result.append((key, self._entries[key]))
+            entry = self._entries[key]
+            if type(entry) == dict:
+                existing_tags = entry.get('tags', [])
+                if type(existing_tags) == str:
+                    existing_tags = [existing_tags]
+
+                entry['tags'] = existing_tags + [self._ranking_method_used]
+            result.append((key, entry))
 
         # the result is the one to be returned, final_key_list is to be used in the cache
         return result

@@ -55,9 +55,7 @@ class Inference:
     @timeit
     def get_ranking(
         self,
-        predefined_input: Optional[InferenceInput] = None,
-        print_weights=False,
-        return_weights=False,
+        predefined_input: Optional[InferenceInput] = None
     ) -> List[str]:
         """
         Gets the ranking from the next item _model
@@ -79,10 +77,6 @@ class Inference:
         Y = self._predict(X)
         result = list(zip(self.all_keys, Y))
         result.sort(key=lambda x: x[1], reverse=True)
-        if return_weights:
-            return result
-        if print_weights:
-            print(result)
 
         only_keys = [entry[0] for entry in result]
         logger.info("Ranking inference succeeded")
