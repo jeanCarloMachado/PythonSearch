@@ -4,12 +4,12 @@ import datetime
 import json
 import logging
 import os
-from typing import List, Tuple
 
 from dateutil import parser
 
 from python_search.acronyms import generate_acronyms
 from python_search.infrastructure.performance import timeit
+from python_search.ranking.ranked_entries import RankedEntries
 
 
 class FzfOptimizedSearchResults:
@@ -21,7 +21,7 @@ class FzfOptimizedSearchResults:
         self._today = datetime.datetime.now()
 
     @timeit
-    def build_entries_result(self, entries: List[Tuple[str, dict]]) -> str:
+    def build_entries_result(self, entries: RankedEntries.type) -> str:
         """Print results"""
         position = 1
         result = ""
