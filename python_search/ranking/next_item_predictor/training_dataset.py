@@ -1,5 +1,4 @@
 import logging
-import math
 import os.path
 import sys
 from typing import Optional
@@ -14,6 +13,7 @@ from python_search.events.run_performed.dataset import RunPerformedDataset
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.next_item_predictor.features.times_used import \
     TimesUsed
+from python_search.ranking.next_item_predictor.inference.label import label_formula
 
 
 class TrainingDataset:
@@ -43,7 +43,7 @@ class TrainingDataset:
         self._dataframe = None
 
     @timeit
-    def build(self, use_cache=False) -> DataFrame:
+    def build(self, use_cache=False, only_show=False) -> DataFrame:
         """
         When cache is enabled, writes a parquet in a temporary file
         """
@@ -60,6 +60,8 @@ class TrainingDataset:
 
         logging.info("Printing a sample of the dataset")
         dataset.show(10)
+        if only_show:
+            return
 
         self._dataframe = dataset
         return dataset
@@ -88,12 +90,6 @@ class TrainingDataset:
 
         logging.info("Adding label")
 
-        def label_formula(row):
-            return (
-                math.log(row["times_3"])
-                + math.log(row["times_2"] * 0.5)
-                + math.log(row["global_pair"] * 0.01)
-            )
 
         udf_f = udf(label_formula, FloatType())
         with_label = all_features.withColumn(
@@ -137,7 +133,7 @@ class TrainingDataset:
 
     def _compute_aggregations(self, all_dimensions, base_features) -> DataFrame:
         """
-        Adds aggregations of the _entries that supports the label formula
+        Adds aggregations of the entries that supports the label formula
         Args:
             all_dimensions:
             base_features:

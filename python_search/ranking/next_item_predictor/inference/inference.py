@@ -8,8 +8,8 @@ from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.ranking.models import PythonSearchMLFlow
 from python_search.ranking.next_item_predictor.inference.input import \
-    InferenceInput
-from python_search.ranking.next_item_predictor.transform import Transform
+    ModelInput
+from python_search.ranking.next_item_predictor.transform import ModelTransform
 
 logger = setup_inference_logger()
 
@@ -19,7 +19,7 @@ class Inference:
     Performs the ranking inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "27ce4cf6b84c420eb90f5d8a55ad40b1"
+    PRODUCTION_RUN_ID = "239c1788635344c0acf98b8c8f26fff2"
 
     def __init__(
         self,
@@ -43,7 +43,7 @@ class Inference:
         # previous key should be setted in runtime
         self.previous_key = None
         self.all_keys = configuration.commands.keys()
-        self._transform = Transform()
+        self._transform = ModelTransform()
 
         try:
             self.model = model if model else self._load_mlflow_model(run_id=self.run_id)
@@ -55,7 +55,7 @@ class Inference:
     @timeit
     def get_ranking(
         self,
-        predefined_input: Optional[InferenceInput] = None
+        predefined_input: Optional[ModelInput] = None
     ) -> List[str]:
         """
         Gets the ranking from the next item _model
@@ -64,7 +64,7 @@ class Inference:
         inference_input = (
             predefined_input
             if predefined_input
-            else InferenceInput.with_given_keys(
+            else ModelInput.with_given_keys(
                 self._transform.inference_embeddings.get_recent_key_with_embedding(),
                 self._transform.inference_embeddings.get_recent_key_with_embedding(
                     second_recent=True
@@ -73,7 +73,7 @@ class Inference:
         )
         logger.info("Inference input: " + str(inference_input.__dict__))
 
-        X = self._transform.transform_inference(inference_input, self.all_keys)
+        X = self._transform.transform_single(inference_input, self.all_keys)
         Y = self._predict(X)
         result = list(zip(self.all_keys, Y))
         result.sort(key=lambda x: x[1], reverse=True)

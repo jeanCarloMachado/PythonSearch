@@ -21,7 +21,7 @@ class TimesUsed:
     def get_dataframe(self) -> DataFrame:
         return self._df
 
-    def item_popularity(self, key) -> int:
+    def get_value(self, key) -> int:
 
         result = self._pandas_df[self._pandas_df["key"] == key]
 

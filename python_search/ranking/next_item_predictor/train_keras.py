@@ -5,17 +5,10 @@ import mlflow
 import numpy as np
 from keras import layers
 from keras.models import Sequential
-from sklearn.model_selection import train_test_split
 
-from python_search.config import DataConfig
-from python_search.ranking.next_item_predictor.offline_evaluation import \
-    OfflineEvaluation
-from python_search.ranking.next_item_predictor.training_dataset import \
-    TrainingDataset
-from python_search.ranking.next_item_predictor.transform import Transform
-
-
+Model = Any
 class Train:
+
     EPOCHS = 30
     TEST_SPLIT_SIZE = 0.10
     BATCH_SIZE = 128
@@ -27,58 +20,7 @@ class Train:
         # enable the profiling scaffolding
         os.environ["TIME_IT"] = "1"
 
-    def train_and_log(self, dataset):
-        """
-        train the _model and log it to MLFlow
-        """
-
-        mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
-        # this creates a new experiment
-        mlflow.set_experiment(DataConfig.NEXT_ITEM_EXPERIMENT_NAME)
-        mlflow.autolog()
-
-        with mlflow.start_run():
-            model, metrics, offline_evaluation = self.train(dataset)
-            mlflow.log_params(metrics)
-            mlflow.keras.log_model(model, "model")
-            mlflow.log_params(offline_evaluation)
-
-        print("Keras was trained successfully!")
-        return model, metrics, offline_evaluation
-
-    def train(self, dataset: TrainingDataset, plot_history=False):
-        """
-        performs training
-
-        :param dataset:
-        :param plot_history:
-        :return:
-        """
-
-        # prepare the _entries
-        X, Y = Transform().transform_train(dataset)
-        X_train, X_test, Y_train, Y_test = self.split(X, Y)
-
-        X_test = np.where(np.isnan(X_test), 0.5, X_test)
-        Y_test = np.where(np.isnan(Y_test), 0.5, Y_test)
-        Y_train = np.where(np.isnan(Y_train), 0.5, Y_train)
-
-        X_test_p = np.delete(X_test, 0, axis=1)
-        X_train_p = np.delete(X_train, 0, axis=1)
-
-        model, history = self._only_train(X_train_p, X_test_p, Y_train, Y_test)
-        metrics = self._compute_standard_metrics(
-            model, X_train_p, X_test_p, Y_train, Y_test
-        )
-
-        offline_evaluation = OfflineEvaluation().run(model, dataset, X_test)
-
-        if plot_history:
-            self._plot_training_history(history)
-
-        return model, metrics, offline_evaluation
-
-    def _only_train(self, X_train, X_test, Y_train, Y_test) -> Tuple[Any, Any]:
+    def train(self, X_train, X_test, Y_train, Y_test) -> Model:
 
         print("Starting train with N epochs, N=", self.epochs)
         print(
@@ -102,38 +44,17 @@ class Train:
         model.add(layers.Dense(1))
         model.compile(optimizer="rmsprop", loss="mse", metrics=["mae", "mse"])
 
-        history = model.fit(
+        model.fit(
             X_train,
             Y_train,
             epochs=self.epochs,
             batch_size=Train.BATCH_SIZE,
             validation_data=(X_test, Y_test),
         )
+        #self._plot_training_history(history)
 
-        return model, history
+        return model
 
-    def split(self, X, Y):
-        X_train, X_test, Y_train, Y_test = train_test_split(
-            X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
-        )
-        return X_train, X_test, Y_train, Y_test
-
-    def _compute_standard_metrics(self, model, X_train, X_test, Y_train, Y_test):
-        """
-        computes mse and mae for train and test splits
-        """
-        train_mse, train_mae, train_mse2 = model.evaluate(X_train, Y_train)
-        test_mse, test_mae, test_mse2 = model.evaluate(X_test, Y_test)
-
-        metrics = {
-            "train_mse": train_mse,
-            "train_mae": train_mae,
-            "test_mse": test_mse,
-            "test_mae": test_mae,
-        }
-        print("Metrics:", metrics)
-
-        return metrics
 
     def _plot_training_history(self, history):
         import matplotlib.pyplot as plt
@@ -150,14 +71,3 @@ class Train:
         plt.legend()
         plt.show()
 
-    def _normalize(self, X_train, X_test):
-        # normalize
-        mean = X_train.mean(axis=0)
-        X_train -= mean
-        std = X_train.std(axis=0)
-        X_train /= std
-
-        X_test -= mean
-        X_test /= std
-
-        return X_train, X_test

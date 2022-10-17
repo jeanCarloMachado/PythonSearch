@@ -2,7 +2,7 @@ from python_search.config import ConfigurationLoader
 from python_search.ranking.next_item_predictor.inference.inference import \
     Inference
 from python_search.ranking.next_item_predictor.inference.input import \
-    InferenceInput
+    ModelInput
 
 
 from pyspark.sql import DataFrame
@@ -12,7 +12,7 @@ class OfflineEvaluation:
     Evaluate the _model with a part of the training _entries
     """
 
-    NUMBER_OF_TESTS = 50
+    NUMBER_OF_TESTS = 100
     def run(self, model, dataset: DataFrame, X_test):
         """
         Computes the average position of the entry in the validation set
@@ -41,13 +41,13 @@ class OfflineEvaluation:
                 )
                 continue
 
-            input = InferenceInput(
+            input = ModelInput(
                 hour=row["hour"],
                 month=row["month"],
                 previous_key=row["previous_key"],
                 previous_previous_key=row["previous_previous_key"],
             )
-            result = inference.get_ranking(predefined_input=input, print_weights=False)
+            result = inference.get_ranking(predefined_input=input)
 
             metadata = {
                 "pair": row["previous_key"] + " -> " + row["key"],

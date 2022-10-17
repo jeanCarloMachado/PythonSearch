@@ -76,7 +76,7 @@ def main():
 
     import uvicorn
 
-    os.putenv("WEB_CONCURRENCY", "1")
+    os.putenv("WEB_CONCURRENCY", "0")
     reload = False
     if "PS_DEBUG" in os.environ:
         print("Debug mode is ON, enabling reload")

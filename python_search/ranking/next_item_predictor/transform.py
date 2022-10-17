@@ -1,20 +1,20 @@
 import logging
+import os
 from typing import Dict, List, Tuple
 
 import numpy as np
 from pyspark.sql import DataFrame
 
 from python_search.config import ConfigurationLoader
-from python_search.ranking.entry_embeddings import create_key_indexed_embedding
-from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
-    InferenceEmbeddingsLoader
+from python_search.ranking.next_item_predictor.features.entry_embeddings.entry_embeddings import create_key_indexed_embedding
+from python_search.ranking.next_item_predictor.features.entry_embeddings import InferenceEmbeddingsLoader
 from python_search.ranking.next_item_predictor.inference.input import \
-    InferenceInput
+    ModelInput
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
 
 
-class Transform:
+class ModelTransform:
     """
     Transform takes an input and make it ready for inference
 
@@ -36,17 +36,66 @@ class Transform:
         self._all_keys = configuration.commands.keys()
         self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
-    def transform_train(self, dataset: DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+
+    def transform_single(
+            self, inference_input: ModelInput, all_keys
+    ) -> np.ndarray:
+        """
+        Transform the inference input into something that can be inferred.
+        This is an element wise ranking.
+        """
+
+        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
+            inference_input.previous_key
+        )
+        previous_previous_key_embedding = (
+            self.inference_embeddings.get_embedding_from_key(
+                inference_input.previous_previous_key
+            )
+        )
+
+        # create an inference array for all keys
+        X = np.zeros([len(self._all_keys), ModelTransform.DIMENSIONS])
+        for i, key in enumerate(all_keys):
+            key_embedding = self.inference_embeddings.get_embedding_from_key(key)
+            if key_embedding is None:
+                logging.warning(f"No content for key ({key})")
+                continue
+
+            X[i] = np.concatenate(
+                (
+                    key_embedding,
+                    previous_key_embedding,
+                    previous_previous_key_embedding,
+                    np.asarray([inference_input.month]),
+                    np.asarray([inference_input.hour]),
+                    np.asarray([inference_input.times_used_previous]),
+                    np.asarray([inference_input.times_used_previous_previous]),
+                )
+            )
+
+        return X
+
+    def transform_collection(self, dataset: DataFrame, use_cache=True) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y
         Returns a pair with X, Y
         """
         print("Number of rows in the dataset: ", dataset.count())
-        print(f"Dimensions of dataset = {Transform.DIMENSIONS}")
+        print(f"Dimensions of dataset = {ModelTransform.DIMENSIONS}")
+
+        if use_cache:
+            if not os.path.exists('/tmp/X.npy') or not os.path.exists('/tmp/Y.npy'):
+                raise Exception("Cache not found")
+            print("Using transformed data from cache")
+            X = np.load('/tmp/X.npy', allow_pickle=True)
+            Y = np.load('/tmp/Y.npy', allow_pickle=True)
+
+            return X, Y
 
         embeddings_keys = self._create_embeddings_training_dataset(dataset)
         # one extra for the row number
-        X = np.zeros([dataset.count(), Transform.DIMENSIONS + 1])
+        X = np.zeros([dataset.count(), ModelTransform.DIMENSIONS + 1])
         Y = np.empty(dataset.count())
 
         print("X shape:", X.shape)
@@ -72,46 +121,14 @@ class Transform:
 
             Y[i] = row.label
 
+
+        X = np.where(np.isnan(X), 0.5, X)
+        Y = np.where(np.isnan(Y), 0.5, Y)
+
+        np.save("/tmp/X.npy", X)
+        np.save("/tmp/Y.npy", Y)
+
         return X, Y
-
-    def transform_inference(
-        self, inference_input: InferenceInput, all_keys
-    ) -> np.ndarray:
-        """
-        Transform the inference input into something that can be inferred.
-        This is an element wise ranking.
-        """
-
-        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
-            inference_input.previous_key
-        )
-        previous_previous_key_embedding = (
-            self.inference_embeddings.get_embedding_from_key(
-                inference_input.previous_previous_key
-            )
-        )
-
-        # create an inference array for all keys
-        X = np.zeros([len(self._all_keys), Transform.DIMENSIONS])
-        for i, key in enumerate(all_keys):
-            key_embedding = self.inference_embeddings.get_embedding_from_key(key)
-            if key_embedding is None:
-                logging.warning(f"No content for key ({key})")
-                continue
-
-            X[i] = np.concatenate(
-                (
-                    key_embedding,
-                    previous_key_embedding,
-                    previous_previous_key_embedding,
-                    np.asarray([inference_input.month]),
-                    np.asarray([inference_input.hour]),
-                    np.asarray([inference_input.times_used_previous]),
-                    np.asarray([inference_input.times_used_previous_previous]),
-                )
-            )
-
-        return X
 
     def _create_embeddings_training_dataset(
         self, dataset: TrainingDataset

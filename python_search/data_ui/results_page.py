@@ -11,7 +11,7 @@ def load_results_page():
     from python_search.ranking.next_item_predictor.inference.inference import \
         Inference
     from python_search.ranking.next_item_predictor.inference.input import \
-        InferenceInput
+        ModelInput
 
     st.write("### Prediction results")
     st.write("##### Production run: " + Inference.PRODUCTION_RUN_ID)
@@ -64,9 +64,9 @@ def load_results_page():
 
     colA, colB = st.columns(2)
 
-    def get_inference_input_for_scenario(scenario, a_or_b="a") -> InferenceInput:
+    def get_inference_input_for_scenario(scenario, a_or_b="a") -> ModelInput:
         input_data = scenarios[scenario][a_or_b]
-        return InferenceInput(**input_data)
+        return ModelInput(**input_data)
 
     def perform_inference(inference_input):
         results = Inference(configuration=config).get_ranking(

@@ -45,7 +45,7 @@ class PythonSearchMLFlow:
             print(f"Loading run id: {run_id}")
 
         BASE_MLFLOW_LOCATON = (
-            "/Users/jean.machado@getyourguide.com/projects/PySearchEntries/mlflow/1"
+            "/Users/jean.machado@getyourguide.com/projects/PySearchEntries/mlflow/2"
         )
 
         if model_type == "keras":

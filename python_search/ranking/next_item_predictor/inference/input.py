@@ -6,11 +6,9 @@ from typing import Optional
 
 from python_search.ranking.next_item_predictor.features.times_used import \
     TimesUsed
-from python_search.ranking.next_item_predictor.inference.embeddings_loader import \
-    InferenceEmbeddingsLoader
 
 
-class InferenceInput:
+class ModelInput:
     hour: int
     month: int
     previous_key: str
@@ -37,22 +35,22 @@ class InferenceInput:
         self.times_used_previous = times_used_previous
         self.times_used_previous_previous = times_used_previous_previous
 
-        if not InferenceInput._times_used:
-           InferenceInput._times_used = TimesUsed()
+        if not ModelInput._times_used:
+           ModelInput._times_used = TimesUsed()
 
         if not times_used_previous:
-           self.times_used_previous = InferenceInput._times_used.item_popularity(
+           self.times_used_previous = ModelInput._times_used.get_value(
                previous_key
            )
         if not times_used_previous_previous:
            self.times_used_previous_previous = (
-               InferenceInput._times_used.item_popularity(previous_previous_key)
+               ModelInput._times_used.get_value(previous_previous_key)
            )
 
     @staticmethod
     def with_given_keys(
         previous_key: str, previous_previous_key: str
-    ) -> "InferenceInput":
+    ) -> "ModelInput":
         """
         Do inference based on the current time and the recent used keys
         """
@@ -62,7 +60,7 @@ class InferenceInput:
             int(os.environ["FORCE_MONTH"]) if "FORCE_MONTH" in os.environ else now.month
         )
 
-        instance = InferenceInput(
+        instance = ModelInput(
             hour=hour,
             month=month,
             previous_key=previous_key,

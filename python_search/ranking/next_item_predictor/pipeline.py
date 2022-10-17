@@ -5,15 +5,22 @@ from typing import Literal, List
 import os
 from typing import Optional
 
+import numpy as np
 from pyspark.sql import SparkSession
+from sklearn.model_selection import train_test_split
 
 from python_search.events.run_performed.clean import RunPerformedCleaning
-from python_search.infrastructure.performance import timeit
+from python_search.ranking.next_item_predictor.mlflow_logger import configure_mlflow
+from python_search.ranking.next_item_predictor.offline_evaluation import OfflineEvaluation
 from python_search.ranking.next_item_predictor.train_keras import Train
 from python_search.ranking.next_item_predictor.train_xgboost import \
     TrainXGBoost
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
+
+from pyspark.sql import DataFrame
+
+from python_search.ranking.next_item_predictor.transform import ModelTransform
 
 
 class NextItemPredictorPipeline:
@@ -25,17 +32,21 @@ class NextItemPredictorPipeline:
     def __init__(self):
         os.environ["TIME_IT"] = "1"
 
-    def run(self, train_only: Optional[List[model_types]] = None, use_cache=True, clean_first=True):
+    def run(self, train_only: Optional[List[model_types]] = None, use_cache=False, clean_first=False, skip_offline_evaluation=False):
         """
         Trains both xgboost and keras models
 
         Args:
+            train_only:
             use_cache:
-            log_model:
+            clean_first:
 
         Returns:
 
         """
+
+        print('Using cache is:', use_cache)
+
         if not train_only:
             train_only = ["xgboost", "keras"]
         else:
@@ -44,12 +55,33 @@ class NextItemPredictorPipeline:
         if clean_first:
             RunPerformedCleaning().clean()
 
-        dataset = TrainingDataset().build(use_cache)
+        dataset: DataFrame = TrainingDataset().build(use_cache)
+        X, Y = ModelTransform().transform_collection(dataset, use_cache=use_cache)
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
+        )
+
+        X_test_p = X_test
+        X_test = np.delete(X_test, 0, axis=1)
+        X_train = np.delete(X_train, 0, axis=1)
 
         if "xgboost" in train_only:
-            TrainXGBoost().train_and_log(dataset)
+            mlflow = configure_mlflow()
+            with mlflow.start_run():
+                model = TrainXGBoost().train(X_train, X_test, Y_train, Y_test)
+                mlflow.xgboost.log_model(model, "model")
+                if not skip_offline_evaluation:
+                    offline_evaluation = OfflineEvaluation().run(model, dataset, X_test_p)
+                    mlflow.log_params(offline_evaluation)
+
         if "keras" in train_only:
-            Train().train_and_log(dataset)
+            mlflow = configure_mlflow()
+            with mlflow.start_run():
+                model = Train().train(X_train, X_test, Y_train, Y_test)
+                mlflow.keras.log_model(model, "model", keras_module="keras")
+                if not skip_offline_evaluation:
+                    offline_evaluation = OfflineEvaluation().run(model, dataset, X_test_p)
+                    mlflow.log_params(offline_evaluation)
 
     def _spark(self):
         return SparkSession.builder.getOrCreate()
