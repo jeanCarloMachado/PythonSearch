@@ -36,7 +36,7 @@ class InstallDependencies:
     def _exists(self, cmd: str):
         result = os.system(f"which {cmd} >/dev/null")
         if result == 0:
-            print("Great, you have {cmd} alread installed")
+            print(f"Great, you have {cmd} alread installed")
             return True
         return False
 
@@ -50,3 +50,6 @@ class InstallDependencies:
         os.system(
             "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
         )
+
+        # sets a light theme in kitty
+        os.system("kitty +kitten themes --reload-in=all One Half Light")
