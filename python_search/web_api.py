@@ -49,8 +49,6 @@ def health():
     if generator._inference is not None:
         run_id = generator._inference.PRODUCTION_RUN_ID
 
-
-
     return {
         "keys_count": len(ConfigurationLoader().load_config().commands.keys()),
         "run_id": run_id,

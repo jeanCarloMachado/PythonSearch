@@ -7,9 +7,7 @@ class RankedEntries:
     type = List[Tuple[str, dict]]
 
     @staticmethod
-    def get_list_of_tuples(
-        from_keys: List[str], entities: dict
-    ) -> RankedEntries.type:
+    def get_list_of_tuples(from_keys: List[str], entities: dict) -> RankedEntries.type:
         used_entries = []
         for used_key in from_keys:
             if used_key not in entities:

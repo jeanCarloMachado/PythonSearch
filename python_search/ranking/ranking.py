@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import logging
 from collections import namedtuple
-from typing import List, Optional, Literal
+from typing import List, Literal, Optional
 
 from python_search.config import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
@@ -9,7 +10,6 @@ from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.ranked_entries import RankedEntries
 from python_search.ranking.results import FzfOptimizedSearchResults
-import logging
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
@@ -30,7 +30,9 @@ class RankingGenerator:
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
         self._used_entries: Optional[List[str]] = None
-        self._ranking_method_used: Literal['RankingNextModel', 'BaselineRank'] = 'BaselineRank'
+        self._ranking_method_used: Literal[
+            "RankingNextModel", "BaselineRank"
+        ] = "BaselineRank"
 
         if self._feature_toggle.is_enabled("ranking_next"):
             from python_search.ranking.next_item_predictor.inference.inference import \
@@ -64,12 +66,13 @@ class RankingGenerator:
     def _rerank_via_model(self):
         try:
             self._ranked_keys = self._inference.get_ranking()
-            self._ranking_method_used = 'RankingNextModel'
+            self._ranking_method_used = "RankingNextModel"
         except Exception as e:
 
             print(f"Failed to perform inference, reason {e}")
 
             # raise e
+
     def _merge_with_latest_used(self) -> RankedEntries.type:
         """
         Merge the ranking with the latest entries
@@ -92,8 +95,7 @@ class RankingGenerator:
                 logging.warning(f"Entryentry_content is not a dict {content}")
                 continue
 
-
-            content['tags'] = content.get('tags', []) + ['RecentlyUsed']
+            content["tags"] = content.get("tags", []) + ["RecentlyUsed"]
             result.append((key, content))
             # delete key
             self._ranked_keys.remove(key)
@@ -105,11 +107,11 @@ class RankingGenerator:
 
             entry = self._entries[key]
             if type(entry) == dict:
-                existing_tags = entry.get('tags', [])
+                existing_tags = entry.get("tags", [])
                 if type(existing_tags) == str:
                     existing_tags = [existing_tags]
 
-                entry['tags'] = existing_tags + [self._ranking_method_used]
+                entry["tags"] = existing_tags + [self._ranking_method_used]
             result.append((key, entry))
 
         # the result is the one to be returned, final_key_list is to be used in the cache

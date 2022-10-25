@@ -6,8 +6,10 @@ import numpy as np
 from pyspark.sql import DataFrame
 
 from python_search.config import ConfigurationLoader
-from python_search.ranking.next_item_predictor.features.entry_embeddings.entry_embeddings import create_key_indexed_embedding
-from python_search.ranking.next_item_predictor.features.entry_embeddings import InferenceEmbeddingsLoader
+from python_search.ranking.next_item_predictor.features.entry_embeddings import \
+    InferenceEmbeddingsLoader
+from python_search.ranking.next_item_predictor.features.entry_embeddings.entry_embeddings import \
+    create_key_indexed_embedding
 from python_search.ranking.next_item_predictor.inference.input import \
     ModelInput
 from python_search.ranking.next_item_predictor.training_dataset import \
@@ -36,10 +38,7 @@ class ModelTransform:
         self._all_keys = configuration.commands.keys()
         self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
-
-    def transform_single(
-            self, inference_input: ModelInput, all_keys
-    ) -> np.ndarray:
+    def transform_single(self, inference_input: ModelInput, all_keys) -> np.ndarray:
         """
         Transform the inference input into something that can be inferred.
         This is an element wise ranking.
@@ -76,7 +75,9 @@ class ModelTransform:
 
         return X
 
-    def transform_collection(self, dataset: DataFrame, use_cache=True) -> Tuple[np.ndarray, np.ndarray]:
+    def transform_collection(
+        self, dataset: DataFrame, use_cache=True
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Transform the dataset into X and Y
         Returns a pair with X, Y
@@ -85,11 +86,11 @@ class ModelTransform:
         print(f"Dimensions of dataset = {ModelTransform.DIMENSIONS}")
 
         if use_cache:
-            if not os.path.exists('/tmp/X.npy') or not os.path.exists('/tmp/Y.npy'):
+            if not os.path.exists("/tmp/X.npy") or not os.path.exists("/tmp/Y.npy"):
                 raise Exception("Cache not found")
             print("Using transformed data from cache")
-            X = np.load('/tmp/X.npy', allow_pickle=True)
-            Y = np.load('/tmp/Y.npy', allow_pickle=True)
+            X = np.load("/tmp/X.npy", allow_pickle=True)
+            Y = np.load("/tmp/Y.npy", allow_pickle=True)
 
             return X, Y
 
@@ -120,7 +121,6 @@ class ModelTransform:
             )
 
             Y[i] = row.label
-
 
         X = np.where(np.isnan(X), 0.5, X)
         Y = np.where(np.isnan(Y), 0.5, Y)

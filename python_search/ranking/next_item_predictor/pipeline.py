@@ -1,25 +1,23 @@
 #!/usr/bin/env python
 # using ipython interferes with fire arguments passing
 
-from typing import Literal, List
 import os
-from typing import Optional
+from typing import List, Literal, Optional
 
 import numpy as np
-from pyspark.sql import SparkSession
+from pyspark.sql import DataFrame, SparkSession
 from sklearn.model_selection import train_test_split
 
 from python_search.events.run_performed.clean import RunPerformedCleaning
-from python_search.ranking.next_item_predictor.mlflow_logger import configure_mlflow
-from python_search.ranking.next_item_predictor.offline_evaluation import OfflineEvaluation
+from python_search.ranking.next_item_predictor.mlflow_logger import \
+    configure_mlflow
+from python_search.ranking.next_item_predictor.offline_evaluation import \
+    OfflineEvaluation
 from python_search.ranking.next_item_predictor.train_keras import Train
 from python_search.ranking.next_item_predictor.train_xgboost import \
     TrainXGBoost
 from python_search.ranking.next_item_predictor.training_dataset import \
     TrainingDataset
-
-from pyspark.sql import DataFrame
-
 from python_search.ranking.next_item_predictor.transform import ModelTransform
 
 
@@ -27,12 +25,19 @@ class NextItemPredictorPipeline:
     """
     Exposes the whole ML pipeline, the runs everything
     """
+
     model_types: Literal["xgboost", "keras"] = "xgboost"
 
     def __init__(self):
         os.environ["TIME_IT"] = "1"
 
-    def run(self, train_only: Optional[List[model_types]] = None, use_cache=False, clean_first=False, skip_offline_evaluation=False):
+    def run(
+        self,
+        train_only: Optional[List[model_types]] = None,
+        use_cache=False,
+        clean_first=False,
+        skip_offline_evaluation=False,
+    ):
         """
         Trains both xgboost and keras models
 
@@ -45,12 +50,12 @@ class NextItemPredictorPipeline:
 
         """
 
-        print('Using cache is:', use_cache)
+        print("Using cache is:", use_cache)
 
         if not train_only:
             train_only = ["xgboost", "keras"]
         else:
-            print('Training only: ', train_only)
+            print("Training only: ", train_only)
 
         if clean_first:
             RunPerformedCleaning().clean()
@@ -71,7 +76,9 @@ class NextItemPredictorPipeline:
                 model = TrainXGBoost().train(X_train, X_test, Y_train, Y_test)
                 mlflow.xgboost.log_model(model, "model")
                 if not skip_offline_evaluation:
-                    offline_evaluation = OfflineEvaluation().run(model, dataset, X_test_p)
+                    offline_evaluation = OfflineEvaluation().run(
+                        model, dataset, X_test_p
+                    )
                     mlflow.log_params(offline_evaluation)
 
         if "keras" in train_only:
@@ -80,7 +87,9 @@ class NextItemPredictorPipeline:
                 model = Train().train(X_train, X_test, Y_train, Y_test)
                 mlflow.keras.log_model(model, "model", keras_module="keras")
                 if not skip_offline_evaluation:
-                    offline_evaluation = OfflineEvaluation().run(model, dataset, X_test_p)
+                    offline_evaluation = OfflineEvaluation().run(
+                        model, dataset, X_test_p
+                    )
                     mlflow.log_params(offline_evaluation)
 
     def _spark(self):

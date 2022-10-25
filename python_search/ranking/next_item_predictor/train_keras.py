@@ -7,6 +7,8 @@ from keras import layers
 from keras.models import Sequential
 
 Model = Any
+
+
 class Train:
 
     EPOCHS = 30
@@ -51,10 +53,9 @@ class Train:
             batch_size=Train.BATCH_SIZE,
             validation_data=(X_test, Y_test),
         )
-        #self._plot_training_history(history)
+        # self._plot_training_history(history)
 
         return model
-
 
     def _plot_training_history(self, history):
         import matplotlib.pyplot as plt
@@ -70,4 +71,3 @@ class Train:
         plt.ylabel("Loss")
         plt.legend()
         plt.show()
-

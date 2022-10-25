@@ -74,7 +74,7 @@ class PythonSearchConfiguration(EntriesGroup):
         entries_groups: Optional[List[EntriesGroup]] = None,
         supported_features: Optional[PythonSearchFeaturesSupport] = None,
         default_tags=None,
-        tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]]=None
+        tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
     ):
         if entries:
             self.commands = entries
@@ -153,5 +153,3 @@ class ConfigurationLoader:
     def load_entries(self):
         config = self.load_config()
         return config.commands
-
-

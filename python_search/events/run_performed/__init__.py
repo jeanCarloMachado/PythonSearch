@@ -9,8 +9,9 @@ from python_search.data_collector import GenericDataCollector
 
 class RunPerformedWriter:
     def write(self, event: RunPerformed):
-        import datetime;
-        event.timestamp  = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        import datetime
+
+        event.timestamp = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
         return GenericDataCollector().write(
             data=event.__dict__, table_name="searches_performed"
@@ -36,5 +37,3 @@ class RunPerformed(BaseModel):
     @staticmethod
     def get_schema():
         return "key string, query_input string, shortcut string"
-
-

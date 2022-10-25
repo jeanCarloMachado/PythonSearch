@@ -53,10 +53,7 @@ class Inference:
             raise e
 
     @timeit
-    def get_ranking(
-        self,
-        predefined_input: Optional[ModelInput] = None
-    ) -> List[str]:
+    def get_ranking(self, predefined_input: Optional[ModelInput] = None) -> List[str]:
         """
         Gets the ranking from the next item _model
         """

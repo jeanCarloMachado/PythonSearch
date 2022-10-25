@@ -7,7 +7,7 @@ from typing import List
 from python_search.apps.notification_ui import send_notification
 from python_search.config import PythonSearchConfiguration
 from python_search.context import Context
-from python_search.events.run_performed import (RunPerformed)
+from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.client import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher

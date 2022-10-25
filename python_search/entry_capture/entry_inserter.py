@@ -4,7 +4,7 @@ import shutil
 from datetime import datetime
 
 from python_search.config import PythonSearchConfiguration
-from python_search.events.run_performed import (RunPerformed)
+from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.client import LogRunPerformedClient
 
 
@@ -17,19 +17,26 @@ class EntryInserter:
 
     def __init__(self, configuration: PythonSearchConfiguration):
         self._configuration = configuration
-        self._file_to_append = self._configuration.get_project_root() + "/entries_main.py"
+        self._file_to_append = (
+            self._configuration.get_project_root() + "/entries_main.py"
+        )
         self._new_entries_string = EntryInserter.NEW_ENTRIES_STRING
 
     def insert(self, key: str, entry: dict):
 
         entry["created_at"] = datetime.now().isoformat()
 
-        if 'tags' in entry and self._configuration.tags_dependent_inserter_marks:
-            for tag in entry['tags']:
+        if "tags" in entry and self._configuration.tags_dependent_inserter_marks:
+            for tag in entry["tags"]:
                 if tag in self._configuration.tags_dependent_inserter_marks.keys():
-                    self._new_entries_string = self._configuration.tags_dependent_inserter_marks[tag][0]
-                    self._file_to_append = self._configuration.get_project_root() + '/' +  self._configuration.tags_dependent_inserter_marks[tag][1]
-
+                    self._new_entries_string = (
+                        self._configuration.tags_dependent_inserter_marks[tag][0]
+                    )
+                    self._file_to_append = (
+                        self._configuration.get_project_root()
+                        + "/"
+                        + self._configuration.tags_dependent_inserter_marks[tag][1]
+                    )
 
         row_entry = str(entry)
         line_to_add = f"    '{key}': {row_entry},"
@@ -38,8 +45,6 @@ class EntryInserter:
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )
-
-
 
         from python_search.apps.notification_ui import send_notification
 

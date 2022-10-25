@@ -16,8 +16,8 @@ class PythonSearchCli:
 
     Try to avoid adding direct commands, prefer instead to add objects as parts of functions
     """
-    # all commands that are not self-explanatory should not be part of the main api, thus are marked as private.
 
+    # all commands that are not self-explanatory should not be part of the main api, thus are marked as private.
 
     configuration: PythonSearchConfiguration
 
@@ -66,12 +66,12 @@ class PythonSearchCli:
         """
         FzfInTerminal.build_search_ui(self.configuration).run()
 
-
     def edit_main(self):
         """Edit the main script"""
         from python_search.entry_capture.edit_content import EditKey
 
         return EditKey(self.configuration).edit_default()
+
     def register_new(self):
         """Starts the UI for collecting a new entry into pythonsearch"""
         from python_search.entry_capture.register_new import RegisterNew
@@ -113,6 +113,7 @@ class PythonSearchCli:
         from python_search.shortcut.generator import ShortcutGenerator
 
         return ShortcutGenerator(self.configuration)
+
     def _search_edit(self, key=None):
         from python_search.entry_capture.edit_content import EditKey
 

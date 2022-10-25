@@ -6,6 +6,7 @@ RUN pip install --upgrade pip ; pip install fire
 COPY . /src
 WORKDIR /src
 
-#RUN poetry install -E full
+RUN pip install python-search
+RUN poetry install --all-extras ; pip install -e .
 
 

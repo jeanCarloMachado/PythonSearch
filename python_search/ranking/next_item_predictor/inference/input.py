@@ -25,8 +25,8 @@ class ModelInput:
         month,
         previous_key,
         previous_previous_key,
-        times_used_previous: Optional[int]=None,
-        times_used_previous_previous: Optional[int]=None,
+        times_used_previous: Optional[int] = None,
+        times_used_previous_previous: Optional[int] = None,
     ):
         self.hour = hour
         self.month = month
@@ -36,21 +36,17 @@ class ModelInput:
         self.times_used_previous_previous = times_used_previous_previous
 
         if not ModelInput._times_used:
-           ModelInput._times_used = TimesUsed()
+            ModelInput._times_used = TimesUsed()
 
         if not times_used_previous:
-           self.times_used_previous = ModelInput._times_used.get_value(
-               previous_key
-           )
+            self.times_used_previous = ModelInput._times_used.get_value(previous_key)
         if not times_used_previous_previous:
-           self.times_used_previous_previous = (
-               ModelInput._times_used.get_value(previous_previous_key)
-           )
+            self.times_used_previous_previous = ModelInput._times_used.get_value(
+                previous_previous_key
+            )
 
     @staticmethod
-    def with_given_keys(
-        previous_key: str, previous_previous_key: str
-    ) -> "ModelInput":
+    def with_given_keys(previous_key: str, previous_previous_key: str) -> "ModelInput":
         """
         Do inference based on the current time and the recent used keys
         """

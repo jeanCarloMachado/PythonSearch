@@ -13,7 +13,8 @@ from python_search.events.run_performed.dataset import RunPerformedDataset
 from python_search.infrastructure.performance import timeit
 from python_search.ranking.next_item_predictor.features.times_used import \
     TimesUsed
-from python_search.ranking.next_item_predictor.inference.label import label_formula
+from python_search.ranking.next_item_predictor.inference.label import \
+    label_formula
 
 
 class TrainingDataset:
@@ -89,7 +90,6 @@ class TrainingDataset:
         """
 
         logging.info("Adding label")
-
 
         udf_f = udf(label_formula, FloatType())
         with_label = all_features.withColumn(

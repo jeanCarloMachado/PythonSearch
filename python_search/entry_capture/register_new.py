@@ -7,14 +7,13 @@ from grimoire.event_sourcing.message import MessageBroker
 from grimoire.string import emptish
 
 from python_search.apps.clipboard import Clipboard
+from python_search.entry_type import infer_default_type
 from python_search.entry_capture.entry_inserter import EntryInserter
 from python_search.entry_capture.entry_inserter_gui import (EntryCaptureGUI,
                                                             EntryData)
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
-from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.interpreter.url import UrlInterpreter
 
 
 class RegisterNew:
@@ -36,7 +35,7 @@ class RegisterNew:
             default_content = Clipboard().get_content()
 
         if not default_type:
-            default_type = self._infer_default_type(default_content)
+            default_type = infer_default_type(default_content)
 
         entry_data: EntryData = EntryCaptureGUI().launch(
             "New Entry Details",
@@ -117,11 +116,6 @@ class RegisterNew:
 
         self.entry_inserter.insert(german_term, as_dict)
 
-    def _infer_default_type(self, content):
-        if UrlInterpreter.is_url(content):
-            return "Url"
 
-        if FileInterpreter.file_exists(content):
-            return "File"
 
-        return "Snippet"
+

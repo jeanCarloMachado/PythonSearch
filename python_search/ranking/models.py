@@ -36,7 +36,7 @@ class PythonSearchMLFlow:
         from typing import Literal
 
         model_type: Literal["xgboost", "keras"] = "xgboost"
-        #model_type: Literal["xgboost", "keras"] = "keras"
+        # model_type: Literal["xgboost", "keras"] = "keras"
 
         if not run_id:
             run_id = self.get_latest_next_predictor_run().run_id
