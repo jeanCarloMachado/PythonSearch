@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from enum import Enum
+
 from python_search.interpreter.file import FileInterpreter
 from python_search.interpreter.url import UrlInterpreter
-from enum import Enum
+
 
 class EntryType(str, Enum):
     URL = "Url"
@@ -13,7 +15,17 @@ class EntryType(str, Enum):
 
     @staticmethod
     def all():
-        return [EntryType.URL, EntryType.SNIPPET, EntryType.CMD, EntryType.FILE, EntryType.CALLABLE]
+        return {
+            0: EntryType.URL,
+            1: EntryType.SNIPPET,
+            2: EntryType.CMD,
+            3: EntryType.FILE,
+            4: EntryType.CALLABLE,
+        }
+
+    @staticmethod
+    def from_categorical(categorical: int) -> "EntryType":
+        return EntryType.all()[categorical]
 
     @staticmethod
     def to_categorical(type: "EntryType") -> int:
@@ -23,12 +35,18 @@ class EntryType(str, Enum):
         :param type:
         :return:
         """
-        all = EntryType.all()
+        all = list(EntryType.all().values())
 
         return all.index(type)
 
 
 def infer_default_type(content: str) -> EntryType:
+
+    if False:
+        from python_search.entry_type.classifier_inference import predict_entry_type
+        return predict_entry_type(content)
+
+
     if UrlInterpreter.is_url(content):
         return EntryType.URL
 
@@ -36,8 +54,3 @@ def infer_default_type(content: str) -> EntryType:
         return EntryType.FILE
 
     return EntryType.SNIPPET
-
-
-if __name__ == '__main__':
-    import fire
-    fire.Fire()

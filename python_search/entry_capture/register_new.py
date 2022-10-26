@@ -7,10 +7,10 @@ from grimoire.event_sourcing.message import MessageBroker
 from grimoire.string import emptish
 
 from python_search.apps.clipboard import Clipboard
-from python_search.entry_type import infer_default_type
 from python_search.entry_capture.entry_inserter import EntryInserter
 from python_search.entry_capture.entry_inserter_gui import (EntryCaptureGUI,
                                                             EntryData)
+from python_search.entry_type.entity import infer_default_type
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
@@ -115,7 +115,3 @@ class RegisterNew:
         }
 
         self.entry_inserter.insert(german_term, as_dict)
-
-
-
-
