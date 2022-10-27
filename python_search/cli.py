@@ -169,14 +169,15 @@ class PythonSearchCli:
 
     def _entry_type_classifier(self):
 
-        from python_search.entry_type.classifier_inference import ClassifierInferenceClient
-        class EntryTypeClassifierAPI:
+        from python_search.entry_type.classifier_inference import \
+            ClassifierInferenceClient
 
+        class EntryTypeClassifierAPI:
             def __init__(self):
                 self.inference_client = ClassifierInferenceClient
 
-
         return EntryTypeClassifierAPI
+
 
 def _error_handler(e):
     import sys

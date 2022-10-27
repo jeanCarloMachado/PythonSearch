@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
-from python_search.entry_type.classifier_inference import EntryData, predict_entry_type
+from python_search.entry_type.classifier_inference import (EntryData,
+                                                           predict_entry_type)
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.run_performed import RunPerformed, RunPerformedWriter
 
@@ -69,6 +70,8 @@ def log_run(event: RunPerformed):
     reload()
 
     return event
+
+
 @app.post("/entry_type/classify")
 def predict_entry_type_endpoint(entry: EntryData):
     return {"predicted_type": predict_entry_type(entry)}
@@ -77,7 +80,6 @@ def predict_entry_type_endpoint(entry: EntryData):
 @app.get("/recent_history")
 def recent_history_endpoint():
     return RecentKeys().get_latest_used_keys()
-
 
 
 def main():

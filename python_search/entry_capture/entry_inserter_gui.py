@@ -1,12 +1,12 @@
+import logging
 from dataclasses import dataclass
 from typing import List
 
 import fire
 
 from python_search.config import ConfigurationLoader
-import logging
-
-from python_search.entry_type.classifier_inference import ClassifierInferenceClient
+from python_search.entry_type.classifier_inference import \
+    ClassifierInferenceClient
 
 
 @dataclass
@@ -75,9 +75,7 @@ class EntryCaptureGUI:
                 )
             ],
             [sg.Text("Type")],
-            [
-                entry_type
-            ],
+            [entry_type],
             [sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
             [sg.Button("Write", key="write")],
@@ -101,7 +99,6 @@ class EntryCaptureGUI:
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
 
-
         while True:
             new_type = ClassifierInferenceClient().predict_from_content(default_content)
             print(f"New type: {new_type}")
@@ -112,8 +109,6 @@ class EntryCaptureGUI:
                 break
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 raise Exception("Quitting window")
-
-
 
         window.close()
         logging.info("values", values)
@@ -134,8 +129,15 @@ class EntryCaptureGUI:
 
     def _classify_type(self, content):
         from subprocess import Popen
-        p = Popen(f"python_search _entry_type_classifier inference_client predict_from_content  '{content}'", shell=True,
-              stdin=None, stdout=None, stderr=None, close_fds=True)
+
+        p = Popen(
+            f"python_search _entry_type_classifier inference_client predict_from_content  '{content}'",
+            shell=True,
+            stdin=None,
+            stdout=None,
+            stderr=None,
+            close_fds=True,
+        )
 
         print("process end")
         return p

@@ -42,7 +42,6 @@ class EntryType(str, Enum):
 
 def infer_default_type(content: str) -> EntryType:
 
-
     if UrlInterpreter.is_url(content):
         return EntryType.URL
 

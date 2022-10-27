@@ -96,6 +96,7 @@ class PythonSearchConfiguration(EntriesGroup):
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
         from datetime import datetime
+
         self._initialization_time = datetime.now()
 
 
