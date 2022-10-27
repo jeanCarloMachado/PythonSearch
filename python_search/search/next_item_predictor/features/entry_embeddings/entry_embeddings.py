@@ -8,7 +8,7 @@ from numpy import ndarray
 from python_search.config import ConfigurationLoader
 from python_search.infrastructure.performance import timeit
 from python_search.infrastructure.redis import PythonSearchRedis
-from python_search.ranking.entries_loader import EntriesLoader
+from python_search.search.entries_loader import EntriesLoader
 
 
 class RedisEmbeddingsReader:

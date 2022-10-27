@@ -125,7 +125,7 @@ class PythonSearchCli:
         return result
 
     def _ranking(self):
-        from python_search.ranking.ranking import Search
+        from python_search.search.ranking import Search
 
         return Search(self.configuration)
 

@@ -8,15 +8,15 @@ from python_search.config import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
-from python_search.ranking.ranked_entries import RankedEntries
-from python_search.ranking.results import FzfOptimizedSearchResults
+from python_search.search.ranked_entries import RankedEntries
+from python_search.search.results import FzfOptimizedSearchResults
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
 
 class Search:
     """
-    Generates the ranking for python search
+    Generates the search for python search
     """
 
     NUMBER_OF_LATEST_ENTRIES = 7
@@ -36,7 +36,7 @@ class Search:
         ] = "BaselineRank"
 
         if self._feature_toggle.is_enabled("ranking_next"):
-            from python_search.ranking.next_item_predictor.inference.inference import \
+            from python_search.search.next_item_predictor.inference.inference import \
                 Inference
 
             try:
@@ -76,7 +76,7 @@ class Search:
 
     def _merge_with_latest_used(self) -> RankedEntries.type:
         """
-        Merge the ranking with the latest entries
+        Merge the search with the latest entries
         """
         self._fetch_latest_entries()
 
@@ -127,7 +127,7 @@ class Search:
 
         # reverse the list given that we pop from the end
         self._used_entries.reverse()
-        # only use the latest 7 _entries for the top of the ranking
+        # only use the latest 7 _entries for the top of the search
         self._used_entries = self._used_entries[-self.NUMBER_OF_LATEST_ENTRIES :]
 
 

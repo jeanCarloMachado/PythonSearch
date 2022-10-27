@@ -6,17 +6,17 @@ from typing import Any, List, Optional
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
-from python_search.ranking.models import PythonSearchMLFlow
-from python_search.ranking.next_item_predictor.inference.input import \
+from python_search.search.models import PythonSearchMLFlow
+from python_search.search.next_item_predictor.inference.input import \
     ModelInput
-from python_search.ranking.next_item_predictor.transform import ModelTransform
+from python_search.search.next_item_predictor.transform import ModelTransform
 
 logger = setup_inference_logger()
 
 
 class Inference:
     """
-    Performs the ranking inference on all existing keys in the moment
+    Performs the search inference on all existing keys in the moment
     """
 
     PRODUCTION_RUN_ID = "239c1788635344c0acf98b8c8f26fff2"
@@ -55,7 +55,7 @@ class Inference:
     @timeit
     def get_ranking(self, predefined_input: Optional[ModelInput] = None) -> List[str]:
         """
-        Gets the ranking from the next item _model
+        Gets the search from the next item _model
         """
         logger.info("Number of existing keys for inference: " + str(len(self.all_keys)))
         inference_input = (

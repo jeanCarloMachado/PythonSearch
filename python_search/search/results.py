@@ -9,7 +9,7 @@ from dateutil import parser
 
 from python_search.acronyms import generate_acronyms
 from python_search.infrastructure.performance import timeit
-from python_search.ranking.ranked_entries import RankedEntries
+from python_search.search.ranked_entries import RankedEntries
 
 
 class FzfOptimizedSearchResults:

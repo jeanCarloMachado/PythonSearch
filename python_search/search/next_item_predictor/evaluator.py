@@ -3,10 +3,10 @@ import logging
 import sys
 
 from python_search.config import ConfigurationLoader
-from python_search.ranking.entries_loader import EntriesLoader
-from python_search.ranking.next_item_predictor.features.entry_embeddings.entry_embeddings import \
+from python_search.search.entries_loader import EntriesLoader
+from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import \
     RedisEmbeddingsReader
-from python_search.ranking.next_item_predictor.inference.inference import \
+from python_search.search.next_item_predictor.inference.inference import \
     Inference
 
 
@@ -27,7 +27,7 @@ class Evaluate:
 
     def evaluate(self, run_id=None):
         """
-        Evaluate a _model against our ranking
+        Evaluate a _model against our search
         """
         logging.info("Evaluate _model")
         print("Run id ", run_id)

@@ -10,7 +10,7 @@ PORT = 8000
 
 app = FastAPI()
 from python_search.config import ConfigurationLoader
-from python_search.ranking.ranking import Search
+from python_search.search.ranking import Search
 
 generator = Search(ConfigurationLoader().load_config())
 ranking_result = generator.generate()
@@ -66,7 +66,7 @@ def log_run(event: RunPerformed):
 
     RunPerformedWriter().write(event)
 
-    # regenerate the ranking after running a key
+    # regenerate the search after running a key
     reload()
 
     return event

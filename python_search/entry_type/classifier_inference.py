@@ -14,12 +14,12 @@ class EntryData(BaseModel):
 def predict_entry_type(entry_data: EntryData) -> EntryType:
     import contextlib
 
-    from python_search.ranking.models import PythonSearchMLFlow
+    from python_search.search.models import PythonSearchMLFlow
 
     model = PythonSearchMLFlow().get_entry_type_classifier(
         run_id="89a6693c06244e54a3c921c86bd8b15b"
     )
-    from python_search.ranking.next_item_predictor.features.entry_embeddings.entry_embeddings import \
+    from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import \
         create_embeddings_from_strings
 
     data = create_embeddings_from_strings([entry_data.content])

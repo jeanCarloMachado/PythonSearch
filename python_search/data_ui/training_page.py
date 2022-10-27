@@ -1,6 +1,6 @@
 import streamlit as st
 
-from python_search.ranking.next_item_predictor.training_dataset import \
+from python_search.search.next_item_predictor.training_dataset import \
     TrainingDataset
 
 

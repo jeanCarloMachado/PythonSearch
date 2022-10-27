@@ -9,16 +9,16 @@ from pyspark.sql import DataFrame, SparkSession
 from sklearn.model_selection import train_test_split
 
 from python_search.events.run_performed.clean import RunPerformedCleaning
-from python_search.ranking.next_item_predictor.mlflow_logger import \
+from python_search.search.next_item_predictor.mlflow_logger import \
     configure_mlflow
-from python_search.ranking.next_item_predictor.offline_evaluation import \
+from python_search.search.next_item_predictor.offline_evaluation import \
     OfflineEvaluation
-from python_search.ranking.next_item_predictor.train_keras import Train
-from python_search.ranking.next_item_predictor.train_xgboost import \
+from python_search.search.next_item_predictor.train_keras import Train
+from python_search.search.next_item_predictor.train_xgboost import \
     TrainXGBoost
-from python_search.ranking.next_item_predictor.training_dataset import \
+from python_search.search.next_item_predictor.training_dataset import \
     TrainingDataset
-from python_search.ranking.next_item_predictor.transform import ModelTransform
+from python_search.search.next_item_predictor.transform import ModelTransform
 
 
 class NextItemPredictorPipeline:

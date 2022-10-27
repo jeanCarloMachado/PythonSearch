@@ -6,13 +6,13 @@ import numpy as np
 from pyspark.sql import DataFrame
 
 from python_search.config import ConfigurationLoader
-from python_search.ranking.next_item_predictor.features.entry_embeddings import \
+from python_search.search.next_item_predictor.features.entry_embeddings import \
     InferenceEmbeddingsLoader
-from python_search.ranking.next_item_predictor.features.entry_embeddings.entry_embeddings import \
+from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import \
     create_key_indexed_embedding
-from python_search.ranking.next_item_predictor.inference.input import \
+from python_search.search.next_item_predictor.inference.input import \
     ModelInput
-from python_search.ranking.next_item_predictor.training_dataset import \
+from python_search.search.next_item_predictor.training_dataset import \
     TrainingDataset
 
 
@@ -41,7 +41,7 @@ class ModelTransform:
     def transform_single(self, inference_input: ModelInput, all_keys) -> np.ndarray:
         """
         Transform the inference input into something that can be inferred.
-        This is an element wise ranking.
+        This is an element wise search.
         """
 
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
