@@ -4,6 +4,9 @@ from typing import List
 import fire
 
 from python_search.config import ConfigurationLoader
+import logging
+
+from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 
 
 @dataclass
@@ -49,6 +52,17 @@ class EntryCaptureGUI:
             expand_x=True,
             expand_y=True,
         )
+        entry_type = sg.Combo(
+            [
+                "Snippet",
+                "Cmd",
+                "Url",
+                "File",
+                "Anonymous",
+            ],
+            key="type",
+            default_value=default_type,
+        )
 
         tags_chucks = self._chunks(self._tags, 4)
         layout = [
@@ -62,17 +76,7 @@ class EntryCaptureGUI:
             ],
             [sg.Text("Type")],
             [
-                sg.Combo(
-                    [
-                        "Snippet",
-                        "Cmd",
-                        "Url",
-                        "File",
-                        "Anonymous",
-                    ],
-                    key="type",
-                    default_value=default_type,
-                )
+                entry_type
             ],
             [sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
@@ -97,15 +101,22 @@ class EntryCaptureGUI:
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
 
+
         while True:
+            new_type = ClassifierInferenceClient().predict_from_content(default_content)
+            print(f"New type: {new_type}")
+            if new_type:
+                entry_type.update(new_type)
             event, values = window.read()
             if event and (event == "write" or event.endswith("_Enter")):
                 break
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 raise Exception("Quitting window")
 
+
+
         window.close()
-        print("values", values)
+        logging.info("values", values)
 
         selected_tags = []
         for key, value in values.items():
@@ -120,6 +131,14 @@ class EntryCaptureGUI:
             result = result.__dict__
 
         return result
+
+    def _classify_type(self, content):
+        from subprocess import Popen
+        p = Popen(f"python_search _entry_type_classifier inference_client predict_from_content  '{content}'", shell=True,
+              stdin=None, stdout=None, stderr=None, close_fds=True)
+
+        print("process end")
+        return p
 
     def _checkbox_list(self, tags):
         return ([self._sg.Checkbox(tag, key=tag, default=False) for tag in tags],)

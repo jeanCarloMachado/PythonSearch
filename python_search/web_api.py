@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
+from python_search.entry_type.classifier_inference import EntryData, predict_entry_type
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.run_performed import RunPerformed, RunPerformedWriter
 
@@ -8,16 +9,16 @@ PORT = 8000
 
 app = FastAPI()
 from python_search.config import ConfigurationLoader
-from python_search.ranking.ranking import RankingGenerator
+from python_search.ranking.ranking import Search
 
-generator = RankingGenerator(ConfigurationLoader().load_config())
+generator = Search(ConfigurationLoader().load_config())
 ranking_result = generator.generate()
 
 
 def reload_ranking():
     global generator
     global ranking_result
-    generator = RankingGenerator(ConfigurationLoader().reload())
+    generator = Search(ConfigurationLoader().reload())
     ranking_result = generator.generate()
     return ranking_result
 
@@ -53,6 +54,7 @@ def health():
         "keys_count": len(ConfigurationLoader().load_config().commands.keys()),
         "run_id": run_id,
         "latest_used_entries": entries,
+        "initialization_time": ConfigurationLoader().load_config()._initialization_time,
     }
 
 
@@ -67,11 +69,15 @@ def log_run(event: RunPerformed):
     reload()
 
     return event
+@app.post("/entry_type/classify")
+def predict_entry_type_endpoint(entry: EntryData):
+    return {"predicted_type": predict_entry_type(entry)}
 
 
 @app.get("/recent_history")
 def recent_history_endpoint():
     return RecentKeys().get_latest_used_keys()
+
 
 
 def main():

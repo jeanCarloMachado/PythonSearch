@@ -5,13 +5,13 @@ from mlflow.entities import RunInfo
 
 from python_search.config import DataConfig
 
-
 BASE_MLFLOW_LOCATON = (
     "/Users/jean.machado@getyourguide.com/projects/PySearchEntries/mlflow/"
 )
 
-NEXT_ITEM_PREDICTOR_PROJECT_NUMBER = '2'
-ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER = '3'
+NEXT_ITEM_PREDICTOR_PROJECT_NUMBER = "2"
+ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER = "3"
+
 
 class PythonSearchMLFlow:
     """
@@ -51,17 +51,12 @@ class PythonSearchMLFlow:
         if self.debug:
             print(f"Loading run id: {run_id}")
 
-
         path = f"{BASE_MLFLOW_LOCATON}/{NEXT_ITEM_PREDICTOR_PROJECT_NUMBER}/{run_id}/artifacts/model"
 
         if model_type == "keras":
-            model = self.mlflow_instance.keras.load_model(
-                path
-            )
+            model = self.mlflow_instance.keras.load_model(path)
         else:
-            model = self.mlflow_instance.xgboost.load_model(
-                path
-            )
+            model = self.mlflow_instance.xgboost.load_model(path)
 
         return model
 

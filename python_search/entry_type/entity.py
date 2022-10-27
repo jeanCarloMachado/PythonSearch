@@ -42,10 +42,6 @@ class EntryType(str, Enum):
 
 def infer_default_type(content: str) -> EntryType:
 
-    if False:
-        from python_search.entry_type.classifier_inference import predict_entry_type
-        return predict_entry_type(content)
-
 
     if UrlInterpreter.is_url(content):
         return EntryType.URL

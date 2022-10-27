@@ -87,6 +87,5 @@ class Inference:
 
     @timeit
     def _load_mlflow_model(self, run_id=None):
-
         model = PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
         return model

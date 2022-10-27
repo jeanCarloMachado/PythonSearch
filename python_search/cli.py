@@ -125,9 +125,9 @@ class PythonSearchCli:
         return result
 
     def _ranking(self):
-        from python_search.ranking.ranking import RankingGenerator
+        from python_search.ranking.ranking import Search
 
-        return RankingGenerator(self.configuration)
+        return Search(self.configuration)
 
     def _features(self):
         """Feature toggle system"""
@@ -167,6 +167,16 @@ class PythonSearchCli:
 
         return Report()
 
+    def _entry_type_classifier(self):
+
+        from python_search.entry_type.classifier_inference import ClassifierInferenceClient
+        class EntryTypeClassifierAPI:
+
+            def __init__(self):
+                self.inference_client = ClassifierInferenceClient
+
+
+        return EntryTypeClassifierAPI
 
 def _error_handler(e):
     import sys

@@ -14,7 +14,7 @@ from python_search.ranking.results import FzfOptimizedSearchResults
 ModelInfo = namedtuple("ModelInfo", "features label")
 
 
-class RankingGenerator:
+class Search:
     """
     Generates the ranking for python search
     """
@@ -30,6 +30,7 @@ class RankingGenerator:
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
         self._used_entries: Optional[List[str]] = None
+        self._entries = None
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
@@ -92,7 +93,7 @@ class RankingGenerator:
 
             # sometimes there can be a bug of saving something other than dicts as _entries
             if type(content) != dict:
-                logging.warning(f"Entryentry_content is not a dict {content}")
+                logging.warning(f"Entry is not a dict {content}")
                 continue
 
             content["tags"] = content.get("tags", []) + ["RecentlyUsed"]

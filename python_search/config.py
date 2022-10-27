@@ -66,6 +66,7 @@ class PythonSearchConfiguration(EntriesGroup):
     simple_gui_font_size = 14
     _default_tags = None
     tags_dependent_inserter_marks = None
+    _initialization_time = None
 
     def __init__(
         self,
@@ -94,6 +95,9 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
+        from datetime import datetime
+        self._initialization_time = datetime.now()
+
 
 class ConfigurationLoader:
     """
@@ -110,7 +114,8 @@ class ConfigurationLoader:
 
         import sys
 
-        sys.path.insert(0, folder)
+        if folder not in sys.path:
+            sys.path.insert(0, folder)
         from entries_main import config
 
         return config
