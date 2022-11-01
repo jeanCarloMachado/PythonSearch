@@ -6,7 +6,7 @@ from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.client import LogRunPerformedClient
-from python_search.search_ui.fzf_terminal import FzfInTerminal
+from python_search.search_ui.fzf_terminal import FzfInKitty
 from python_search.search_ui.preview import Preview
 
 
@@ -64,7 +64,7 @@ class PythonSearchCli:
         """
         Opens the Search UI. Main entrypoint of the application
         """
-        FzfInTerminal.build_search_ui(self.configuration).run()
+        FzfInKitty.build_search_ui(self.configuration).run()
 
     def edit_main(self):
         """Edit the main script"""
@@ -125,7 +125,7 @@ class PythonSearchCli:
         return result
 
     def _ranking(self):
-        from python_search.search.ranking import Search
+        from python_search.search.search import Search
 
         return Search(self.configuration)
 

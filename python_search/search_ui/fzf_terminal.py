@@ -5,27 +5,27 @@ from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
 
 
-class FzfInTerminal:
+class FzfInKitty:
     """
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE = 14
+    FONT_SIZE = 15
     PREVIEW_PERCENTAGE_SIZE = 50
-    HEIGHT = 240
+    HEIGHT = 127
     WIDTH = 950
 
     configuration: PythonSearchConfiguration
 
     @staticmethod
-    def build_search_ui(configuration) -> "FzfInTerminal":
+    def build_search_ui(configuration) -> "FzfInKitty":
         """Assembles what is specific for the search ui exclusively"""
 
-        return FzfInTerminal(configuration=configuration)
+        return FzfInKitty(configuration=configuration)
 
     def __init__(self, *, configuration: PythonSearchConfiguration):
-        self.height = FzfInTerminal.HEIGHT
-        self.width = FzfInTerminal.WIDTH
+        self.height = FzfInKitty.HEIGHT
+        self.width = FzfInKitty.WIDTH
 
         self.preview_cmd = f"python_search _preview_entry {{}} "
         self.executable = "python_search"
@@ -45,7 +45,7 @@ class FzfInTerminal:
         self._launch_terminal(self._fzf_cmd())
 
     def _fzf_cmd(self):
-        FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#e8e8e8,hl+:#d7005f"
+        FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#ffffff,hl+:#d7005f"
         THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
         cmd = f"""bash -c 'pkill fzf ; {self._get_rankging_generate_cmd()} | \
         fzf \
@@ -54,7 +54,7 @@ class FzfInTerminal:
         --no-hscroll \
         --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
-        --preview-window=right,{FzfInTerminal.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
+        --preview-window=right,{FzfInKitty.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
         --reverse -i --exact --no-sort \
         --border=none \
         --margin=0% \
@@ -112,14 +112,21 @@ class FzfInTerminal:
 
         font = "FontAwesome"
         if is_mac():
-            font = "Monaco"
+            font = "Menlo"
 
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title}"\
+        -o draw_minimal_borders=yes \
+        -o placement_strategy=top-left \
+        -o window_border_width=0 \
+        -o window_padding_width=0 \
+        -o hide_window_decorations=titlebar-only \
+        -o background_opacity=1 \
+        -o tab_bar_style=hidden  \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
         -o font_family="{font}" \
-        -o font_size={FzfInTerminal.FONT_SIZE} \
+        -o font_size={FzfInKitty.FONT_SIZE} \
         {Terminal.GLOBAL_TERMINAL_PARAMS} \
          {internal_cmd}
         """

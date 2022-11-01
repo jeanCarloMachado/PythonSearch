@@ -10,17 +10,16 @@ PORT = 8000
 
 app = FastAPI()
 from python_search.config import ConfigurationLoader
-from python_search.search.ranking import Search
+from python_search.search.search import Search
 
 generator = Search(ConfigurationLoader().load_config())
-ranking_result = generator.generate()
+ranking_result = generator.search()
 
 
 def reload_ranking():
     global generator
     global ranking_result
-    generator = Search(ConfigurationLoader().reload())
-    ranking_result = generator.generate()
+    ranking_result = Search(ConfigurationLoader().reload()).search()
     return ranking_result
 
 

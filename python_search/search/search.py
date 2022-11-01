@@ -47,7 +47,7 @@ class Search:
                 )
 
     @timeit
-    def generate(self) -> str:
+    def search(self) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
         """
@@ -82,9 +82,7 @@ class Search:
 
         result = []
 
-        while self._used_entries:
-            key = self._used_entries.pop()
-
+        for key in self._used_entries:
             if key not in self._entries:
                 # key not found in _entries
                 continue
@@ -125,10 +123,8 @@ class Search:
 
         self._used_entries = RecentKeys().get_latest_used_keys()
 
-        # reverse the list given that we pop from the end
-        self._used_entries.reverse()
-        # only use the latest 7 _entries for the top of the search
-        self._used_entries = self._used_entries[-self.NUMBER_OF_LATEST_ENTRIES :]
+        # only use the latest 7 entries for the top of the search
+        self._used_entries = self._used_entries[:self.NUMBER_OF_LATEST_ENTRIES]
 
 
 if __name__ == "__main__":

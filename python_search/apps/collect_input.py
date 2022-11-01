@@ -10,7 +10,7 @@ class CollectInput:
     Ask the user for input and return the entered _entries
     """
 
-    def launch(self, name="Enter Data", prefill_with_clipboard: bool = False):
+    def launch(self, name="Enter Data", default_content="", prefill_with_clipboard: bool = False):
         """
         Launch the _entries capture GUI.
         """
@@ -19,15 +19,14 @@ class CollectInput:
         with contextlib.redirect_stdout(None):
             import PySimpleGUI as sg
 
-            default_text = ""
             if prefill_with_clipboard:
-                default_text = Clipboard().get_content()
+                default_content = Clipboard().get_content()
 
             font_size = 12
             sg.theme("SystemDefault1")
 
             input_field = sg.Input(
-                key="content", default_text=default_text, expand_x=True, expand_y=True
+                key="content", default_text=default_content, expand_x=True, expand_y=True
             )
 
             layout = [
@@ -43,7 +42,7 @@ class CollectInput:
                 alpha_channel=0.99,
             )
 
-            if default_text != "":
+            if default_content != "":
                 input_field.update(select=True)
             # workaround for mac bug
             window.read(timeout=100)

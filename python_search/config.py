@@ -118,8 +118,8 @@ class ConfigurationLoader:
         if folder not in sys.path:
             sys.path.insert(0, folder)
         from entries_main import config
-
-        return config
+        import copy
+        return copy.deepcopy(config)
 
     def reload(self):
         """
@@ -130,7 +130,10 @@ class ConfigurationLoader:
         import entries_main
 
         importlib.reload(entries_main)
-        return entries_main.config
+
+        import entries_main
+        import copy
+        return copy.deepcopy(entries_main.config)
 
     def get_project_root(self):
         env_name = "PS_ENTRIES_HOME"
