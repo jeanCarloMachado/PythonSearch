@@ -124,7 +124,7 @@ class Search:
         self._used_entries = RecentKeys().get_latest_used_keys()
 
         # only use the latest 7 entries for the top of the search
-        self._used_entries = self._used_entries[:self.NUMBER_OF_LATEST_ENTRIES]
+        self._used_entries = self._used_entries[: self.NUMBER_OF_LATEST_ENTRIES]
 
 
 if __name__ == "__main__":

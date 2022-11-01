@@ -30,7 +30,11 @@ class Preview:
 
     def _print_values(self, data):
         print("")
-        print(data["type"] + ': ' + self._color_str(data["value"], self._get_color_for_type(data["type"])))
+        print(
+            data["type"]
+            + ": "
+            + self._color_str(data["value"], self._get_color_for_type(data["type"]))
+        )
         print(f"Key: {self._color_str(data['key'], Fore.YELLOW)}")
         if "description" in data:
             print(f"Description: {data['description']}")

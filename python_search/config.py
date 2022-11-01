@@ -117,8 +117,10 @@ class ConfigurationLoader:
 
         if folder not in sys.path:
             sys.path.insert(0, folder)
-        from entries_main import config
         import copy
+
+        from entries_main import config
+
         return copy.deepcopy(config)
 
     def reload(self):
@@ -131,8 +133,10 @@ class ConfigurationLoader:
 
         importlib.reload(entries_main)
 
-        import entries_main
         import copy
+
+        import entries_main
+
         return copy.deepcopy(entries_main.config)
 
     def get_project_root(self):

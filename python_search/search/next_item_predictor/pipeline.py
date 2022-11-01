@@ -14,8 +14,7 @@ from python_search.search.next_item_predictor.mlflow_logger import \
 from python_search.search.next_item_predictor.offline_evaluation import \
     OfflineEvaluation
 from python_search.search.next_item_predictor.train_keras import Train
-from python_search.search.next_item_predictor.train_xgboost import \
-    TrainXGBoost
+from python_search.search.next_item_predictor.train_xgboost import TrainXGBoost
 from python_search.search.next_item_predictor.training_dataset import \
     TrainingDataset
 from python_search.search.next_item_predictor.transform import ModelTransform

@@ -7,8 +7,7 @@ from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.models import PythonSearchMLFlow
-from python_search.search.next_item_predictor.inference.input import \
-    ModelInput
+from python_search.search.next_item_predictor.inference.input import ModelInput
 from python_search.search.next_item_predictor.transform import ModelTransform
 
 logger = setup_inference_logger()
