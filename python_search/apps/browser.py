@@ -26,13 +26,13 @@ class Browser:
         """
         params = locals()
         del params["self"]
-        cmd_to_run = self.open_cmd(**params)
+        cmd_to_run = self.open_shell_cmd(**params)
         print("Comand to run:", cmd_to_run)
-        from python_search.interpreter.cmd import CmdInterpreter
 
-        CmdInterpreter({"cmd": cmd_to_run}).interpret_default()
+        import  os
+        os.system(cmd_to_run)
 
-    def open_cmd(self, url: str, app_mode=False, incognito=False) -> str:
+    def open_shell_cmd(self, url: str, app_mode=False, incognito=False) -> str:
         """
         Returns the shell command to open the browser
         """
@@ -46,10 +46,18 @@ class Browser:
         # if type == SupportedBrowsers.CHROME and app_mode:
         #    return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  --app='{url}'"
 
-        cmd = f"{browser} '{url}'"
+        # open -a is much faster on mac to open url
+        # i suppose it is so because it does not have to do chrome startup again
+        # while calling the binary directly does
+        #cmd = f"/usr/bin/open -a '/Applications/Google Chrome.app' '{url}'"
+        #cmd = f'open -b com.google.chrome "{url}"'
+        # this is too slow
+        #cmd = f'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "{url}"'
+        # this does not work always
+        cmd = f'open -g "{url}" '
 
-        if type == SupportedBrowsers.CHROME and incognito:
-            cmd = f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  --incognito '{url}'"
+
+
 
         return cmd
 

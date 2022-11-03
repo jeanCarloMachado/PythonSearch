@@ -3,8 +3,6 @@ from __future__ import annotations
 import datetime
 import time
 
-from grimoire.event_sourcing.message import MessageBroker
-from grimoire.string import emptish
 
 from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.entry_inserter import EntryInserter
@@ -23,7 +21,6 @@ class RegisterNew:
 
     def __init__(self, configuration):
         self.configuration = configuration
-        self.message_broker = MessageBroker("search_run_register_new")
         self.entry_inserter = EntryInserter(configuration)
 
     def launch_ui(self, default_type=None, default_key=None, default_content=None):
@@ -34,7 +31,8 @@ class RegisterNew:
         if not default_content:
             default_content = Clipboard().get_content()
 
-        if not default_type:
+        # @todo reenable this once in the dockerfile
+        if False and not default_type:
             default_type = infer_default_type(default_content)
 
         entry_data: EntryData = EntryCaptureGUI().launch(
@@ -106,7 +104,7 @@ class RegisterNew:
 
         meaning = CollectInput().launch(f"Please type the meaning of ({german_term})")
 
-        if emptish(meaning):
+        if not meaning:
             raise RegisterNewException.empty_content()
 
         as_dict = {

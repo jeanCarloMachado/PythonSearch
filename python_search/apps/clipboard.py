@@ -1,13 +1,18 @@
 from typing import Union
 
-from grimoire.shell import shell
-from grimoire.string import chomp, remove_new_lines
 
 from python_search.environment import is_mac
 
+def chomp(x):
+    """remove special chars from end of string"""
+    if x.endswith("\r\n"):
+        return x[:-2]
+    if x.endswith("\n") or x.endswith("\r"):
+        return x[:-1]
+    return x
 
 class Clipboard:
-    def get_content(self, source="--primary"):
+    def get_content(self, source="--primary") -> str:
         """
         Accepted values are --primary and --clipboard
         """
@@ -16,24 +21,13 @@ class Clipboard:
         if is_mac():
             cmd = "pbpaste"
 
-        result = shell.run_with_result(cmd)
+        import subprocess;
+        result = subprocess.getoutput(cmd)
+
         result = chomp(result)
 
         return result
 
-    def get_content_preview(self):
-        content = self.get_content()
-        content = content.strip(" \t\n\r")
-        content = remove_new_lines(content)
-        content_len = len(content)
-        desized_preview_size = 10
-        size_of_preview = (
-            desized_preview_size if desized_preview_size < content_len else content_len
-        )
-
-        final_content = content[0:size_of_preview]
-        suffix = " ..." if len(content) > size_of_preview else ""
-        return f"{final_content}{suffix}"
 
     def set_content(self, content: Union[str, None] = None, enable_notifications=True):
         """
@@ -44,21 +38,18 @@ class Clipboard:
         :return:
         """
 
-        import select
         import sys
 
         if (
             not content
-            and select.select(
-                [
-                    sys.stdin,
-                ],
-                [],
-                [],
-                0.0,
-            )[0]
+            and has_stdin()
         ):
             content = sys.stdin.read()
+
+        if not content:
+            raise Exception("Tytrin to set empty to clipboard")
+
+
 
         def shellquote(s):
             return "'" + s.replace("'", "'\\''") + "'"
@@ -69,15 +60,28 @@ class Clipboard:
         if is_mac():
             clipboard_cmd = "pbcopy"
 
-        cmd = f"echo {sanitized} | {clipboard_cmd}"
+        cmd = f'echo {sanitized} | {clipboard_cmd}'
 
         if enable_notifications:
             from python_search.apps.notification_ui import send_notification
-
             send_notification(f"Content copied: {sanitized}")
 
-        return shell.run(cmd)
+        import os
+        print(cmd)
+        return os.system(cmd)
 
+def has_stdin() -> bool:
+    import select
+    import sys
+
+    return select.select(
+                    [
+                        sys.stdin,
+                    ],
+                    [],
+                    [],
+                    0.0,
+                )[0]
 
 def main():
     import fire

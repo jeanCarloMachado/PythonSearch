@@ -24,11 +24,9 @@ class UrlInterpreter(BaseInterpreter):
     def interpret_default(self):
         logger.info(f'Processing as url: {self.cmd["url"]}')
 
-        app_mode = self.cmd["app_mode"] if "app_mode" in self.cmd else False
-        shell_cmd: str = Browser().open_cmd(self.cmd["url"], app_mode)
-
         final_cmd = self.cmd
-        final_cmd["cmd"] = shell_cmd
+        url = self.cmd["url"]
+        final_cmd["cmd"] = f"browser open '{url}'"
 
         logger.info(f"Final URL command={final_cmd}")
         return CmdInterpreter(final_cmd, self.context).interpret_default()

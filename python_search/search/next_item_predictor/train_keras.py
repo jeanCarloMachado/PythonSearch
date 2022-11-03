@@ -9,7 +9,7 @@ from keras.models import Sequential
 Model = Any
 
 
-class Train:
+class TrainKeras:
 
     EPOCHS = 30
     TEST_SPLIT_SIZE = 0.10
@@ -17,7 +17,7 @@ class Train:
 
     def __init__(self, epochs=None):
         if not epochs:
-            epochs = Train.EPOCHS
+            epochs = TrainKeras.EPOCHS
         self.epochs = epochs
         # enable the profiling scaffolding
         os.environ["TIME_IT"] = "1"
@@ -50,7 +50,7 @@ class Train:
             X_train,
             Y_train,
             epochs=self.epochs,
-            batch_size=Train.BATCH_SIZE,
+            batch_size=TrainKeras.BATCH_SIZE,
             validation_data=(X_test, Y_test),
         )
         # self._plot_training_history(history)

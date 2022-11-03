@@ -1,6 +1,6 @@
 from typing import Optional
 
-from grimoire.string import remove_special_chars
+
 
 # @ todo remove this dependencies on grimoire
 from python_search.apps.notification_ui import send_notification
@@ -117,3 +117,9 @@ class CmdInterpreter(BaseInterpreter):
 
     def copiable_part(self):
         return self.cmd["cmd"]
+def remove_special_chars(string, exceptions=[]):
+    """
+    Remove all special chars from strings except if they are one of the exceptions
+    """
+    result = "".join(e for e in string if e.isalnum() or e in exceptions)
+    return result

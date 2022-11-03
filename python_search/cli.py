@@ -6,7 +6,7 @@ from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.client import LogRunPerformedClient
-from python_search.search_ui.fzf_terminal import FzfInKitty
+from python_search.search_ui.fzf_kitty import FzfInKitty
 from python_search.search_ui.preview import Preview
 
 

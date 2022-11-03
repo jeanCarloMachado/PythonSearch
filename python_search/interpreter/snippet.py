@@ -1,5 +1,3 @@
-from grimoire.shell import shell
-
 from python_search.apps.clipboard import Clipboard
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
@@ -28,12 +26,6 @@ class SnippetInterpreter(BaseInterpreter):
 
     def interpret_default(self):
         Clipboard().set_content(self.cmd["snippet"])
-
-        if "type-it" in self.cmd:
-            snippet = self.apply_directory(self.cmd["snippet"])
-            shell.run(f"setxkbmap ; xdotool type '{snippet}'")
-            shell.run(f"xdotool key Return ")
-
         return
 
     def copiable_part(self):

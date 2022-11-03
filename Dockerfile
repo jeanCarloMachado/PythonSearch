@@ -1,12 +1,19 @@
-FROM python:3.10-buster
+FROM --platform=linux/amd64 python:3.10-buster
 
-RUN pip install --upgrade pip ; pip install fire
-#RUN pip install poetry && poetry config virtualenvs.create false
+
+WORKDIR /src
+COPY ./container /src/container
+COPY pyproject.toml /src/pyproject.toml
+COPY poetry.lock /src/poetry.lock
+RUN /src/container/setup.sh
+
 
 COPY . /src
-WORKDIR /src
 
-RUN pip install python-search
-RUN poetry install --all-extras ; pip install -e .
+RUN /root/.local/bin/poetry run pip install -e .
 
+ENV SHELL /bin/bash
+ENV PATH /root/.local/bin:$PATH
+
+CMD poetry shell
 

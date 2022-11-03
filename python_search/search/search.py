@@ -29,7 +29,6 @@ class Search:
         self._feature_toggle = FeatureToggle()
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
-        self._used_entries: Optional[List[str]] = None
         self._entries = None
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"
@@ -78,26 +77,28 @@ class Search:
         """
         Merge the search with the latest entries
         """
-        self._fetch_latest_entries()
 
         result = []
 
-        for key in self._used_entries:
-            if key not in self._entries:
-                # key not found in _entries
-                continue
+        latest_entries = self._fetch_latest_entries()
 
-            content = self._entries[key]
+        if latest_entries:
+            for key in latest_entries:
+                if key not in self._entries:
+                    # key not found in _entries
+                    continue
 
-            # sometimes there can be a bug of saving something other than dicts as _entries
-            if type(content) != dict:
-                logging.warning(f"Entry is not a dict {content}")
-                continue
+                content = self._entries[key]
 
-            content["tags"] = content.get("tags", []) + ["RecentlyUsed"]
-            result.append((key, content))
-            # delete key
-            self._ranked_keys.remove(key)
+                # sometimes there can be a bug of saving something other than dicts as _entries
+                if type(content) != dict:
+                    logging.warning(f"Entry is not a dict {content}")
+                    continue
+
+                content["tags"] = content.get("tags", []) + ["RecentlyUsed"]
+                result.append((key, content))
+                # delete key
+                self._ranked_keys.remove(key)
 
         for key in self._ranked_keys:
             if key not in self._entries:
@@ -121,10 +122,10 @@ class Search:
         if not self._feature_toggle.is_enabled("ranking_latest_used"):
             return
 
-        self._used_entries = RecentKeys().get_latest_used_keys()
+        entries = RecentKeys().get_latest_used_keys()
 
         # only use the latest 7 entries for the top of the search
-        self._used_entries = self._used_entries[: self.NUMBER_OF_LATEST_ENTRIES]
+        return entries[: self.NUMBER_OF_LATEST_ENTRIES]
 
 
 if __name__ == "__main__":

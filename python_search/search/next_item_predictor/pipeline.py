@@ -13,11 +13,9 @@ from python_search.search.next_item_predictor.mlflow_logger import \
     configure_mlflow
 from python_search.search.next_item_predictor.offline_evaluation import \
     OfflineEvaluation
-from python_search.search.next_item_predictor.train_keras import Train
 from python_search.search.next_item_predictor.train_xgboost import TrainXGBoost
 from python_search.search.next_item_predictor.training_dataset import \
     TrainingDataset
-from python_search.search.next_item_predictor.transform import ModelTransform
 
 
 class NextItemPredictorPipeline:
@@ -60,9 +58,11 @@ class NextItemPredictorPipeline:
             RunPerformedCleaning().clean()
 
         dataset: DataFrame = TrainingDataset().build(use_cache)
+        from python_search.search.next_item_predictor.transform import ModelTransform
         X, Y = ModelTransform().transform_collection(dataset, use_cache=use_cache)
+        from python_search.search.next_item_predictor.train_keras import TrainKeras
         X_train, X_test, Y_train, Y_test = train_test_split(
-            X, Y, test_size=Train.TEST_SPLIT_SIZE, random_state=42
+            X, Y, test_size=TrainKeras.TEST_SPLIT_SIZE, random_state=42
         )
 
         X_test_p = X_test
@@ -83,7 +83,8 @@ class NextItemPredictorPipeline:
         if "keras" in train_only:
             mlflow = configure_mlflow()
             with mlflow.start_run():
-                model = Train().train(X_train, X_test, Y_train, Y_test)
+                from python_search.search.next_item_predictor.train_keras import TrainKeras
+                model = TrainKeras().train(X_train, X_test, Y_train, Y_test)
                 mlflow.keras.log_model(model, "model", keras_module="keras")
                 if not skip_offline_evaluation:
                     offline_evaluation = OfflineEvaluation().run(

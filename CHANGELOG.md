@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.9.0
+- Moving to dockerfile model
+
 ## 0.7.0
 
 - Moving to an architecture without kafka
