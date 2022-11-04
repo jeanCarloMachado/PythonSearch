@@ -1,7 +1,5 @@
 from typing import Optional
 
-
-
 # @ todo remove this dependencies on grimoire
 from python_search.apps.notification_ui import send_notification
 from python_search.apps.terminal import Terminal
@@ -117,6 +115,8 @@ class CmdInterpreter(BaseInterpreter):
 
     def copiable_part(self):
         return self.cmd["cmd"]
+
+
 def remove_special_chars(string, exceptions=[]):
     """
     Remove all special chars from strings except if they are one of the exceptions

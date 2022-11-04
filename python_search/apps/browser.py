@@ -29,7 +29,8 @@ class Browser:
         cmd_to_run = self.open_shell_cmd(**params)
         print("Comand to run:", cmd_to_run)
 
-        import  os
+        import os
+
         os.system(cmd_to_run)
 
     def open_shell_cmd(self, url: str, app_mode=False, incognito=False) -> str:
@@ -49,15 +50,12 @@ class Browser:
         # open -a is much faster on mac to open url
         # i suppose it is so because it does not have to do chrome startup again
         # while calling the binary directly does
-        #cmd = f"/usr/bin/open -a '/Applications/Google Chrome.app' '{url}'"
-        #cmd = f'open -b com.google.chrome "{url}"'
+        # cmd = f"/usr/bin/open -a '/Applications/Google Chrome.app' '{url}'"
+        # cmd = f'open -b com.google.chrome "{url}"'
         # this is too slow
-        #cmd = f'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "{url}"'
+        # cmd = f'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "{url}"'
         # this does not work always
         cmd = f'open -g "{url}" '
-
-
-
 
         return cmd
 

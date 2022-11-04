@@ -77,7 +77,7 @@ class Inference:
         only_keys = [entry[0] for entry in result]
         logger.info("Ranking inference succeeded")
 
-        logger.debug("Only keys: ", only_keys)
+        # logger.debug("Only keys: ", only_keys)
         return only_keys
 
     @timeit

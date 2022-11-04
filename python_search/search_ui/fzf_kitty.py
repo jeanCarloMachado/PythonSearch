@@ -112,7 +112,7 @@ class FzfInKitty:
 
         font = "FontAwesome"
         if is_mac():
-            font = 'Pragmata Pro'
+            font = "Pragmata Pro"
 
         launch_cmd = f"""nice -19 kitty \
         --title="{self.title}"\

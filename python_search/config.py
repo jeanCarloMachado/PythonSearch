@@ -50,8 +50,8 @@ class KafkaConfig:
 
 
 class RedisConfig:
-    host = "localhost"
-    port = 6379 if is_mac() else 6378
+    host = "host.docker.internal"
+    port = 6379
 
 
 class PythonSearchConfiguration(EntriesGroup):

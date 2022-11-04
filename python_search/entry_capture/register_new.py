@@ -3,7 +3,6 @@ from __future__ import annotations
 import datetime
 import time
 
-
 from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.entry_inserter import EntryInserter
 from python_search.entry_capture.entry_inserter_gui import (EntryCaptureGUI,
