@@ -24,6 +24,7 @@ def run(*, cmd="", entrypoint="", port=""):
         port = f" -p {port}"
 
     cmd = f"docker run {port} --expose 6379 --cpuset-cpus='0-6' -e 'PS_ENTRIES_HOME=/entries' -it -v $HOME/projects/PythonSearch:/src -v $HOME/projects/PySearchEntries/:/entries -v $HOME/.PythonSearch:/root/.PythonSearch -v $HOME/.data:/root/.data {entrypoint} ps {cmd}"
+    print("Cmd: " + cmd)
     os.system(cmd)
 
 

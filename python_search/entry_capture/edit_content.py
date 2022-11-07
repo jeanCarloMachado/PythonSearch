@@ -2,9 +2,6 @@
 import logging
 from typing import Optional
 
-from grimoire import s
-from grimoire.shell import shell
-
 from python_search.apps.terminal import Terminal
 from python_search.config import config
 from python_search.interpreter.cmd import CmdInterpreter
@@ -37,7 +34,9 @@ class EditKey:
         cmd = f"ack -i '{key}' {self.configuration.get_project_root()} --py || true"
 
         logging.info(f"Command: {cmd}")
-        result_shell = shell.run_with_result(cmd)
+        import subprocess
+        result_shell = subprocess.check_output(cmd, shell=True, text=True)
+
         if not result_shell:
             logging.info("Could not find match edit main file")
             self._edit_config(self.configuration.get_source_file(), dry_run)
@@ -72,4 +71,5 @@ class EditKey:
             logging.info(f"Command to edit file: {cmd}")
             return
 
-        s.run(cmd)
+        import os
+        os.system(cmd)

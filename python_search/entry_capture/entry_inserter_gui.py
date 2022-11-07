@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+import threading
 from dataclasses import dataclass
 from typing import List
 
@@ -7,19 +10,6 @@ import fire
 from python_search.config import ConfigurationLoader
 from python_search.entry_type.classifier_inference import \
     ClassifierInferenceClient
-
-
-@dataclass
-class EntryData:
-    """
-    Entry _entries schema
-
-    """
-
-    key: str
-    value: str
-    type: str
-    tags: List[str]
 
 
 class EntryCaptureGUI:
@@ -34,7 +24,7 @@ class EntryCaptureGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
-    ) -> EntryData:
+    ) -> GuiEntryData:
         """
         Launch the _entries capture GUI.
         """
@@ -64,7 +54,7 @@ class EntryCaptureGUI:
             default_value=default_type,
         )
 
-        tags_chucks = self._chunks(self._tags, 4)
+        tags_chucks = self._chunks_of_tags(self._tags, 4)
         layout = [
             [sg.Text("Entry content")],
             [content_input],
@@ -99,14 +89,16 @@ class EntryCaptureGUI:
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
 
+        threading.Thread(target=self._predict_content, args=(window, default_content), daemon=True).start()
         while True:
-            new_type = ClassifierInferenceClient().predict_from_content(default_content)
-            print(f"New type: {new_type}")
-            if new_type:
-                entry_type.update(new_type)
             event, values = window.read()
             if event and (event == "write" or event.endswith("_Enter")):
                 break
+
+            if event == "-type-inference-ready-":
+                window["type"].update(values[event])
+                continue
+
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 raise Exception("Quitting window")
 
@@ -118,7 +110,7 @@ class EntryCaptureGUI:
             if key in self._tags and value == True:
                 selected_tags.append(key)
 
-        result = EntryData(
+        result = GuiEntryData(
             values["key"], values["content"], values["type"], selected_tags
         )
 
@@ -127,28 +119,35 @@ class EntryCaptureGUI:
 
         return result
 
-    def _classify_type(self, content):
-        from subprocess import Popen
+    def _predict_content(self, window, content):
+        new_type = ClassifierInferenceClient().predict_from_content(content)
+        print(f"New type: {new_type}")
 
-        p = Popen(
-            f"python_search _entry_type_classifier inference_client predict_from_content  '{content}'",
-            shell=True,
-            stdin=None,
-            stdout=None,
-            stderr=None,
-            close_fds=True,
-        )
+        if not new_type:
+            return
 
-        print("process end")
-        return p
+        window.write_event_value("-type-inference-ready-", new_type)
 
     def _checkbox_list(self, tags):
         return ([self._sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
 
-    def _chunks(self, lst, n):
+    def _chunks_of_tags(self, lst, n):
         """Yield successive n-sized chunks from lst."""
         for i in range(0, len(lst), n):
             yield lst[i : i + n]
+
+
+@dataclass
+class GuiEntryData:
+    """
+    Entry _entries schema
+
+    """
+
+    key: str
+    value: str
+    type: str
+    tags: List[str]
 
 
 if __name__ == "__main__":

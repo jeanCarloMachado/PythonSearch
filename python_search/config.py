@@ -30,7 +30,7 @@ class DataConfig:
     entries_dump = base_data_folder + "/entries_dumped/latest"
     entries_dump_file = base_data_folder + "/entries_dumped/latest/000.parquet"
     cached_configuration = "/tmp/search_and_run_configuration_cached"
-    MLFLOW_MODELS_PATH = f"{os.environ['HOME']}/projects/PySearchEntries/mlflow"
+    MLFLOW_MODELS_PATH = f"/entries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v1"
     DATA_WAREHOUSE_FOLDER = base_data_folder + "/data_warehouse"
@@ -50,7 +50,7 @@ class KafkaConfig:
 
 
 class RedisConfig:
-    host = "host.docker.internal"
+    host =  "127.0.0.1" if is_mac() else "host.docker.internal"
     port = 6379
 
 

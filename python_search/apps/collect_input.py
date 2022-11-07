@@ -1,5 +1,4 @@
 import sys
-
 import fire
 
 from python_search.apps.clipboard import Clipboard

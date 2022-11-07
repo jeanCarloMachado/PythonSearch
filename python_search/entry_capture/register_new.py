@@ -6,7 +6,7 @@ import time
 from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.entry_inserter import EntryInserter
 from python_search.entry_capture.entry_inserter_gui import (EntryCaptureGUI,
-                                                            EntryData)
+                                                            GuiEntryData)
 from python_search.entry_type.entity import infer_default_type
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
@@ -31,10 +31,10 @@ class RegisterNew:
             default_content = Clipboard().get_content()
 
         # @todo reenable this once in the dockerfile
-        if False and not default_type:
+        if not default_type:
             default_type = infer_default_type(default_content)
 
-        entry_data: EntryData = EntryCaptureGUI().launch(
+        entry_data: GuiEntryData = EntryCaptureGUI().launch(
             "New Entry Details",
             default_content=default_content,
             default_key=default_key,
