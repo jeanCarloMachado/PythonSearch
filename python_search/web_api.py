@@ -2,18 +2,19 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
 from python_search.entry_type.classifier_inference import (EntryData,
-                                                           predict_entry_type)
+                                                           PredictEntryTypeInference)
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.run_performed import RunPerformed, RunPerformedWriter
+from python_search.config import ConfigurationLoader
+from python_search.search.search import Search
 
 PORT = 8000
 
 app = FastAPI()
-from python_search.config import ConfigurationLoader
-from python_search.search.search import Search
 
 generator = Search(ConfigurationLoader().load_config())
 ranking_result = generator.search()
+entry_type_inference = PredictEntryTypeInference()
 
 
 def reload_ranking():
@@ -73,7 +74,7 @@ def log_run(event: RunPerformed):
 
 @app.post("/entry_type/classify")
 def predict_entry_type_endpoint(entry: EntryData):
-    return {"predicted_type": predict_entry_type(entry)}
+    return {"predicted_type": entry_type_inference.predict_entry_type(entry)}
 
 
 @app.get("/recent_history")

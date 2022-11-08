@@ -28,7 +28,9 @@ mlflow = { version = ">=1.29", optional = true }
 pdoc3 = {version = "^0.10.0", optional = true}
 keras = {version = ">=2.10", optional = true}
 tensorflow = {version = ">=2.10.0", optional = true}
-python-dateutil = "^2.8.2"
+arize = { version = "^5.2.0", optional = true }
+jupyterlab = { version = "^3.5.0", optional = true }
+
 
 
 [tool.poetry.dev-dependencies]
@@ -51,6 +53,7 @@ run_entry = 'python_search.cli:_run_key_bin'
 reminders = 'python_search.plugins.reminders:main'
 feature_toggle = 'python_search.feature_toggle:FeatureToggle.main'
 generic_data_collector = 'python_search.data_collector:GenericDataCollector.initialize'
+ps_container = 'container:main'
 
 [tool.poetry.extras]
 server = [
@@ -68,4 +71,6 @@ server = [
     "xgboost",
     "matplotlib",
     "msgpack-numpy",
+    "arize",
+    "jupyterlab",
 ]
