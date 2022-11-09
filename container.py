@@ -29,12 +29,13 @@ def run(*, cmd="", entrypoint="", port=""):
         " -v $HOME/.PythonSearch:/root/.PythonSearch ",
         " -v $HOME/.PythonSearch/container_cache/:/root/.cache ",
         " -v $HOME/.data:/root/.data"
+        " -v $HOME/.gitconfig:/root/.gitconfig"
     ])
 
     environment_variables = " ". join([
         " -e 'PS_ENTRIES_HOME=/entries' ",
         " -e ARIZE_API_KEY=$ARIZE_API_KEY ",
-        " -e ARIZE_SPACE_KEY=$ARIZE_API_SPACE_KEY ",
+        " -e ARIZE_SPACE_KEY=$ARIZE_SPACE_KEY ",
     ])
 
     cmd = f"docker run {port} --expose 6379 --cpuset-cpus='0-6' {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
@@ -45,9 +46,9 @@ def sh():
     run(entrypoint="/bin/bash")
 
 def run_jupyter():
-    run(cmd="jupyter lab --allow-root --ip '*' --notebook-dir /", port="8888:8888")
+    run(cmd="jupyter lab --allow-root --ip '*' --notebook-dir / --NotebookApp.token='' --NotebookApp.password=''", port="8888:8888")
 def run_mlflow():
-    run(cmd="mlflow ui --backend-store-uri file:/entries/mlflow --port 5001 --host '0.0.0.0' --port='5001:5001'", port="5001:5001")
+    run(cmd="mlflow ui --backend-store-uri file:/entries/mlflow --port 5001 --host '0.0.0.0' ", port="5001:5001")
 
 def run_webserver():
     run(cmd="python_search_webapi", port="8000:8000")

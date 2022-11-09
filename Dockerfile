@@ -2,7 +2,7 @@ FROM buildpack-deps:buster
 
 
 RUN apt-get update -y && apt install default-jre -y
-RUN apt-get install curl wget htop -y
+RUN apt-get install curl wget htop zsh -y
 
 WORKDIR /src
 COPY ./container /src/container
@@ -16,7 +16,7 @@ RUN /src/container/setup.sh
 
 RUN apt-get install -y vim
 
-ENV SHELL /bin/bash
+ENV SHELL /bin/zsh
 ENV PATH /root/miniconda3/envs/310/bin:/root/.local/bin:/root/miniconda3/bin:$PATH
 RUN poetry export --with-credentials --without-hashes -f requirements.txt -E server > requirements.txt && pip install -r requirements.txt
 RUN pip install torch sentence-transformers
@@ -26,5 +26,5 @@ RUN pip install fastapi
 COPY . /src
 
 RUN pip install -e .
-CMD bash
+CMD zsh
 

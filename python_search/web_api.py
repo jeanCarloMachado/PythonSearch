@@ -71,10 +71,10 @@ def log_run(event: RunPerformed):
 
     return event
 
-
 @app.post("/entry_type/classify")
 def predict_entry_type_endpoint(entry: EntryData):
-    return {"predicted_type": entry_type_inference.predict_entry_type(entry)}
+    type, uuid = entry_type_inference.predict_entry_type(entry)
+    return {"predicted_type": type, "prediction_uuid": uuid}
 
 
 @app.get("/recent_history")
@@ -83,6 +83,7 @@ def recent_history_endpoint():
 
 
 def main():
+
     import os
 
     import uvicorn

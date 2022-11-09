@@ -6,16 +6,19 @@ from dataclasses import dataclass
 from typing import List
 
 import fire
+from arize.utils.types import Environments, ModelTypes
 
 from python_search.config import ConfigurationLoader
 from python_search.entry_type.classifier_inference import \
     ClassifierInferenceClient
+from python_search.infrastructure.arize import Arize
 
 
 class EntryCaptureGUI:
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
+        self._prediction_uuid = None
 
     def launch(
         self,
@@ -114,18 +117,41 @@ class EntryCaptureGUI:
             values["key"], values["content"], values["type"], selected_tags
         )
 
+        self._report_actual(result)
+
         if serialize_output:
             result = result.__dict__
 
         return result
 
-    def _predict_content(self, window, content):
-        new_type = ClassifierInferenceClient().predict_from_content(content)
-        print(f"New type: {new_type}")
+    def _report_actual(self, data: GuiEntryData):
+        if not self._prediction_uuid:
+            print("No prediction uuid, skipping report")
+            return
+        arize_client = Arize().get_client()
 
-        if not new_type:
+        data = {
+            "model_id": Arize.MODEL_ID,
+            "model_version": Arize.MODEL_VERSION,
+            "model_type": ModelTypes.SCORE_CATEGORICAL,
+            "environment": Environments.PRODUCTION,
+            "prediction_id": self._prediction_uuid,
+            "actual_label": data.type,
+        }
+        print(f"Data to send arize: {data}")
+
+        arize_result = arize_client.log(**data)
+        Arize.arize_responses_helper(arize_result)
+
+    def _predict_content(self, window, content):
+        result = ClassifierInferenceClient().predict_from_content(content)
+
+        if not result:
             return
 
+        new_type = result[0]
+        self._prediction_uuid = result[1]
+        print(f"New type: {new_type}, uuid: {self._prediction_uuid}")
         window.write_event_value("-type-inference-ready-", new_type)
 
     def _checkbox_list(self, tags):

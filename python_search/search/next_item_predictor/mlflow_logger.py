@@ -10,11 +10,17 @@ def configure_mlflow(experiment_name: Optional[str] = None):
     train the _model and log it to MLFlow
     """
 
-    mlflow.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
-    # this creates a new experiment
     if not experiment_name:
         experiment_name = DataConfig.NEXT_ITEM_EXPERIMENT_NAME
 
-    mlflow.set_experiment(experiment_name)
+    data = {
+        "experiment_name": experiment_name,
+        "tracking_uri": f"file:{DataConfig.MLFLOW_MODELS_PATH}"
+    }
+
+    print('MLFlow configuration:', data)
+
+    mlflow.set_tracking_uri(data['tracking_uri'])
+    mlflow.set_experiment(data['experiment_name'])
 
     return mlflow

@@ -5,7 +5,7 @@ from mlflow.entities import RunInfo
 
 from python_search.config import DataConfig
 
-BASE_MLFLOW_LOCATON = "/entries/mlflow/"
+BASE_MLFLOW_LOCATON = "/entries/mlflow"
 
 NEXT_ITEM_PREDICTOR_PROJECT_NUMBER = "2"
 ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER = "3"
