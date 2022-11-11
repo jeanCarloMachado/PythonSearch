@@ -8,7 +8,7 @@ from python_search.config import DataConfig
 BASE_MLFLOW_LOCATON = "/entries/mlflow"
 
 NEXT_ITEM_PREDICTOR_PROJECT_NUMBER = "2"
-ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER = "3"
+ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER = "4"
 
 
 class PythonSearchMLFlow:

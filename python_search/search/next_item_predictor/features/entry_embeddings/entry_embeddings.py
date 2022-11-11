@@ -117,7 +117,7 @@ def create_embeddings_from_strings(keys: List[str]) -> ndarray:
     transformer = SentenceTransformer(
         "nreimers/MiniLM-L6-H384-uncased",
     )
-    return transformer.encode(keys, batch_size=128, show_progress_bar=True)
+    return transformer.encode(keys, show_progress_bar=True)
 
 
 def create_key_indexed_embedding(keys) -> dict[str, str]:

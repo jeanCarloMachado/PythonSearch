@@ -1,11 +1,7 @@
 import logging
 import os
 
-from grimoire.file import write_file
-from grimoire.shell import shell
-
 from python_search.entries_group import EntriesGroup
-
 
 class I3:
     """
@@ -24,10 +20,11 @@ class I3:
         if not os.path.exists(f"{i3_config_path}/config_part1"):
             raise Exception("Cannot find part 1 of i3 _configuration")
 
-        write_file(f"{i3_config_path}/config_part2", shortcut_str)
+        with open(f"{i3_config_path}/config_part2", "a") as myfile:
+            myfile.write(shortcut_str)
 
-        shell.run(f"cat {i3_config_path}/config_part1 > {i3_config_path}/config")
-        shell.run(f"cat {i3_config_path}/config_part2 >> {i3_config_path}/config")
+        os.system(f"cat {i3_config_path}/config_part1 > {i3_config_path}/config")
+        os.system(f"cat {i3_config_path}/config_part2 >> {i3_config_path}/config")
 
     def _generate_i3_shortcuts_string(self) -> str:
         """Generates a single string with all exported shortcuts"""

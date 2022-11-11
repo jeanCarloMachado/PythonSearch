@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.2
+- improve development container
+- updates dependencies
+- add arize to type classifier
+
 ## 0.9.0
 - Moving to dockerfile model
 

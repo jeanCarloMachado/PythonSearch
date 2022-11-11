@@ -33,6 +33,7 @@ class DataConfig:
     MLFLOW_MODELS_PATH = f"/entries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v1"
+    ENTRY_TYPE_CLASSIFIER_EXPERIMENT_NAME = f"entry_type_classifier_v2"
     DATA_WAREHOUSE_FOLDER = base_data_folder + "/data_warehouse"
     CLEAN_EVENTS_FOLDER = DATA_WAREHOUSE_FOLDER + "/clean"
     SEARCH_RUNS_PERFORMED_FOLDER = (

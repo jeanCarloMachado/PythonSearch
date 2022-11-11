@@ -4,7 +4,7 @@ from arize.utils.types import ModelTypes, Environments,  Embedding
 
 from python_search.entry_type.classifier_inference import get_value_and_label
 from python_search.entry_type.entity import EntryType
-from python_search.config import ConfigurationLoader
+from python_search.config import ConfigurationLoader, DataConfig
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -58,9 +58,9 @@ class Pipeline:
 
         categorical_labels = to_categorical(df['label'].tolist())
 
-        mlflow = configure_mlflow(experiment_name="entry_type_classifier")
+        mlflow = configure_mlflow(experiment_name=DataConfig.ENTRY_TYPE_CLASSIFIER_EXPERIMENT_NAME)
         mlflow.keras.autolog()
-        with mlflow.start_run():
+        with mlflow.start_run() as modelInfo:
             model = models.Sequential()
             run_id = mlflow.active_run().info.run_id
             model.add(layers.Dense(128, activation='relu', input_shape=(Pipeline.INPUT_DIMENSIONS,)))
@@ -78,6 +78,8 @@ class Pipeline:
 
             history = model.fit(x_train, y_train, epochs=20, batch_size=512, validation_data=(x_val, y_val))
             mlflow.keras.log_model(model, "model", keras_module="keras")
+            run_id = mlflow.active_run().info.run_id
+            print("run id: ", run_id)
 
         if not disable_arize:
             print("Sending validation values to arize")
@@ -95,8 +97,8 @@ class Pipeline:
                     actual_label=(get_value_and_label(y_val[key])[1], float(get_value_and_label(y_val[key])[0])),
                     environment=Environments.VALIDATION,
                 )
+                Arize.arize_responses_helper(result)
 
-            Arize.arize_responses_helper(result)
 
 
         loss = history.history['loss']
@@ -161,4 +163,3 @@ class Pipeline:
 if __name__ == '__main__':
     import fire
     fire.Fire()
-

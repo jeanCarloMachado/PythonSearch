@@ -15,7 +15,7 @@ def build_and_run():
     run()
 
 
-def run(*, cmd="", entrypoint="", port=""):
+def run(cmd="", entrypoint="", port=""):
 
     if entrypoint:
         entrypoint = f" --entrypoint '{entrypoint}'"
@@ -38,11 +38,14 @@ def run(*, cmd="", entrypoint="", port=""):
         " -e ARIZE_SPACE_KEY=$ARIZE_SPACE_KEY ",
     ])
 
-    cmd = f"docker run {port} --expose 6379 --cpuset-cpus='0-6' {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
+    LIMIT_CPU = 8
+    cmd = f"docker run {port} --expose 6379 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
     print("Cmd: " + cmd)
     os.system(cmd)
-
 def sh():
+    shell()
+
+def shell():
     run(entrypoint="/bin/bash")
 
 def run_jupyter():

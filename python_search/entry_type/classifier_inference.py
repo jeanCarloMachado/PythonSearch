@@ -13,6 +13,7 @@ from python_search.infrastructure.arize import Arize
 PredictionUuid = str
 
 class PredictEntryTypeInference():
+    PRODUCTION_RUN_ID = "004224c854464ec296b5f648bd3f74f5"
     def __init__(self):
         # Instantiate an Arize Client object using your API and Space keys
         self._arize_client = Arize().get_client()
@@ -25,7 +26,7 @@ class PredictEntryTypeInference():
         from python_search.search.models import PythonSearchMLFlow
 
         model = PythonSearchMLFlow().get_entry_type_classifier(
-            run_id="179a4a34c78449eea624b9fc8d85581c"
+            run_id=PredictEntryTypeInference.PRODUCTION_RUN_ID
         )
         from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import \
             create_embeddings_from_strings

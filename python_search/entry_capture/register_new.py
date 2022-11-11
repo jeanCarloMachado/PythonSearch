@@ -4,7 +4,7 @@ import datetime
 import time
 
 from python_search.apps.clipboard import Clipboard
-from python_search.entry_capture.entry_inserter import EntryInserter
+from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
 from python_search.entry_capture.entry_inserter_gui import (EntryCaptureGUI,
                                                             GuiEntryData)
 from python_search.entry_type.entity import infer_default_type
@@ -15,12 +15,38 @@ from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 
 class RegisterNew:
     """
-    Responsible for registering new entries in your catalog
+    Entry point for the registering of new entries
     """
 
     def __init__(self, configuration):
         self.configuration = configuration
-        self.entry_inserter = EntryInserter(configuration)
+        self.entry_inserter = FilesystemEntryInserter(configuration)
+
+    def register(self, *, key: str, value: str, tag: str = None):
+        """
+        The non ui driven registering api
+        Args:
+            key:
+            value:
+            tag:
+
+        Returns:
+
+        """
+
+        key = self._sanitize_key(key)
+
+        interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
+            self.configuration
+        ).get_interpreter(value)
+        dict_entry = interpreter.to_dict()
+        if tag:
+            dict_entry["tags"] = [tag]
+
+        self.entry_inserter.insert(key, dict_entry)
+
+    def _sanitize_key(self, key):
+        return key.replace("\n", " ").replace(":", " ")
 
     def launch_ui(self, default_type=None, default_key=None, default_content=None):
         """
@@ -40,6 +66,7 @@ class RegisterNew:
             default_key=default_key,
             default_type=default_type,
         )
+        key = self._sanitize_key(entry_data.key)
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self.configuration
         ).get_interpreter_from_type(entry_data.type)
@@ -48,28 +75,8 @@ class RegisterNew:
         if entry_data.tags:
             dict_entry["tags"] = entry_data.tags
 
-        self.entry_inserter.insert(entry_data.key, dict_entry)
-
-    def register(self, *, key: str, value: str, tag: str = None):
-        """
-        The non ui driven registering api
-        Args:
-            key:
-            value:
-            tag:
-
-        Returns:
-
-        """
-
-        interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
-            self.configuration
-        ).get_interpreter(value)
-        dict_entry = interpreter.to_dict()
-        if tag:
-            dict_entry["tags"] = [tag]
-
         self.entry_inserter.insert(key, dict_entry)
+
 
     def anonymous_snippet(self):
         """

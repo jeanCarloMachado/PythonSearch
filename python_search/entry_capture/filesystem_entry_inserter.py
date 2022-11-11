@@ -8,9 +8,9 @@ from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.client import LogRunPerformedClient
 
 
-class EntryInserter:
+class FilesystemEntryInserter:
     """
-    Class responsible to the actual writing of the new entry
+    Class responsible to the actual writing of the new entry in the filesystem
     """
 
     NEW_ENTRIES_STRING = "# NEW_ENTRIES_HERE"
@@ -20,7 +20,7 @@ class EntryInserter:
         self._file_to_append = (
             self._configuration.get_project_root() + "/entries_main.py"
         )
-        self._new_entries_string = EntryInserter.NEW_ENTRIES_STRING
+        self._new_entries_string = FilesystemEntryInserter.NEW_ENTRIES_STRING
 
     def insert(self, key: str, entry: dict):
 
