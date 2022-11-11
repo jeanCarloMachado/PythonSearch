@@ -4,13 +4,15 @@ import datetime
 import time
 
 from python_search.apps.clipboard import Clipboard
-from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
-from python_search.entry_capture.entry_inserter_gui import (EntryCaptureGUI,
-                                                            GuiEntryData)
+from python_search.entry_capture.filesystem_entry_inserter import (
+    FilesystemEntryInserter,
+)
+from python_search.entry_capture.entry_inserter_gui import EntryCaptureGUI, GuiEntryData
 from python_search.entry_type.entity import infer_default_type
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+from python_search.exceptions import notify_exception
 
 
 class RegisterNew:
@@ -22,6 +24,7 @@ class RegisterNew:
         self.configuration = configuration
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
+    @notify_exception()
     def register(self, *, key: str, value: str, tag: str = None):
         """
         The non ui driven registering api
@@ -48,6 +51,7 @@ class RegisterNew:
     def _sanitize_key(self, key):
         return key.replace("\n", " ").replace(":", " ")
 
+    @notify_exception()
     def launch_ui(self, default_type=None, default_key=None, default_content=None):
         """
         Create a new inferred entry based on the clipboard content
@@ -76,7 +80,6 @@ class RegisterNew:
             dict_entry["tags"] = entry_data.tags
 
         self.entry_inserter.insert(key, dict_entry)
-
 
     def anonymous_snippet(self):
         """

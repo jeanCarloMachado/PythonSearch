@@ -9,8 +9,7 @@ import fire
 from arize.utils.types import Environments, ModelTypes
 
 from python_search.config import ConfigurationLoader
-from python_search.entry_type.classifier_inference import \
-    ClassifierInferenceClient
+from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.infrastructure.arize import Arize
 
 
@@ -92,7 +91,9 @@ class EntryCaptureGUI:
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
 
-        threading.Thread(target=self._predict_content, args=(window, default_content), daemon=True).start()
+        threading.Thread(
+            target=self._predict_content, args=(window, default_content), daemon=True
+        ).start()
         while True:
             event, values = window.read()
             if event and (event == "write" or event.endswith("_Enter")):

@@ -35,6 +35,7 @@ class EditKey:
 
         logging.info(f"Command: {cmd}")
         import subprocess
+
         result_shell = subprocess.check_output(cmd, shell=True, text=True)
 
         if not result_shell:
@@ -72,4 +73,5 @@ class EditKey:
             return
 
         import os
+
         os.system(cmd)

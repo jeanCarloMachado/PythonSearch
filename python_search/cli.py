@@ -8,6 +8,7 @@ from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.client import LogRunPerformedClient
 from python_search.search_ui.fzf_kitty import FzfInKitty
 from python_search.search_ui.preview import Preview
+from python_search.exceptions import notify_exception
 
 
 class PythonSearchCli:
@@ -60,6 +61,7 @@ class PythonSearchCli:
         self.configuration = configuration
         self.run_key = EntryRunner(self.configuration).run
 
+    @notify_exception()
     def search(self):
         """
         Opens the Search UI. Main entrypoint of the application
@@ -88,8 +90,7 @@ class PythonSearchCli:
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
         """
-        from python_search.interpreter.interpreter_matcher import \
-            InterpreterMatcher
+        from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
         LogRunPerformedClient().send(
@@ -169,8 +170,9 @@ class PythonSearchCli:
 
     def _entry_type_classifier(self):
 
-        from python_search.entry_type.classifier_inference import \
-            ClassifierInferenceClient
+        from python_search.entry_type.classifier_inference import (
+            ClassifierInferenceClient,
+        )
 
         class EntryTypeClassifierAPI:
             def __init__(self):

@@ -11,10 +11,8 @@ from pyspark.sql.window import Window
 
 from python_search.events.run_performed.dataset import RunPerformedDataset
 from python_search.infrastructure.performance import timeit
-from python_search.search.next_item_predictor.features.times_used import \
-    TimesUsed
-from python_search.search.next_item_predictor.inference.label import \
-    label_formula
+from python_search.search.next_item_predictor.features.times_used import TimesUsed
+from python_search.search.next_item_predictor.inference.label import label_formula
 
 
 class TrainingDataset:

@@ -12,6 +12,7 @@ from python_search.events.run_performed.client import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
+from python_search.exceptions import notify_exception
 
 logger = setup_run_key_logger()
 
@@ -24,6 +25,7 @@ class EntryRunner:
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
 
+    @notify_exception()
     def run(
         self,
         key: str,

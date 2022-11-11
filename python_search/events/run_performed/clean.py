@@ -4,8 +4,7 @@ import pyspark.sql.functions as F
 class RunPerformedCleaning:
     def clean(self):
         print("Performing the cleaninging of the new events")
-        from python_search.events.run_performed.dataset import \
-            RunPerformedDataset
+        from python_search.events.run_performed.dataset import RunPerformedDataset
 
         # load baseline clean
         df_clean = RunPerformedDataset().load_clean()

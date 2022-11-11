@@ -6,13 +6,14 @@ import numpy as np
 from pyspark.sql import DataFrame
 
 from python_search.config import ConfigurationLoader
-from python_search.search.next_item_predictor.features.entry_embeddings import \
-    InferenceEmbeddingsLoader
-from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import \
-    create_key_indexed_embedding
+from python_search.search.next_item_predictor.features.entry_embeddings import (
+    InferenceEmbeddingsLoader,
+)
+from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
+    create_key_indexed_embedding,
+)
 from python_search.search.next_item_predictor.inference.input import ModelInput
-from python_search.search.next_item_predictor.training_dataset import \
-    TrainingDataset
+from python_search.search.next_item_predictor.training_dataset import TrainingDataset
 
 
 class ModelTransform:

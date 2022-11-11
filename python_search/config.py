@@ -51,7 +51,7 @@ class KafkaConfig:
 
 
 class RedisConfig:
-    host =  "127.0.0.1" if is_mac() else "host.docker.internal"
+    host = "127.0.0.1" if is_mac() else "host.docker.internal"
     port = 6379
 
 

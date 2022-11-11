@@ -4,7 +4,10 @@ import copy
 
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
-    EmbeddingSerialization, RedisEmbeddingsReader, RedisEmbeddingsWriter)
+    EmbeddingSerialization,
+    RedisEmbeddingsReader,
+    RedisEmbeddingsWriter,
+)
 
 
 class InferenceEmbeddingsLoader:

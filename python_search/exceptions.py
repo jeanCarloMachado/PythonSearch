@@ -33,3 +33,28 @@ class MissingConfigException:
         raise MissingConfigException(
             "The python search configuration was not found. Run python_search setup to initialize a new config"
         )
+
+
+from functools import wraps
+
+
+def notify_exception():
+    """
+    Will let you know when a function is called or returned error as a desktop notification
+    """
+
+    def _(func):
+        @wraps(func)
+        def __(*args, **kwargs):
+            try:
+                result = func(*args, **kwargs)
+            except Exception as e:
+                from python_search.apps.notification_ui import send_notification
+
+                send_notification(f"Exception: {str(e)}")
+                raise e
+            return result
+
+        return __
+
+    return _
