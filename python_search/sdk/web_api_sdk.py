@@ -23,6 +23,13 @@ class WebApiSDK:
         data = json.loads(result.text)
         return data["history"]
 
+    def generate_description(self, content, return_json=False):
+        result = requests.post(url="http://localhost:8000/entry/generate_description", json={'content': content})
+        if return_json:
+            return result.text
+
+        data = json.loads(result.text)
+        return data
 
 def main():
     import fire

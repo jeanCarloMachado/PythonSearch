@@ -22,6 +22,7 @@ class DescriptionGenerator:
 
     def generate(self, text):
 
+        result = ""
         for i in range(0, max_chars_from_key):
             encoded = self._transform(text)
             preds = self._model.predict(encoded)
@@ -29,7 +30,8 @@ class DescriptionGenerator:
             next_index = self.sample(preds[0], 1.2)
             next_char = self._chars[next_index]
             text = text + next_char
-            print("sentence: ", text)
+            result+= next_char
+        return result
 
     def sample(self, preds, temperature=1.0):
         preds = np.asanyarray(preds).astype('float64')

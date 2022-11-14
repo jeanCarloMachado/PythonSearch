@@ -11,6 +11,7 @@ from arize.utils.types import Environments, ModelTypes
 from python_search.config import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.infrastructure.arize import Arize
+from python_search.sdk.web_api_sdk import WebApiSDK
 
 
 class EntryCaptureGUI:
@@ -92,8 +93,13 @@ class EntryCaptureGUI:
         window["type"].bind("<Escape>", "_Esc")
 
         threading.Thread(
-            target=self._predict_content, args=(window, default_content), daemon=True
+            target=self._predict_entry_type, args=(window, default_content), daemon=True
         ).start()
+
+        threading.Thread(
+            target=self._generate_description, args=(window, default_content), daemon=True
+        ).start()
+
         while True:
             event, values = window.read()
             if event and (event == "write" or event.endswith("_Enter")):
@@ -101,6 +107,10 @@ class EntryCaptureGUI:
 
             if event == "-type-inference-ready-":
                 window["type"].update(values[event])
+                continue
+
+            if event == "-generated-key-ready-":
+                window["key"].update(values[event])
                 continue
 
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
@@ -144,7 +154,7 @@ class EntryCaptureGUI:
         arize_result = arize_client.log(**data)
         Arize.arize_responses_helper(arize_result)
 
-    def _predict_content(self, window, content):
+    def _predict_entry_type(self, window, content):
         result = ClassifierInferenceClient().predict_from_content(content)
 
         if not result:
@@ -154,7 +164,15 @@ class EntryCaptureGUI:
         self._prediction_uuid = result[1]
         print(f"New type: {new_type}, uuid: {self._prediction_uuid}")
         window.write_event_value("-type-inference-ready-", new_type)
+    def _generate_description(self, window, content):
+        result = WebApiSDK().generate_description(content)
 
+        if not result:
+            return
+
+        description = result['generated_description']
+        print(f"New description: {description}")
+        window.write_event_value("-generated-key-ready-", description)
     def _checkbox_list(self, tags):
         return ([self._sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
 
