@@ -165,7 +165,7 @@ class EntryCaptureGUI:
         print(f"New type: {new_type}, uuid: {self._prediction_uuid}")
         window.write_event_value("-type-inference-ready-", new_type)
     def _generate_description(self, window, content):
-        result = WebApiSDK().generate_description(content)
+        result = WebApiSDK().generate_description({'content': content, 'temperature': 0.2})
 
         if not result:
             return

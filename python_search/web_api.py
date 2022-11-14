@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
-from python_search.entry_description_generator.description_geneartor import DescriptionGenerator
+from python_search.entry_description_generator.description_geneartor import DescriptionGenerator, EntryKeyGeneratorCmd
 from python_search.entry_type.classifier_inference import (
     EntryData,
     PredictEntryTypeInference,
@@ -83,14 +83,15 @@ def predict_entry_type_endpoint(entry: EntryData):
 
 
 @app.post("/entry/generate_description")
-def generate_description(entry: EntryData):
-    result = description_generator.generate(entry.content)
+def generate_description(entry: EntryKeyGeneratorCmd):
+    result = description_generator.generate(entry)
     return {"generated_description": result}
 
 
 @app.get("/recent_history")
 def recent_history_endpoint():
     return {"history": RecentKeys().get_latest_used_keys()}
+
 
 
 def main():

@@ -1,9 +1,17 @@
 import numpy as np
+from pydantic import BaseModel
+
 from python_search.search.models import PythonSearchMLFlow
 
 max_chars_from_key = 30
 max_chars_of_body = 100
 maxlen = max_chars_of_body + max_chars_from_key
+
+
+class EntryKeyGeneratorCmd(BaseModel):
+    content: str
+    temperature: float =  1.0
+
 class DescriptionGenerator:
 
     def __init__(self):
@@ -20,14 +28,15 @@ class DescriptionGenerator:
         self._char_indices = dict((char, self._chars.index(char)) for char in self._chars)
 
 
-    def generate(self, text):
+    def generate(self, cmd: EntryKeyGeneratorCmd):
 
         result = ""
         for i in range(0, max_chars_from_key):
+            text = cmd.content
             encoded = self._transform(text)
             preds = self._model.predict(encoded)
 
-            next_index = self.sample(preds[0], 1.2)
+            next_index = self.sample(preds[0], cmd.temperature)
             next_char = self._chars[next_index]
             text = text + next_char
             result+= next_char
