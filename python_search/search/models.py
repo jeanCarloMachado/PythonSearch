@@ -9,6 +9,7 @@ BASE_MLFLOW_LOCATON = "/entries/mlflow"
 
 NEXT_ITEM_PREDICTOR_PROJECT_NUMBER = "2"
 ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER = "4"
+ENTRY_DESCRIPTION_GENERATOR_PROJECT_NUMBER = "5"
 
 
 class PythonSearchMLFlow:
@@ -61,4 +62,12 @@ class PythonSearchMLFlow:
     def get_entry_type_classifier(self, run_id):
         return self.mlflow_instance.keras.load_model(
             f"{BASE_MLFLOW_LOCATON}/{ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER}/{run_id}/artifacts/model"
+        )
+    def get_entry_description_geneartor(self, run_id):
+        return self.mlflow_instance.keras.load_model(
+            f"{BASE_MLFLOW_LOCATON}/{ENTRY_DESCRIPTION_GENERATOR_PROJECT_NUMBER}/{run_id}/artifacts/model"
+        )
+    def get_entry_description_geneartor_dict(self, run_id):
+        return self.mlflow_instance.artifacts.load_dict(
+            f"{BASE_MLFLOW_LOCATON}/{ENTRY_DESCRIPTION_GENERATOR_PROJECT_NUMBER}/{run_id}/artifacts/chars"
         )

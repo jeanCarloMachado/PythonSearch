@@ -31,7 +31,7 @@ class NextItemPredictorPipeline:
         self,
         train_only: Optional[List[model_types]] = None,
         use_cache=False,
-        clean_first=False,
+        clean_first=True,
         skip_offline_evaluation=False,
     ):
         """

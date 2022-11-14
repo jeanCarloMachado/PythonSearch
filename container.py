@@ -73,6 +73,9 @@ def run_webserver():
     run(cmd="python_search_webapi", port="8000:8000")
 
 
+def run_streamlit():
+    run(cmd=" streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501 ", port="8501:8501")
+
 def main():
     import fire
 

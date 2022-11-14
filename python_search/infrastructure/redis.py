@@ -6,7 +6,6 @@ class PythonSearchRedis:
     @staticmethod
     def get_client():
         import redis
-
         return redis.StrictRedis(host=RedisConfig.host, port=RedisConfig.port)
 
 

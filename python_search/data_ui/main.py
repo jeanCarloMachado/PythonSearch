@@ -3,13 +3,11 @@ from __future__ import annotations
 import os
 
 import streamlit as st
+from python_search.events.run_performed.dataset import RunPerformedDataset
 
 from python_search.data_ui.training_page import load_training_page
-from python_search.events.search_run_performed.searchesperformeddataset import (
-    SearchesPerformedDataset,
-)
 
-open_page = "results"
+open_page = "training"
 
 os.putenv("SPARK_LOCAL_IP", "localhost")
 with st.sidebar:
@@ -34,6 +32,6 @@ if open_page == "results":
 
 if open_page == "searches_performed_dataset":
     st.write("## Searches performed dataset")
-    search_performed_df = SearchesPerformedDataset().load_clean()
+    search_performed_df = RunPerformedDataset().load_clean()
     pdf = search_performed_df.toPandas()
     st.dataframe(pdf)
