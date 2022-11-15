@@ -119,9 +119,7 @@ class ConfigurationLoader:
         if folder not in sys.path:
             sys.path.insert(0, folder)
         import copy
-
         from entries_main import config
-
         return copy.deepcopy(config)
 
     def reload(self):
@@ -165,5 +163,4 @@ class ConfigurationLoader:
         return folder
 
     def load_entries(self):
-        config = self.load_config()
-        return config.commands
+        return self.load_config().commands

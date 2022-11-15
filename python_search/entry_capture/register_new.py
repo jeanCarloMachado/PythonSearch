@@ -4,6 +4,7 @@ import datetime
 import time
 
 from python_search.apps.clipboard import Clipboard
+from python_search.config import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )
@@ -20,7 +21,11 @@ class RegisterNew:
     Entry point for the registering of new entries
     """
 
-    def __init__(self, configuration):
+    def __init__(self, configuration=None):
+
+        if not configuration:
+            configuration = ConfigurationLoader().load_config()
+
         self.configuration = configuration
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
