@@ -43,21 +43,13 @@ if open_page == 'home':
     search = st.text_input('Search').lower()
     data = []
     for key, value in entries.items():
-        if search:
-            print(search)
-            if search in key or search in value:
-                data.append((key, value))
-            else:
-                continue
-        else:
-            data.append((key, value))
+        data.append((key, value))
 
     st.write("## Entries ")
     df = pd.DataFrame.from_records(data, columns=['key', 'value'])
 
     if search:
-        search = search.split(' ')
-        df = df[df['key'].isin(search)]
+        df.query('key.str.contains(@search) or value.str.contains(@search)', inplace=True)
 
     st.dataframe(df)
 
