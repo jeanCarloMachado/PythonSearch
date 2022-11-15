@@ -1,5 +1,5 @@
 from __future__ import annotations
-key,value, create = None, None, None
+import pandas as pd
 
 import streamlit as st
 
@@ -40,13 +40,18 @@ if open_page == 'home':
             entries = config.commands
 
 
+    search = st.text_input('Search').lower()
     data = []
-
     for key, value in entries.items():
-        data.append((key, value))
+        if search:
+            print(search)
+            if search in key or search in value:
+                data.append((key, value))
+            else:
+                continue
+        else:
+            data.append((key, value))
 
-    import pandas as pd
-    search = st.text_input('Search')
     st.write("## Entries ")
     df = pd.DataFrame.from_records(data, columns=['key', 'value'])
 
