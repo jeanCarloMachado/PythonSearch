@@ -23,7 +23,7 @@ class EntryCaptureGUI:
     def launch(
         self,
         title: str = "Capture Entry",
-        default_key="",
+        default_key: str = "",
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
@@ -31,6 +31,8 @@ class EntryCaptureGUI:
         """
         Launch the _entries capture GUI.
         """
+
+        print("Default key: ", default_key)
         import PySimpleGUI as sg
 
         self._sg = sg
@@ -96,9 +98,10 @@ class EntryCaptureGUI:
             target=self._predict_entry_type, args=(window, default_content), daemon=True
         ).start()
 
-        threading.Thread(
-            target=self._generate_description, args=(window, default_content), daemon=True
-        ).start()
+        if not default_key:
+            threading.Thread(
+                target=self._generate_description, args=(window, default_content), daemon=True
+            ).start()
 
         while True:
             event, values = window.read()
@@ -164,6 +167,7 @@ class EntryCaptureGUI:
         self._prediction_uuid = result[1]
         print(f"New type: {new_type}, uuid: {self._prediction_uuid}")
         window.write_event_value("-type-inference-ready-", new_type)
+
     def _generate_description(self, window, content):
         result = WebApiSDK().generate_description({'content': content, 'temperature': 0.2})
 

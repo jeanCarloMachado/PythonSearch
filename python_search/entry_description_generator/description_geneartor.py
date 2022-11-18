@@ -10,21 +10,26 @@ maxlen = max_chars_of_body + max_chars_from_key
 
 class EntryKeyGeneratorCmd(BaseModel):
     content: str
-    temperature: float =  1.0
+    temperature: float = 0.2
 
 class DescriptionGenerator:
 
+    RUN_ID = '2fd85bdb745f4c10901a90e3f18cfec3'
+
     def __init__(self):
-        run_id = '74af9c8066c34ce4809b990ce4b029db'
         self._model = PythonSearchMLFlow().get_entry_description_geneartor(
-            run_id=run_id
+            run_id=DescriptionGenerator.RUN_ID
 
         )
 
-        self._chars = PythonSearchMLFlow().get_entry_description_geneartor_dict(
-            run_id=run_id
+        try:
+            self._chars = PythonSearchMLFlow().get_entry_description_geneartor_dict(
+                run_id="74af9c8066c34ce4809b990ce4b029db"
 
-        )
+            )
+        except:
+            print("Could not load chars dict from mlflow")
+            return
         self._char_indices = dict((char, self._chars.index(char)) for char in self._chars)
 
 

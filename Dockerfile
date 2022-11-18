@@ -1,6 +1,5 @@
 FROM buildpack-deps:buster
 
-
 RUN apt-get update -y && apt install default-jre -y
 RUN apt-get install curl wget htop zsh -y
 
@@ -9,7 +8,6 @@ COPY ./container /src/container
 COPY pyproject.toml /src/pyproject.toml
 COPY poetry.lock /src/poetry.lock
 RUN /src/container/setup.sh
-
 
 
 #RUN /root/.local/bin/poetry run pip install -e d
