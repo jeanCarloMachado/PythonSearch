@@ -7,10 +7,14 @@
 
 # conda installation
 export PATH="/root/miniconda3/bin/:$PATH"
-FILE_NAME=Miniconda3-py39_4.12.0-Linux-x86_64.sh
-if [[ $( dpkg --print-architecture) -eq "arm64" ]]; then
+
+dpkg --print-architecture | grep "arm64"
+if [[ $? -eq 0  ]]; then
   echo "Arm architecture detected"
   FILE_NAME=Miniconda3-py39_4.12.0-Linux-aarch64.sh
+else
+  echo "AMD architecture detected"
+  FILE_NAME=Miniconda3-py39_4.12.0-Linux-x86_64.sh
 fi
 
 wget https://repo.anaconda.com/miniconda/$FILE_NAME
