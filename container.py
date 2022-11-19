@@ -59,9 +59,13 @@ def shell():
     run(entrypoint="/bin/bash")
 
 
-def run_jupyter():
+def run_jupyter(with_token=False):
+
+    token_expression = " --NotebookApp.token=''"
+    if with_token:
+        token_expression = ""
     run(
-        cmd="jupyter lab --allow-root --ip '*' --notebook-dir / --NotebookApp.token='' --NotebookApp.password=''",
+        cmd=f"jupyter lab --allow-root --ip '*' --notebook-dir / {token_expression} --NotebookApp.password=''",
         port="8888:8888",
     )
 
