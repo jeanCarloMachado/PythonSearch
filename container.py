@@ -88,7 +88,7 @@ def run_webserver(restart=False):
 
 def run_streamlit():
     run(
-        cmd=" streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501 ",
+        cmd="streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501",
         port="8501:8501"
     )
 

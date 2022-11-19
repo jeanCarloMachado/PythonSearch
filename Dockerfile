@@ -17,9 +17,8 @@ RUN apt-get install -y vim
 ENV SHELL /bin/zsh
 ENV PATH /root/miniconda3/envs/310/bin:/root/.local/bin:/root/miniconda3/bin:$PATH
 RUN poetry export --dev --with-credentials --without-hashes -f requirements.txt -E server > requirements.txt && pip install -r requirements.txt
-RUN pip install torch sentence-transformers
-RUN apt install lsof
-RUN pip install fastapi
+RUN pip install torch sentence-transformers lsof fastapi
+RUN pip install streamlit --force-reinstall
 
 COPY . /src
 
