@@ -34,8 +34,8 @@ if open_page == 'home':
         import subprocess
         result = subprocess.check_output('/src/sync_hosts.sh ', shell=True, text=True)
         st.write(f"Result: {result}")
-        import sys
-        sys.exit(0)
+        import os
+        os.system("pkill streamlit")
 
     if st.checkbox("Add new entry"):
         key = st.text_input("Key")
