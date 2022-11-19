@@ -43,6 +43,7 @@ def run(cmd="", entrypoint="", port="", restart=False):
             " -e 'PS_ENTRIES_HOME=/entries' ",
             " -e ARIZE_API_KEY=$ARIZE_API_KEY ",
             " -e ARIZE_SPACE_KEY=$ARIZE_SPACE_KEY ",
+            " -e PS_WEB_PASSWORD=$PS_WEB_PASSWORD",
         ]
     )
 
