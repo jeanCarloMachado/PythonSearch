@@ -30,6 +30,7 @@ def run(cmd="", entrypoint="", port="", restart=False):
     volumes = " ".join(
         [
             " -v $HOME/projects/PythonSearch:/src ",
+            " -v $HOME/.ssh:/root/.ssh ",
             " -v $HOME/projects/PySearchEntries/:/entries ",
             " -v $HOME/.PythonSearch:/root/.PythonSearch ",
             " -v $HOME/.PythonSearch/container_cache/:/root/.cache ",
