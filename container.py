@@ -22,7 +22,7 @@ def run(cmd="", entrypoint="", port="", restart=False):
 
     restart_exp = ""
     if restart:
-        restart_exp = " --restart "
+        restart_exp = " --restart unless-stopped "
 
     if port:
         port = f" -p {port}"
@@ -87,10 +87,11 @@ def run_webserver(restart=False):
     )
 
 
-def run_streamlit():
+def run_streamlit(restart=False):
     run(
         cmd="streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501",
-        port="8501:8501"
+        port="8501:8501",
+        restart=restart,
     )
 
 def main():

@@ -30,6 +30,11 @@ if open_page == 'home':
 
     entries = ConfigurationLoader().load_config().commands
 
+    if st.button("Sync hosts"):
+        import subprocess
+        result = subprocess.check_output('ps_container run /src/sync_hosts.sh ', shell=True, text=True)
+        st.write(f"Result: {result}")
+
     if st.checkbox("Add new entry"):
         key = st.text_input("Key")
         value = st.text_input("Value")
