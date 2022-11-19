@@ -14,12 +14,14 @@ class Arize:
         SPACE_KEY = os.environ["ARIZE_SPACE_KEY"]
 
         if not API_KEY or not SPACE_KEY:
-            raise Exception(
+            print(
                 "Arize cannot be created without both API_KEY and SPACE_KEY, values: "
                 + API_KEY
                 + " "
                 + SPACE_KEY
             )
+
+            return
         return Client(space_key=SPACE_KEY, api_key=API_KEY)
 
     def arize_responses_helper(responses):
