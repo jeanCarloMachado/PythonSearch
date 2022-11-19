@@ -26,6 +26,10 @@ with st.sidebar:
         open_page = "searches_performed_dataset"
 
 
+def restart():
+    result = subprocess.check_output('pkill streamlit', shell=True, text=True)
+    st.write(f"Result: {result}")
+
 if open_page == 'home':
     from python_search.config import ConfigurationLoader
 
@@ -34,9 +38,9 @@ if open_page == 'home':
     if st.button("Sync hosts"):
         result = subprocess.check_output('/src/sync_hosts.sh ', shell=True, text=True)
         st.write(f"Result: {result}")
+        restart()
     if st.button("Restart"):
-        result = subprocess.check_output('pkill streamlit', shell=True, text=True)
-        st.write(f"Result: {result}")
+        restart()
 
     if st.checkbox("Add new entry"):
         key = st.text_input("Key")
