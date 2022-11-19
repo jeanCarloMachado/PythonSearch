@@ -20,7 +20,7 @@ def run(cmd="", entrypoint="", port="", restart=False):
     if entrypoint:
         entrypoint = f" --entrypoint '{entrypoint}'"
 
-
+    restart_exp = ""
     if restart:
         restart_exp = " --restart "
 
@@ -78,10 +78,11 @@ def run_mlflow(restart=False):
     )
 
 
-def run_webserver():
+def run_webserver(restart=False):
     run(
         cmd="python_search_webapi",
-        port="8000:8000"
+        port="8000:8000",
+        restart=restart,
     )
 
 
