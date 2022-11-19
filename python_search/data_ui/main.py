@@ -1,4 +1,5 @@
 from __future__ import annotations
+import subprocess
 import pandas as pd
 
 import streamlit as st
@@ -31,9 +32,9 @@ if open_page == 'home':
     entries = ConfigurationLoader().load_config().commands
 
     if st.button("Sync hosts"):
-        import subprocess
         result = subprocess.check_output('/src/sync_hosts.sh ', shell=True, text=True)
         st.write(f"Result: {result}")
+    if st.button("Restart"):
         result = subprocess.check_output('pkill streamlit', shell=True, text=True)
         st.write(f"Result: {result}")
 
