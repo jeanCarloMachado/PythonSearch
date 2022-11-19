@@ -32,7 +32,7 @@ if open_page == 'home':
 
     if st.button("Sync hosts"):
         import subprocess
-        result = subprocess.check_output('esrc/sync_hosts.sh ', shell=True, text=True)
+        result = subprocess.check_output('/src/sync_hosts.sh ', shell=True, text=True)
         st.write(f"Result: {result}")
 
     if st.checkbox("Add new entry"):
