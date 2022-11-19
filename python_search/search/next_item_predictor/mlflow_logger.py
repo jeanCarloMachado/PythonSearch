@@ -7,7 +7,7 @@ from python_search.config import DataConfig
 
 def configure_mlflow(experiment_name: Optional[str] = None):
     """
-    train the _model and log it to MLFlow
+    setts up an mlflow uri and experiment name
     """
 
     if not experiment_name:

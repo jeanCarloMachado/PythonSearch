@@ -26,7 +26,7 @@ class CollectInput:
             if prefill_with_clipboard:
                 default_content = Clipboard().get_content()
 
-            font_size = 12
+            font_size = 14
             sg.theme("SystemDefault1")
 
             input_field = sg.Input(

@@ -15,10 +15,14 @@ def build_and_run():
     run()
 
 
-def run(cmd="", entrypoint="", port=""):
+def run(cmd="", entrypoint="", port="", restart=False):
 
     if entrypoint:
         entrypoint = f" --entrypoint '{entrypoint}'"
+
+
+    if restart:
+        restart_exp = " --restart "
 
     if port:
         port = f" -p {port}"
@@ -42,7 +46,7 @@ def run(cmd="", entrypoint="", port=""):
     )
 
     LIMIT_CPU = 8
-    cmd = f"docker run {port} --expose=8000 --expose 6379 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
+    cmd = f"docker run {port} {restart_exp} --expose=8000 --expose 6379 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
     print("Cmd: " + cmd)
     os.system(cmd)
 
@@ -62,19 +66,26 @@ def run_jupyter():
     )
 
 
-def run_mlflow():
+def run_mlflow(restart=False):
     run(
         cmd="mlflow ui --backend-store-uri file:/entries/mlflow --port 5001 --host '0.0.0.0' ",
         port="5001:5001",
+        restart=restart,
     )
 
 
 def run_webserver():
-    run(cmd="python_search_webapi", port="8000:8000")
+    run(
+        cmd="python_search_webapi",
+        port="8000:8000"
+    )
 
 
 def run_streamlit():
-    run(cmd=" streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501 ", port="8501:8501")
+    run(
+        cmd=" streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501 ",
+        port="8501:8501"
+    )
 
 def main():
     import fire
