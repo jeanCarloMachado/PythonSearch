@@ -57,19 +57,19 @@ def load_homepage():
 
     search = st.text_input('Search').lower()
     data = []
+    limit = 50
+    rendered = 0
+
+    st.write(" ## Entries")
     for key, value in entries.items():
-        tags = []
-        if 'tags' in value:
-            tags= value['tags']
+        if rendered > limit:
+            break
+
         value = extract_value_from_entry(value)
-        data.append((key, value, tags))
+        if search and (search not in key) and search not in value:
+            continue
+        col_key, col_value = st.columns((1, 3))
+        col_key.write(key)
+        col_value.write(value)
 
-
-    st.write("## Entries ")
-    df = pd.DataFrame.from_records(data, columns=['key', 'value', 'tags'])
-    df.style.hide_index()
-
-    if search:
-        df.query('key.str.contains(@search) or value.str.contains(@search)', inplace=True)
-
-    st.dataframe(df.head(50))
+        rendered += 1

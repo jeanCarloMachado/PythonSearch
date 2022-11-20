@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import streamlit as st
 
+
 from python_search.data_ui.app_functions import check_password
 from python_search.events.run_performed.dataset import RunPerformedDataset
 
@@ -11,7 +12,9 @@ open_page = "home"
 
 st.set_page_config(
     initial_sidebar_state="collapsed",
+    layout="wide"
 )
+
 with st.sidebar:
 
     if st.button("HomePage"):
