@@ -11,17 +11,17 @@ from python_search.entry_capture.register_new import RegisterNew
 def extract_value_from_entry(entry):
     result = ""
     if 'url' in entry:
-        result = entry['url']
+        result = str(entry['url'])
     if 'snippet' in entry:
-        result = entry['snippet']
+        result = str(entry['snippet'])
     if 'file' in entry:
-        result = entry['file']
+        result = str(entry['file'])
     if 'callable' in entry:
         result = str(entry['callable'])
     if 'cmd' in entry:
-        result = entry['cmd']
+        result = str(entry['cmd'])
     if 'cli_cmd' in entry:
-        result = entry['cli_cmd']
+        result = str(entry['cli_cmd'])
     return result
 
 def load_homepage():
