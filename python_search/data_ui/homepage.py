@@ -63,4 +63,4 @@ def load_homepage():
     if search:
         df.query('key.str.contains(@search) or value.str.contains(@search)', inplace=True)
 
-    st.dataframe(df.head(50))
+    st.table(df.head(50))
