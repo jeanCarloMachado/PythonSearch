@@ -29,23 +29,31 @@ def load_homepage():
 
     entries = ConfigurationLoader().load_config().commands
 
-    if st.button("Sync hosts"):
-        result = subprocess.check_output('/src/sync_hosts.sh ', shell=True, text=True)
-        st.write(f"Result: {result}")
-        restart_app()
-    if st.button("Restart"):
-        restart_app()
+    col1, col2, col3  = st.columns([1, 1, 1])
+
+    with col1:
+        if st.button("Sync hosts"):
+            result = subprocess.check_output('/src/sync_hosts.sh ', shell=True, text=True)
+            st.write(f"Result: {result}")
+            restart_app()
+    with col2:
+        if st.button("Restart"):
+            restart_app()
+
+    with col3:
+        if st.checkbox("Add new entry"):
+            open_add_new =  True
+        else:
+            open_add_new =  False
 
 
-    if st.checkbox("Add new entry"):
-
+    if open_add_new:
         key = st.text_input("Key")
         value = st.text_input("Value")
         create = st.button("Create")
         if create:
             RegisterNew().register(key=key, value=value)
             restart_app()
-
 
     search = st.text_input('Search').lower()
     data = []
@@ -59,6 +67,7 @@ def load_homepage():
 
     st.write("## Entries ")
     df = pd.DataFrame.from_records(data, columns=['key', 'value', 'tags'])
+    df.style.hide_index()
 
     if search:
         df.query('key.str.contains(@search) or value.str.contains(@search)', inplace=True)
