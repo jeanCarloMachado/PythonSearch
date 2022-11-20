@@ -9,8 +9,11 @@ from python_search.data_ui.training_page import load_training_page
 
 open_page = "home"
 
-
+st.set_page_config(
+    initial_sidebar_state="collapsed",
+)
 with st.sidebar:
+
     if st.button("HomePage"):
         open_page = "home"
 

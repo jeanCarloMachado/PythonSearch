@@ -21,14 +21,15 @@ def load_homepage():
     if st.button("Restart"):
         restart_app()
 
+
     if st.checkbox("Add new entry"):
+
         key = st.text_input("Key")
         value = st.text_input("Value")
         create = st.button("Create")
         if create:
             RegisterNew().register(key=key, value=value)
-            config = ConfigurationLoader().load_config()
-            entries = config.commands
+            restart_app()
 
 
     search = st.text_input('Search').lower()
