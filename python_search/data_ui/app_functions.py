@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 
 import streamlit as st
@@ -14,6 +15,10 @@ import streamlit as st
 
 def check_password():
     """Returns `True` if the user had the correct password."""
+
+    if 'PS_DISABLE_PASSWORD' in os.environ:
+        print("Password disabled")
+        return True
 
     def password_entered():
         import os

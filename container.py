@@ -15,7 +15,7 @@ def build_and_run():
     run()
 
 
-def run(cmd="", entrypoint="", port="", restart=False):
+def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
 
     if entrypoint:
         entrypoint = f" --entrypoint '{entrypoint}'"
@@ -38,14 +38,16 @@ def run(cmd="", entrypoint="", port="", restart=False):
         ]
     )
 
-    environment_variables = " ".join(
-        [
+    env_vars = [
             " -e 'PS_ENTRIES_HOME=/entries' ",
             " -e ARIZE_API_KEY=$ARIZE_API_KEY ",
             " -e ARIZE_SPACE_KEY=$ARIZE_SPACE_KEY ",
             " -e PS_WEB_PASSWORD=$PS_WEB_PASSWORD",
-        ]
-    )
+    ]
+
+    env_vars = env_vars + extra_env_vars if extra_env_vars else env_vars
+
+    environment_variables = " ".join(env_vars)
 
     LIMIT_CPU = 8
     cmd = f"docker run {port} {restart_exp} --expose=8000 --expose 6379 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
@@ -89,11 +91,12 @@ def run_webserver(restart=False):
     )
 
 
-def run_streamlit(restart=False):
+def run_streamlit(restart=False, disable_password=False):
     run(
         cmd="streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501",
         port="8501:8501",
         restart=restart,
+        extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
     )
 
 def main():
