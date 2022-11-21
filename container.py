@@ -83,7 +83,10 @@ def run_mlflow(restart=False):
     )
 
 
-def run_webserver(restart=False):
+def run_webserver(restart=False, force_restart=False):
+    if force_restart:
+        print("Stopping previously running container")
+        os.system("docker stop $(docker ps | grep -i 8000 | cut -d ' ' -f1) ")
     run(
         cmd="python_search_webapi",
         port="8000:8000",

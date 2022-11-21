@@ -14,23 +14,23 @@ class EntryKeyGeneratorCmd(BaseModel):
 
 class DescriptionGenerator:
 
-    RUN_ID = '2fd85bdb745f4c10901a90e3f18cfec3'
+    RUN_ID = '0d0fa2b7e3d9411f83e99a1383246d04'
 
     def __init__(self):
-        self._model = PythonSearchMLFlow().get_entry_description_geneartor(
-            run_id=DescriptionGenerator.RUN_ID
-
-        )
-
         try:
-            self._chars = PythonSearchMLFlow().get_entry_description_geneartor_dict(
-                run_id="74af9c8066c34ce4809b990ce4b029db"
+            self._model = PythonSearchMLFlow().get_entry_description_geneartor(
+                run_id=DescriptionGenerator.RUN_ID
 
             )
-        except:
-            print("Could not load chars dict from mlflow")
+
+            self._chars = PythonSearchMLFlow().get_entry_description_geneartor_dict(
+                run_id=DescriptionGenerator.RUN_ID
+
+            )
+            self._char_indices = dict((char, self._chars.index(char)) for char in self._chars)
+        except Exception as e:
+            print("Could not load descritpion generator {}".format(e))
             return
-        self._char_indices = dict((char, self._chars.index(char)) for char in self._chars)
 
 
     def generate(self, cmd: EntryKeyGeneratorCmd):
