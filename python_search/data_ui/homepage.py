@@ -33,7 +33,7 @@ def load_homepage():
 
     with col1:
         if st.button("Sync hosts"):
-            result = subprocess.check_output('/src/sync_hosts.sh ', shell=True, text=True)
+            result = subprocess.check_output('/src/sync_hosts.py ', shell=True, text=True)
             st.write(f"Result: {result}")
             restart_app()
     with col2:

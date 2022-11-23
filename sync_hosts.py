@@ -6,14 +6,17 @@ import subprocess
 def call_docker():
   os.system("ps_container run /src/sync_hosts.py")
 
+def sync_both_from_mac():
+  sync()
+  sync_archlinux()
+
 def sync_archlinux():
-  os.system("ssh -t jean@192.168.178.20 'ps_container run /src/sync_hosts.py'")
+  os.system("ssh -t jean@192.168.178.20 'ps_container run /src/sync_hosts.py sync'")
 
 def sync():
   os.system("git config pull.rebase true")
   sync_repo('/entries')
   sync_repo('/src')
-
 
 
 def pull_cb():
