@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import time
 import os
 import subprocess
 
@@ -8,6 +9,7 @@ def sync_from_container():
 
 def sync_both_from_mac():
   sync()
+  time.sleep(1)
   sync_archlinux()
 
 def sync_archlinux():
@@ -34,10 +36,10 @@ def sync_repo(folder):
   print('Current branch: ' + current_branch)
 
   cmd = f'cd {folder} ; git add . ; git commit -m AutomaticChanges '
-  print(cmd)
   os.system(cmd)
 
-  os.system(f"git pull origin {current_branch} ; git push origin {current_branch}")
+  time.sleep(0.5)
+  os.system(f"cd {folder}  ; git pull origin {current_branch} ; git push origin {current_branch}")
 
 
 
