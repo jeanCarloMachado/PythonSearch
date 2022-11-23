@@ -38,8 +38,10 @@ def sync_repo(folder):
   cmd = f'cd {folder} ; git add . ; git commit -m AutomaticChanges '
   os.system(cmd)
 
-  time.sleep(0.5)
-  os.system(f"cd {folder}  ; git pull origin {current_branch} ; git push origin {current_branch}")
+  time.sleep(0.3)
+  os.system(f"cd {folder}  ; git pull origin {current_branch} ")
+  time.sleep(0.3)
+  os.system(f"cd {folder}  ;  git push origin {current_branch} ")
 
 
 
