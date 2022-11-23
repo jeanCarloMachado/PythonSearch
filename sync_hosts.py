@@ -11,6 +11,8 @@ def sync_both_from_mac():
   sync()
   time.sleep(1)
   sync_archlinux()
+  time.sleep(1)
+  sync()
 
 def sync_archlinux():
   os.system("ssh -t jean@192.168.178.20 \"ps_container run '/src/sync_hosts.py sync'\"")
