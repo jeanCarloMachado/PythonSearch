@@ -15,7 +15,7 @@ def sync_repo(folder):
   print('Syncing entries project')
   current_branch = get_current_branch()
   print('Current branch: ' + current_branch)
-  os.system(f"cd {folder} ; git add . ; git commit -m 'Automatic changes' && git pull origin {current_branch} && git push origin {current_branch}")
+  os.system(f'bash -c "cd {folder} ; git add . ; git commit -m AutomaticChanges && git pull origin {current_branch} && git push origin {current_branch}"')
 
 
 if __name__ == '__main__':
