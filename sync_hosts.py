@@ -33,9 +33,11 @@ def sync_repo(folder):
   current_branch = get_current_branch()
   print('Current branch: ' + current_branch)
 
-  cmd = f'bash -c "cd {folder} ; git add . ; git commit -m AutomaticChanges && git pull origin {current_branch} ; git push origin {current_branch}"'
+  cmd = f'cd {folder} ; git add . ; git commit -m AutomaticChanges '
   print(cmd)
   os.system(cmd)
+
+  os.system(f"git pull origin {current_branch} ; git push origin {current_branch}")
 
 
 
