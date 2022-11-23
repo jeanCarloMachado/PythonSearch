@@ -9,7 +9,7 @@ def sync_host():
   sync_repo('/src')
 
 def get_current_branch():
-  return subprocess.check_output('git branch 2> /dev/null | grep "*" | cut -d" " -f2', shell=True, text=True)
+  return subprocess.check_output('git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
 
 def sync_repo(folder):
   print('Syncing entries project')
