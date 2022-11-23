@@ -3,8 +3,8 @@
 import os
 import subprocess
 
-def call_docker():
-  os.system("ps_container run /src/sync_hosts.py")
+def sync_from_container():
+  os.system("ps_container run /src/sync_hosts.py sync")
 
 def sync_both_from_mac():
   sync()
