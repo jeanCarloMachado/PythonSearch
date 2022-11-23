@@ -20,9 +20,10 @@ def sync():
   sync_repo('/src')
 
 
-def pull_cb():
+def pull_cb(folder="/entries"):
   current_branch = get_current_branch()
-  os.system("git pull origin " + current_branch)
+  os.system(f"cd {folder} ; git pull origin " + current_branch)
+
 
 def get_current_branch():
   return subprocess.check_output('git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
