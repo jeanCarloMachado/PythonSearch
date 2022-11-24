@@ -85,28 +85,30 @@ class PythonSearchCli:
 
         return EditKey(self.configuration).edit_key(key, dry_run=False)
 
-    def _copy_entry_content(self, key: str):
+    def _copy_entry_content(self, entry_str: str):
         """
         Copies the content of the provided key to the clipboard.
         Used by fzf to provide Ctrl-c functionality.
         """
         from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 
+        key = entry_str.split(":")[0]
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
+        print(f"Key: {key}")
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )
 
-    def _copy_key_only(self, key_str: str):
+    def _copy_key_only(self, entry_str: str):
         """
         Copies to clipboard the key
         """
         from python_search.apps.clipboard import Clipboard
 
-        only_key = key_str.split(":")[0]
-        Clipboard().set_content(only_key)
+        key = entry_str.split(":")[0]
+        Clipboard().set_content(key)
         LogRunPerformedClient().send(
-            RunPerformed(key=only_key, query_input="", shortcut=False)
+            RunPerformed(key=key, query_input="", shortcut=False)
         )
 
     def shortcut_generator(self):
