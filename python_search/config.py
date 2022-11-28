@@ -25,6 +25,7 @@ class DataConfig:
 
     # output of the _model
     base_data_folder = f"{os.environ['HOME']}/.data/data/python_search"
+    BASE_DATA_COLLECTOR_FOLDER = f"{os.environ['HOME']}/.data/data_collection"
     prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
     # a copy of the search run _entries for the feature store
     entries_dump = base_data_folder + "/entries_dumped/latest"

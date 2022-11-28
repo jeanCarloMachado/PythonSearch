@@ -6,6 +6,7 @@ from typing import List, Literal, Optional
 
 from python_search.config import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
+from python_search.events.ranking_generated import RankingGenerated, RankingGeneratedWriter
 from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
 from python_search.search.ranked_entries import RankedEntries
@@ -30,6 +31,7 @@ class Search:
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
         self._entries = None
+        self._ranking_generator_writer = RankingGeneratedWriter()
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
@@ -62,7 +64,10 @@ class Search:
         """Populate the variable used_entries  with the results from redis"""
         result = self._merge_with_latest_used()
 
-        return self._entries_result.build_entries_result(result)
+        self._ranking_generator_writer.write(RankingGenerated(ranking=[i[0] for i in result[0:10]]))
+        result_str = self._entries_result.build_entries_result(result)
+
+        return result_str
 
     def _rerank_via_model(self):
         try:
