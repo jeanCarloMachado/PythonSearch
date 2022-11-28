@@ -134,7 +134,7 @@ class FzfInKitty:
 def focus_on_python_search_ui() -> bool:
     os.system("""osascript -e 'tell application "Kitty"
 activate
-set visible of first window whose name contains "PythonSearch" to true
+set visible of first window whose name contains "PythonSearchWindow" to true
 end tell'""")
 
     result = os.system("test $(ps aux | grep -i 'PythonSearchWindow' | wc -l ) -gt 1")
@@ -147,6 +147,10 @@ end tell'""")
 
 
     return int(process_running) > 2
+
+def hide_kitty() -> bool:
+    #os.system("""osascript -e 'tell application "Kitty" to set miniaturized of (first window whose name contains "PythonSearchWindow") to true '""")
+    os.system("""osascript -e 'tell application "Kitty" to set visible of every window to true' """)
 
 if __name__ == "__main__":
     import fire
