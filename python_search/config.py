@@ -61,7 +61,7 @@ class PythonSearchConfiguration(EntriesGroup):
     Everything to customize about the application is configurable via code through this class
     """
 
-    APPLICATION_TITLE = "SearchPythonSearch"
+    APPLICATION_TITLE = "PythonSearchWindow"
     commands: dict
     simple_gui_theme = "SystemDefault1"
     simple_gui_font_size = 14

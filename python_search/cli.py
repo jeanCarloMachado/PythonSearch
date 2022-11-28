@@ -66,7 +66,8 @@ class PythonSearchCli:
         """
         Opens the Search UI. Main entrypoint of the application
         """
-        FzfInKitty.build_search_ui(self.configuration).run()
+        FzfInKitty(self.configuration).run()
+
 
     def edit_main(self):
         """Edit the main script"""

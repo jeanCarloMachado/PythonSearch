@@ -1,4 +1,3 @@
-import cmd
 from typing import Union
 
 import requests

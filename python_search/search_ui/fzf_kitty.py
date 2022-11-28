@@ -17,13 +17,7 @@ class FzfInKitty:
 
     configuration: PythonSearchConfiguration
 
-    @staticmethod
-    def build_search_ui(configuration) -> "FzfInKitty":
-        """Assembles what is specific for the search ui exclusively"""
-
-        return FzfInKitty(configuration=configuration)
-
-    def __init__(self, *, configuration: PythonSearchConfiguration):
+    def __init__(self, configuration: PythonSearchConfiguration):
         self.height = FzfInKitty.HEIGHT
         self.width = FzfInKitty.WIDTH
 
@@ -41,12 +35,14 @@ class FzfInKitty:
         self._logger = logger
 
     def run(self) -> None:
-        self._launch_terminal(self._fzf_cmd())
+        if not focus_on_python_search_ui():
+            print("Opening new window")
+            self._launch_terminal(self._fzf_cmd())
 
     def _fzf_cmd(self):
         FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#ffffff,hl+:#d7005f"
         THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
-        cmd = f"""bash -c 'pkill fzf ; export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
+        cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
         --tiebreak=length,begin,index \
         --cycle \
@@ -114,7 +110,7 @@ class FzfInKitty:
             font = "Pragmata Pro"
 
         launch_cmd = f"""nice -19 kitty \
-        --title="{self.title}"\
+        --title {self.title} \
         -o draw_minimal_borders=yes \
         -o placement_strategy=top-left \
         -o window_border_width=0 \
@@ -134,6 +130,23 @@ class FzfInKitty:
         if result != 0:
             raise Exception("Search run fzf projection failed")
 
+
+def focus_on_python_search_ui() -> bool:
+    os.system("""osascript -e 'tell application "Kitty"
+activate
+set visible of first window whose name contains "PythonSearch" to true
+end tell'""")
+
+    result = os.system("test $(ps aux | grep -i 'PythonSearchWindow' | wc -l ) -gt 1")
+
+
+    import subprocess
+    result = subprocess.check_output("ps aux | grep -i 'PythonSearchWindow' | wc -l", shell=True, text=True)
+    process_running = result.split(' ')[-1].split("\n")[0]
+    print("Process running", process_running)
+
+
+    return int(process_running) > 2
 
 if __name__ == "__main__":
     import fire
