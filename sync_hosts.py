@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
-import time
 import os
 import subprocess
-
-def sync_from_container():
-  os.system("ps_container run /src/sync_hosts.py sync")
+import time
 
 def sync_both_from_mac():
   sync_archlinux()
   time.sleep(1)
   sync()
+
+def sync_from_container():
+  os.system("ps_container run /src/sync_hosts.py sync")
 
 def sync_archlinux():
   os.system("ssh -t jean@192.168.178.20 \"ps_container run '/src/sync_hosts.py sync'\"")

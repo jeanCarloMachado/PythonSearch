@@ -80,10 +80,16 @@ class PythonSearchCli:
 
         return RegisterNew(self.configuration)
 
-    def edit_key(self, key):
+    def edit_key(self, entry_str):
         from python_search.entry_capture.edit_content import EditKey
 
-        return EditKey(self.configuration).edit_key(key, dry_run=False)
+
+        result =  EditKey(self.configuration).edit_key(entry_str, dry_run=False)
+        key = entry_str.split(":")[0]
+        LogRunPerformedClient().send(
+            RunPerformed(key=key, query_input="", shortcut=False)
+        )
+        return result
 
     def _copy_entry_content(self, entry_str: str):
         """
@@ -117,14 +123,17 @@ class PythonSearchCli:
 
         return ShortcutGenerator(self.configuration)
 
-    def _search_edit(self, key=None):
+    def _search_edit(self, entry_str=None):
         from python_search.entry_capture.edit_content import EditKey
 
-        result = EditKey(self.configuration).search_entries_directory(key)
+        result = EditKey(self.configuration).search_entries_directory(entry_str)
 
-        LogRunPerformedClient().send(
-            RunPerformed(key=key, query_input="", shortcut=False)
-        )
+
+        if entry_str.split(":"):
+            key = entry_str.split(":")[0]
+            LogRunPerformedClient().send(
+                RunPerformed(key=key, query_input="", shortcut=False)
+            )
         return result
 
     def _ranking(self):
