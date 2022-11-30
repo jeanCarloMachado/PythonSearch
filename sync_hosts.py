@@ -8,6 +8,7 @@ def sync_both_from_mac():
   sync_archlinux()
   time.sleep(1)
   sync()
+  sync_archlinux()
 
 def sync_from_container():
   os.system("ps_container run /src/sync_hosts.py sync")
