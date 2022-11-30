@@ -5,6 +5,7 @@ from colorama import Fore
 from dateutil import parser
 
 from python_search.config import ConfigurationLoader
+from python_search.logger import setup_preview_logger
 from python_search.search_ui.serialized_entry import decode_serialized_data_from_entry_text
 
 
@@ -15,9 +16,8 @@ class Preview:
 
     def __init__(self):
         self.configuration = ConfigurationLoader()
-        self.logger = logging.getLogger("preview_entry")
+        self.logger = setup_preview_logger()
         # do not send the errors to stderr, in the future we should send to kibana or a file
-        self.logger.disabled = True
 
     def display(self, entry_text: str):
         """
@@ -101,7 +101,7 @@ class Preview:
         if "description" in entry_data:
             result["description"] = entry_data["description"]
 
-        decoded_content = decode_serialized_data_from_entry_text(entry_text)
+        decoded_content = decode_serialized_data_from_entry_text(entry_text, self.logger)
 
         if "position" in decoded_content:
             result["position"] = str(decoded_content["position"])

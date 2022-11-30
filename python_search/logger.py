@@ -15,6 +15,17 @@ def setup_inference_logger():
 
     return logger
 
+def setup_preview_logger():
+    """
+    Only writes to file
+    """
+    logger = logging.getLogger("preview")
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler("/tmp/preview.txt")
+    fh.setLevel(logging.INFO)
+    logger.addHandler(fh)
+
+    return logger
 
 def setup_run_key_logger():
     logger = logging.getLogger("run-key")
