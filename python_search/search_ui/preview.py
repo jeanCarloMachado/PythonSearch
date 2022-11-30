@@ -48,6 +48,9 @@ class Preview:
         if "position" in data:
             print("Position: " + data["position"])
 
+        if "uuid" in data:
+            print("Uuid: " + data["uuid"][0:8])
+
     def _get_color_for_type(self, type):
         if type == "Cmd":
             return Fore.RED
@@ -110,6 +113,9 @@ class Preview:
 
         if "tags" in decoded_content:
             result["tags"] = " ".join(decoded_content["tags"])
+
+        if "uuid" in decoded_content:
+            result["uuid"] = str(decoded_content["uuid"])
 
         return result
 

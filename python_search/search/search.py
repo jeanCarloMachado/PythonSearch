@@ -64,8 +64,9 @@ class Search:
         """Populate the variable used_entries  with the results from redis"""
         result = self._merge_with_latest_used()
 
-        self._ranking_generator_writer.write(RankingGenerated(ranking=[i[0] for i in result[0:10]]))
-        result_str = self._entries_result.build_entries_result(result)
+        ranknig_generated_event = RankingGenerated(ranking=[i[0] for i in result[0:10]])
+        self._ranking_generator_writer.write(ranknig_generated_event)
+        result_str = self._entries_result.build_entries_result(result, ranknig_generated_event.uuid)
 
         return result_str
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import  List, Union
 import uuid
 
+import datetime
 from pydantic import BaseModel
 
 EVENT_FOLDER = "ranking_generated"
@@ -17,14 +18,14 @@ class RankingGenerated(BaseModel):
     uuid: Union[str, NotSetYet] = NotSetYet
     timestamp: Union[str, NotSetYet] = NotSetYet
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.uuid = str(uuid.uuid4())
+        self.first = self.ranking[0]
+        self.timestamp = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
+
 class RankingGeneratedWriter:
     def write(self, event: RankingGenerated):
-        import datetime
-
-        event.timestamp = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
-        event.uuid = str(uuid.uuid4())
-        event.first = event.ranking[0]
-
         return GenericDataCollector().write(
             data=event.__dict__, table_name=EVENT_FOLDER
         )

@@ -21,7 +21,7 @@ class FzfOptimizedSearchResults:
         self._today = datetime.datetime.now()
 
     @timeit
-    def build_entries_result(self, entries: RankedEntries.type) -> str:
+    def build_entries_result(self, entries: RankedEntries.type, ranking_uuid: str) -> str:
         """Print results"""
         position = 1
         result = ""
@@ -30,6 +30,7 @@ class FzfOptimizedSearchResults:
                 content["key_name"] = name
                 content["position"] = position
                 content["generated_acronyms"] = generate_acronyms(name)
+                content["uuid"] = ranking_uuid
                 content["tags"] = content["tags"] if "tags" in content else []
                 if "created_at" in content:
                     date_created = parser.parse(content["created_at"])
