@@ -20,7 +20,6 @@ def setup_preview_logger():
     Only writes to file
     """
     logger = logging.getLogger("preview")
-    logger.setLevel(logging.DEBUG)
     fh = logging.FileHandler("/tmp/preview.txt")
     fh.setLevel(logging.INFO)
     logger.addHandler(fh)

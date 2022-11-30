@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 
 from colorama import Fore
@@ -61,8 +60,7 @@ class Preview:
         return Fore.BLUE
 
     def _build_values_to_print(self, entry_text) -> dict:
-        print_values = entry_text.split(":")
-        key = print_values[0]
+        key = entry_text.split(":")[0]
         # the entry content is after the key + a ":" character
 
         result = {}

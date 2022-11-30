@@ -10,5 +10,4 @@ def decode_serialized_data_from_entry_text(entry_text: str, logger=None) -> dict
         if logger:
             logger.info(message)
 
-        print(message)
         return {}
