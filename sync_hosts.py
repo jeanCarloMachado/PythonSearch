@@ -32,7 +32,7 @@ def get_current_branch():
   return subprocess.check_output('git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
 
 def sync_repo(folder):
-  print('Syncing entries project')
+  print('====> Syncing entries project')
   current_branch = get_current_branch()
   print('Current branch: ' + current_branch)
 
