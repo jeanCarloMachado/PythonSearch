@@ -68,9 +68,7 @@ def health():
 def log_run(event: RunPerformed):
 
     RecentKeys.add_latest_used(event.key)
-
     RunPerformedWriter().write(event)
-
     # regenerate the search after running a key
     reload()
 

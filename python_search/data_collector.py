@@ -1,5 +1,6 @@
 import json
 import os
+from pyspark.sql import DataFrame
 
 
 class GenericDataCollector:
@@ -35,14 +36,13 @@ class GenericDataCollector:
 
         print(f"File {file_name} written successfully")
 
-    def data_location(self, table_name):
+    def data_location(self, table_name) -> str:
         return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
 
-    def dataframe(self, table_name):
+
+    def dataframe(self, table_name) -> DataFrame:
         from pyspark.sql.session import SparkSession
-
         spark = SparkSession.builder.getOrCreate()
-
         return spark.read.json(GenericDataCollector().data_location(table_name))
 
     def show_data(self, table_name):

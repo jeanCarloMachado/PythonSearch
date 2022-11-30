@@ -1,5 +1,8 @@
 from __future__ import annotations
 from typing import  List, Union
+from python_search.config import DataConfig
+from python_search.data_collector import GenericDataCollector
+
 import uuid
 
 import datetime
@@ -29,12 +32,6 @@ class RankingGeneratedWriter:
         return GenericDataCollector().write(
             data=event.__dict__, table_name=EVENT_FOLDER
         )
-
-
-
-from python_search.config import DataConfig
-from python_search.data_collector import GenericDataCollector
-
 
 class RankingGeneratedDataset:
     """

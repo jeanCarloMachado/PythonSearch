@@ -20,6 +20,9 @@ class LogRunPerformedClient:
 
 
 class RunPerformedWriter:
+    """
+    Writes event
+    """
     def write(self, event: RunPerformed):
         import datetime
 

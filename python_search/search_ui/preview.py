@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import datetime
 
@@ -6,6 +5,7 @@ from colorama import Fore
 from dateutil import parser
 
 from python_search.config import ConfigurationLoader
+from python_search.search_ui.serialized_entry import decode_serialized_data_from_entry_text
 
 
 class Preview:
@@ -64,7 +64,6 @@ class Preview:
         print_values = entry_text.split(":")
         key = print_values[0]
         # the entry content is after the key + a ":" character
-        serialized_content = entry_text[len(key) + 1 :]
 
         result = {}
         result["type"] = "Unknown"
@@ -102,7 +101,7 @@ class Preview:
         if "description" in entry_data:
             result["description"] = entry_data["description"]
 
-        decoded_content = self._decode_serialized_data(serialized_content)
+        decoded_content = decode_serialized_data_from_entry_text(entry_text)
 
         if "position" in decoded_content:
             result["position"] = str(decoded_content["position"])
@@ -122,12 +121,6 @@ class Preview:
     def _color_str(self, a_string, a_color) -> str:
         return f"{a_color}{a_string}{Fore.RESET}"
 
-    def _decode_serialized_data(self, serialized_content):
-        try:
-            return json.loads(serialized_content)
-        except Exception as e:
-            self.logger.error(str(e))
-            return []
 
     def _load_key_data(self, key):
         entries = self.configuration.load_entries()

@@ -13,6 +13,7 @@ from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
 from python_search.exceptions import notify_exception
+from python_search.search_ui.serialized_entry import decode_serialized_data_from_entry_text
 
 logger = setup_run_key_logger()
 
@@ -28,7 +29,7 @@ class EntryRunner:
     @notify_exception()
     def run(
         self,
-        key: str,
+        entry_text: str,
         query_used: str = "",
         force_gui_mode=False,
         gui_mode=False,
@@ -42,26 +43,20 @@ class EntryRunner:
             entry_rank_position: accounts for where the entry was when it was executed, if passed it will be used for
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
+        key = entry_text.split(":")[0] if ':' in entry_text else entry_text
 
         logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is
         # usually the key from fzf, and our keys do not accept :
-        metadata = ""
-        if ":" in key:
-            key, metadata = key.split(":", 1)
-            logger.info(f"metadata: {metadata}")
 
         if from_shortcut:
             send_notification(f"{key}")
 
-        rank_position = None
 
-        if metadata:
-            try:
-                matadata_dict = json.loads(metadata)
-                rank_position = matadata_dict.get("position")
-            except BaseException as e:
-                logger.warning(f"Could not decode metadata: {e}")
+        metadata = decode_serialized_data_from_entry_text(entry_text, logger)
+        logger.info(f"Decoded metadata {metadata}")
+        rank_position = metadata.get("position")
+
 
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
@@ -95,9 +90,10 @@ class EntryRunner:
 
         result = InterpreterMatcher.build_instance(self.configuration).default(real_key)
 
-        LogRunPerformedClient().send(
-            RunPerformed(key=key, query_input=query_used, shortcut=from_shortcut)
-        )
+        logger.info("Passed interpreter")
+        run_performed = RunPerformed(key=key, query_input=query_used, shortcut=from_shortcut, rank_uuid=metadata.get("uuid"))
+        logger.info(f"Run performed = {run_performed}")
+        LogRunPerformedClient().send(run_performed)
         return result
 
     def _matching_keys(self, key: str) -> List[str]:
