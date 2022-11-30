@@ -41,7 +41,7 @@ class RegisterNew:
         Returns:
 
         """
-
+        print(f"Registering new entry with tag = {tag}")
         key = self._sanitize_key(key)
 
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
