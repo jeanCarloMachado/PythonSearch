@@ -40,7 +40,7 @@ def load_homepage():
             restart_app()
 
     with col3:
-        if st.checkbox("Add new entry"):
+        if st.checkbox("Add New Entry"):
             open_add_new = True
         else:
             open_add_new = False
@@ -51,7 +51,10 @@ def load_homepage():
         value = st.text_input("Value")
         create = st.button("Create")
         if create:
-            RegisterNew().register(key=key, value=value, tag='DataApp_Entry')
+            cmd = f"python_search register_new register --key='{key}' --value='{value}' --tag=DataApp_Entry"
+            st.write("Running: ", cmd)
+            result = subprocess.check_output(cmd, shell=True, text=True)
+            st.write(f"Result: {result}")
 
     search = st.text_input('Search').lower()
     data = []
