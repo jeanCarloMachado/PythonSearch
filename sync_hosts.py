@@ -28,12 +28,12 @@ def pull_cb(folder="/entries"):
   os.system(f"cd {folder} ; git pull origin " + current_branch)
 
 
-def get_current_branch():
-  return subprocess.check_output('git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
+def get_current_branch(folder):
+  return subprocess.check_output('cd {folder} ; git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
 
 def sync_repo(folder):
   print('====> Syncing entries project')
-  current_branch = get_current_branch()
+  current_branch = get_current_branch(folder)
   print('Current branch: ' + current_branch)
 
   cmd = f'cd {folder} ; git add . ; git commit -m AutomaticChanges '
