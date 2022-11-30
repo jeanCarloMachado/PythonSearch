@@ -29,7 +29,7 @@ def pull_cb(folder="/entries"):
 
 
 def get_current_branch(folder):
-  return subprocess.check_output('cd {folder} ; git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
+  return subprocess.check_output(f'cd {folder} ; git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
 
 def sync_repo(folder):
   print('====> Syncing entries project')
