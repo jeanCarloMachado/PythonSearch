@@ -28,7 +28,7 @@ def load_homepage():
 
     entries = ConfigurationLoader().load_config().commands
 
-    col1, col2, col3  = st.columns([1, 1, 1])
+    col1, col2, col3 = st.columns([1, 1, 1])
 
     with col1:
         if st.button("Sync hosts"):
@@ -41,9 +41,9 @@ def load_homepage():
 
     with col3:
         if st.checkbox("Add new entry"):
-            open_add_new =  True
+            open_add_new = True
         else:
-            open_add_new =  False
+            open_add_new = False
 
 
     if open_add_new:
@@ -51,7 +51,7 @@ def load_homepage():
         value = st.text_input("Value")
         create = st.button("Create")
         if create:
-            RegisterNew().register(key=key, value=value)
+            RegisterNew().register(key=key, value=value, tag='DataApp_Entry')
 
     search = st.text_input('Search').lower()
     data = []
