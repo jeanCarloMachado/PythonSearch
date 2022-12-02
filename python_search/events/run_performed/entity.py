@@ -18,9 +18,10 @@ class RunPerformed(BaseModel):
     query_input: str
     # for when it is started from a shortcut
     shortcut: str
-    rank_uuid: Optional[str] = None
     # unix timestamp
     timestamp: Optional[str] = None
+    rank_uuid: Optional[str] = None
+    rank_position: Optional[int] = None
 
     @staticmethod
     def get_schema():

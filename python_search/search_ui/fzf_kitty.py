@@ -1,5 +1,6 @@
 import os
 
+import subprocess
 from python_search.apps.terminal import Terminal
 from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
@@ -137,10 +138,9 @@ activate
 set visible of first window whose name contains "PythonSearchWindow" to true
 end tell'""")
 
-    result = os.system("test $(ps aux | grep -i 'PythonSearchWindow' | wc -l ) -gt 1")
+    os.system("test $(ps aux | grep -i 'PythonSearchWindow' | wc -l ) -gt 1")
 
 
-    import subprocess
     result = subprocess.check_output("ps aux | grep -i 'PythonSearchWindow' | wc -l", shell=True, text=True)
     process_running = result.split(' ')[-1].split("\n")[0]
     print("Process running", process_running)
@@ -149,7 +149,6 @@ end tell'""")
     return int(process_running) > 2
 
 def hide_kitty() -> bool:
-    #os.system("""osascript -e 'tell application "Kitty" to set miniaturized of (first window whose name contains "PythonSearchWindow") to true '""")
     os.system("""osascript -e 'tell application "Kitty" to set visible of every window to true' """)
 
 if __name__ == "__main__":

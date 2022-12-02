@@ -6,7 +6,7 @@ import json
 from python_search.entry_description_generator.description_geneartor import EntryKeyGeneratorCmd
 
 
-class WebApiSDK:
+class PythonSearchWebAPISDK:
     """
     A lightweight SDK for the web api
     """
@@ -40,7 +40,7 @@ class WebApiSDK:
 def main():
     import fire
 
-    fire.Fire(WebApiSDK)
+    fire.Fire(PythonSearchWebAPISDK)
 
 
 if __name__ == "__main__":

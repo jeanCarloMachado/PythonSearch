@@ -91,7 +91,13 @@ class EntryRunner:
         result = InterpreterMatcher.build_instance(self.configuration).default(real_key)
 
         logger.info("Passed interpreter")
-        run_performed = RunPerformed(key=key, query_input=query_used, shortcut=from_shortcut, rank_uuid=metadata.get("uuid"))
+        run_performed = RunPerformed(
+            key=key,
+            query_input=query_used,
+            shortcut=from_shortcut,
+            rank_uuid=metadata.get("uuid"),
+            rank_position=metadata.get("position")
+        )
         logger.info(f"Run performed = {run_performed}")
         LogRunPerformedClient().send(run_performed)
         return result

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 from python_search.config import DataConfig
 from python_search.data_collector import GenericDataCollector
@@ -36,12 +36,21 @@ class RunPerformedDataset:
     def load_new(self):
         from pyspark.sql.session import SparkSession
 
-        my_schema = StructType(
-            [StructField('key', StringType(), True), StructField('query_input', StringType(), True),
-             StructField('shortcut', StringType(), True), StructField('rank_uuid', StringType(), True),
-             StructField('timestamp', StringType(), True)])
+        schema = StructType(
+            [
+                StructField('key', StringType(), True),
+                StructField('query_input', StringType(), True),
+                StructField('shortcut', StringType(), True),
+                StructField('rank_uuid', StringType(), True),
+                StructField('rank_position', IntegerType(), True),
+                StructField('timestamp', StringType(), True)
+             ]
+        )
 
         spark = SparkSession.builder.getOrCreate()
-        result_df = spark.read.json(GenericDataCollector().data_location(RunPerformedDataset.NEW_TABLE_NAME), schema=my_schema)
+        result_df = spark.read.json(
+            GenericDataCollector().data_location(RunPerformedDataset.NEW_TABLE_NAME),
+            schema=schema
+        )
 
         return result_df

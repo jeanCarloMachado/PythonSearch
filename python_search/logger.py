@@ -37,3 +37,14 @@ def setup_run_key_logger():
     logger.addHandler(ch)
 
     return logger
+def setup_data_writter_logger(event_name):
+    logger = logging.getLogger(f"data-writer_{event_name}")
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler(f"/tmp/data-writer_event_{event_name}")
+    fh.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
+    return logger
