@@ -36,9 +36,7 @@ class FzfInKitty:
         self._logger = logger
 
     def run(self) -> None:
-        if not focus_on_python_search_ui():
-            print("Opening new window")
-            self._launch_terminal(self._fzf_cmd())
+        self._launch_terminal(self._fzf_cmd())
 
     def _fzf_cmd(self):
         FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#ffffff,hl+:#d7005f"
@@ -131,25 +129,6 @@ class FzfInKitty:
         if result != 0:
             raise Exception("Search run fzf projection failed")
 
-
-def focus_on_python_search_ui() -> bool:
-    os.system("""osascript -e 'tell application "Kitty"
-activate
-set visible of first window whose name contains "PythonSearchWindow" to true
-end tell'""")
-
-    os.system("test $(ps aux | grep -i 'PythonSearchWindow' | wc -l ) -gt 1")
-
-
-    result = subprocess.check_output("ps aux | grep -i 'PythonSearchWindow' | wc -l", shell=True, text=True)
-    process_running = result.split(' ')[-1].split("\n")[0]
-    print("Process running", process_running)
-
-
-    return int(process_running) > 2
-
-def hide_kitty() -> bool:
-    os.system("""osascript -e 'tell application "Kitty" to set visible of every window to true' """)
 
 if __name__ == "__main__":
     import fire

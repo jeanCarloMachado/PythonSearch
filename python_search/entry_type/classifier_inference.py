@@ -4,7 +4,6 @@ import uuid
 from typing import Optional, Tuple
 
 import numpy as np
-from arize.utils.types import ModelTypes, Environments, Embedding
 from pydantic import BaseModel
 
 from python_search.entry_type.entity import EntryType
@@ -57,6 +56,7 @@ class PredictEntryTypeInference:
         value, prediction_label = get_value_and_label(result[0])
 
         prediction_uuid = str(uuid.uuid4())
+        from arize.utils.types import ModelTypes, Environments, Embedding
         arize_result = self._arize_client.log(
             model_id=Arize.MODEL_ID,
             model_version=Arize.MODEL_VERSION,

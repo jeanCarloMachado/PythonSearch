@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import List
 
 import fire
-from arize.utils.types import Environments, ModelTypes
 
 from python_search.config import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
@@ -142,6 +141,8 @@ class EntryCaptureGUI:
         if not self._prediction_uuid:
             print("No prediction uuid, skipping report")
             return
+
+        from arize.utils.types import Environments, ModelTypes
         arize_client = Arize().get_client()
 
         data = {
