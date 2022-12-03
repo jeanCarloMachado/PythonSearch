@@ -43,13 +43,15 @@ class FzfInKitty:
         THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
         cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
-        --tiebreak=length,begin,index \
+        --tiebreak=begin,chunk,length,index \
+        --extended \
+        --reverse \
         --cycle \
         --no-hscroll \
         --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
         --preview-window=right,{FzfInKitty.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
-        --reverse -i --exact --no-sort \
+        -i \
         --border=none \
         --margin=0% \
         --padding=0% \

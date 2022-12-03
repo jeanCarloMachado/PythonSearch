@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from typing import Optional
 
-from python_search.environment import is_mac
-
-
 class Browser:
     """
     Abstracts the browser features cross-platform

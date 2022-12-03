@@ -27,6 +27,11 @@ class FzfOptimizedSearchResults:
         result = ""
         for name, content in entries:
             try:
+                if "snippet" in content:
+                    content["snippet"] = sanitize(content["snippet"])
+                if "cmd" in content:
+                    content["cmd"] = sanitize(content["cmd"])
+
                 content["key_name"] = name
                 content["position"] = position
                 content["generated_acronyms"] = generate_acronyms(name)
@@ -57,9 +62,7 @@ class FzfOptimizedSearchResults:
 
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
-                logging.debug(e)
-                # print(e)
-                # breakpoint()
+                logging.info(e)
                 content_str = str(content)
 
             position = position + 1
@@ -73,3 +76,14 @@ class FzfOptimizedSearchResults:
                 continue
             result += content_str + "\n"
         return result
+
+
+def sanitize(content):
+    result = ""
+    for char in content:
+        if char.isalnum():
+            result += char
+        else:
+            result += " "
+
+    return result
