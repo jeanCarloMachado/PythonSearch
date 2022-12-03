@@ -43,7 +43,7 @@ class FzfInKitty:
         THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
         cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
-        --tiebreak=begin,chunk,length,index \
+        --tiebreak=begin,length,index \
         --extended \
         --reverse \
         --cycle \
