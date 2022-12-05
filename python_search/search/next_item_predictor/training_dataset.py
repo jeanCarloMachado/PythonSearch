@@ -9,7 +9,7 @@ from pyspark.sql.functions import struct, udf
 from pyspark.sql.types import FloatType
 from pyspark.sql.window import Window
 
-from python_search.events.run_performed.dataset import RunPerformedDataset
+from python_search.events.run_performed.dataset import EntryExecutedDataset
 from python_search.infrastructure.performance import timeit
 from python_search.search.next_item_predictor.features.times_used import TimesUsed
 from python_search.search.next_item_predictor.inference.label import label_formula
@@ -72,7 +72,7 @@ class TrainingDataset:
         Returns:
 
         """
-        search_performed_df = RunPerformedDataset().load_clean()
+        search_performed_df = EntryExecutedDataset().load_clean()
         search_performed_df_filtered = self._filter_blacklisted(search_performed_df)
         all_dimensions = self._add_all_features(search_performed_df_filtered)
 
@@ -205,7 +205,7 @@ class TrainingDataset:
         return base_features
 
     def _load_searches_performed(self) -> DataFrame:
-        return RunPerformedDataset().load_clean()
+        return EntryExecutedDataset().load_clean()
 
     def _add_all_features(self, df: DataFrame) -> DataFrame:
         """

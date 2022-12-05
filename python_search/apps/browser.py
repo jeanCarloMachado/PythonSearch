@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Literal
+
 
 class Browser:
     """
     Abstracts the browser features cross-platform
     """
+    BROSERS = Literal["firefox", "chrome"]
     def open(self, url: Optional[str] = None, app_mode=False, incognito=False) -> None:
         """
         performs the open
@@ -19,14 +21,19 @@ class Browser:
 
         os.system(cmd_to_run)
 
-    def open_shell_cmd(self, url: Optional[str] = None, app_mode=False, incognito=False) -> str:
+    def open_shell_cmd(self, url: Optional[str] = None, app_mode=False, incognito=False, browser: Optional[BROSERS] = None) -> str:
         """
         Returns the shell command to open the browser
         """
         url_expr = ''
         if url is not None:
             url_expr = f"'{url}'"
-        cmd = f" open -a Firefox {url_expr}"
+
+        if browser == 'chrome':
+            cmd = f" open -a 'Google Chrome' {url_expr}"
+        else:
+            cmd = f" open -a Firefox {url_expr}"
+
 
         return cmd
 

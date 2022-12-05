@@ -4,16 +4,16 @@ import pyspark.sql.functions as F
 class RunPerformedCleaning:
     def clean(self):
         print("Performing the cleaning of the new events")
-        from python_search.events.run_performed.dataset import RunPerformedDataset
+        from python_search.events.run_performed.dataset import EntryExecutedDataset
 
         # load baseline clean
-        df_clean = RunPerformedDataset().load_clean()
+        df_clean = EntryExecutedDataset().load_clean()
         print(f"Number of pre-existing clean events: {df_clean.count()}")
 
         # get  latest timestamp imported
         max_timestamp = df_clean.agg({"timestamp": "max"}).collect()[0][0]
 
-        df_new = RunPerformedDataset().load_new().sort("timestamp", ascending=False)
+        df_new = EntryExecutedDataset().load_new().sort("timestamp", ascending=False)
         df_new = df_new.withColumn(
             "timestamp_real", F.from_unixtime(F.col("timestamp"))
         )
@@ -31,9 +31,9 @@ class RunPerformedCleaning:
 
         joined.write.option("partitionOverwriteMode", "dynamic").partitionBy(
             "date"
-        ).mode("overwrite").parquet(RunPerformedDataset.CLEAN_PATH)
+        ).mode("overwrite").parquet(EntryExecutedDataset.CLEAN_PATH)
 
-        df_clean = RunPerformedDataset().load_clean()
+        df_clean = EntryExecutedDataset().load_clean()
         print("Number of clean events", df_clean.count())
 
 

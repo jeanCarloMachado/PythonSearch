@@ -1,6 +1,5 @@
 import uuid
 
-from arize.utils.types import ModelTypes, Environments, Embedding
 
 from python_search.entry_type.classifier_inference import get_value_and_label
 from python_search.entry_type.entity import EntryType
@@ -99,7 +98,8 @@ class Pipeline:
             run_id = mlflow.active_run().info.run_id
             print("run id: ", run_id)
 
-        if not disable_arize:
+        if not disable_arize and Arize.is_installed():
+            from arize.utils.types import ModelTypes, Environments, Embedding
             print("Sending validation values to arize")
             for key, entry in enumerate(x_val):
                 value, label = get_value_and_label(

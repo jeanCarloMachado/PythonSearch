@@ -56,20 +56,21 @@ class PredictEntryTypeInference:
         value, prediction_label = get_value_and_label(result[0])
 
         prediction_uuid = str(uuid.uuid4())
-        from arize.utils.types import ModelTypes, Environments, Embedding
-        arize_result = self._arize_client.log(
-            model_id=Arize.MODEL_ID,
-            model_version=Arize.MODEL_VERSION,
-            model_type=ModelTypes.SCORE_CATEGORICAL,
-            environment=Environments.PRODUCTION,
-            prediction_id=prediction_uuid,
-            features={"has_pipe": has_pipe, "has_double_minus": has_double_minus},
-            embedding_features={
-                "content": Embedding(vector=data[0], data=entry_data.content)
-            },
-            prediction_label=(prediction_label, float(value)),
-        )
-        Arize.arize_responses_helper(arize_result)
+        if Arize.is_installed():
+            from arize.utils.types import ModelTypes, Environments, Embedding
+            arize_result = self._arize_client.log(
+                model_id=Arize.MODEL_ID,
+                model_version=Arize.MODEL_VERSION,
+                model_type=ModelTypes.SCORE_CATEGORICAL,
+                environment=Environments.PRODUCTION,
+                prediction_id=prediction_uuid,
+                features={"has_pipe": has_pipe, "has_double_minus": has_double_minus},
+                embedding_features={
+                    "content": Embedding(vector=data[0], data=entry_data.content)
+                },
+                prediction_label=(prediction_label, float(value)),
+            )
+            Arize.arize_responses_helper(arize_result)
 
         print("Predicted label: ", prediction_label)
 

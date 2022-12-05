@@ -142,9 +142,11 @@ class EntryCaptureGUI:
             print("No prediction uuid, skipping report")
             return
 
-        from arize.utils.types import Environments, ModelTypes
+        if not Arize.is_installed():
+            return
         arize_client = Arize().get_client()
 
+        from arize.utils.types import Environments, ModelTypes
         data = {
             "model_id": Arize.MODEL_ID,
             "model_version": Arize.MODEL_VERSION,

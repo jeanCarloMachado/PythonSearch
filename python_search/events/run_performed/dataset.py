@@ -6,7 +6,7 @@ from python_search.config import DataConfig
 from python_search.data_collector import GenericDataCollector
 
 
-class RunPerformedDataset:
+class EntryExecutedDataset:
     """
     Poit of access for the searches performed
     This is the place to keep the source of truth for the schema as well
@@ -49,7 +49,7 @@ class RunPerformedDataset:
 
         spark = SparkSession.builder.getOrCreate()
         result_df = spark.read.json(
-            GenericDataCollector().data_location(RunPerformedDataset.NEW_TABLE_NAME),
+            GenericDataCollector().data_location(EntryExecutedDataset.NEW_TABLE_NAME),
             schema=schema
         )
 

@@ -4,7 +4,7 @@ import streamlit as st
 
 
 from python_search.data_ui.app_functions import check_password
-from python_search.events.run_performed.dataset import RunPerformedDataset
+from python_search.events.run_performed.dataset import EntryExecutedDataset
 
 from python_search.data_ui.training_page import load_training_page
 
@@ -46,7 +46,7 @@ def render_page():
 
     if open_page == "searches_performed_dataset":
         st.write("## Searches performed dataset")
-        search_performed_df = RunPerformedDataset().load_clean()
+        search_performed_df = EntryExecutedDataset().load_clean()
         pdf = search_performed_df.toPandas()
         st.dataframe(pdf)
 

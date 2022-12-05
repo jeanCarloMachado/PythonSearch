@@ -1,15 +1,25 @@
 import os
 import concurrent.futures as cf
 
-from arize.api import Client
-
-
 class Arize:
 
     MODEL_ID = "entry_type_classifier_v2"
     MODEL_VERSION = "v5"
 
-    def get_client(self) -> Client:
+
+    @staticmethod
+    def is_installed()->bool:
+        try:
+            import arize
+            return True
+        except:
+            return False
+
+
+    def get_client(self):
+        if not Arize.is_installed():
+            return none
+
         API_KEY = os.environ["ARIZE_API_KEY"]
         SPACE_KEY = os.environ["ARIZE_SPACE_KEY"]
 

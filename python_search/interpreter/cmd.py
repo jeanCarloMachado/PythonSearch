@@ -93,13 +93,13 @@ class CmdInterpreter(BaseInterpreter):
         logger.info(f"To run as subprocess: {cmd}")
 
         import subprocess
-
+        import sys
         p = subprocess.Popen(
             cmd,
             shell=True,
             stdin=None,
-            stdout=None,
-            stderr=None,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
             close_fds=True,
             # make sure the process does not die when python search dies
             start_new_session=True,
