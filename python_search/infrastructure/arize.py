@@ -18,7 +18,7 @@ class Arize:
 
     def get_client(self):
         if not Arize.is_installed():
-            return none
+            return None
 
         API_KEY = os.environ["ARIZE_API_KEY"]
         SPACE_KEY = os.environ["ARIZE_SPACE_KEY"]
@@ -30,8 +30,9 @@ class Arize:
                 + " "
                 + SPACE_KEY
             )
-
             return
+
+        from arize.api import Client
         return Client(space_key=SPACE_KEY, api_key=API_KEY)
 
     def arize_responses_helper(responses):
