@@ -58,7 +58,7 @@ run_entry = 'python_search.cli:_run_key_bin'
 reminders = 'python_search.plugins.reminders:main'
 feature_toggle = 'python_search.feature_toggle:FeatureToggle.main'
 generic_data_collector = 'python_search.data_collector:GenericDataCollector.initialize'
-ps_container = 'container:main'
+ps_container = 'ps_container:main'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
 
 [tool.poetry.extras]

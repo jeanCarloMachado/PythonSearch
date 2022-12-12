@@ -118,7 +118,7 @@ class PythonSearchCli:
             RunPerformed(key=key, query_input="", shortcut=False)
         )
 
-    def shortcut_generator(self):
+    def shortcut(self):
         """Generate shorcuts for all environments"""
         from python_search.shortcut.generator import ShortcutGenerator
 

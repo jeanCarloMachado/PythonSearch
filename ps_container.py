@@ -22,7 +22,8 @@ def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
 
     restart_exp = ""
     if restart:
-        restart_exp = " --restart unless-stopped "
+        print("Adding restart flag")
+        restart_exp = " --restart always "
 
     if port:
         port = f" -p {port}"
