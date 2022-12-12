@@ -5,7 +5,6 @@ import subprocess
 import streamlit as st
 
 from python_search.data_ui.app_functions import restart_app
-from python_search.entry_capture.register_new import RegisterNew
 
 def extract_value_from_entry(entry):
     result = ""
@@ -40,7 +39,7 @@ def load_homepage():
             restart_app()
 
     with col3:
-        if st.checkbox("Add New Entry"):
+        if st.button("Add New Entry"):
             open_add_new = True
         else:
             open_add_new = False
@@ -56,21 +55,25 @@ def load_homepage():
             result = subprocess.check_output(cmd, shell=True, text=True)
             st.write(f"Result: {result}")
 
+    st.write(" ## Entries")
     search = st.text_input('Search').lower()
     data = []
     limit = 50
     rendered = 0
 
-    st.write(" ## Entries")
     for key, value in entries.items():
         if rendered > limit:
             break
 
-        value = extract_value_from_entry(value)
-        if search and (search not in key) and search not in value:
+        value_str = extract_value_from_entry(value)
+        tags = ' '.join(value.get('tags', []))
+
+        if search and (search not in key) and search not in value_str and search not in tags:
             continue
-        col_key, col_value = st.columns((1, 3))
+
+        col_key, col_value, col_tags = st.columns((1, 2, 1))
         col_key.write(key)
-        col_value.write(value)
+        col_value.write(value_str)
+        col_tags.write(tags)
 
         rendered += 1

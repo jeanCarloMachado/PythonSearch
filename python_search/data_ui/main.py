@@ -33,7 +33,7 @@ with st.sidebar:
 
 def render_page():
     if open_page == 'home':
-        from python_search.data_ui.homepage import load_homepage
+        from python_search.data_ui.entries_page import load_homepage
         load_homepage()
 
     if open_page == "training":
