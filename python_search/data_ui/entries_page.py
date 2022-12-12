@@ -39,7 +39,7 @@ def load_homepage():
             restart_app()
 
     with col3:
-        if st.button("Add New Entry"):
+        if st.checkbox("Add New Entry"):
             open_add_new = True
         else:
             open_add_new = False
