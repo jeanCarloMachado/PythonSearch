@@ -23,6 +23,5 @@ chmod +x $FILE_NAME
 #conda init bash
 conda create -n 310 python=3.10
 export PATH="/root/miniconda3/envs/310/bin/:$PATH"
-pip install poetry
-pip install nvidia-pyindex
+pip install poetry  nvidia-pyindex pytest black pre-commit
 #conda run --no-capture-output -n 310 poetry install

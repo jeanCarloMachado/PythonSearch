@@ -101,6 +101,9 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self._initialization_time = datetime.now()
 
+    def get_default_tags(self):
+        return self._default_tags
+
 
 class ConfigurationLoader:
     """

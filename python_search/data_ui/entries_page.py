@@ -57,7 +57,8 @@ def load_homepage():
 
     st.write(" ## Entries")
     search = st.text_input('Search').lower()
-    data = []
+
+    selected_tags = st.multiselect("Tags", ConfigurationLoader().load_config().get_default_tags())
     limit = 50
     rendered = 0
 
@@ -67,6 +68,11 @@ def load_homepage():
 
         value_str = extract_value_from_entry(value)
         tags = ' '.join(value.get('tags', []))
+
+
+        if not set(selected_tags).issubset(set(value.get('tags', []))):
+            continue
+
 
         if search and (search not in key) and search not in value_str and search not in tags:
             continue
