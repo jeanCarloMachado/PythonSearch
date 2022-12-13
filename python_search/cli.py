@@ -61,7 +61,6 @@ class PythonSearchCli:
         self.configuration = configuration
         self.run_key = EntryRunner(self.configuration).run
 
-    @notify_exception()
     def search(self):
         """
         Opens the Search UI. Main entrypoint of the application
@@ -69,6 +68,7 @@ class PythonSearchCli:
         FzfInKitty(self.configuration).run()
 
 
+    @notify_exception()
     def edit_main(self):
         """Edit the main script"""
         from python_search.entry_capture.edit_content import EditKey
@@ -113,7 +113,7 @@ class PythonSearchCli:
         from python_search.apps.clipboard import Clipboard
 
         key = entry_str.split(":")[0]
-        Clipboard().set_content(key)
+        Clipboard().set_content(key, enable_notifications=True)
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )
