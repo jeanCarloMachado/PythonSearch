@@ -104,11 +104,10 @@ def run_streamlit(restart=False, disable_password=False):
         extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
     )
 
-def main():
+def start():
     import fire
-
     fire.Fire()
 
 
 if __name__ == "__main__":
-    main
+    start
