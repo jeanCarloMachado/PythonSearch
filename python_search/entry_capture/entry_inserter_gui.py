@@ -6,12 +6,11 @@ from dataclasses import dataclass
 from typing import List
 
 import fire
-from arize.utils.types import Environments, ModelTypes
 
 from python_search.config import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.infrastructure.arize import Arize
-from python_search.sdk.web_api_sdk import WebApiSDK
+from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 
 
 class EntryCaptureGUI:
@@ -142,8 +141,12 @@ class EntryCaptureGUI:
         if not self._prediction_uuid:
             print("No prediction uuid, skipping report")
             return
+
+        if not Arize.is_installed():
+            return
         arize_client = Arize().get_client()
 
+        from arize.utils.types import Environments, ModelTypes
         data = {
             "model_id": Arize.MODEL_ID,
             "model_version": Arize.MODEL_VERSION,
@@ -169,7 +172,7 @@ class EntryCaptureGUI:
         window.write_event_value("-type-inference-ready-", new_type)
 
     def _generate_description(self, window, content):
-        result = WebApiSDK().generate_description({'content': content, 'temperature': 0.2})
+        result = PythonSearchWebAPISDK().generate_description({'content': content, 'temperature': 0.2})
 
         if not result:
             return

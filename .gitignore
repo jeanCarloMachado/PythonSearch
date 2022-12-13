@@ -16,3 +16,4 @@ notebooks/*
 *.swp
 requirements.txt
 =
+exported_*.txt

@@ -86,11 +86,11 @@ class Mac:
     def _entry(self, shortcut, key, number) -> str:
         shortcut = shortcut
         return f"""
-        
+
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command =  python_search run_key "{key}" 
-workdir = 
+command =  /Users/jean.machado@getyourguide.com/projects/PythonSearch/log_command.sh python_search run_key "{key}"
+workdir =
 enabled = yes
 """

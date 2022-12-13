@@ -25,6 +25,7 @@ class DataConfig:
 
     # output of the _model
     base_data_folder = f"{os.environ['HOME']}/.data/data/python_search"
+    BASE_DATA_COLLECTOR_FOLDER = f"{os.environ['HOME']}/.data/data_collection"
     prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
     # a copy of the search run _entries for the feature store
     entries_dump = base_data_folder + "/entries_dumped/latest"
@@ -61,7 +62,7 @@ class PythonSearchConfiguration(EntriesGroup):
     Everything to customize about the application is configurable via code through this class
     """
 
-    APPLICATION_TITLE = "SearchPythonSearch"
+    APPLICATION_TITLE = "PythonSearchWindow"
     commands: dict
     simple_gui_theme = "SystemDefault1"
     simple_gui_font_size = 14
@@ -99,6 +100,9 @@ class PythonSearchConfiguration(EntriesGroup):
         from datetime import datetime
 
         self._initialization_time = datetime.now()
+
+    def get_default_tags(self):
+        return self._default_tags
 
 
 class ConfigurationLoader:

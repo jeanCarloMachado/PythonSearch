@@ -1,4 +1,9 @@
 # Changelog
+## 0.9.5
+
+- Dev container
+- Data exporter
+- Arize integration
 
 ## 0.9.2
 - improve development container

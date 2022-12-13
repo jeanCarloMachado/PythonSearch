@@ -8,6 +8,7 @@ def sync_both_from_mac():
   sync_archlinux()
   time.sleep(1)
   sync()
+  sync_archlinux()
 
 def sync_from_container():
   os.system("ps_container run /src/sync_hosts.py sync")
@@ -16,7 +17,7 @@ def sync_archlinux():
   os.system("ssh -t jean@192.168.178.20 \"ps_container run '/src/sync_hosts.py sync'\"")
 
 def sync():
-  print("Starting sync")
+  print("Starting sync current host")
   os.system("git config pull.rebase true")
   sync_repo('/entries')
   sync_repo('/src')
@@ -27,12 +28,12 @@ def pull_cb(folder="/entries"):
   os.system(f"cd {folder} ; git pull origin " + current_branch)
 
 
-def get_current_branch():
-  return subprocess.check_output('git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
+def get_current_branch(folder):
+  return subprocess.check_output(f'cd {folder} ; git branch 2> /dev/null | grep "*" | cut -d" " -f2 | tr -d "\n"', shell=True, text=True)
 
 def sync_repo(folder):
-  print('Syncing entries project')
-  current_branch = get_current_branch()
+  print('====> Syncing entries project')
+  current_branch = get_current_branch(folder)
   print('Current branch: ' + current_branch)
 
   cmd = f'cd {folder} ; git add . ; git commit -m AutomaticChanges '

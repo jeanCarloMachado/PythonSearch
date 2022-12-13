@@ -1,6 +1,5 @@
 import time
 
-import schedule
 
 from python_search.apps.notification_ui import send_notification
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
@@ -21,38 +20,38 @@ def get_random():
 
     random_key = random.choice(list(reminders.keys()))
 
-    feature_toggle = FeatureToggle()
-    if feature_toggle.is_enabled("reminders"):
-        content = (
-            reminders[random_key]["snippet"]
-            if "snippet" in reminders[random_key]
-            else str(reminders[random_key])
-        )
-        send_notification(f"R: {content}, key={random_key}")
-    else:
-        print("reminders disabled in feature togle")
+    run_key(random_key)
 
 
 from python_search.feature_toggle import FeatureToggle
 
+def run_key(key):
+    import os
+    os.system(f"python_search run_key '{key}'")
 
 def run_daemon():
+    import schedule
+    FeatureToggle().enable("reminders")
+    schedule.every(15).minutes.do(get_random)
 
-    feature_toggle = FeatureToggle()
-    if feature_toggle.is_enabled("reminders_1m"):
-        print("Enabling every minute")
-        schedule.every(1).minutes.do(get_random)
+    entries = ConfigurationLoader().load_entries()
+    for key, entry in entries.items():
+        if 'schedules' in entry:
+            print("Found a schedule for key: " + key )
+            for entry_schedule in entry['schedules']:
+                entry_schedule(schedule).do(run_key, key)
 
-    if feature_toggle.is_enabled("reminders_15m"):
-        print("Enabling every 15 minutes")
-        schedule.every(15).minutes.do(get_random)
 
-    if feature_toggle.is_enabled("reminders_1h"):
-        print("Enabling every hour")
-        schedule.every(60).minutes.do(get_random)
-
+    print("entering loop")
     while True:
-        schedule.run_pending()
+        feature_toggle = FeatureToggle()
+        if feature_toggle.is_enabled("reminders"):
+            print("Running pending")
+            schedule.run_pending()
+        else:
+            print("Feature is disabled")
+
+        print("Sleeping")
         time.sleep(1)
 
 

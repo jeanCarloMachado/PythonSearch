@@ -22,7 +22,8 @@ def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
 
     restart_exp = ""
     if restart:
-        restart_exp = " --restart unless-stopped "
+        print("Adding restart flag")
+        restart_exp = " --restart always "
 
     if port:
         port = f" -p {port}"
@@ -33,6 +34,7 @@ def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
             " -v $HOME/.ssh:/root/.ssh ",
             " -v $HOME/projects/PySearchEntries/:/entries ",
             " -v $HOME/.PythonSearch:/root/.PythonSearch ",
+            " -v $HOME/.ddataflow:/root/.ddataflow",
             " -v $HOME/.PythonSearch/container_cache/:/root/.cache ",
             " -v $HOME/.data:/root/.data" " -v $HOME/.gitconfig:/root/.gitconfig",
         ]

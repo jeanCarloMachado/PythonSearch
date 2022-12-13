@@ -7,7 +7,8 @@ from python_search.entry_type.classifier_inference import (
     PredictEntryTypeInference,
 )
 from python_search.events.latest_used_entries import RecentKeys
-from python_search.events.run_performed import RunPerformed, RunPerformedWriter
+from python_search.events.run_performed import RunPerformed
+from python_search.events.run_performed.writer import RunPerformedWriter
 from python_search.config import ConfigurationLoader
 from python_search.search.search import Search
 
@@ -67,9 +68,7 @@ def health():
 def log_run(event: RunPerformed):
 
     RecentKeys.add_latest_used(event.key)
-
     RunPerformedWriter().write(event)
-
     # regenerate the search after running a key
     reload()
 

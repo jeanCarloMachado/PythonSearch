@@ -1,5 +1,6 @@
 import os
 
+import subprocess
 from python_search.apps.terminal import Terminal
 from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
@@ -17,13 +18,7 @@ class FzfInKitty:
 
     configuration: PythonSearchConfiguration
 
-    @staticmethod
-    def build_search_ui(configuration) -> "FzfInKitty":
-        """Assembles what is specific for the search ui exclusively"""
-
-        return FzfInKitty(configuration=configuration)
-
-    def __init__(self, *, configuration: PythonSearchConfiguration):
+    def __init__(self, configuration: PythonSearchConfiguration):
         self.height = FzfInKitty.HEIGHT
         self.width = FzfInKitty.WIDTH
 
@@ -46,15 +41,17 @@ class FzfInKitty:
     def _fzf_cmd(self):
         FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#ffffff,hl+:#d7005f"
         THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
-        cmd = f"""bash -c 'pkill fzf ; export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
+        cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
-        --tiebreak=length,begin,index \
+        --tiebreak=begin,length,index \
+        --extended \
+        --reverse \
         --cycle \
         --no-hscroll \
         --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
         --preview-window=right,{FzfInKitty.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
-        --reverse -i --exact --no-sort \
+        -i \
         --border=none \
         --margin=0% \
         --padding=0% \
@@ -114,7 +111,7 @@ class FzfInKitty:
             font = "Pragmata Pro"
 
         launch_cmd = f"""nice -19 kitty \
-        --title="{self.title}"\
+        --title {self.title} \
         -o draw_minimal_borders=yes \
         -o placement_strategy=top-left \
         -o window_border_width=0 \

@@ -5,7 +5,7 @@ from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.events.run_performed import RunPerformed
-from python_search.events.run_performed.client import LogRunPerformedClient
+from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.search_ui.fzf_kitty import FzfInKitty
 from python_search.search_ui.preview import Preview
 from python_search.exceptions import notify_exception
@@ -66,7 +66,8 @@ class PythonSearchCli:
         """
         Opens the Search UI. Main entrypoint of the application
         """
-        FzfInKitty.build_search_ui(self.configuration).run()
+        FzfInKitty(self.configuration).run()
+
 
     def edit_main(self):
         """Edit the main script"""
@@ -117,7 +118,7 @@ class PythonSearchCli:
             RunPerformed(key=key, query_input="", shortcut=False)
         )
 
-    def shortcut_generator(self):
+    def shortcut(self):
         """Generate shorcuts for all environments"""
         from python_search.shortcut.generator import ShortcutGenerator
 

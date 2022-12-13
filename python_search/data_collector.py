@@ -1,5 +1,8 @@
 import json
 import os
+from pyspark.sql import DataFrame
+
+from python_search.logger import setup_data_writter_logger
 
 
 class GenericDataCollector:
@@ -11,12 +14,12 @@ class GenericDataCollector:
 
     @staticmethod
     def initialize():
-
         import fire
 
         return fire.Fire(GenericDataCollector())
 
     def write(self, *, data: dict, table_name: str, date=None):
+        self.logger = setup_data_writter_logger(table_name)
         from datetime import datetime
 
         datetime.now().timestamp()
@@ -33,16 +36,15 @@ class GenericDataCollector:
         with open(file_name, "w") as f:
             f.write(json.dumps(data))
 
-        print(f"File {file_name} written successfully")
+        self.logger.info(f"File {file_name} written successfully with data {data}")
 
-    def data_location(self, table_name):
+    def data_location(self, table_name) -> str:
         return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
 
-    def dataframe(self, table_name):
+
+    def dataframe(self, table_name) -> DataFrame:
         from pyspark.sql.session import SparkSession
-
         spark = SparkSession.builder.getOrCreate()
-
         return spark.read.json(GenericDataCollector().data_location(table_name))
 
     def show_data(self, table_name):

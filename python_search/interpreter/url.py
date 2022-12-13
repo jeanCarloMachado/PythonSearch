@@ -26,7 +26,9 @@ class UrlInterpreter(BaseInterpreter):
 
         final_cmd = self.cmd
         url = self.cmd["url"]
-        final_cmd["cmd"] = f"browser open '{url}'"
+
+        final_cmd["cmd"] = Browser().open_shell_cmd(url, browser=self.cmd.get('browser'))
+
 
         logger.info(f"Final URL command={final_cmd}")
         return CmdInterpreter(final_cmd, self.context).interpret_default()

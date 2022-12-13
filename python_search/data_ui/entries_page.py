@@ -5,7 +5,6 @@ import subprocess
 import streamlit as st
 
 from python_search.data_ui.app_functions import restart_app
-from python_search.entry_capture.register_new import RegisterNew
 
 def extract_value_from_entry(entry):
     result = ""
@@ -28,10 +27,10 @@ def load_homepage():
 
     entries = ConfigurationLoader().load_config().commands
 
-    col1, col2, col3  = st.columns([1, 1, 1])
+    col1, col2, col3 = st.columns([1, 1, 1])
 
     with col1:
-        if st.button("Sync hosts"):
+        if st.button("Sync current host"):
             result = subprocess.check_output('/src/sync_hosts.py sync', shell=True, text=True)
             st.write(f"Result: {result}")
             restart_app()
@@ -40,10 +39,10 @@ def load_homepage():
             restart_app()
 
     with col3:
-        if st.checkbox("Add new entry"):
-            open_add_new =  True
+        if st.checkbox("Add New Entry"):
+            open_add_new = True
         else:
-            open_add_new =  False
+            open_add_new = False
 
 
     if open_add_new:
@@ -51,23 +50,36 @@ def load_homepage():
         value = st.text_input("Value")
         create = st.button("Create")
         if create:
-            RegisterNew().register(key=key, value=value)
+            cmd = f"python_search register_new register --key='{key}' --value='{value}' --tag=DataApp_Entry"
+            st.write("Running: ", cmd)
+            result = subprocess.check_output(cmd, shell=True, text=True)
+            st.write(f"Result: {result}")
 
+    st.write(" ## Entries")
     search = st.text_input('Search').lower()
-    data = []
+
+    selected_tags = st.multiselect("Tags", ConfigurationLoader().load_config().get_default_tags())
     limit = 50
     rendered = 0
 
-    st.write(" ## Entries")
     for key, value in entries.items():
         if rendered > limit:
             break
 
-        value = extract_value_from_entry(value)
-        if search and (search not in key) and search not in value:
+        value_str = extract_value_from_entry(value)
+        tags = ' '.join(value.get('tags', []))
+
+
+        if not set(selected_tags).issubset(set(value.get('tags', []))):
             continue
-        col_key, col_value = st.columns((1, 3))
+
+
+        if search and (search not in key) and search not in value_str and search not in tags:
+            continue
+
+        col_key, col_value, col_tags = st.columns((1, 2, 1))
         col_key.write(key)
-        col_value.write(value)
+        col_value.write(value_str)
+        col_tags.write(tags)
 
         rendered += 1

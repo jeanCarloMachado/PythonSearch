@@ -5,7 +5,7 @@ from datetime import datetime
 
 from python_search.config import PythonSearchConfiguration
 from python_search.events.run_performed import RunPerformed
-from python_search.events.run_performed.client import LogRunPerformedClient
+from python_search.events.run_performed.writer import LogRunPerformedClient
 
 
 class FilesystemEntryInserter:

@@ -1,7 +1,6 @@
 import numpy as np
 from pydantic import BaseModel
 
-from python_search.search.models import PythonSearchMLFlow
 
 max_chars_from_key = 30
 max_chars_of_body = 100
@@ -18,6 +17,7 @@ class DescriptionGenerator:
 
     def __init__(self):
         try:
+            from python_search.search.models import PythonSearchMLFlow
             self._model = PythonSearchMLFlow().get_entry_description_geneartor(
                 run_id=DescriptionGenerator.RUN_ID
 
