@@ -59,11 +59,12 @@ def load_homepage():
     search = st.text_input('Search').lower()
 
     selected_tags = st.multiselect("Tags", ConfigurationLoader().load_config().get_default_tags())
-    limit = 50
-    rendered = 0
+    has_filter = len(search) > 0 or len(selected_tags) > 0
+    limit = 50 if not has_filter else None
 
+    rendered = 0
     for key, value in entries.items():
-        if rendered > limit:
+        if limit and rendered > limit:
             break
 
         value_str = extract_value_from_entry(value)
@@ -83,3 +84,4 @@ def load_homepage():
         col_tags.write(tags)
 
         rendered += 1
+    st.write(f"**Total entries displayed**: {rendered}")
