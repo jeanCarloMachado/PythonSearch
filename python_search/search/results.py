@@ -60,6 +60,7 @@ class FzfOptimizedSearchResults:
                     if days_ago > 365:
                         content["tags"].append(f"previous_year_created")
 
+
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
                 logging.info(e)

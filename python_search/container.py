@@ -52,7 +52,7 @@ def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
     environment_variables = " ".join(env_vars)
 
     LIMIT_CPU = 8
-    cmd = f"docker run {port} {restart_exp} --expose=8000 --expose 6379 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
+    cmd = f"docker run {port} {restart_exp} --expose=8000 --expose 4040 --expose 6380 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
     print("Cmd: " + cmd)
     os.system(cmd)
 

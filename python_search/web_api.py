@@ -12,6 +12,13 @@ from python_search.events.run_performed.writer import RunPerformedWriter
 from python_search.config import ConfigurationLoader
 from python_search.search.search import Search
 
+import pyroscope
+
+pyroscope.configure(
+  application_name = "my.python.app", # replace this with some name for your application
+  server_address   = "http://host.docker.internal:4040", # replace this with the address of your pyroscope server
+  sample_rate=1, # default is 100
+)
 PORT = 8000
 
 app = FastAPI()
@@ -23,10 +30,11 @@ description_generator = DescriptionGenerator()
 
 
 def reload_ranking():
-    global generator
-    global ranking_result
-    ranking_result = Search(ConfigurationLoader().reload()).search()
-    return ranking_result
+    with pyroscope.tag_wrapper({"endpoint": "reload_ranking"}):
+        global generator
+        global ranking_result
+        ranking_result = Search(ConfigurationLoader().reload()).search()
+        return ranking_result
 
 
 @app.get("/ranking/generate", response_class=PlainTextResponse)
@@ -83,8 +91,9 @@ def predict_entry_type_endpoint(entry: EntryData):
 
 @app.post("/entry/generate_description")
 def generate_description(entry: EntryKeyGeneratorCmd):
-    result = description_generator.generate(entry)
-    return {"generated_description": result}
+    with pyroscope.tag_wrapper({"endpoint": "generate_description"}):
+        result = description_generator.generate(entry)
+        return {"generated_description": result}
 
 
 @app.get("/recent_history")
