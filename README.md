@@ -59,5 +59,5 @@ Feature contributions are also welcomed! If you want to be part of the roadmap d
 
 ## Legal
 
-This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE.txt) for the full text.\
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full text.\
 Copyright 2022 Jean Carlo Machado
