@@ -100,6 +100,7 @@ class Pipeline:
 
         if not disable_arize and Arize.is_installed():
             from arize.utils.types import ModelTypes, Environments, Embedding
+
             print("Sending validation values to arize")
             for key, entry in enumerate(x_val):
                 value, label = get_value_and_label(

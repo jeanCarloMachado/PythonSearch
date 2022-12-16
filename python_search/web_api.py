@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
-from python_search.entry_description_generator.description_geneartor import DescriptionGenerator, EntryKeyGeneratorCmd
+from python_search.entry_description_generator.description_geneartor import (
+    DescriptionGenerator,
+    EntryKeyGeneratorCmd,
+)
 from python_search.entry_type.classifier_inference import (
     EntryData,
     PredictEntryTypeInference,
@@ -15,9 +18,9 @@ from python_search.search.search import Search
 import pyroscope
 
 pyroscope.configure(
-  application_name = "my.python.app", # replace this with some name for your application
-  server_address   = "http://host.docker.internal:4040", # replace this with the address of your pyroscope server
-  sample_rate=1, # default is 100
+    application_name="my.python.app",  # replace this with some name for your application
+    server_address="http://host.docker.internal:4040",  # replace this with the address of your pyroscope server
+    sample_rate=1,  # default is 100
 )
 PORT = 8000
 
@@ -99,7 +102,6 @@ def generate_description(entry: EntryKeyGeneratorCmd):
 @app.get("/recent_history")
 def recent_history_endpoint():
     return {"history": RecentKeys().get_latest_used_keys()}
-
 
 
 def main():

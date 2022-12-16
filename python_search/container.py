@@ -41,10 +41,10 @@ def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
     )
 
     env_vars = [
-            " -e 'PS_ENTRIES_HOME=/entries' ",
-            " -e ARIZE_API_KEY=$ARIZE_API_KEY ",
-            " -e ARIZE_SPACE_KEY=$ARIZE_SPACE_KEY ",
-            " -e PS_WEB_PASSWORD=$PS_WEB_PASSWORD",
+        " -e 'PS_ENTRIES_HOME=/entries' ",
+        " -e ARIZE_API_KEY=$ARIZE_API_KEY ",
+        " -e ARIZE_SPACE_KEY=$ARIZE_SPACE_KEY ",
+        " -e PS_WEB_PASSWORD=$PS_WEB_PASSWORD",
     ]
 
     env_vars = env_vars + extra_env_vars if extra_env_vars else env_vars
@@ -104,8 +104,10 @@ def run_streamlit(restart=False, disable_password=False):
         extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
     )
 
+
 def start():
     import fire
+
     fire.Fire()
 
 

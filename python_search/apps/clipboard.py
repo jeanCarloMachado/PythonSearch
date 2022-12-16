@@ -1,4 +1,3 @@
-
 import sys
 from typing import Union
 from python_search.environment import is_mac
@@ -39,7 +38,6 @@ class Clipboard:
         :param enable_notifications:
         :return:
         """
-
 
         if not content and has_stdin():
             content = sys.stdin.read()

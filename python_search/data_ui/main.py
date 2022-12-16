@@ -10,10 +10,7 @@ from python_search.data_ui.training_page import load_training_page
 
 open_page = "home"
 
-st.set_page_config(
-    initial_sidebar_state="collapsed",
-    layout="wide"
-)
+st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
 
 with st.sidebar:
 
@@ -30,10 +27,10 @@ with st.sidebar:
         open_page = "searches_performed_dataset"
 
 
-
 def render_page():
-    if open_page == 'home':
+    if open_page == "home":
         from python_search.data_ui.entries_page import load_homepage
+
         load_homepage()
 
     if open_page == "training":
@@ -49,6 +46,7 @@ def render_page():
         search_performed_df = EntryExecutedDataset().load_clean()
         pdf = search_performed_df.toPandas()
         st.dataframe(pdf)
+
 
 if check_password():
     render_page()

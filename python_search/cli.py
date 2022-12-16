@@ -67,7 +67,6 @@ class PythonSearchCli:
         """
         FzfInKitty(self.configuration).run()
 
-
     @notify_exception()
     def edit_main(self):
         """Edit the main script"""
@@ -84,8 +83,7 @@ class PythonSearchCli:
     def edit_key(self, entry_str):
         from python_search.entry_capture.edit_content import EditKey
 
-
-        result =  EditKey(self.configuration).edit_key(entry_str, dry_run=False)
+        result = EditKey(self.configuration).edit_key(entry_str, dry_run=False)
         key = entry_str.split(":")[0]
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
@@ -128,7 +126,6 @@ class PythonSearchCli:
         from python_search.entry_capture.edit_content import EditKey
 
         result = EditKey(self.configuration).search_entries_directory(entry_str)
-
 
         if entry_str.split(":"):
             key = entry_str.split(":")[0]

@@ -21,7 +21,9 @@ class FzfOptimizedSearchResults:
         self._today = datetime.datetime.now()
 
     @timeit
-    def build_entries_result(self, entries: RankedEntries.type, ranking_uuid: str) -> str:
+    def build_entries_result(
+        self, entries: RankedEntries.type, ranking_uuid: str
+    ) -> str:
         """Print results"""
         position = 1
         result = ""
@@ -59,7 +61,6 @@ class FzfOptimizedSearchResults:
                         content["tags"].append(f"this_year_created")
                     if days_ago > 365:
                         content["tags"].append(f"previous_year_created")
-
 
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:

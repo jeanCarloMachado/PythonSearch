@@ -12,7 +12,9 @@ from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger, StreamToLogger
 from python_search.exceptions import notify_exception
-from python_search.search_ui.serialized_entry import decode_serialized_data_from_entry_text
+from python_search.search_ui.serialized_entry import (
+    decode_serialized_data_from_entry_text,
+)
 
 logger = setup_run_key_logger()
 
@@ -42,7 +44,7 @@ class EntryRunner:
             entry_rank_position: accounts for where the entry was when it was executed, if passed it will be used for
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
-        key = entry_text.split(":")[0] if ':' in entry_text else entry_text
+        key = entry_text.split(":")[0] if ":" in entry_text else entry_text
 
         logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is
@@ -51,11 +53,9 @@ class EntryRunner:
         if from_shortcut:
             send_notification(f"{key}")
 
-
         metadata = decode_serialized_data_from_entry_text(entry_text, logger)
         logger.info(f"Decoded metadata {metadata}")
         rank_position = metadata.get("position")
-
 
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
@@ -95,7 +95,7 @@ class EntryRunner:
             query_input=query_used,
             shortcut=from_shortcut,
             rank_uuid=metadata.get("uuid"),
-            rank_position=metadata.get("position")
+            rank_position=metadata.get("position"),
         )
         logger.info(f"Run performed = {run_performed}")
         LogRunPerformedClient().send(run_performed)

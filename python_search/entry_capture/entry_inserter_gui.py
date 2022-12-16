@@ -99,7 +99,9 @@ class EntryCaptureGUI:
 
         if not default_key:
             threading.Thread(
-                target=self._generate_description, args=(window, default_content), daemon=True
+                target=self._generate_description,
+                args=(window, default_content),
+                daemon=True,
             ).start()
 
         while True:
@@ -147,6 +149,7 @@ class EntryCaptureGUI:
         arize_client = Arize().get_client()
 
         from arize.utils.types import Environments, ModelTypes
+
         data = {
             "model_id": Arize.MODEL_ID,
             "model_version": Arize.MODEL_VERSION,
@@ -172,14 +175,17 @@ class EntryCaptureGUI:
         window.write_event_value("-type-inference-ready-", new_type)
 
     def _generate_description(self, window, content):
-        result = PythonSearchWebAPISDK().generate_description({'content': content, 'temperature': 0.2})
+        result = PythonSearchWebAPISDK().generate_description(
+            {"content": content, "temperature": 0.2}
+        )
 
         if not result:
             return
 
-        description = result['generated_description']
+        description = result["generated_description"]
         print(f"New description: {description}")
         window.write_event_value("-generated-key-ready-", description)
+
     def _checkbox_list(self, tags):
         return ([self._sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
 

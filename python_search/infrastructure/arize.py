@@ -1,20 +1,20 @@
 import os
 import concurrent.futures as cf
 
+
 class Arize:
 
     MODEL_ID = "entry_type_classifier_v2"
     MODEL_VERSION = "v5"
 
-
     @staticmethod
-    def is_installed()->bool:
+    def is_installed() -> bool:
         try:
             import arize
+
             return True
         except:
             return False
-
 
     def get_client(self):
         if not Arize.is_installed():
@@ -33,6 +33,7 @@ class Arize:
             return
 
         from arize.api import Client
+
         return Client(space_key=SPACE_KEY, api_key=API_KEY)
 
     def arize_responses_helper(responses):

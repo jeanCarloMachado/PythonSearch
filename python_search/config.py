@@ -124,6 +124,7 @@ class ConfigurationLoader:
             sys.path.insert(0, folder)
         import copy
         from entries_main import config
+
         return copy.deepcopy(config)
 
     def reload(self):
