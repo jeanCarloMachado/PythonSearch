@@ -5,7 +5,6 @@ from datetime import datetime
 
 from python_search.config import PythonSearchConfiguration
 from python_search.events.run_performed import RunPerformed
-from python_search.events.run_performed.writer import LogRunPerformedClient
 
 
 class FilesystemEntryInserter:
@@ -42,6 +41,7 @@ class FilesystemEntryInserter:
         line_to_add = f"    '{key}': {row_entry},"
         self._append_entry(line_to_add)
 
+        from python_search.events.run_performed.writer import LogRunPerformedClient
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )
