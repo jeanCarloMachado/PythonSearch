@@ -1,6 +1,5 @@
 import os
 
-import subprocess
 from python_search.apps.terminal import Terminal
 from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
@@ -15,6 +14,7 @@ class FzfInKitty:
     PREVIEW_PERCENTAGE_SIZE = 50
     HEIGHT = 127
     WIDTH = 950
+    RANK_TIE_BREAK = "begin,index"
 
     configuration: PythonSearchConfiguration
 
@@ -43,7 +43,7 @@ class FzfInKitty:
         THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
         cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
-        --tiebreak=begin,length,index \
+        --tiebreak={FzfInKitty.RANK_TIE_BREAK} \
         --extended \
         --reverse \
         --info=inline \
