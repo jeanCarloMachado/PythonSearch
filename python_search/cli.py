@@ -81,6 +81,7 @@ class PythonSearchCli:
         return RegisterNew(self.configuration)
 
     def edit_key(self, entry_str):
+        """Opens the key in the source code using the IDE specified in the config, defaults to vim"""
         from python_search.entry_capture.edit_content import EditKey
 
         result = EditKey(self.configuration).edit_key(entry_str, dry_run=False)

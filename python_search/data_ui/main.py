@@ -9,25 +9,28 @@ from python_search.events.run_performed.dataset import EntryExecutedDataset
 from python_search.data_ui.training_page import load_training_page
 
 open_page = "home"
+def init():
+    st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
 
-st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
+def sidebar():
+    global open_page
+    with st.sidebar:
 
-with st.sidebar:
+        if st.button("HomePage"):
+            open_page = "home"
 
-    if st.button("HomePage"):
-        open_page = "home"
+        if st.button("Results evaluation"):
+            open_page = "results"
 
-    if st.button("Results evaluation"):
-        open_page = "results"
+        if st.button("Training Dataset"):
+            open_page = "training"
 
-    if st.button("Training Dataset"):
-        open_page = "training"
-
-    if st.button("Searches Performed Dataset"):
-        open_page = "searches_performed_dataset"
+        if st.button("Searches Performed Dataset"):
+            open_page = "searches_performed_dataset"
 
 
 def render_page():
+    global open_page
     if open_page == "home":
         from python_search.data_ui.entries_page import load_homepage
 
@@ -48,5 +51,8 @@ def render_page():
         st.dataframe(pdf)
 
 
-if check_password():
-    render_page()
+if __name__ == '__main__':
+    init()
+    sidebar()
+    if check_password():
+        render_page()

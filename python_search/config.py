@@ -15,7 +15,7 @@ from python_search.features import PythonSearchFeaturesSupport
 class SearchRunConfiguration:
     NLP_PICKLED_EMBEDDINGS: str = f"{os.getenv('HOME')}/.python_search_nlp_embeddings"
     # editor used to edit the _entries
-    EDITOR = "vim"
+    EDITOR = "docker_nvim"
 
 
 class DataConfig:

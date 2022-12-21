@@ -1,5 +1,6 @@
 """ Module responsible for the logic of editing entry files """
 import logging
+import subprocess
 from typing import Optional
 
 from python_search.apps.terminal import Terminal
@@ -19,8 +20,9 @@ class EditKey:
         """
         Edits the _configuration files by searching the text
         """
+        print(f"Editing key {key}")
         if not key:
-            self._edit_default()
+            self.edit_default()
             return
 
         key = key.split(":")
@@ -32,10 +34,7 @@ class EditKey:
         key = key[0]
         # needs to be case insensitive search
         cmd = f"ack -i '{key}' {self.configuration.get_project_root()} --py || true"
-
         logging.info(f"Command: {cmd}")
-        import subprocess
-
         result_shell = subprocess.check_output(cmd, shell=True, text=True)
 
         if not result_shell:
@@ -44,6 +43,7 @@ class EditKey:
             return
 
         file, line, *_ = result_shell.split(":")
+        print(f"Editng file and line {file}, {line}")
 
         self._edit_config(file, line)
 
@@ -65,8 +65,9 @@ class EditKey:
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
-            f"; {config.EDITOR} {file_name} +{line}' "
+            f"; {config.EDITOR} {file_name} --line={line}' "
         )
+        print(cmd)
 
         if dry_run:
             logging.info(f"Command to edit file: {cmd}")
