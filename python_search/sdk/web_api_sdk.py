@@ -3,7 +3,9 @@ from typing import Union
 import requests
 import json
 
-from python_search.entry_description_generator.description_geneartor import EntryKeyGeneratorCmd
+from python_search.entry_description_generator.description_geneartor import (
+    EntryKeyGeneratorCmd,
+)
 
 
 class PythonSearchWebAPISDK:
@@ -27,15 +29,21 @@ class PythonSearchWebAPISDK:
         data = json.loads(result.text)
         return data["history"]
 
-    def generate_description(self, generator_cmd: Union[dict, EntryKeyGeneratorCmd], return_json=False):
+    def generate_description(
+        self, generator_cmd: Union[dict, EntryKeyGeneratorCmd], return_json=False
+    ):
         if type(generator_cmd) == dict:
             generator_cmd = EntryKeyGeneratorCmd(**generator_cmd)
-        result = requests.post(url="http://localhost:8000/entry/generate_description", json=generator_cmd.dict())
+        result = requests.post(
+            url="http://localhost:8000/entry/generate_description",
+            json=generator_cmd.dict(),
+        )
         if return_json:
             return result.text
 
         data = json.loads(result.text)
         return data
+
 
 def main():
     import fire

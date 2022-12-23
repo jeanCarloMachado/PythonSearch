@@ -1,6 +1,5 @@
 import os
 
-import subprocess
 from python_search.apps.terminal import Terminal
 from python_search.config import PythonSearchConfiguration
 from python_search.environment import is_mac
@@ -15,6 +14,7 @@ class FzfInKitty:
     PREVIEW_PERCENTAGE_SIZE = 50
     HEIGHT = 127
     WIDTH = 950
+    RANK_TIE_BREAK = "begin,index"
 
     configuration: PythonSearchConfiguration
 
@@ -43,9 +43,10 @@ class FzfInKitty:
         THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
         cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
-        --tiebreak=begin,length,index \
+        --tiebreak={FzfInKitty.RANK_TIE_BREAK} \
         --extended \
         --reverse \
+        --info=inline \
         --cycle \
         --no-hscroll \
         --hscroll-off=0 \
@@ -61,15 +62,11 @@ class FzfInKitty:
         {self._edit_key('right-click')} \
         --bind "alt-enter:execute-silent:(nohup python_search run_key {{}} --query_used {{q}} & disown)" \
         --bind "alt-m:execute-silent:(nohup python_search edit_main {{}} & disown)" \
-        --bind "alt-m:+execute-silent:(python_search _utils hide_launcher)" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+first" \
-        --bind "ctrl-k:execute-silent:(nohup python_search _copy_key_only {{}} & disown)" \
-        --bind "ctrl-k:+clear-query" \
-        --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} & disown)" \
-        --bind "ctrl-c:+clear-query" \
-        --bind "ctrl-s:execute-silent:(nohup python_search search_edit {{}} & disown)" \
-        --bind "ctrl-s:+execute-silent:(python_search _utils hide_launcher)" \
+        --bind "ctrl-k:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
+        --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
+        --bind "ctrl-s:execute-silent:(nohup python_search search_edit {{}} && kill -9 $PPID)" \
         --bind "ctrl-r:reload:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-t:execute-silent:(notify-send testjean)" \
         --bind "ctrl-f:first" \
@@ -84,15 +81,10 @@ class FzfInKitty:
         return cmd
 
     def _run_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(LOG_FILE=/tmp/log_run_key_fzf nohup python_search run_key {{}} --query_used {{q}} & disown)" \
-        --bind "{shortcut}:+execute-silent:(python_search _utils hide_launcher)" \
-        --bind "{shortcut}:+reload:({self._get_rankging_generate_cmd()})" \
-        --bind "{shortcut}:+clear-query" \
-        --bind "{shortcut}:+abort"   """
+        return f"""--bind "{shortcut}:execute-silent:(LOG_FILE=/tmp/log_run_key_fzf nohup python_search run_key {{}} --query_used {{q}} && kill -9 $PPID)"  """
 
     def _edit_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key {{}} & disown)" \
-        --bind "{shortcut}:+execute-silent:(python_search _utils hide_launcher)"  """
+        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key {{}} & disown && kill -9 $PPID ) "  """
 
     def _get_rankging_generate_cmd(self, reload=False):
         # in mac we need tensorflow to be installed via conda

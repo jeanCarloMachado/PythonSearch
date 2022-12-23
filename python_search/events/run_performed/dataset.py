@@ -38,19 +38,19 @@ class EntryExecutedDataset:
 
         schema = StructType(
             [
-                StructField('key', StringType(), True),
-                StructField('query_input', StringType(), True),
-                StructField('shortcut', StringType(), True),
-                StructField('rank_uuid', StringType(), True),
-                StructField('rank_position', IntegerType(), True),
-                StructField('timestamp', StringType(), True)
-             ]
+                StructField("key", StringType(), True),
+                StructField("query_input", StringType(), True),
+                StructField("shortcut", StringType(), True),
+                StructField("rank_uuid", StringType(), True),
+                StructField("rank_position", IntegerType(), True),
+                StructField("timestamp", StringType(), True),
+            ]
         )
 
         spark = SparkSession.builder.getOrCreate()
         result_df = spark.read.json(
             GenericDataCollector().data_location(EntryExecutedDataset.NEW_TABLE_NAME),
-            schema=schema
+            schema=schema,
         )
 
         return result_df

@@ -1,9 +1,9 @@
 """ Module responsible for the logic of editing entry files """
 import logging
+import subprocess
 from typing import Optional
 
 from python_search.apps.terminal import Terminal
-from python_search.config import config
 from python_search.interpreter.cmd import CmdInterpreter
 
 
@@ -19,8 +19,9 @@ class EditKey:
         """
         Edits the _configuration files by searching the text
         """
+        print(f"Editing key {key}")
         if not key:
-            self._edit_default()
+            self.edit_default()
             return
 
         key = key.split(":")
@@ -32,10 +33,7 @@ class EditKey:
         key = key[0]
         # needs to be case insensitive search
         cmd = f"ack -i '{key}' {self.configuration.get_project_root()} --py || true"
-
         logging.info(f"Command: {cmd}")
-        import subprocess
-
         result_shell = subprocess.check_output(cmd, shell=True, text=True)
 
         if not result_shell:
@@ -44,6 +42,7 @@ class EditKey:
             return
 
         file, line, *_ = result_shell.split(":")
+        print(f"Editng file and line {file}, {line}")
 
         self._edit_config(file, line)
 
@@ -59,14 +58,18 @@ class EditKey:
         self._edit_config(self.configuration.get_project_root() + "/entries_main.py")
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
-        """ "edit a _configuration file given the name and line"""
+        """
+        edit a configuration file given the name and line
+        """
 
         # @ todo make this editor generic
+
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
-            f"; {config.EDITOR} {file_name} +{line}' "
+            f"; {self._get_open_text_editor_command(file_name, line)} "
         )
+        print(cmd)
 
         if dry_run:
             logging.info(f"Command to edit file: {cmd}")
@@ -75,3 +78,12 @@ class EditKey:
         import os
 
         os.system(cmd)
+
+    def _get_open_text_editor_command(self, file, line):
+        if self.configuration.get_text_editor() == 'vim':
+            return f"{self.configuration.get_text_editor()} {file} +{line}'"
+        elif self.configuration.get_text_editor() == 'docker_nvim':
+            return f"{self.configuration.get_text_editor()} {file} --line={line}'"
+        else:
+            # if is not a known editor just open the file
+            return f"{self.configuration.get_text_editor()} {file}"

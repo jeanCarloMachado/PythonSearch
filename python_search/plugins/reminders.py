@@ -25,22 +25,25 @@ def get_random():
 
 from python_search.feature_toggle import FeatureToggle
 
+
 def run_key(key):
     import os
+
     os.system(f"python_search run_key '{key}'")
+
 
 def run_daemon():
     import schedule
+
     FeatureToggle().enable("reminders")
     schedule.every(15).minutes.do(get_random)
 
     entries = ConfigurationLoader().load_entries()
     for key, entry in entries.items():
-        if 'schedules' in entry:
-            print("Found a schedule for key: " + key )
-            for entry_schedule in entry['schedules']:
+        if "schedules" in entry:
+            print("Found a schedule for key: " + key)
+            for entry_schedule in entry["schedules"]:
                 entry_schedule(schedule).do(run_key, key)
-
 
     print("entering loop")
     while True:

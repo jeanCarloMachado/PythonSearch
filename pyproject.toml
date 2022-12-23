@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.9.5"
+version = "0.9.6"
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
@@ -31,6 +31,7 @@ tensorflow = {version = ">=2.10.0", optional = true}
 arize = { version = "^5.2.0", optional = true }
 jupyterlab = { version = "^3.5.0", optional = true }
 streamlit = {version = "^1.14.1", optional = true, python = "3.10"}
+pyroscope-io = "^0.8.0"
 
 
 
@@ -58,7 +59,7 @@ run_entry = 'python_search.cli:_run_key_bin'
 reminders = 'python_search.plugins.reminders:main'
 feature_toggle = 'python_search.feature_toggle:FeatureToggle.main'
 generic_data_collector = 'python_search.data_collector:GenericDataCollector.initialize'
-ps_container = 'ps_container:main'
+ps_container = 'python_search.container:start'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
 
 [tool.poetry.extras]

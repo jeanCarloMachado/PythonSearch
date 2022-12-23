@@ -1,6 +1,5 @@
 import json
 import os
-from pyspark.sql import DataFrame
 
 from python_search.logger import setup_data_writter_logger
 
@@ -41,11 +40,13 @@ class GenericDataCollector:
     def data_location(self, table_name) -> str:
         return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
 
-
-    def dataframe(self, table_name) -> DataFrame:
+    def dataframe(self, table_name):
+        from pyspark.sql import DataFrame
         from pyspark.sql.session import SparkSession
+
         spark = SparkSession.builder.getOrCreate()
-        return spark.read.json(GenericDataCollector().data_location(table_name))
+        result: DataFrame = spark.read.json(GenericDataCollector().data_location(table_name))
+        return result
 
     def show_data(self, table_name):
         return self.dataframe(table_name).show()

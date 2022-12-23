@@ -94,6 +94,7 @@ class CmdInterpreter(BaseInterpreter):
 
         import subprocess
         import sys
+
         p = subprocess.Popen(
             cmd,
             shell=True,

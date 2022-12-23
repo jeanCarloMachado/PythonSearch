@@ -16,6 +16,7 @@ def setup_inference_logger():
 
     return logger
 
+
 def setup_preview_logger():
     """
     Only writes to file
@@ -27,6 +28,7 @@ def setup_preview_logger():
 
     return logger
 
+
 def setup_run_key_logger():
     logger = logging.getLogger("run-key")
     fh = logging.FileHandler("/tmp/run_key.txt")
@@ -34,6 +36,8 @@ def setup_run_key_logger():
     logger.addHandler(fh)
 
     return logger
+
+
 def setup_data_writter_logger(event_name):
     logger = logging.getLogger(f"data-writer_{event_name}")
     logger.setLevel(logging.DEBUG)
@@ -51,14 +55,15 @@ class StreamToLogger(object):
     """
     Fake file-like stream object that redirects writes to a logger instance.
     """
+
     def __init__(self, logger, level):
-       self.logger = logger
-       self.level = level
-       self.linebuf = ''
+        self.logger = logger
+        self.level = level
+        self.linebuf = ""
 
     def write(self, buf):
-       for line in buf.rstrip().splitlines():
-          self.logger.log(self.level, line.rstrip())
+        for line in buf.rstrip().splitlines():
+            self.logger.log(self.level, line.rstrip())
 
     def flush(self):
         pass

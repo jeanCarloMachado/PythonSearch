@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from python_search.data_collector import GenericDataCollector
 from python_search.events.run_performed import RunPerformed
 
 
@@ -21,11 +20,13 @@ class RunPerformedWriter:
     """
     Writes event
     """
+
     def write(self, event: RunPerformed):
         import datetime
 
         event.timestamp = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
+        from python_search.data_collector import GenericDataCollector
         return GenericDataCollector().write(
             data=event.__dict__, table_name="searches_performed"
         )

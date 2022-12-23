@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import  List, Union
+from typing import List, Union
 from python_search.config import DataConfig
 from python_search.data_collector import GenericDataCollector
 
@@ -12,6 +12,7 @@ EVENT_FOLDER = "ranking_generated"
 
 
 NotSetYet = None
+
 
 class RankingGenerated(BaseModel):
     # name of the entry matched
@@ -27,11 +28,13 @@ class RankingGenerated(BaseModel):
         self.first = self.ranking[0]
         self.timestamp = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
+
 class RankingGeneratedWriter:
     def write(self, event: RankingGenerated):
         return GenericDataCollector().write(
             data=event.__dict__, table_name=EVENT_FOLDER
         )
+
 
 class RankingGeneratedDataset:
     """
@@ -43,6 +46,7 @@ class RankingGeneratedDataset:
 
     def __init__(self, spark=None):
         from pyspark.sql.session import SparkSession
+
         self.spark = spark if spark else SparkSession.builder.getOrCreate()
 
     def load(self):

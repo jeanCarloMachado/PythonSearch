@@ -11,27 +11,28 @@ class EntryKeyGeneratorCmd(BaseModel):
     content: str
     temperature: float = 0.2
 
+
 class DescriptionGenerator:
 
-    RUN_ID = '054613ec285f4b1c86ee81de98b08d06'
+    RUN_ID = "054613ec285f4b1c86ee81de98b08d06"
 
     def __init__(self):
         try:
             from python_search.search.models import PythonSearchMLFlow
+
             self._model = PythonSearchMLFlow().get_entry_description_geneartor(
                 run_id=DescriptionGenerator.RUN_ID
-
             )
 
             self._chars = PythonSearchMLFlow().get_entry_description_geneartor_dict(
                 run_id=DescriptionGenerator.RUN_ID
-
             )
-            self._char_indices = dict((char, self._chars.index(char)) for char in self._chars)
+            self._char_indices = dict(
+                (char, self._chars.index(char)) for char in self._chars
+            )
         except Exception as e:
             print("Could not load descritpion generator {}".format(e))
             return
-
 
     def generate(self, cmd: EntryKeyGeneratorCmd):
 
@@ -44,11 +45,11 @@ class DescriptionGenerator:
             next_index = self.sample(preds[0], cmd.temperature)
             next_char = self._chars[next_index]
             text = text + next_char
-            result+= next_char
+            result += next_char
         return result
 
     def sample(self, preds, temperature=1.0):
-        preds = np.asanyarray(preds).astype('float64')
+        preds = np.asanyarray(preds).astype("float64")
         preds = np.log(preds) / temperature
 
         exp_preds = np.exp(preds)
@@ -62,9 +63,9 @@ class DescriptionGenerator:
         missing_spaces = text_len < (maxlen - 3)
 
         if missing_spaces:
-            text = ' ' * missing_spaces
+            text = " " * missing_spaces
 
-        text = text + ' = '
+        text = text + " = "
 
         encoded = np.zeros((1, maxlen, len(self._chars)))
 
@@ -74,7 +75,7 @@ class DescriptionGenerator:
         return encoded
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     import fire
+
     fire.Fire(DescriptionGenerator)

@@ -21,7 +21,9 @@ class FzfOptimizedSearchResults:
         self._today = datetime.datetime.now()
 
     @timeit
-    def build_entries_result(self, entries: RankedEntries.type, ranking_uuid: str) -> str:
+    def build_entries_result(
+        self, entries: RankedEntries.type, ranking_uuid: str
+    ) -> str:
         """Print results"""
         position = 1
         result = ""

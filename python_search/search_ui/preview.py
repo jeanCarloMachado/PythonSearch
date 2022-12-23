@@ -5,7 +5,9 @@ from dateutil import parser
 
 from python_search.config import ConfigurationLoader
 from python_search.logger import setup_preview_logger
-from python_search.search_ui.serialized_entry import decode_serialized_data_from_entry_text
+from python_search.search_ui.serialized_entry import (
+    decode_serialized_data_from_entry_text,
+)
 
 
 class Preview:
@@ -99,7 +101,9 @@ class Preview:
         if "description" in entry_data:
             result["description"] = entry_data["description"]
 
-        decoded_content = decode_serialized_data_from_entry_text(entry_text, self.logger)
+        decoded_content = decode_serialized_data_from_entry_text(
+            entry_text, self.logger
+        )
 
         if "position" in decoded_content:
             result["position"] = str(decoded_content["position"])
@@ -118,7 +122,6 @@ class Preview:
 
     def _color_str(self, a_string, a_color) -> str:
         return f"{a_color}{a_string}{Fore.RESET}"
-
 
     def _load_key_data(self, key):
         entries = self.configuration.load_entries()

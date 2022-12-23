@@ -58,6 +58,7 @@ class PredictEntryTypeInference:
         prediction_uuid = str(uuid.uuid4())
         if Arize.is_installed():
             from arize.utils.types import ModelTypes, Environments, Embedding
+
             arize_result = self._arize_client.log(
                 model_id=Arize.MODEL_ID,
                 model_version=Arize.MODEL_VERSION,

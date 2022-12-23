@@ -1,5 +1,5 @@
+import sys
 from typing import Union
-
 from python_search.environment import is_mac
 
 
@@ -32,14 +32,12 @@ class Clipboard:
 
     def set_content(self, content: Union[str, None] = None, enable_notifications=True):
         """
-        Put a string in the clibboard.
+        Put a string in the clipboard.
         If no string is provided it tries to fetch it from stdin
         :param content:
         :param enable_notifications:
         :return:
         """
-
-        import sys
 
         if not content and has_stdin():
             content = sys.stdin.read()
