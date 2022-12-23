@@ -23,6 +23,7 @@ pip install python-search
 ```
 
 We support **Mac and Linux**.
+If you want to develop python-search install it via [the instructions in the contributing doc](CONTRIBUTING.md)
 
 ### 2. Initialize your entries project
 
