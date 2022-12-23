@@ -1,4 +1,12 @@
-# Recommendations
+# Setup machine for development
+
+
+1. Clone python search source code
+2. Install it in a local python, (conda or virtualenviroment recommended)
+3. Create a feature branch, develop it!
+
+
+# Requirements
 
 On every change make sure to change the CHANGELOG.md
 
