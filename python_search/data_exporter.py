@@ -4,7 +4,6 @@ from python_search.data_ui.entries_page import extract_value_from_entry
 
 class DataExporter:
     blacklisted_terms = [
-        "rhea",
         "http://",
         "https://",
         "email",
