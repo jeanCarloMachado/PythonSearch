@@ -4,7 +4,6 @@ import subprocess
 from typing import Optional
 
 from python_search.apps.terminal import Terminal
-from python_search.config import config
 from python_search.interpreter.cmd import CmdInterpreter
 
 
@@ -59,13 +58,16 @@ class EditKey:
         self._edit_config(self.configuration.get_project_root() + "/entries_main.py")
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
-        """ "edit a _configuration file given the name and line"""
+        """
+        edit a configuration file given the name and line
+        """
 
         # @ todo make this editor generic
+
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
-            f"; {config.EDITOR} {file_name} --line={line}' "
+            f"; {self._get_open_text_editor_command(file_name, line)} "
         )
         print(cmd)
 
@@ -76,3 +78,12 @@ class EditKey:
         import os
 
         os.system(cmd)
+
+    def _get_open_text_editor_command(self, file, line):
+        if self.configuration.get_text_editor() == 'vim':
+            return f"{self.configuration.get_text_editor()} {file} +{line}'"
+        elif self.configuration.get_text_editor() == 'docker_nvim':
+            return f"{self.configuration.get_text_editor()} {file} --line={line}'"
+        else:
+            # if is not a known editor just open the file
+            return f"{self.configuration.get_text_editor()} {file}"

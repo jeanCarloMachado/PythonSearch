@@ -3,6 +3,7 @@ Clients should depend on a configuration instance (config) rather than in the cl
 the class should only be used for type annotation.
 This way we can have multiple configs depending of the enviroment.
 """
+import datetime
 import logging
 import os
 from typing import List, Optional, Tuple
@@ -12,10 +13,6 @@ from python_search.environment import is_mac
 from python_search.features import PythonSearchFeaturesSupport
 
 
-class SearchRunConfiguration:
-    NLP_PICKLED_EMBEDDINGS: str = f"{os.getenv('HOME')}/.python_search_nlp_embeddings"
-    # editor used to edit the _entries
-    EDITOR = "docker_nvim"
 
 
 class DataConfig:
@@ -42,9 +39,7 @@ class DataConfig:
     )
 
 
-# @todo do not depend on this config directly rather depend on the base _configuration
-config = SearchRunConfiguration()
-
+# @todo do not depend on this config directly rather depend on the base configuration
 
 class KafkaConfig:
     default_port: str = "9092"
@@ -69,6 +64,7 @@ class PythonSearchConfiguration(EntriesGroup):
     _default_tags = None
     tags_dependent_inserter_marks = None
     _initialization_time = None
+    _default_text_editor = "vim"
 
     def __init__(
         self,
@@ -78,7 +74,17 @@ class PythonSearchConfiguration(EntriesGroup):
         supported_features: Optional[PythonSearchFeaturesSupport] = None,
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
+        default_text_editor: Optional[str] = None,
     ):
+        """
+
+        :param entries:
+        :param entries_groups:
+        :param supported_features:
+        :param default_tags:
+        :param tags_dependent_inserter_marks:
+        :param default_text_editor:
+        """
         if entries:
             self.commands = entries
 
@@ -97,9 +103,13 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
-        from datetime import datetime
 
-        self._initialization_time = datetime.now()
+        self._initialization_time = datetime.datetime.now()
+        self._default_text_editor = default_text_editor
+
+
+    def get_text_editor(self):
+        return self._default_text_editor
 
     def get_default_tags(self):
         return self._default_tags
