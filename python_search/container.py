@@ -104,6 +104,13 @@ def run_streamlit(restart=False, disable_password=False):
         extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
     )
 
+def run_calendar(restart=True, disable_password=False):
+    run(
+        cmd="streamlit run /entries/calendar_app.py --server.address=0.0.0.0  --server.port=8502",
+        port="8502:8502",
+        restart=restart,
+        extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
+    )
 
 def start():
     import fire
