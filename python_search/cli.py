@@ -38,7 +38,7 @@ class PythonSearchCli:
 
     @staticmethod
     def set_project_location(location: str):
-        """Create a new project in the current directory with the given name"""
+        """For existing """
         from python_search.init.project import Project
 
         Project().set_current_project(location)
@@ -169,7 +169,7 @@ class PythonSearchCli:
 
     def _preview_entry(self, entry_text: str):
         """
-        Recieves _entries from fzf and show them formatted for the preview window
+        Recives entries from fzf and show them formatted for the preview window
         """
         Preview().display(entry_text)
 
