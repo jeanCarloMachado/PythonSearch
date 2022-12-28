@@ -84,13 +84,15 @@ class Mac:
         return self._entry(shortcut, key, shortcut_number)
 
     def _entry(self, shortcut, key, number) -> str:
+        HOME = os.environ["HOME"]
         shortcut = shortcut
+        # @todo make the first shortcut system independent
         return f"""
 
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command =  /Users/jean.machado@getyourguide.com/projects/PythonSearch/log_command.sh python_search run_key "{key}"
+command =  {HOME}/projects/PythonSearch/wrap_log_command.sh python_search run_key "{key}"
 workdir =
 enabled = yes
 """

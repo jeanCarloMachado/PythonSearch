@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.9.6"
+version = "0.9.7"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -62,6 +62,8 @@ feature_toggle = 'python_search.feature_toggle:FeatureToggle.main'
 generic_data_collector = 'python_search.data_collector:GenericDataCollector.initialize'
 ps_container = 'python_search.container:start'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
+aps_webapi = 'python_search.sdk.web_api_sdk:main'
+wrap_log_command = {reference = "log_command.sh", type = "file", extras = []}
 
 [tool.poetry.extras]
 server = [
