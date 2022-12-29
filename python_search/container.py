@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 
+from python_search.config import MLFlowConfig
+
 
 def build():
     result = os.system("docker build . -t ps:latest ")
@@ -79,16 +81,17 @@ def run_jupyter(with_token=False, restart=False):
 
 def run_mlflow(restart=False):
     run(
-        cmd="mlflow ui --backend-store-uri file:/entries/mlflow --port 5001 --host '0.0.0.0' ",
-        port="5001:5001",
+        cmd=f"mlflow ui --backend-store-uri file:/entries/mlflow --port {MLFlowConfig.port} --host '0.0.0.0' ",
+        port=f"{MLFlowConfig.port}:{MLFlowConfig.port}",
         restart=restart,
     )
 
 
 def run_webserver(restart=False, force_restart=False):
-    if force_restart:
+    if restart or force_restart:
         print("Stopping previously running container")
-        os.system("docker stop $(docker ps | grep -i 8000 | cut -d ' ' -f1) ")
+        os.system("docker stop $(docker ps | grep -i 8000 | cut -d ' ' -f1) ; sleep 3")
+
     run(
         cmd="python_search_webapi",
         port="8000:8000",

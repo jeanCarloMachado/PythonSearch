@@ -39,7 +39,8 @@ class DataConfig:
     )
 
 
-# @todo do not depend on this config directly rather depend on the base configuration
+class MLFlowConfig:
+    port = 5002
 
 class KafkaConfig:
     default_port: str = "9092"
