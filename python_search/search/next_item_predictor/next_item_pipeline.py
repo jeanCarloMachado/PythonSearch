@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# using ipython interferes with fire arguments passing
 
 import os
 from typing import List, Literal, Optional

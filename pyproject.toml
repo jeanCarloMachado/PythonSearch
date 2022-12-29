@@ -28,7 +28,8 @@ pyspark = { version = ">=3.0", optional = true }
 mlflow = ">=1.29.0,<1.30.0"
 pdoc3 = {version = "^0.10.0", optional = true}
 keras = {version = ">=2.10", optional = true}
-tensorflow = {version = ">=2.10.0", optional = true}
+# tensorflow cannot be installed in mac m1 chips
+tensorflow = {version = ">=2.10.0", optional = true, platform = 'linux'}
 arize = { version = "^5.2.0", optional = true }
 jupyterlab = { version = "^3.5.0", optional = true }
 streamlit = {version = "^1.14.1", optional = true, python = "3.10"}
@@ -49,7 +50,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 python_search = 'python_search.cli:main'
-next_item_pipeline = 'python_search.search.next_item_predictor.pipeline:main'
+next_item_pipeline = 'python_search.search.next_item_predictor.next_item_pipeline:main'
 collect_input = 'python_search.apps.collect_input:main'
 clipboard = 'python_search.apps.clipboard:main'
 notify_send = 'python_search.apps.notification_ui:main'
@@ -63,7 +64,7 @@ generic_data_collector = 'python_search.data_collector:GenericDataCollector.init
 ps_container = 'python_search.container:start'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
 aps_webapi = 'python_search.sdk.web_api_sdk:main'
-wrap_log_command = {reference = "log_command.sh", type = "file", extras = []}
+wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = []}
 
 [tool.poetry.extras]
 server = [
