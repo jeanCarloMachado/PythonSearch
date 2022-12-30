@@ -18,7 +18,7 @@ class Inference:
     Performs the search inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "239c1788635344c0acf98b8c8f26fff2"
+    PRODUCTION_RUN_ID = "ef29ca3a82484f60b82d0dd7b7470274"
 
     def __init__(
         self,

@@ -21,8 +21,8 @@ class Mac:
 
         if restart_app:
             print("Killing shortcut app")
-            os.system("pkill -f iCanHa")
-            time.sleep(2)
+            os.system("pkill -f iCan")
+            time.sleep(3)
 
         shortcut_found = False
         # starts with number 2 as number 1 is static in config.part1
