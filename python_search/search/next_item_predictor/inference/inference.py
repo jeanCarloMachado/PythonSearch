@@ -18,7 +18,7 @@ class Inference:
     Performs the search inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "ef29ca3a82484f60b82d0dd7b7470274"
+    PRODUCTION_RUN_ID = "db6d108526b5438dbc0d9eaf2b765729"
 
     def __init__(
         self,
@@ -35,7 +35,7 @@ class Inference:
         if model:
             logger.info("Using custom passed _model")
         else:
-            logger.info("Using run id: " + self.run_id)
+            logger.info("Next item predictor using run id: " + self.run_id)
         configuration = (
             configuration if configuration else ConfigurationLoader().load_config()
         )

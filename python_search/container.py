@@ -89,8 +89,7 @@ def run_mlflow(restart=False):
 
 def run_webserver(restart=False, force_restart=False):
     if restart or force_restart:
-        print("Stopping previously running container")
-        os.system("docker stop $(docker ps | grep -i 8000 | cut -d ' ' -f1) ; sleep 3")
+        _restart_by_port(8000)
 
     run(
         cmd="python_search_webapi",
@@ -98,8 +97,15 @@ def run_webserver(restart=False, force_restart=False):
         restart=restart,
     )
 
+def _restart_by_port(port):
+    print("Stopping previously running container")
+    os.system(f"docker stop $(docker ps | grep -i {port} | cut -d ' ' -f1) ; sleep 3")
 
 def run_streamlit(restart=False, disable_password=False):
+
+    if restart:
+        _restart_by_port(8501)
+
     run(
         cmd="streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501",
         port="8501:8501",
