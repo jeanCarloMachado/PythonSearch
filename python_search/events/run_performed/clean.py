@@ -8,9 +8,11 @@ class RunPerformedCleaning:
 
         # load baseline clean
         df_clean = EntryExecutedDataset().load_clean()
+        print("Clean schema")
+        df_clean.printSchema()
         print(f"Number of pre-existing clean events: {df_clean.count()}")
 
-        # get  latest timestamp imported
+        # get latest timestamp imported
         max_timestamp = df_clean.agg({"timestamp": "max"}).collect()[0][0]
 
         df_new = EntryExecutedDataset().load_new().sort("timestamp", ascending=False)
@@ -26,6 +28,8 @@ class RunPerformedCleaning:
 
         print(f"Number of new events: {df_new.count()}")
 
+        print("New schema")
+        df_new.printSchema()
         joined = df_clean.union(df_new)
         print("Joined size", joined.count())
 

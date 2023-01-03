@@ -16,13 +16,10 @@ class Mac:
 
         self.config_folder = f'{os.environ["HOME"]}/.config/iCanHazShortcut/'
 
-    def generate(self, restart_app=True):
+    def generate(self):
         print("Generating macos shortctus")
 
-        if restart_app:
-            print("Killing shortcut app")
-            os.system("pkill -f iCanHa")
-            time.sleep(2)
+        self._stop_app()
 
         shortcut_found = False
         # starts with number 2 as number 1 is static in config.part1
@@ -66,9 +63,9 @@ class Mac:
         time.sleep(1)
 
         # restart shortcut app
-        if restart_app:
-            print("Restarting shortcut app")
-            os.system("open -a iCanHazShortcut")
+
+        print("Restarting shortcut app")
+        os.system("open -a iCanHazShortcut")
 
         print(f"Done! {Mac.START_SHORTCUT_NUMBER}  shortcuts generated")
 
@@ -83,14 +80,29 @@ class Mac:
         print(f"Generating shortcut for {key}")
         return self._entry(shortcut, key, shortcut_number)
 
+    def _stop_app(self):
+        print("Killing shortcut app")
+        from subprocess import PIPE, Popen
+
+        get_pid_app = "pgrep iCanHazShortcut"
+        import subprocess;
+        output = subprocess.check_output(get_pid_app, shell=True, text=True)
+        if len(output) < 3:
+            raise Exception("Could not find PID! Restart will fail, try again.")
+
+        os.system("kill -9 " + output)
+        time.sleep(3)
+
     def _entry(self, shortcut, key, number) -> str:
+        HOME = os.environ["HOME"]
         shortcut = shortcut
+        # @todo make the first shortcut system independent
         return f"""
 
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command =  /Users/jean.machado@getyourguide.com/projects/PythonSearch/log_command.sh python_search run_key "{key}"
+command =  {HOME}/projects/PythonSearch/wrap_log_command.sh python_search run_key "{key}"
 workdir =
 enabled = yes
 """

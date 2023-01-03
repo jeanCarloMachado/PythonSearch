@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# using ipython interferes with fire arguments passing
 
 import os
 from typing import List, Literal, Optional
@@ -26,10 +25,22 @@ class NextItemPredictorPipeline:
 
     def __init__(self):
         os.environ["TIME_IT"] = "1"
+        print('Overriding pyspark python executable')
+
+        from subprocess import PIPE, Popen
+        command = "whereis python"
+        with Popen(command, stdout=PIPE, stderr=None, shell=True) as process:
+            output = process.communicate()[0].decode("utf-8")
+        print(f"Where is ouptut: {output}")
+        # get only the path and remove new line in the end
+        path = output.split(' ')[1].split("\n")[0]
+        print(f"Using the following path: {path}")
+        os.environ['PYSPARK_PYTHON'] = path
+        os.environ['PYSPARK_DRIVER_PYTHON'] = path
 
     def run(
         self,
-        train_only: Optional[List[model_types]] = None,
+        train_only: Optional[List[model_types]] = ['xgboost'],
         use_cache=False,
         clean_first=True,
         skip_offline_evaluation=False,
@@ -45,6 +56,7 @@ class NextItemPredictorPipeline:
         Returns:
 
         """
+        print("Starting pipeline, use --help for understaning the options")
 
         print("Using cache is:", use_cache)
 

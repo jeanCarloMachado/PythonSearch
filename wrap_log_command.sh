@@ -1,10 +1,7 @@
 #!/usr/bin/env zsh
 
-
-
 destination_file=${LOG_FILE:-/tmp/debug}
 echo "Check the results in the file: $destination_file"
-
 
 echo "Start collecting info about command $(date)" > $destination_file
 
@@ -14,8 +11,6 @@ echo "Sourcing config"
 # source $HOME/config.sh
 # export $($HOME/config.sh)
 [ -f $HOME/config.sh ] && . $HOME/config.sh
-
-
 
 echo "PATH: ${PATH}" >>$destination_file
 

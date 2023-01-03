@@ -30,10 +30,11 @@ class FileInterpreter(BaseInterpreter):
         )
 
     def get_executable(self):
+
         filename, file_extension = os.path.splitext(self.cmd["file"])
 
 
-        if file_extension in [".py", '.vim']:
+        if file_extension in [".py", '.vim', '.', '.rc', '.yaml', '.yml']:
             return 'docker_nvim'
 
         if is_mac():

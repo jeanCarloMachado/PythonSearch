@@ -17,7 +17,7 @@ class ShortcutGenerator:
         self.gnome = Gnome(self.configuration)
         self.i3 = I3(self.configuration)
 
-    def generate(self):
+    def configure(self):
         if is_mac():
             self.mac.generate()
             return

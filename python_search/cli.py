@@ -38,7 +38,7 @@ class PythonSearchCli:
 
     @staticmethod
     def set_project_location(location: str):
-        """Create a new project in the current directory with the given name"""
+        """For existing """
         from python_search.init.project import Project
 
         Project().set_current_project(location)
@@ -117,11 +117,13 @@ class PythonSearchCli:
             RunPerformed(key=key, query_input="", shortcut=False)
         )
 
-    def shortcut(self):
-        """Generate shorcuts for all environments"""
+    def configure_shortcuts(self):
+        """
+        Generate shorcuts for the appliable environments
+        """
         from python_search.shortcut.generator import ShortcutGenerator
 
-        return ShortcutGenerator(self.configuration)
+        return ShortcutGenerator(self.configuration).configure
 
     def _search_edit(self, entry_str=None):
         from python_search.entry_capture.edit_content import EditKey
@@ -169,7 +171,7 @@ class PythonSearchCli:
 
     def _preview_entry(self, entry_text: str):
         """
-        Recieves _entries from fzf and show them formatted for the preview window
+        Recives entries from fzf and show them formatted for the preview window
         """
         Preview().display(entry_text)
 

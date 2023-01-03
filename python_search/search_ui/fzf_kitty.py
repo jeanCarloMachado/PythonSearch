@@ -87,14 +87,25 @@ class FzfInKitty:
         return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key {{}} & disown && kill -9 $PPID ) "  """
 
     def _get_rankging_generate_cmd(self, reload=False):
-        # in mac we need tensorflow to be installed via conda
+        # @todo move this part to a binary sdk
         if self.configuration.supported_features.is_dynamic_ranking_supported():
             if reload:
                 return f"curl -s localhost:8000/ranking/reload_and_generate"
 
             return f"curl -s localhost:8000/ranking/generate"
 
-        return f"python_search ranking generate"
+        from python_search.cli import PythonSearchCli
+        from python_search.search.search import Search
+        return f"python_search " + PythonSearchCli._ranking.__name__ +  ' ' + Search.search.__name__
+
+    def _docker_running(self) -> bool:
+        result = os.system("docker info")
+
+        if result != 0:
+            print("Docker is not running")
+            return False
+
+        return True
 
     def _launch_terminal(self, internal_cmd: str) -> None:
 
