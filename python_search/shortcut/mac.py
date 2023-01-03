@@ -84,10 +84,11 @@ class Mac:
         print("Killing shortcut app")
         from subprocess import PIPE, Popen
 
-        get_pid_app = "ps aux | grep -i iCanHazShortcut | tail -n 1 | cut -d ' ' -f3"
-        with Popen(get_pid_app, stdout=PIPE, stderr=None, shell=True) as process:
-            output = process.communicate()[0].decode("utf-8")
-            print("Shortcut app PID: "+output)
+        get_pid_app = "pgrep iCanHazShortcut"
+        import subprocess;
+        output = subprocess.check_output(get_pid_app, shell=True, text=True)
+        if len(output) < 3:
+            raise Exception("Could not find PID! Restart will fail, try again.")
 
         os.system("kill -9 " + output)
         time.sleep(3)
