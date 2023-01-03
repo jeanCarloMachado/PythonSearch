@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.9.8
+
+
+ - use constant variables to call ranking
+ - improvements debugging
+ - hability to query tags via query parameter
+ - use mlflow config
+ - fixes for pipeline next item predictor
+ - tensorflow and running docker
+ - override pyspark with local spark driver variable with same value
+ - fix retrain pipeline using wrong python version
+ - improve shortcut generation logic
+ - fail if restart of shortcut fails
+
+
+
 ## 0.9.6
 
 - add profiling
