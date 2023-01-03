@@ -37,7 +37,6 @@ pyroscope-io = "^0.8.0"
 tensorflow-macos = {version = "^2.11.0", optional = true, platform = "mac"}
 
 
-
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
 
@@ -59,6 +58,7 @@ python_search_infra = 'python_search.infrastructure.infrastructure:main'
 browser = 'python_search.apps.browser:main'
 python_search_webapi = 'python_search.web_api:main'
 run_entry = 'python_search.cli:_run_key_bin'
+run_key = 'python_search.cli:_run_key_bin'
 reminders = 'python_search.plugins.reminders:main'
 feature_toggle = 'python_search.feature_toggle:FeatureToggle.main'
 generic_data_collector = 'python_search.data_collector:GenericDataCollector.initialize'
