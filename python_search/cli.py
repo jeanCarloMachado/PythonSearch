@@ -24,7 +24,7 @@ class PythonSearchCli:
 
     @staticmethod
     def install_dependencies():
-        """install dependenceis"""
+        """install dependencies"""
         from python_search.init.install_dependencies import InstallDependencies
 
         InstallDependencies().install_all()
