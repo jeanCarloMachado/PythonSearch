@@ -2,10 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Python Search</title>
-    <link>/</link>
+    <link>https://jeancarlomachado.github.io/PythonSearch/</link>
     <description>Recent content on Python Search</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Jan 2023 22:44:25 +0200</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 05 Jan 2023 22:44:25 +0200</lastBuildDate><atom:link href="https://jeancarlomachado.github.io/PythonSearch/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

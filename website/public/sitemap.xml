@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>/</loc>
+    <loc>https://jeancarlomachado.github.io/PythonSearch/</loc>
     <lastmod>2023-01-05T22:44:25+02:00</lastmod>
   </url><url>
-    <loc>/categories/</loc>
+    <loc>https://jeancarlomachado.github.io/PythonSearch/categories/</loc>
   </url><url>
-    <loc>/tags/</loc>
+    <loc>https://jeancarlomachado.github.io/PythonSearch/tags/</loc>
   </url>
 </urlset>
