@@ -28,6 +28,7 @@ class DataConfig:
     entries_dump = base_data_folder + "/entries_dumped/latest"
     entries_dump_file = base_data_folder + "/entries_dumped/latest/000.parquet"
     cached_configuration = "/tmp/search_and_run_configuration_cached"
+    # this path exists in the docker container but not necessarily in the host
     MLFLOW_MODELS_PATH = f"/entries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v1"
@@ -39,7 +40,8 @@ class DataConfig:
     )
 
 
-# @todo do not depend on this config directly rather depend on the base configuration
+class MLFlowConfig:
+    port = 5002
 
 class KafkaConfig:
     default_port: str = "9092"

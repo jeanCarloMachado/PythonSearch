@@ -61,8 +61,14 @@ def load_homepage():
     st.write(" ## Entries")
     search = st.text_input("Search").lower()
 
+    query_params = st.experimental_get_query_params()
+    default_tags = []
+    if "tags" in query_params:
+        default_tags = query_params.get('tags', [''])[0].split(",")
+
+    existing_tags = ConfigurationLoader().load_config().get_default_tags()
     selected_tags = st.multiselect(
-        "Tags", ConfigurationLoader().load_config().get_default_tags()
+        "Tags", existing_tags, default_tags
     )
     has_filter = len(search) > 0 or len(selected_tags) > 0
     limit = 50 if not has_filter else None

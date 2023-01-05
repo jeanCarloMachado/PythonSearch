@@ -30,7 +30,7 @@ class Infrastructure:
                 "log": "/tmp/log_consumer_redis",
             },
             "spark_consumer": {
-                "cmd": "sleep 12;  log_command.sh spark-submit \
+                "cmd": "sleep 12;  wrap_log_command.sh spark-submit \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.0.1 \
         $HOME/projects/PythonSearch/python_search/events/consumer.py consume_search_run_performed",
                 "log": "/tmp/log_spark",
@@ -52,7 +52,7 @@ class Infrastructure:
             raise Exception("Could not find service: " + service_name)
 
         print("Starting service: " + service_name)
-        cmd = f"LOG_FILE={self._RUNNING_INFO[service_name]['log']} log_command.sh {self._RUNNING_INFO[service_name]['cmd']}"
+        cmd = f"LOG_FILE={self._RUNNING_INFO[service_name]['log']} wrap_log_command.sh {self._RUNNING_INFO[service_name]['cmd']}"
 
         self._RUNNING_INFO[service_name]["pid"] = self._run_pid(cmd)
 

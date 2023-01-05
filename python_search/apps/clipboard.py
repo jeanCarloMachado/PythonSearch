@@ -40,10 +40,11 @@ class Clipboard:
         """
 
         if not content and has_stdin():
+            import sys
             content = sys.stdin.read()
 
         if not content:
-            raise Exception("Tytrin to set empty to clipboard")
+            raise Exception("Tryring to set empty to clipboard")
 
         def shellquote(s):
             return "'" + s.replace("'", "'\\''") + "'"

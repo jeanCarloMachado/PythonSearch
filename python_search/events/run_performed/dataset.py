@@ -13,9 +13,19 @@ class EntryExecutedDataset:
     """
 
     columns = ["key", "query_input", "shortcut", "rank_uuid", "timestamp"]
-    TABLE_NAME = "run_performed"
-    NEW_TABLE_NAME = "searches_performed"
-    CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + TABLE_NAME
+    FILE_NAME = "run_performed"
+    NEW_FILE_NAME = "searches_performed"
+    CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + FILE_NAME
+    SCHEMA = StructType(
+        [
+            StructField("key", StringType(), True),
+            StructField("query_input", StringType(), True),
+            StructField("shortcut", StringType(), True),
+            StructField("rank_uuid", StringType(), True),
+            StructField("rank_position", IntegerType(), True),
+            StructField("timestamp", StringType(), True),
+        ]
+    )
 
     def __init__(self, spark=None):
         from pyspark.sql.session import SparkSession
@@ -31,26 +41,16 @@ class EntryExecutedDataset:
         return self.spark.read.format("parquet").load_old(data_location)
 
     def load_clean(self):
-        return self.spark.read.parquet(self.CLEAN_PATH)
+        return self.spark.read.format("parquet").schema(EntryExecutedDataset.SCHEMA).load(self.CLEAN_PATH)
 
     def load_new(self):
         from pyspark.sql.session import SparkSession
 
-        schema = StructType(
-            [
-                StructField("key", StringType(), True),
-                StructField("query_input", StringType(), True),
-                StructField("shortcut", StringType(), True),
-                StructField("rank_uuid", StringType(), True),
-                StructField("rank_position", IntegerType(), True),
-                StructField("timestamp", StringType(), True),
-            ]
-        )
 
         spark = SparkSession.builder.getOrCreate()
         result_df = spark.read.json(
-            GenericDataCollector().data_location(EntryExecutedDataset.NEW_TABLE_NAME),
-            schema=schema,
+            GenericDataCollector().data_location(EntryExecutedDataset.NEW_FILE_NAME),
+            schema=EntryExecutedDataset.SCHEMA,
         )
 
         return result_df
