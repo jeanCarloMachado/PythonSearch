@@ -1,0 +1,4 @@
+theme = 'ananke'
+contentDir = "posts"
+languageCode = 'en-us'
+title = 'Python Search'
