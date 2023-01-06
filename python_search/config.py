@@ -1,7 +1,7 @@
 """
 Clients should depend on a configuration instance (config) rather than in the class,
 the class should only be used for type annotation.
-This way we can have multiple configs depending of the enviroment.
+This way we can have multiple configs depending of the environment.
 """
 import datetime
 import logging
@@ -67,6 +67,8 @@ class PythonSearchConfiguration(EntriesGroup):
     tags_dependent_inserter_marks = None
     _initialization_time = None
     _default_text_editor = "vim"
+    _default_fzf_theme = None
+
 
     def __init__(
         self,
@@ -77,6 +79,8 @@ class PythonSearchConfiguration(EntriesGroup):
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
+        default_fzf_theme: Optional[str] = None,
+        custom_window_size: Optional[Tuple[int, int]] = None,
     ):
         """
 
@@ -105,9 +109,12 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
-
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor
+        self._default_fzf_theme = default_fzf_theme
+        if custom_window_size:
+            self._custom_window_size = custom_window_size
+
 
 
     def get_text_editor(self):
@@ -115,6 +122,13 @@ class PythonSearchConfiguration(EntriesGroup):
 
     def get_default_tags(self):
         return self._default_tags
+
+    def get_fzf_theme(self):
+        return self._default_fzf_theme
+
+    def get_window_size(self):
+        if hasattr(self, "_custom_window_size"):
+            return self._custom_window_size
 
 
 class ConfigurationLoader:

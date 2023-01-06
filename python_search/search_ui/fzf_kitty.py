@@ -10,17 +10,17 @@ class FzfInKitty:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE = 15
+    FONT_SIZE : int = 15
     PREVIEW_PERCENTAGE_SIZE = 50
-    HEIGHT = 127
-    WIDTH = 950
-    RANK_TIE_BREAK = "begin,index"
+    _default_window_size = (800, 400)
+    RANK_TIE_BREAK : str = "begin,index"
 
     configuration: PythonSearchConfiguration
 
     def __init__(self, configuration: PythonSearchConfiguration):
-        self.height = FzfInKitty.HEIGHT
-        self.width = FzfInKitty.WIDTH
+        custom_window_size = configuration.get_window_size()
+        self.width = custom_window_size[0] if custom_window_size else self._default_window_size[0]
+        self.height = custom_window_size[1] if custom_window_size else self._default_window_size[1]
 
         self.preview_cmd = f"python_search _preview_entry {{}} "
         self.title = configuration.APPLICATION_TITLE
@@ -39,8 +39,10 @@ class FzfInKitty:
         self._launch_terminal(self._fzf_cmd())
 
     def _fzf_cmd(self):
-        FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#ffffff,hl+:#d7005f"
-        THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
+        THEME = ""
+        if self.configuration.get_fzf_theme() == "light":
+            FZF_LIGHT_THEME = "fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#ffffff,hl+:#d7005f"
+            THEME = f"--color={FZF_LIGHT_THEME}"  # for more fzf options see: https://www.mankier.com/1/fzf#
         cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
         --tiebreak={FzfInKitty.RANK_TIE_BREAK} \
@@ -87,25 +89,14 @@ class FzfInKitty:
         return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key {{}} & disown && kill -9 $PPID ) "  """
 
     def _get_rankging_generate_cmd(self, reload=False):
-        # @todo move this part to a binary sdk
+        # in mac we need tensorflow to be installed via conda
         if self.configuration.supported_features.is_dynamic_ranking_supported():
             if reload:
                 return f"curl -s localhost:8000/ranking/reload_and_generate"
 
             return f"curl -s localhost:8000/ranking/generate"
 
-        from python_search.cli import PythonSearchCli
-        from python_search.search.search import Search
-        return f"python_search " + PythonSearchCli._ranking.__name__ +  ' ' + Search.search.__name__
-
-    def _docker_running(self) -> bool:
-        result = os.system("docker info")
-
-        if result != 0:
-            print("Docker is not running")
-            return False
-
-        return True
+        return f"python_search _ranking search"
 
     def _launch_terminal(self, internal_cmd: str) -> None:
 

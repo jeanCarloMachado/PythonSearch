@@ -71,7 +71,7 @@ class Search:
             ranking=[i[0] for i in result[0:100]]
         )
         self._ranking_generator_writer.write(ranknig_generated_event)
-        print(f"Ranking generated UUID {ranknig_generated_event.uuid}")
+        #print(f"Ranking generated UUID {ranknig_generated_event.uuid}")
         result_str = self._entries_result.build_entries_result(
             result, ranknig_generated_event.uuid
         )
