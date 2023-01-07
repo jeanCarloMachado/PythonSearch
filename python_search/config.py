@@ -6,7 +6,7 @@ This way we can have multiple configs depending of the environment.
 import datetime
 import logging
 import os
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
 from python_search.environment import is_mac
@@ -79,7 +79,7 @@ class PythonSearchConfiguration(EntriesGroup):
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
-        default_fzf_theme: Optional[str] = None,
+        default_fzf_theme: Optional[Literal["light"]] = None,
         custom_window_size: Optional[Tuple[int, int]] = None,
     ):
         """
@@ -90,6 +90,8 @@ class PythonSearchConfiguration(EntriesGroup):
         :param default_tags:
         :param tags_dependent_inserter_marks:
         :param default_text_editor:
+        :param default_fzf_theme: the theme to use for fzf
+        :param custom_window_size: the size of the fzf window
         """
         if entries:
             self.commands = entries
