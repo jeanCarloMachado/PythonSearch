@@ -17,3 +17,4 @@ notebooks/*
 requirements.txt
 =
 exported_*.txt
+website/themes/ananke/
