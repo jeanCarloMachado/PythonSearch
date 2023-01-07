@@ -63,13 +63,9 @@ def health():
     from python_search.events.latest_used_entries import RecentKeys
 
     entries = RecentKeys().get_latest_used_keys()
-    run_id = None
-    if generator._inference is not None:
-        run_id = generator._inference.PRODUCTION_RUN_ID
 
     return {
         "keys_count": len(ConfigurationLoader().load_config().commands.keys()),
-        "run_id": run_id,
         "latest_used_entries": entries,
         "initialization_time": ConfigurationLoader().load_config()._initialization_time,
     }

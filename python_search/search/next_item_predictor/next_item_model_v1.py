@@ -6,6 +6,7 @@ import numpy as np
 from pyspark.sql import DataFrame
 
 from python_search.config import ConfigurationLoader
+from python_search.search.models import PythonSearchMLFlow
 from python_search.search.next_item_predictor.features.entry_embeddings import (
     InferenceEmbeddingsLoader,
 )
@@ -34,6 +35,8 @@ class NextItemModelV1(ModelInterface):
     # + 1 for global popularity of previous_previous key
     DIMENSIONS = _EMBEDDINGS_ENTRIES * 384 + 1 + 1 + 1 + 1
 
+    PRODUCTION_RUN_ID = "db6d108526b5438dbc0d9eaf2b765729"
+
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
         self._all_keys = configuration.commands.keys()
@@ -41,7 +44,6 @@ class NextItemModelV1(ModelInterface):
 
     def build_dataset(self):
         return TrainingDataset().build()
-
 
     def transform_collection(
         self, dataset: DataFrame, use_cache=True
@@ -98,18 +100,21 @@ class NextItemModelV1(ModelInterface):
 
         return X, Y
 
-    def transform_single(self, inference_input: ModelInput, all_keys) -> np.ndarray:
+    def transform_single(self, inference_input: dict) -> np.ndarray:
         """
         Transform the inference input into something that can be inferred.
         This is an element wise search.
         """
 
+        inference_input_obj = inference_input['inference_input']
+        all_keys = inference_input['all_keys']
+
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
-            inference_input.previous_key
+            inference_input_obj.previous_key
         )
         previous_previous_key_embedding = (
             self.inference_embeddings.get_embedding_from_key(
-                inference_input.previous_previous_key
+                inference_input_obj.previous_previous_key
             )
         )
 
@@ -126,10 +131,10 @@ class NextItemModelV1(ModelInterface):
                     key_embedding,
                     previous_key_embedding,
                     previous_previous_key_embedding,
-                    np.asarray([inference_input.month]),
-                    np.asarray([inference_input.hour]),
-                    np.asarray([inference_input.times_used_previous]),
-                    np.asarray([inference_input.times_used_previous_previous]),
+                    np.asarray([inference_input_obj.month]),
+                    np.asarray([inference_input_obj.hour]),
+                    np.asarray([inference_input_obj.times_used_previous]),
+                    np.asarray([inference_input_obj.times_used_previous_previous]),
                 )
             )
 
@@ -157,3 +162,10 @@ class NextItemModelV1(ModelInterface):
             keys.append(collected_keys.previous_key)
 
         return keys
+
+    def load_mlflow_model(self, run_id=None):
+        model = PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
+        return model
+
+    def get_run_id(self):
+        return NextItemModelV1.PRODUCTION_RUN_ID

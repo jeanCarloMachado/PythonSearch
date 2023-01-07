@@ -6,7 +6,6 @@ from typing import Any, List, Optional
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
-from python_search.search.models import PythonSearchMLFlow
 from python_search.search.next_item_predictor.inference.input import ModelInput
 from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
 
@@ -18,8 +17,6 @@ class Inference:
     Performs the search inference on all existing keys in the moment
     """
 
-    PRODUCTION_RUN_ID = "db6d108526b5438dbc0d9eaf2b765729"
-
     def __init__(
         self,
         configuration: Optional[PythonSearchConfiguration] = None,
@@ -28,27 +25,25 @@ class Inference:
     ):
 
         self.debug = os.getenv("DEBUG", False)
-        self.run_id = run_id if run_id else self.PRODUCTION_RUN_ID
         if "FORCE_RUN_ID" in os.environ:
             self.run_id = os.environ["FORCE_RUN_ID"]
 
         if model:
-            logger.info("Using custom passed _model")
+            logger.info("Using custom passed model")
         else:
             logger.info("Next item predictor using run id: " + self.run_id)
         configuration = (
             configuration if configuration else ConfigurationLoader().load_config()
         )
-        # previous key should be setted in runtime
-        self.previous_key = None
         self.all_keys = configuration.commands.keys()
-        self._transform = NextItemModelV1()
+        self._model = NextItemModelV1()
 
+        self.run_id = run_id if run_id else self._model.get_run_id()
         try:
-            self.model = model if model else self._load_mlflow_model(run_id=self.run_id)
+            self._mlflow_model = model if model else self._model.load_mlflow_model(run_id=self.run_id)
         except Exception as e:
             print("Failed to load mlflow model")
-            self.model = None
+            self._mlflow_model = None
             raise e
 
     @timeit
@@ -61,15 +56,15 @@ class Inference:
             predefined_input
             if predefined_input
             else ModelInput.with_given_keys(
-                self._transform.inference_embeddings.get_recent_key_with_embedding(),
-                self._transform.inference_embeddings.get_recent_key_with_embedding(
+                self._model.inference_embeddings.get_recent_key_with_embedding(),
+                self._model.inference_embeddings.get_recent_key_with_embedding(
                     second_recent=True
                 ),
             )
         )
         logger.info("Inference input: " + str(inference_input.__dict__))
 
-        X = self._transform.transform_single(inference_input, self.all_keys)
+        X = self._model.transform_single({'inference_input': inference_input, 'all_keys': self.all_keys})
         Y = self._predict(X)
         result = list(zip(self.all_keys, Y))
         result.sort(key=lambda x: x[1], reverse=True)
@@ -82,9 +77,4 @@ class Inference:
 
     @timeit
     def _predict(self, X):
-        return self.model.predict(X)
-
-    @timeit
-    def _load_mlflow_model(self, run_id=None):
-        model = PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
-        return model
+        return self._mlflow_model.predict(X)
