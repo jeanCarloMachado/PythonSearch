@@ -17,8 +17,11 @@ class FzfOptimizedSearchResults:
     Builds the list of results ready to be consumed by fzf
     """
 
+    degraded_message = ""
+
     def __init__(self):
         self._today = datetime.datetime.now()
+
 
     @timeit
     def build_entries_result(
@@ -27,6 +30,8 @@ class FzfOptimizedSearchResults:
         """Print results"""
         position = 1
         result = ""
+        if self.degraded_message:
+            result = f"Degraded: {self.degraded_message}\n"
         for name, content in entries:
             try:
                 if "snippet" in content:
