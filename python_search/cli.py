@@ -2,6 +2,7 @@ import logging
 
 from python_search.apps.window_manager import WindowManager
 from python_search.config import ConfigurationLoader, PythonSearchConfiguration
+from python_search.core_entities import Key
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.events.run_performed import RunPerformed
@@ -83,9 +84,9 @@ class PythonSearchCli:
     def edit_key(self, entry_str):
         """Opens the key in the source code using the IDE specified in the config, defaults to vim"""
         from python_search.entry_capture.edit_content import EditKey
+        key = str(Key.from_fzf(entry_str))
 
-        result = EditKey(self.configuration).edit_key(entry_str, dry_run=False)
-        key = entry_str.split(":")[0]
+        result = EditKey(self.configuration).edit_key(key, dry_run=False)
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )
@@ -97,10 +98,9 @@ class PythonSearchCli:
         Used by fzf to provide Ctrl-c functionality.
         """
         from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+        key = str(Key.from_fzf(entry_str))
 
-        key = entry_str.split(":")[0]
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
-        print(f"Key: {key}")
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )

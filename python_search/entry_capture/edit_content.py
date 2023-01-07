@@ -24,9 +24,6 @@ class EditKey:
             self.edit_default()
             return
 
-        key = key.split(":")
-
-
         if not len(key):
             self.edit_default()
             return

@@ -14,10 +14,10 @@ from python_search.search.next_item_predictor.features.entry_embeddings.entry_em
 )
 from python_search.search.next_item_predictor.inference.input import ModelInput
 from python_search.search.next_item_predictor.training_dataset import TrainingDataset
-from python_search.search.next_item_predictor.model_dataset_interface import ModelDatasetInterface
+from python_search.search.next_item_predictor.model_dataset_interface import ModelInterface
 
 
-class ModelTransform(ModelDatasetInterface):
+class NextItemModelV1(ModelInterface):
     """
     Transform takes an input and make it ready for inference
 
@@ -39,42 +39,9 @@ class ModelTransform(ModelDatasetInterface):
         self._all_keys = configuration.commands.keys()
         self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
-    def transform_single(self, inference_input: ModelInput, all_keys) -> np.ndarray:
-        """
-        Transform the inference input into something that can be inferred.
-        This is an element wise search.
-        """
+    def build_dataset(self):
+        return TrainingDataset().build()
 
-        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
-            inference_input.previous_key
-        )
-        previous_previous_key_embedding = (
-            self.inference_embeddings.get_embedding_from_key(
-                inference_input.previous_previous_key
-            )
-        )
-
-        # create an inference array for all keys
-        X = np.zeros([len(self._all_keys), ModelTransform.DIMENSIONS])
-        for i, key in enumerate(all_keys):
-            key_embedding = self.inference_embeddings.get_embedding_from_key(key)
-            if key_embedding is None:
-                logging.warning(f"No content for key ({key})")
-                continue
-
-            X[i] = np.concatenate(
-                (
-                    key_embedding,
-                    previous_key_embedding,
-                    previous_previous_key_embedding,
-                    np.asarray([inference_input.month]),
-                    np.asarray([inference_input.hour]),
-                    np.asarray([inference_input.times_used_previous]),
-                    np.asarray([inference_input.times_used_previous_previous]),
-                )
-            )
-
-        return X
 
     def transform_collection(
         self, dataset: DataFrame, use_cache=True
@@ -84,7 +51,7 @@ class ModelTransform(ModelDatasetInterface):
         Returns a pair with X, Y
         """
         print("Number of rows in the dataset: ", dataset.count())
-        print(f"Dimensions of dataset = {ModelTransform.DIMENSIONS}")
+        print(f"Dimensions of dataset = {NextItemModelV1.DIMENSIONS}")
 
         if use_cache:
             if not os.path.exists("/tmp/X.npy") or not os.path.exists("/tmp/Y.npy"):
@@ -97,7 +64,7 @@ class ModelTransform(ModelDatasetInterface):
 
         embeddings_keys = self._create_embeddings_training_dataset(dataset)
         # one extra for the row number
-        X = np.zeros([dataset.count(), ModelTransform.DIMENSIONS + 1])
+        X = np.zeros([dataset.count(), NextItemModelV1.DIMENSIONS + 1])
         Y = np.empty(dataset.count())
 
         print("X shape:", X.shape)
@@ -130,6 +97,43 @@ class ModelTransform(ModelDatasetInterface):
         np.save("/tmp/Y.npy", Y)
 
         return X, Y
+
+    def transform_single(self, inference_input: ModelInput, all_keys) -> np.ndarray:
+        """
+        Transform the inference input into something that can be inferred.
+        This is an element wise search.
+        """
+
+        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
+            inference_input.previous_key
+        )
+        previous_previous_key_embedding = (
+            self.inference_embeddings.get_embedding_from_key(
+                inference_input.previous_previous_key
+            )
+        )
+
+        # create an inference array for all keys
+        X = np.zeros([len(self._all_keys), NextItemModelV1.DIMENSIONS])
+        for i, key in enumerate(all_keys):
+            key_embedding = self.inference_embeddings.get_embedding_from_key(key)
+            if key_embedding is None:
+                logging.warning(f"No content for key ({key})")
+                continue
+
+            X[i] = np.concatenate(
+                (
+                    key_embedding,
+                    previous_key_embedding,
+                    previous_previous_key_embedding,
+                    np.asarray([inference_input.month]),
+                    np.asarray([inference_input.hour]),
+                    np.asarray([inference_input.times_used_previous]),
+                    np.asarray([inference_input.times_used_previous_previous]),
+                )
+            )
+
+        return X
 
     def _create_embeddings_training_dataset(
         self, dataset: TrainingDataset

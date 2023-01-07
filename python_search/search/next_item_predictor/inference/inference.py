@@ -8,7 +8,7 @@ from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.models import PythonSearchMLFlow
 from python_search.search.next_item_predictor.inference.input import ModelInput
-from python_search.search.next_item_predictor.rankerv1_dataset import ModelTransform
+from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
 
 logger = setup_inference_logger()
 
@@ -42,7 +42,7 @@ class Inference:
         # previous key should be setted in runtime
         self.previous_key = None
         self.all_keys = configuration.commands.keys()
-        self._transform = ModelTransform()
+        self._transform = NextItemModelV1()
 
         try:
             self.model = model if model else self._load_mlflow_model(run_id=self.run_id)

@@ -10,7 +10,6 @@ from typing import List, Optional
 
 from numpy import ndarray
 
-
 class Key:
     """ Represents a key of an entry """
     def __init__(self, key):
@@ -21,8 +20,6 @@ class Key:
         key = entry_text.split(":")[0] if ":" in entry_text else entry_text
         key = key.strip()
         return Key(key)
-
-
 
     def __str__(self):
         return self.key

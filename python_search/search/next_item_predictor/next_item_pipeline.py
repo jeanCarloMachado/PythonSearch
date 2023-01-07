@@ -13,8 +13,6 @@ from python_search.search.next_item_predictor.offline_evaluation import (
     OfflineEvaluation,
 )
 from python_search.search.next_item_predictor.train_xgboost import TrainXGBoost
-from python_search.search.next_item_predictor.training_dataset import TrainingDataset
-
 
 class NextItemPredictorPipeline:
     """
@@ -42,7 +40,7 @@ class NextItemPredictorPipeline:
         self,
         train_only: Optional[List[model_types]] = ['xgboost'],
         use_cache=False,
-        clean_first=True,
+        clean_events_first=False,
         skip_offline_evaluation=False,
     ):
         """
@@ -51,7 +49,7 @@ class NextItemPredictorPipeline:
         Args:
             train_only:
             use_cache:
-            clean_first:
+            clean_events_first:
 
         Returns:
 
@@ -65,13 +63,14 @@ class NextItemPredictorPipeline:
         else:
             print("Training only: ", train_only)
 
-        if clean_first:
+        if clean_events_first:
             RunPerformedCleaning().clean()
 
-        dataset: DataFrame = TrainingDataset().build(use_cache)
-        from python_search.search.next_item_predictor.rankerv1_dataset import ModelTransform
+        from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
+        model = NextItemModelV1()
+        dataset = model.build_dataset()
 
-        X, Y = ModelTransform().transform_collection(dataset, use_cache=use_cache)
+        X, Y = model.transform_collection(dataset, use_cache=use_cache)
         from python_search.search.next_item_predictor.train_keras import TrainKeras
 
         X_train, X_test, Y_train, Y_test = train_test_split(
