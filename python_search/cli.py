@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from python_search.apps.window_manager import WindowManager
 from python_search.configuration.configuration import PythonSearchConfiguration
@@ -45,7 +46,7 @@ class PythonSearchCli:
 
         Project().set_current_project(location)
 
-    def __init__(self, configuration: PythonSearchConfiguration = None):
+    def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         """
         Keep this constructor small and import dependencies inside the functions
         so they keep being fast
@@ -84,9 +85,9 @@ class PythonSearchCli:
 
     def edit_key(self, entry_str):
         """Opens the key in the source code using the IDE specified in the config, defaults to vim"""
-        from python_search.entry_capture.edit_content import EditKey
         key = str(Key.from_fzf(entry_str))
 
+        from python_search.entry_capture.edit_content import EditKey
         result = EditKey(self.configuration).edit_key(key, dry_run=False)
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)

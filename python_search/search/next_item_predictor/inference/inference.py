@@ -8,7 +8,6 @@ from python_search.configuration.loader import ConfigurationLoader
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.next_item_predictor.inference.input import ModelInput
-from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
 
 logger = setup_inference_logger()
 

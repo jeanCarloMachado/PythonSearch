@@ -118,7 +118,7 @@ class NextItemModelV1(ModelInterface):
         )
 
         # create an inference array for all keys
-        X = np.zeros([len(self._all_keys), NextItemModelV1.DIMENSIONS])
+        X = np.zeros([len(all_keys), NextItemModelV1.DIMENSIONS])
         for i, key in enumerate(all_keys):
             key_embedding = self.inference_embeddings.get_embedding_from_key(key)
             if key_embedding is None:

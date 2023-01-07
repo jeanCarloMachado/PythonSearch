@@ -52,7 +52,7 @@ def reload():
 
 
 @app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
-def reload():
+def reload_and_generate():
     return reload_ranking()
 
 

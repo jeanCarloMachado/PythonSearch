@@ -76,6 +76,3 @@ class InvertedIndex:
             instance.entries.append(Entry(name=key, value=value))
 
         return instance
-
-    def serialize(self) -> str:
-        pass

@@ -33,7 +33,7 @@ class Search:
         self._feature_toggle = FeatureToggle()
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
-        self._entries = None
+        self._entries: Optional[dict] = None
         self._ranking_generator_writer = RankingGeneratedWriter()
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"

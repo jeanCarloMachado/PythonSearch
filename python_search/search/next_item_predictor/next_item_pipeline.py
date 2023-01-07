@@ -60,7 +60,7 @@ class NextItemPredictorPipeline:
 
         dataset = self._model.build_dataset()
 
-        X, Y = self._model.transform_collection(dataset, use_cache=use_cache)
+        X, Y = self._model.transform_collection(dataset)
         from python_search.search.next_item_predictor.train_keras import TrainKeras
 
         X_train, X_test, Y_train, Y_test = train_test_split(

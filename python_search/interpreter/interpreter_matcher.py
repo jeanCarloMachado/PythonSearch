@@ -29,7 +29,7 @@ class InterpreterMatcher:
     _instance = None
 
     @staticmethod
-    def build_instance(configuration):
+    def build_instance(configuration) -> 'InterpreterMatcher':
         """
         Singleton. Initializes a _configuration a context and a interpreter
 
@@ -63,7 +63,7 @@ class InterpreterMatcher:
 
         return self._match_interpreter(given_input)
 
-    def get_interpreter_from_type(self, type: str):
+    def get_interpreter_from_type(self, type: str) -> BaseInterpreter:
         """
         From a type given in the ui via string returns the matching interpreter type
 
