@@ -32,7 +32,7 @@ class Inference:
             configuration if configuration else ConfigurationLoader().load_config()
         )
         self.all_keys = configuration.commands.keys()
-        self._model = NextItemModelV1()
+        self._model = configuration.get_next_item_predictor_model()
 
         self.run_id = run_id if run_id else self._model.get_run_id()
 

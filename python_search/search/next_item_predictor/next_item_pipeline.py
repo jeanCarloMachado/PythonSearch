@@ -7,6 +7,7 @@ import numpy as np
 from pyspark.sql import SparkSession
 from sklearn.model_selection import train_test_split
 
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.events.run_performed.clean import RunPerformedCleaning
 from python_search.search.next_item_predictor.mlflow_logger import configure_mlflow
 from python_search.search.next_item_predictor.offline_evaluation import (
@@ -23,6 +24,9 @@ class NextItemPredictorPipeline:
 
     def __init__(self):
         self._fix_python_interpreter_pyspark()
+
+        configuration = ConfigurationLoader().load_config()
+        self._model = configuration.get_next_item_predictor_model()
 
     def run(
         self,
@@ -54,11 +58,9 @@ class NextItemPredictorPipeline:
         if clean_events_first:
             RunPerformedCleaning().clean()
 
-        from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
-        model = NextItemModelV1()
-        dataset = model.build_dataset()
+        dataset = self._model.build_dataset()
 
-        X, Y = model.transform_collection(dataset, use_cache=use_cache)
+        X, Y = self._model.transform_collection(dataset, use_cache=use_cache)
         from python_search.search.next_item_predictor.train_keras import TrainKeras
 
         X_train, X_test, Y_train, Y_test = train_test_split(

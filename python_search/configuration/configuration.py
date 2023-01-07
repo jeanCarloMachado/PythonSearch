@@ -70,6 +70,14 @@ class PythonSearchConfiguration(EntriesGroup):
             self._custom_window_size = custom_window_size
 
 
+    def get_next_item_predictor_model(self):
+        """
+        Return the model used by the application
+
+        :return:
+        """
+        from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
+        return NextItemModelV1()
 
     def get_text_editor(self):
         return self._default_text_editor
