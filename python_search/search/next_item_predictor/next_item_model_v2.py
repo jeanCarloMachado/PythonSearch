@@ -14,7 +14,7 @@ from python_search.search.next_item_predictor.next_item_model_v1 import NextItem
 
 
 class NextItemModelV2(ModelInterface):
-    PRODUCTION_RUN_ID = None
+    PRODUCTION_RUN_ID = "bf20747c4a214df893e0138b9a469a19"
 
     DIMENSIONS = 384 + 1
 
@@ -77,8 +77,8 @@ class NextItemModelV2(ModelInterface):
         Y = np.empty(dataset.count())
 
         collected_rows = dataset.collect()
-        timestamp = dataset.select('timestamp').toPandas()['timestamp']
-        normalized_timestamp = self._NormalizeData(timestamp)
+        #timestamp = dataset.select('timestamp').toPandas()['timestamp']
+        #normalized_timestamp = self._NormalizeData(timestamp)
 
         for i, row in enumerate(collected_rows):
             X[i] = np.concatenate(
@@ -87,7 +87,7 @@ class NextItemModelV2(ModelInterface):
                     # it gets deleted before training
                     np.asarray([row.entry_number]),
                     embeddings_keys[row.key],
-                    np.asarray([normalized_timestamp[i]]),
+                    np.asarray([row.timestamp])
                 ]
             )
 
@@ -115,7 +115,7 @@ class NextItemModelV2(ModelInterface):
         all_keys = inference_input['all_keys']
         from datetime import datetime;
         timestamp = int(datetime.now().timestamp())
-        timestamp_normalized = timestamp - 1669663110
+        #timestamp_normalized = timestamp - 1669663110
 
         X = np.zeros([len(all_keys), self.DIMENSIONS])
         for i, key in enumerate(all_keys):
@@ -126,7 +126,7 @@ class NextItemModelV2(ModelInterface):
             X[i] = np.concatenate(
                 (
                     key_embedding,
-                    np.asarray([timestamp_normalized])
+                    np.asarray([timestamp])
                 )
             )
 
@@ -137,7 +137,7 @@ class NextItemModelV2(ModelInterface):
         return model
 
     def get_run_id(self):
-        return NextItemModelV1.PRODUCTION_RUN_ID
+        return self.PRODUCTION_RUN_ID
 
 
     def _create_embeddings_training_dataset(
