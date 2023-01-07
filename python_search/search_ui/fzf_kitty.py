@@ -48,9 +48,11 @@ class FzfInKitty:
         --tiebreak={FzfInKitty.RANK_TIE_BREAK} \
         --extended \
         --reverse \
+        --no-separator \
         --info=inline \
         --cycle \
         --no-hscroll \
+        --ellipsis='' \
         --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
         --preview-window=right,{FzfInKitty.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \

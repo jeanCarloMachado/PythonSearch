@@ -56,7 +56,7 @@ class NextItemModelV2(ModelInterface):
         unioned = unioned.withColumn(
             "entry_number", F.row_number().over(window)
         )
-        dataset = unioned.select('entry_number', 'key', 'datetime', 'position', 'label')
+        dataset = unioned.select('entry_number', 'key', 'datetime', 'timestamp', 'position', 'label')
 
         dataset.show()
 
@@ -75,12 +75,9 @@ class NextItemModelV2(ModelInterface):
         # one extra for the row number
         X = np.zeros([dataset.count(), self.DIMENSIONS + 1])
         Y = np.empty(dataset.count())
-        from datetime import datetime;
-        timestamp = int(datetime.now().timestamp())
 
         collected_rows = dataset.collect()
         timestamp = dataset.select('timestamp').toPandas()['timestamp']
-
         normalized_timestamp = self._NormalizeData(timestamp)
 
         for i, row in enumerate(collected_rows):
@@ -129,7 +126,7 @@ class NextItemModelV2(ModelInterface):
             X[i] = np.concatenate(
                 (
                     key_embedding,
-                    timestamp_normalized
+                    np.asarray([timestamp_normalized])
                 )
             )
 
