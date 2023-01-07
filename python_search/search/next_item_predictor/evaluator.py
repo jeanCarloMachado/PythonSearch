@@ -2,7 +2,7 @@ import datetime
 import logging
 import sys
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.search.entries_loader import EntriesLoader
 from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
     RedisEmbeddingsReader,

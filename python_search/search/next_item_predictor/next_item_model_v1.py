@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 import numpy as np
 from pyspark.sql import DataFrame
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.search.models import PythonSearchMLFlow
 from python_search.search.next_item_predictor.features.entry_embeddings import (
     InferenceEmbeddingsLoader,

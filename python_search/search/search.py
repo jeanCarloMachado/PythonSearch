@@ -4,7 +4,7 @@ import logging
 from collections import namedtuple
 from typing import List, Literal, Optional
 
-from python_search.config import PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.ranking_generated import (
     RankingGenerated,

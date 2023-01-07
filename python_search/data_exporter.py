@@ -1,4 +1,4 @@
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.data_ui.entries_page import extract_value_from_entry
 
 

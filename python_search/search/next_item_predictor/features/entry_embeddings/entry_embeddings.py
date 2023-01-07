@@ -5,7 +5,7 @@ import msgpack_numpy as m
 import numpy as np
 from numpy import ndarray
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.infrastructure.performance import timeit
 from python_search.infrastructure.redis import PythonSearchRedis
 from python_search.search.entries_loader import EntriesLoader

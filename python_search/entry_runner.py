@@ -4,7 +4,7 @@ import re
 from typing import List
 
 from python_search.apps.notification_ui import send_notification
-from python_search.config import PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.context import Context
 from python_search.core_entities import Key
 from python_search.events.run_performed import RunPerformed

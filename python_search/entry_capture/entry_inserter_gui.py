@@ -7,7 +7,7 @@ from typing import List
 
 import fire
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.infrastructure.arize import Arize
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK

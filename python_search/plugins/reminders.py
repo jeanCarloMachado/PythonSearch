@@ -2,7 +2,8 @@ import time
 
 
 from python_search.apps.notification_ui import send_notification
-from python_search.config import ConfigurationLoader, PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
+from python_search.configuration.loader import ConfigurationLoader
 
 
 def get_random():

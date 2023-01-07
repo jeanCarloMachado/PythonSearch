@@ -25,7 +25,7 @@ def extract_value_from_entry(entry):
 
 
 def load_homepage():
-    from python_search.config import ConfigurationLoader
+    from python_search.configuration.loader import ConfigurationLoader
 
     entries = ConfigurationLoader().load_config().commands
 

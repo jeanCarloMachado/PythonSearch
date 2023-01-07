@@ -2,7 +2,7 @@ def load_results_page():
     import pandas as pd
     import streamlit as st
 
-    from python_search.config import ConfigurationLoader
+    from python_search.configuration.loader import ConfigurationLoader
 
     config = ConfigurationLoader().load_config()
 

@@ -49,7 +49,6 @@ entries = {
     },
 }
 
-
-from python_search.config import PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
 
 config = PythonSearchConfiguration(entries=entries)

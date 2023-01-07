@@ -4,7 +4,7 @@ import datetime
 import time
 
 from python_search.apps.clipboard import Clipboard
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )

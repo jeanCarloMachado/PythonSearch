@@ -3,7 +3,7 @@ from datetime import datetime
 from colorama import Fore
 from dateutil import parser
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.logger import setup_preview_logger
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,

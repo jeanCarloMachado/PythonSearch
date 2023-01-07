@@ -3,7 +3,8 @@ import uuid
 
 from python_search.entry_type.classifier_inference import get_value_and_label
 from python_search.entry_type.entity import EntryType
-from python_search.config import ConfigurationLoader, DataConfig
+from python_search.config import DataConfig
+from python_search.configuration.loader import ConfigurationLoader
 import pandas as pd
 import matplotlib.pyplot as plt
 

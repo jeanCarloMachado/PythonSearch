@@ -72,6 +72,6 @@ class EntriesGroup:
         @ deprecated use environment loader instead
         """
 
-        from python_search.config import ConfigurationLoader
+        from python_search.configuration.loader import ConfigurationLoader
 
         return ConfigurationLoader().get_project_root()

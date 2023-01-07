@@ -22,10 +22,7 @@ class NextItemPredictorPipeline:
     model_types: Literal["xgboost", "keras"] = "xgboost"
 
     def __init__(self):
-        os.environ["TIME_IT"] = "1"
-
         self._fix_python_interpreter_pyspark()
-
 
     def run(
         self,
