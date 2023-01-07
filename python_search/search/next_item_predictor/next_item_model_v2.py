@@ -79,6 +79,9 @@ class NextItemModelV2(ModelInterface):
         timestamp = int(datetime.now().timestamp())
 
         collected_rows = dataset.collect()
+        timestamp = dataset.select('timestamp').toPandas()['timestamp']
+
+        normalized_timestamp = self._NormalizeData(timestamp)
 
         for i, row in enumerate(collected_rows):
             X[i] = np.concatenate(
@@ -87,7 +90,7 @@ class NextItemModelV2(ModelInterface):
                     # it gets deleted before training
                     np.asarray([row.entry_number]),
                     embeddings_keys[row.key],
-                    np.asarray([timestamp]),
+                    np.asarray([normalized_timestamp[i]]),
                 ]
             )
 
@@ -97,6 +100,10 @@ class NextItemModelV2(ModelInterface):
         Y = np.where(np.isnan(Y), 0.5, Y)
 
         return X, Y
+
+    def _NormalizeData(self, data):
+        """normalize a value between 0 and 1 """
+        return (data - np.min(data)) / (np.max(data) - np.min(data))
 
     def load_mlflow_model(self):
         raise Exception("Not implemented")
@@ -110,19 +117,19 @@ class NextItemModelV2(ModelInterface):
         inference_input_obj = inference_input['inference_input']
         all_keys = inference_input['all_keys']
         from datetime import datetime;
-        datetime.now().timestamp()
+        timestamp = int(datetime.now().timestamp())
+        timestamp_normalized = timestamp - 1669663110
 
         X = np.zeros([len(all_keys), self.DIMENSIONS])
         for i, key in enumerate(all_keys):
             key_embedding = self.inference_embeddings.get_embedding_from_key(key)
             if key_embedding is None:
-                logging.warning(f"No content for key ({key})")
                 continue
 
             X[i] = np.concatenate(
                 (
                     key_embedding,
-                    np.asarray([inference_input_obj.month]),
+                    timestamp_normalized
                 )
             )
 
