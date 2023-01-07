@@ -61,8 +61,8 @@ class Search:
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
-        if self._feature_toggle.is_enabled("ranking_next") and self._inference:
-            self._rerank_via_model()
+        self._rerank_via_model()
+
 
         """Populate the variable used_entries  with the results from redis"""
         result = self._merge_with_latest_used()

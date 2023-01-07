@@ -26,11 +26,13 @@ class EditKey:
 
         key = key.split(":")
 
+
         if not len(key):
             self.edit_default()
             return
 
         key = key[0]
+        key = key.strip()
         # needs to be case insensitive search
         cmd = f"ack -i '{key}' {self.configuration.get_project_root()} --py || true"
         logging.info(f"Command: {cmd}")

@@ -175,10 +175,6 @@ class PythonSearchCli:
         """
         Preview().display(entry_text)
 
-    def _infra_report(self):
-        from python_search.infrastructure.report import Report
-
-        return Report()
 
     def _entry_type_classifier(self):
 

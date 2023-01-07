@@ -63,6 +63,8 @@ class Preview:
 
     def _build_values_to_print(self, entry_text) -> dict:
         key = entry_text.split(":")[0]
+        # remove the last 2 spaces from the key as they are used for formatting the string in fzf
+        key = key.strip()
         # the entry content is after the key + a ":" character
 
         result = {}
