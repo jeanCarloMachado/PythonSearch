@@ -14,9 +14,10 @@ from python_search.search.next_item_predictor.features.entry_embeddings.entry_em
 )
 from python_search.search.next_item_predictor.inference.input import ModelInput
 from python_search.search.next_item_predictor.training_dataset import TrainingDataset
+from python_search.search.next_item_predictor.model_dataset_interface import ModelDatasetInterface
 
 
-class ModelTransform:
+class ModelTransform(ModelDatasetInterface):
     """
     Transform takes an input and make it ready for inference
 

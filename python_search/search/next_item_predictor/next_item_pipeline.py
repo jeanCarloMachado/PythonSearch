@@ -69,7 +69,7 @@ class NextItemPredictorPipeline:
             RunPerformedCleaning().clean()
 
         dataset: DataFrame = TrainingDataset().build(use_cache)
-        from python_search.search.next_item_predictor.transform import ModelTransform
+        from python_search.search.next_item_predictor.rankerv1_dataset import ModelTransform
 
         X, Y = ModelTransform().transform_collection(dataset, use_cache=use_cache)
         from python_search.search.next_item_predictor.train_keras import TrainKeras

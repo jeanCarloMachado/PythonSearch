@@ -6,6 +6,7 @@ from typing import List
 from python_search.apps.notification_ui import send_notification
 from python_search.config import PythonSearchConfiguration
 from python_search.context import Context
+from python_search.core_entities import Key
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter
@@ -44,7 +45,8 @@ class EntryRunner:
             entry_rank_position: accounts for where the entry was when it was executed, if passed it will be used for
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
-        key = entry_text.split(":")[0] if ":" in entry_text else entry_text
+
+        key = str(Key.from_fzf(entry_text))
 
         logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is

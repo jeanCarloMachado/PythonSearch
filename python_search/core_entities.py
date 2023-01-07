@@ -9,7 +9,23 @@ from __future__ import annotations
 from typing import List, Optional
 
 from numpy import ndarray
-from typed_pyspark import Dataframe
+
+
+class Key:
+    """ Represents a key of an entry """
+    def __init__(self, key):
+        self.key = key
+
+    @staticmethod
+    def from_fzf(entry_text: str) -> Key:
+        key = entry_text.split(":")[0] if ":" in entry_text else entry_text
+        key = key.strip()
+        return Key(key)
+
+
+
+    def __str__(self):
+        return self.key
 
 
 class Entry:
@@ -66,7 +82,3 @@ class InvertedIndex:
 
     def serialize(self) -> str:
         pass
-
-
-Entries = Dataframe(schema={"key": "String", "position": "Integer"})
-EntriesType = Entries.type_annotation()
