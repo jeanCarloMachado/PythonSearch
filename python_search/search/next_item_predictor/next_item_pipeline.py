@@ -4,7 +4,7 @@ import os
 from typing import List, Literal, Optional
 
 import numpy as np
-from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import SparkSession
 from sklearn.model_selection import train_test_split
 
 from python_search.events.run_performed.clean import RunPerformedCleaning
@@ -23,18 +23,9 @@ class NextItemPredictorPipeline:
 
     def __init__(self):
         os.environ["TIME_IT"] = "1"
-        print('Overriding pyspark python executable')
 
-        from subprocess import PIPE, Popen
-        command = "whereis python"
-        with Popen(command, stdout=PIPE, stderr=None, shell=True) as process:
-            output = process.communicate()[0].decode("utf-8")
-        print(f"Where is ouptut: {output}")
-        # get only the path and remove new line in the end
-        path = output.split(' ')[1].split("\n")[0]
-        print(f"Using the following path: {path}")
-        os.environ['PYSPARK_PYTHON'] = path
-        os.environ['PYSPARK_DRIVER_PYTHON'] = path
+        self._fix_python_interpreter_pyspark()
+
 
     def run(
         self,
@@ -109,6 +100,20 @@ class NextItemPredictorPipeline:
 
     def _spark(self):
         return SparkSession.builder.getOrCreate()
+
+    def _fix_python_interpreter_pyspark(self):
+        print('Overriding pyspark python executable')
+
+        from subprocess import PIPE, Popen
+        command = "whereis python"
+        with Popen(command, stdout=PIPE, stderr=None, shell=True) as process:
+            output = process.communicate()[0].decode("utf-8")
+        print(f"Where is ouptut: {output}")
+        # get only the path and remove new line in the end
+        path = output.split(' ')[1].split("\n")[0]
+        print(f"Using the following path: {path}")
+        os.environ['PYSPARK_PYTHON'] = path
+        os.environ['PYSPARK_DRIVER_PYTHON'] = path
 
 
 def main():

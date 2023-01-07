@@ -17,13 +17,13 @@ class ModelInterface:
         """
         raise Exception("Not implemented")
 
+    def load_mlflow_model(self):
+        raise Exception("Not implemented")
+
     def transform_single(self, inference_input: dict) -> np.ndarray:
         """
         Return X
         :param inference_input:
         :return:
         """
-        raise Exception("Not implemented")
-
-    def load_mlflow_model(self):
         raise Exception("Not implemented")
