@@ -10,11 +10,10 @@ from python_search.search.next_item_predictor.features.entry_embeddings import I
 from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import \
     create_key_indexed_embedding
 from python_search.search.next_item_predictor.model_interface import ModelInterface
-from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
 
 
 class NextItemModelV2(ModelInterface):
-    PRODUCTION_RUN_ID = "bf20747c4a214df893e0138b9a469a19"
+    PRODUCTION_RUN_ID = "07c37a94ccb64c0c8e1eca195ad910cb"
 
     DIMENSIONS = 384 + 1
 
@@ -58,7 +57,7 @@ class NextItemModelV2(ModelInterface):
         )
         dataset = unioned.select('entry_number', 'key', 'datetime', 'timestamp', 'position', 'label')
 
-        dataset.show()
+        dataset.show(n=10, truncate=False)
 
         return dataset
 
