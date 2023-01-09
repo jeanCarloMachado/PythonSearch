@@ -85,10 +85,10 @@ class FzfInKitty:
         return cmd
 
     def _run_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(LOG_FILE=/tmp/log_run_key_fzf nohup run_key {{}} --query_used {{q}} && kill -9 $PPID)"  """
+        return f"""--bind "{shortcut}:execute:(run_key {{}} --query_used {{q}} --fzf_pid_to_kill $PPID {{}} &)"  """
 
     def _edit_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key {{}} & disown && kill -9 $PPID ) "  """
+        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key --fzf_pid_to_kill $PPID {{}}  & disown)" """
 
     def _get_rankging_generate_cmd(self, reload=False):
         # in mac we need tensorflow to be installed via conda

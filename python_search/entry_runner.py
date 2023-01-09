@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import os
 from typing import List
 
 from python_search.apps.notification_ui import send_notification
@@ -11,7 +12,7 @@ from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.logger import setup_run_key_logger, StreamToLogger
+from python_search.logger import setup_run_key_logger
 from python_search.exceptions import notify_exception
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
@@ -36,6 +37,7 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
+        fzf_pid_to_kill = None
     ):
         """
         Runs an entry given its name or its partial name.
@@ -81,7 +83,8 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-        real_key: str = matches[0]
+        real_key = key
+
 
         if len(matches) > 1:
             real_key = min(matches, key=len)
@@ -90,6 +93,10 @@ class EntryRunner:
             )
 
         result = InterpreterMatcher.build_instance(self.configuration).default(real_key)
+
+        if fzf_pid_to_kill:
+            print("Killing fzf")
+            os.system(f"kill -9 {fzf_pid_to_kill}")
 
         logger.info("Passed interpreter")
         run_performed = RunPerformed(
