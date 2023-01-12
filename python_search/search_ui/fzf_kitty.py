@@ -85,7 +85,7 @@ class FzfInKitty:
         return cmd
 
     def _run_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute:(run_key {{}} --query_used {{q}} --fzf_pid_to_kill $PPID {{}} &)"  """
+        return f"""--bind "{shortcut}:execute-silent:(run_key {{}} --query_used {{q}} --fzf_pid_to_kill $PPID {{}} &)"  """
 
     def _edit_key(self, shortcut) -> str:
         return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key --fzf_pid_to_kill $PPID {{}}  & disown)" """

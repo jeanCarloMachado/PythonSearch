@@ -83,20 +83,16 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-        real_key = key
 
 
         if len(matches) > 1:
-            real_key = min(matches, key=len)
+            key = min(matches, key=len)
             send_notification(
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
-        result = InterpreterMatcher.build_instance(self.configuration).default(real_key)
+        result = InterpreterMatcher.build_instance(self.configuration).default(key)
 
-        if fzf_pid_to_kill:
-            print("Killing fzf")
-            os.system(f"kill -9 {fzf_pid_to_kill}")
 
         logger.info("Passed interpreter")
         run_performed = RunPerformed(
@@ -108,6 +104,12 @@ class EntryRunner:
         )
         logger.info(f"Run performed = {run_performed}")
         LogRunPerformedClient().send(run_performed)
+
+        # this needs to be last as it will kill the process
+        if fzf_pid_to_kill:
+            print("Killing fzf")
+            os.system(f"kill -9 {fzf_pid_to_kill}")
+
         return result
 
     def _matching_keys(self, key: str) -> List[str]:

@@ -71,7 +71,7 @@ class RegisterNew:
             default_type = infer_default_type(default_content)
 
         entry_data: GuiEntryData = EntryCaptureGUI().launch(
-            "New Entry Details",
+            "New Entry",
             default_content=default_content,
             default_key=default_key,
             default_type=default_type,

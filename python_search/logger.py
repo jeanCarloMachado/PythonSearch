@@ -10,7 +10,7 @@ def setup_inference_logger():
     # fh.setLevel(logging.DEBUG)
     # logger.addHandler(fh)
 
-    ch = logging.StreamHandler()
+    ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)
 
@@ -35,6 +35,16 @@ def setup_run_key_logger():
     fh.setLevel(logging.DEBUG)
     logger.addHandler(fh)
 
+    return logger
+
+def interpreter_logger():
+    logger = logging.getLogger("interpeter_logger")
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.INFO)
+    logger.addHandler(ch)
+    fh = logging.FileHandler(f"/tmp/debug_interpreter")
+    fh.setLevel(logging.INFO)
+    logger.addHandler(fh)
     return logger
 
 
