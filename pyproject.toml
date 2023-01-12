@@ -67,6 +67,7 @@ ps_container = 'python_search.container:start'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
 aps_webapi = 'python_search.sdk.web_api_sdk:main'
 wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = []}
+events_etl = 'python_search.events.events_etl:main'
 
 [tool.poetry.extras]
 server = [
