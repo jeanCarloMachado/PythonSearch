@@ -11,9 +11,19 @@ from python_search.next_item_predictor.features.entry_embeddings.entry_embedding
     create_key_indexed_embedding
 from python_search.next_item_predictor.model_interface import ModelInterface
 
+def number_of_same_words(key1, key2):
+    count = 0
+    for i in key1.split(' '):
+        for j in key2.split(' '):
+            if i == j:
+                count+=1
+    return count
+
+def number_of_same_words_from_row(row):
+    return number_of_same_words(row['key_performed'], row['key'])
 
 class NextItemModelV2(ModelInterface):
-    PRODUCTION_RUN_ID = "07c37a94ccb64c0c8e1eca195ad910cb"
+    PRODUCTION_RUN_ID = "ab9c5ed3eabb46ef8216314e55646ea6"
 
     DIMENSIONS = 384 + 1
 
@@ -27,39 +37,58 @@ class NextItemModelV2(ModelInterface):
 
         print("Building dataset v2")
 
-        base_entries = self._get_ranking_generated_entries_data()
-        print(f'Rank entries total: {base_entries.count()}')
-        performed_entries = self._get_performed_entries_dataset()
-        performed_entries = performed_entries.withColumn('share_words_count', F.lit(0))
+        ranking_df = self._get_ranking_entries_dataset()
+        print(f'Rank entries total: {ranking_df.count()}')
+
+
+        performed_df = self._get_performed_entries_dataset()
+        performed_df = performed_df.withColumn('share_words_count', F.lit(0))
+
+        # decrement the position of the performed entries, it starts at 1 there but at the ranking event at 0
+        print('Decrementing performed entries position')
+
+        performed_df = performed_df.withColumn('position', F.col('position').cast('int'))
+        performed_df = performed_df.withColumn('position', F.col('position') - 1)
+        performed_df = performed_df.withColumn('position', F.col('position').cast('String'))
+
 
         # remove ranks without performed keys in it
-        performed_uuids = performed_entries.select('uuid').withColumnRenamed('uuid', 'performed_uuid')
-        base_entries = performed_uuids.join(base_entries, on=performed_uuids.performed_uuid == base_entries.uuid, how='left')
-        base_entries = base_entries.drop('performed_uuid')
-        print(f'Ranks entries with executed item: {base_entries.count()}')
+        performed_uuids = performed_df.select('uuid').withColumnRenamed('uuid', 'performed_uuid')
+
+
+        ranking_df = performed_uuids.join(ranking_df, on=performed_uuids.performed_uuid == ranking_df.uuid, how='left')
+        ranking_df = ranking_df.drop('performed_uuid')
+        ranking_df = ranking_df.withColumn('position', F.col('position').cast('int'))
+        print(f'Ranks entries with executed item: {ranking_df.count()}')
+
+
+        # remove entries that contain the performed key
+
+        performed_keys = performed_df.select(F.col('key').alias('performed_key'), F.col('uuid').alias('performed_uuid'),
+                                             F.col('position').alias('performed_position'))
+
+        ranking_df = ranking_df.join(performed_keys, on=[ performed_keys.performed_uuid == ranking_df.uuid,
+                                                     performed_keys.performed_position == ranking_df.position],
+                                 how='left_anti')
+
+
+
 
         ## add number of same words as feature
-        performed_key_and_uuid = performed_entries.select(F.col('uuid').alias('uuid_performed'), F.col('key').alias('key_performed'))
-        same_words_df = performed_key_and_uuid.join(base_entries, on=performed_key_and_uuid.uuid_performed == base_entries.uuid, how='left')
+        performed_key_and_uuid = performed_df.select(F.col('uuid').alias('uuid_performed'), F.col('key').alias('key_performed'))
+        same_words_df = performed_key_and_uuid.join(ranking_df, on=performed_key_and_uuid.uuid_performed == ranking_df.uuid, how='left')
         from pyspark.sql.functions import udf, struct
-        def number_of_same_words(row):
-            count = 0
-            for i in row['key_performed'].split(' '):
-                for j in row['key'].split(' '):
-                    if i == j:
-                        count+=1
-            return count
-        udf_f = udf(number_of_same_words)
+        udf_f = udf(number_of_same_words_from_row)
         same_words_df = same_words_df.withColumn('share_words_count', udf_f(struct([same_words_df[x] for x in same_words_df.columns])))
-        base_entries = same_words_df.drop('uuid_performed').drop('key_performed')
+        ranking_df = same_words_df.drop('uuid_performed').drop('key_performed')
 
         # add same words as criteria for label
-        base_entries = base_entries.withColumn('label', F.when(F.col('share_words_count') > 0, 1).otherwise(F.col('label')))
+        ranking_df = ranking_df.withColumn('label', F.when(F.col('share_words_count') > 0, 2).otherwise(F.col('label')))
 
-        base_entries.printSchema()
-        performed_entries.printSchema()
+        ranking_df.printSchema()
+        performed_df.printSchema()
 
-        unioned = base_entries.union(performed_entries)
+        unioned = ranking_df.union(performed_df)
         unioned = unioned.withColumn('timestamp', F.unix_timestamp('datetime'))
 
 
@@ -70,9 +99,9 @@ class NextItemModelV2(ModelInterface):
 
         # prepare result for returning
         # select only relevant columns
-        dataset = unioned.select('entry_number', 'key', 'share_words_count', 'datetime', 'timestamp', 'position', 'label')
+        dataset = unioned.select('entry_number',  'key', 'uuid', 'datetime', 'timestamp', 'position', 'label')
         # sort dataframe in a readable way
-        dataset = dataset.sort(['timestamp', 'position'], ascending=[False, True])
+        dataset = dataset.sort(['uuid', 'timestamp', 'position'], ascending=[True, False, True])
 
 
         if debug:
@@ -80,7 +109,7 @@ class NextItemModelV2(ModelInterface):
 
         return dataset
 
-    def _get_ranking_generated_entries_data(self) -> DataFrame:
+    def _get_ranking_entries_dataset(self) -> DataFrame:
         """
         Returns the ranking generated data in the format of the base dataset
         :return:
@@ -104,7 +133,7 @@ class NextItemModelV2(ModelInterface):
         performed_entries = performed_entries.filter("rank_uuid IS NOT NULL and rank_position IS NOT NULL").select(
             F.col("key"), F.col("rank_position").alias('position'), F.col("rank_uuid").alias('uuid'),
             F.col("timestamp").alias('datetime'))
-        return performed_entries.withColumn('label', F.lit(2))
+        return performed_entries.withColumn('label', F.lit(5))
 
     def transform_collection(
             self, dataset: DataFrame
@@ -121,10 +150,9 @@ class NextItemModelV2(ModelInterface):
         Y = np.empty(dataset.count())
 
         collected_rows = dataset.collect()
-        #timestamp = dataset.select('timestamp').toPandas()['timestamp']
-        #normalized_timestamp = self._NormalizeData(timestamp)
 
         for i, row in enumerate(collected_rows):
+
             X[i] = np.concatenate(
                 [
                     # adds entry number so we can index and select the right row afterwards
@@ -159,12 +187,12 @@ class NextItemModelV2(ModelInterface):
         all_keys = inference_input['all_keys']
         from datetime import datetime;
         timestamp = int(datetime.now().timestamp())
-        #timestamp_normalized = timestamp - 1669663110
 
         X = np.zeros([len(all_keys), self.DIMENSIONS])
         for i, key in enumerate(all_keys):
             key_embedding = self.inference_embeddings.get_embedding_from_key(key)
             if key_embedding is None:
+                print(f"No embeddings for key: '{key}'")
                 continue
 
             X[i] = np.concatenate(
