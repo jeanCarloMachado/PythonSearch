@@ -4,7 +4,7 @@ import datetime
 import os
 from typing import Optional
 
-from python_search.search.next_item_predictor.features.times_used import TimesUsed
+from python_search.next_item_predictor.features.times_used import TimesUsed
 
 
 class ModelInput:

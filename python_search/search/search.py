@@ -40,9 +40,7 @@ class Search:
         ] = "BaselineRank"
 
         if self._feature_toggle.is_enabled("ranking_next"):
-            from python_search.search.next_item_predictor.inference.inference import (
-                Inference,
-            )
+            from python_search.next_item_predictor.inference.inference import Inference
 
             try:
                 self._inference = Inference(self._configuration)

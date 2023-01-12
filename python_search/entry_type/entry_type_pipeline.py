@@ -9,8 +9,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from python_search.infrastructure.arize import Arize
-from python_search.search.next_item_predictor.mlflow_logger import configure_mlflow
-from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
+from python_search.next_item_predictor import configure_mlflow
+from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
     create_embeddings_from_strings,
 )
 import os

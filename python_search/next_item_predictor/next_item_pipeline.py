@@ -9,11 +9,11 @@ from sklearn.model_selection import train_test_split
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.events.run_performed.clean import RunPerformedCleaning
-from python_search.search.next_item_predictor.mlflow_logger import configure_mlflow
-from python_search.search.next_item_predictor.offline_evaluation import (
+from python_search.next_item_predictor.mlflow_logger import configure_mlflow
+from python_search.next_item_predictor.offline_evaluation import (
     OfflineEvaluation,
 )
-from python_search.search.next_item_predictor.train_xgboost import TrainXGBoost
+from python_search.next_item_predictor.train_xgboost import TrainXGBoost
 
 class NextItemPredictorPipeline:
     """
@@ -61,7 +61,7 @@ class NextItemPredictorPipeline:
         dataset = self._model.build_dataset()
 
         X, Y = self._model.transform_collection(dataset)
-        from python_search.search.next_item_predictor.train_keras import TrainKeras
+        from python_search.next_item_predictor.train_keras import TrainKeras
 
         X_train, X_test, Y_train, Y_test = train_test_split(
             X, Y, test_size=TrainKeras.TEST_SPLIT_SIZE, random_state=42
@@ -85,7 +85,7 @@ class NextItemPredictorPipeline:
         if "keras" in train_only:
             mlflow = configure_mlflow()
             with mlflow.start_run():
-                from python_search.search.next_item_predictor.train_keras import (
+                from python_search.next_item_predictor.train_keras import (
                     TrainKeras,
                 )
 

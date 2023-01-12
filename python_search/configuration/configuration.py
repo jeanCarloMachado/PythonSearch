@@ -80,10 +80,10 @@ class PythonSearchConfiguration(EntriesGroup):
         version = 'v2'
 
         if version == 'v1':
-            from python_search.search.next_item_predictor.next_item_model_v1 import NextItemModelV1
+            from python_search.next_item_predictor.next_item_model_v2 import NextItemModelV1
             return NextItemModelV1()
         else:
-            from python_search.search.next_item_predictor.next_item_model_v2 import NextItemModelV2
+            from python_search.next_item_predictor.next_item_model_v2 import NextItemModelV2
             return NextItemModelV2()
 
     def get_text_editor(self):

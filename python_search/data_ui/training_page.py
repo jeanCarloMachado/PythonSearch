@@ -1,6 +1,6 @@
 import streamlit as st
 
-from python_search.search.next_item_predictor.training_dataset import TrainingDataset
+from python_search.next_item_predictor import TrainingDataset
 
 
 def load_training_page():

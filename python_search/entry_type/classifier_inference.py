@@ -31,7 +31,7 @@ class PredictEntryTypeInference:
         model = PythonSearchMLFlow().get_entry_type_classifier(
             run_id=PredictEntryTypeInference.PRODUCTION_RUN_ID
         )
-        from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
+        from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
             create_embeddings_from_strings,
         )
 

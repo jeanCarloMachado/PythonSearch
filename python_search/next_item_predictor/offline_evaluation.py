@@ -1,8 +1,8 @@
 from pyspark.sql import DataFrame
 
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.search.next_item_predictor.inference.inference import Inference
-from python_search.search.next_item_predictor.inference.input import ModelInput
+from python_search.next_item_predictor.inference.inference import Inference
+from python_search.next_item_predictor.inference.input import ModelInput
 
 
 class OfflineEvaluation:
