@@ -1,8 +1,5 @@
-import openai
 import os
 
-openai.api_key = os.environ["OPENAI_KEY"]
-model_engine = "text-davinci-003"
 
 class ChatGPT:
     def collect_prompt_via_ui(self):
@@ -10,8 +7,14 @@ class ChatGPT:
         message = CollectInput().launch()
         self.answer(message)
 
-    def answer(self, prompt):
+    def answer(self, prompt: str):
+        """
+        Answer a prompt with openAI results
+        """
 
+        import openai
+        openai.api_key = os.environ["OPENAI_KEY"]
+        model_engine = "text-davinci-003"
         # Set the maximum number of tokens to generate in the response
         max_tokens = 500
         print("Prompt: ", prompt)
