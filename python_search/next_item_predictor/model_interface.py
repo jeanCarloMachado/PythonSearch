@@ -4,6 +4,9 @@ import numpy as np
 from pyspark.sql import DataFrame
 
 class ModelInterface:
+    """
+    Sets of interfaces that need to be implemented to provide a new version of the NextItemPredictor model
+    """
     def build_dataset(self) -> DataFrame:
         raise Exception("Not implemented")
 
