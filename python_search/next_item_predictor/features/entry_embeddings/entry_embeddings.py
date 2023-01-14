@@ -120,7 +120,7 @@ def create_embeddings_from_strings(keys: List[str]) -> ndarray:
     return transformer.encode(keys, show_progress_bar=True)
 
 
-def create_key_indexed_embedding(keys) -> dict[str, str]:
+def create_key_indexed_embedding(keys) -> dict[str, np.ndarray]:
     """
     Create an embedding dict
     """

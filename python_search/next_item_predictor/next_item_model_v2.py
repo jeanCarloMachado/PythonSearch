@@ -3,6 +3,8 @@ from typing import Tuple, Dict
 import numpy as np
 from pandas import DataFrame
 from pyspark.sql import Window
+from pyspark.sql.functions import udf, struct
+import pyspark.sql.functions as F
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.search.models import PythonSearchMLFlow
@@ -33,62 +35,53 @@ class NextItemModelV2(ModelInterface):
         self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
     def build_dataset(self, debug=True) -> DataFrame:
-        import pyspark.sql.functions as F
 
         print("Building dataset v2")
 
-        ranking_df = self._get_ranking_entries_dataset()
-        print(f'Rank entries total: {ranking_df.count()}')
+        self._ranking_df = self._get_ranking_entries_dataset()
+        print(f'Rank entries total: {self._ranking_df.count()}')
 
 
-        performed_df = self._get_performed_entries_dataset()
-        performed_df = performed_df.withColumn('share_words_count', F.lit(0))
+        self._performed_df = self._get_performed_entries_dataset()
+        self._performed_df = self._performed_df.withColumn('share_words_count', F.lit(0))
 
         # decrement the position of the performed entries, it starts at 1 there but at the ranking event at 0
-        print('Decrementing performed entries position')
-
-        performed_df = performed_df.withColumn('position', F.col('position').cast('int'))
-        performed_df = performed_df.withColumn('position', F.col('position') - 1)
-        performed_df = performed_df.withColumn('position', F.col('position').cast('String'))
+        self._performed_df = self._decrement_entry_position()
 
 
         # remove ranks without performed keys in it
-        performed_uuids = performed_df.select('uuid').withColumnRenamed('uuid', 'performed_uuid')
+        performed_uuids = self._performed_df.select('uuid').withColumnRenamed('uuid', 'performed_uuid')
+        self._ranking_df = performed_uuids.join(self._ranking_df, on=performed_uuids.performed_uuid == self._ranking_df.uuid, how='left')
+        self._ranking_df = self._ranking_df.drop('performed_uuid')
+        self._ranking_df = self._ranking_df.withColumn('position', F.col('position').cast('int'))
+        print(f'Ranks entries with executed item: {self._ranking_df.count()}')
 
 
-        ranking_df = performed_uuids.join(ranking_df, on=performed_uuids.performed_uuid == ranking_df.uuid, how='left')
-        ranking_df = ranking_df.drop('performed_uuid')
-        ranking_df = ranking_df.withColumn('position', F.col('position').cast('int'))
-        print(f'Ranks entries with executed item: {ranking_df.count()}')
-
-
-        # remove entries that contain the performed key
-
-        performed_keys = performed_df.select(F.col('key').alias('performed_key'), F.col('uuid').alias('performed_uuid'),
+        # remove entries that contain the performed key from ranking_df
+        performed_keys = self._performed_df.select(F.col('key').alias('performed_key'), F.col('uuid').alias('performed_uuid'),
                                              F.col('position').alias('performed_position'))
 
-        ranking_df = ranking_df.join(performed_keys, on=[ performed_keys.performed_uuid == ranking_df.uuid,
-                                                     performed_keys.performed_position == ranking_df.position],
+        self._ranking_df = self._ranking_df.join(performed_keys, on=[ performed_keys.performed_uuid == self._ranking_df.uuid,
+                                                     performed_keys.performed_position == self._ranking_df.position],
                                  how='left_anti')
 
 
 
 
         ## add number of same words as feature
-        performed_key_and_uuid = performed_df.select(F.col('uuid').alias('uuid_performed'), F.col('key').alias('key_performed'))
-        same_words_df = performed_key_and_uuid.join(ranking_df, on=performed_key_and_uuid.uuid_performed == ranking_df.uuid, how='left')
-        from pyspark.sql.functions import udf, struct
+        performed_key_and_uuid = self._performed_df.select(F.col('uuid').alias('uuid_performed'), F.col('key').alias('key_performed'))
+        same_words_df = performed_key_and_uuid.join(self._ranking_df, on=performed_key_and_uuid.uuid_performed == self._ranking_df.uuid, how='left')
         udf_f = udf(number_of_same_words_from_row)
         same_words_df = same_words_df.withColumn('share_words_count', udf_f(struct([same_words_df[x] for x in same_words_df.columns])))
-        ranking_df = same_words_df.drop('uuid_performed').drop('key_performed')
+        self._ranking_df = same_words_df.drop('uuid_performed').drop('key_performed')
 
         # add same words as criteria for label
-        ranking_df = ranking_df.withColumn('label', F.when(F.col('share_words_count') > 0, 2).otherwise(F.col('label')))
+        self._ranking_df = self._ranking_df.withColumn('label', F.when(F.col('share_words_count') > 0, 2).otherwise(F.col('label')))
 
-        ranking_df.printSchema()
-        performed_df.printSchema()
+        self._ranking_df.printSchema()
+        self._performed_df.printSchema()
 
-        unioned = ranking_df.union(performed_df)
+        unioned = self._ranking_df.union(self._performed_df)
         unioned = unioned.withColumn('timestamp', F.unix_timestamp('datetime'))
 
 
@@ -108,6 +101,14 @@ class NextItemModelV2(ModelInterface):
             dataset.show(n=10, truncate=False)
 
         return dataset
+
+    def _decrement_entry_position(self):
+        print('Decrementing performed entries position')
+        self._performed_df = self._performed_df.withColumn('position', F.col('position').cast('int'))
+        self._performed_df = self._performed_df.withColumn('position', F.col('position') - 1)
+        self._performed_df = self._performed_df.withColumn('position', F.col('position').cast('String'))
+
+        return self._performed_df
 
     def _get_ranking_entries_dataset(self) -> DataFrame:
         """
@@ -173,9 +174,6 @@ class NextItemModelV2(ModelInterface):
     def _NormalizeData(self, data):
         """normalize a value between 0 and 1 """
         return (data - np.min(data)) / (np.max(data) - np.min(data))
-
-    def load_mlflow_model(self):
-        raise Exception("Not implemented")
 
     def transform_single(self, inference_input: dict) -> np.ndarray:
         """
