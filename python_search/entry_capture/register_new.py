@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import datetime
 import time
+from typing import Optional
 
 from python_search.apps.clipboard import Clipboard
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )
@@ -30,7 +31,7 @@ class RegisterNew:
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
     @notify_exception()
-    def register(self, *, key: str, value: str, tag: str = None):
+    def register(self, *, key: str, value: str, tag: Optional[str] = None):
         """
         The non ui driven registering api
         Args:
@@ -70,7 +71,7 @@ class RegisterNew:
             default_type = infer_default_type(default_content)
 
         entry_data: GuiEntryData = EntryCaptureGUI().launch(
-            "New Entry Details",
+            "New Entry",
             default_content=default_content,
             default_key=default_key,
             default_type=default_type,

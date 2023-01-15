@@ -12,7 +12,7 @@ from python_search.entry_type.classifier_inference import (
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import RunPerformedWriter
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.search.search import Search
 
 import pyroscope
@@ -52,7 +52,7 @@ def reload():
 
 
 @app.get("/ranking/reload_and_generate", response_class=PlainTextResponse)
-def reload():
+def reload_and_generate():
     return reload_ranking()
 
 
@@ -63,13 +63,9 @@ def health():
     from python_search.events.latest_used_entries import RecentKeys
 
     entries = RecentKeys().get_latest_used_keys()
-    run_id = None
-    if generator._inference is not None:
-        run_id = generator._inference.PRODUCTION_RUN_ID
 
     return {
         "keys_count": len(ConfigurationLoader().load_config().commands.keys()),
-        "run_id": run_id,
         "latest_used_entries": entries,
         "initialization_time": ConfigurationLoader().load_config()._initialization_time,
     }

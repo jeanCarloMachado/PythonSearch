@@ -1,4 +1,3 @@
-import logging
 import re
 
 from python_search.context import Context
@@ -10,6 +9,7 @@ from python_search.interpreter.group import GroupInterpreter
 from python_search.interpreter.python import PythonInterpreter
 from python_search.interpreter.snippet import SnippetInterpreter
 from python_search.interpreter.url import UrlInterpreter
+from python_search.logger import interpreter_logger
 
 INTERPRETERS_IN_ORDER = [
     UrlInterpreter,
@@ -20,7 +20,6 @@ INTERPRETERS_IN_ORDER = [
     CmdInterpreter,
 ]
 
-
 class InterpreterMatcher:
     """
     Matches a query with an entry interpreter
@@ -29,7 +28,7 @@ class InterpreterMatcher:
     _instance = None
 
     @staticmethod
-    def build_instance(configuration):
+    def build_instance(configuration) -> 'InterpreterMatcher':
         """
         Singleton. Initializes a _configuration a context and a interpreter
 
@@ -46,24 +45,26 @@ class InterpreterMatcher:
         self.context = context
         self.context.set_interpreter(self)
         self._interpreters = INTERPRETERS_IN_ORDER
+        self.logger = interpreter_logger()
 
-    def get_interpreter(self, given_input: str) -> BaseInterpreter:
+    def get_interpreter(self, given_input: str, skip_key_matching=False) -> BaseInterpreter:
         """
         Given the string content, returns the best matched interpreter.
         Returns the instance of the matched interpreter given an text input
         """
         self.context.set_input(given_input)
 
-        try:
-            # tries to get the real key if it exists
-            key = self._get_key(given_input)
-            given_input = self._configuration.get_command(key)
-        except Exception as e:
-            logging.error(e)
+        if not skip_key_matching:
+            try:
+                # tries to get the real key if it exists
+                key = self._get_key(given_input)
+                given_input = self._configuration.get_command(key)
+            except Exception as e:
+                self.logger.error(e)
 
         return self._match_interpreter(given_input)
 
-    def get_interpreter_from_type(self, type: str):
+    def get_interpreter_from_type(self, type: str) -> BaseInterpreter:
         """
         From a type given in the ui via string returns the matching interpreter type
 
@@ -97,11 +98,13 @@ class InterpreterMatcher:
         return specific_interpreter.interpret_clipboard()
 
     def _match_interpreter(self, cmd) -> BaseInterpreter:
+        self.logger.info("Matching interpreter for command: %s", cmd)
+        print("Matching interpreter for command: %s", cmd)
         for interpreter in self._interpreters:
             try:
-                logging.info(f"Trying to construct {interpreter}")
+                print(f"Trying to construct {interpreter}")
                 command_instance = interpreter(cmd, self.context)
-                logging.info(f"Matched command instance {command_instance}")
+                print(f"Matched command instance {command_instance}")
                 return command_instance
             except CommandDoNotMatchException as e:
                 pass

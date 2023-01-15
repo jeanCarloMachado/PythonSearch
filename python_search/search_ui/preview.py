@@ -3,7 +3,7 @@ from datetime import datetime
 from colorama import Fore
 from dateutil import parser
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.logger import setup_preview_logger
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
@@ -18,6 +18,7 @@ class Preview:
     def __init__(self):
         self.configuration = ConfigurationLoader()
         self.logger = setup_preview_logger()
+        self.entries = self.configuration.load_entries()
         # do not send the errors to stderr, in the future we should send to kibana or a file
 
     def display(self, entry_text: str):
@@ -25,6 +26,10 @@ class Preview:
         Prints the entry in the preview window
 
         """
+        key = self._extract_key(entry_text)
+        if not self._key_exists(key):
+            print(f"Not found as key {entry_text}")
+            return
 
         data = self._build_values_to_print(entry_text)
         self._print_values(data)
@@ -61,9 +66,15 @@ class Preview:
 
         return Fore.BLUE
 
-    def _build_values_to_print(self, entry_text) -> dict:
+    def _extract_key(self, entry_text):
         key = entry_text.split(":")[0]
+        # remove the last 2 spaces from the key as they are used for formatting the string in fzf
+        key = key.strip()
+        return key
+
+    def _build_values_to_print(self, entry_text) -> dict:
         # the entry content is after the key + a ":" character
+        key = self._extract_key(entry_text)
 
         result = {}
         result["type"] = "Unknown"
@@ -123,10 +134,11 @@ class Preview:
     def _color_str(self, a_string, a_color) -> str:
         return f"{a_color}{a_string}{Fore.RESET}"
 
+    def _key_exists(self, key):
+        return key in self.entries
+
     def _load_key_data(self, key):
-        entries = self.configuration.load_entries()
-        if not key in entries:
-            print()
+        if not self._key_exists(key):
             print(
                 (
                     f'Key "{self._color_str(key, Fore.RED)}" not found in python search data'
@@ -136,4 +148,4 @@ class Preview:
 
             sys.exit(0)
 
-        return entries[key]
+        return self.entries[key]

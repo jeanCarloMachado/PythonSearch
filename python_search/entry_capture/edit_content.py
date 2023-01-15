@@ -15,7 +15,7 @@ class EditKey:
     def __init__(self, configuration):
         self.configuration = configuration
 
-    def edit_key(self, key, dry_run=False):
+    def edit_key(self, key: str, dry_run=False):
         """
         Edits the _configuration files by searching the text
         """
@@ -24,13 +24,11 @@ class EditKey:
             self.edit_default()
             return
 
-        key = key.split(":")
-
         if not len(key):
+            print('Editing default')
             self.edit_default()
             return
 
-        key = key[0]
         # needs to be case insensitive search
         cmd = f"ack -i '{key}' {self.configuration.get_project_root()} --py || true"
         logging.info(f"Command: {cmd}")

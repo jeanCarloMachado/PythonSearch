@@ -10,7 +10,7 @@ def decode_serialized_data_from_entry_text(entry_text: str, logger=None) -> dict
 
         return result
     except Exception as e:
-        message = f"Failed with error {e} wile decoding the followingthe entry_text '{entry_text}' "
+        message = f"Failed with error {e} wile decoding the following entry_text '{entry_text}' "
         if logger:
             logger.info(message)
 

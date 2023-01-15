@@ -4,7 +4,7 @@ import logging
 from collections import namedtuple
 from typing import List, Literal, Optional
 
-from python_search.config import PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.ranking_generated import (
     RankingGenerated,
@@ -33,16 +33,14 @@ class Search:
         self._feature_toggle = FeatureToggle()
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
-        self._entries = None
+        self._entries: Optional[dict] = None
         self._ranking_generator_writer = RankingGeneratedWriter()
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
 
         if self._feature_toggle.is_enabled("ranking_next"):
-            from python_search.search.next_item_predictor.inference.inference import (
-                Inference,
-            )
+            from python_search.next_item_predictor.inference.inference import Inference
 
             try:
                 self._inference = Inference(self._configuration)
@@ -50,6 +48,7 @@ class Search:
                 print(
                     f"Could not initialize the inference component. Proceeding without inference, details: {e}"
                 )
+                self._entries_result.degraded_message = f"{e}"
 
     @timeit
     def search(self) -> str:
@@ -61,8 +60,8 @@ class Search:
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
-        if self._feature_toggle.is_enabled("ranking_next") and self._inference:
-            self._rerank_via_model()
+        self._rerank_via_model()
+
 
         """Populate the variable used_entries  with the results from redis"""
         result = self._merge_with_latest_used()
@@ -71,7 +70,6 @@ class Search:
             ranking=[i[0] for i in result[0:100]]
         )
         self._ranking_generator_writer.write(ranknig_generated_event)
-        #print(f"Ranking generated UUID {ranknig_generated_event.uuid}")
         result_str = self._entries_result.build_entries_result(
             result, ranknig_generated_event.uuid
         )

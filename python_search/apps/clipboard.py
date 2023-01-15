@@ -47,7 +47,7 @@ class Clipboard:
             raise Exception("Tryring to set empty to clipboard")
 
         def shellquote(s):
-            return "'" + s.replace("'", "'\\''") + "'"
+            return "'" + s.replace("'", "\'") + "'"
 
         sanitized = shellquote(content)
 

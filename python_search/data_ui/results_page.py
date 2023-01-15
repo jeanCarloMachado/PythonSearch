@@ -2,14 +2,14 @@ def load_results_page():
     import pandas as pd
     import streamlit as st
 
-    from python_search.config import ConfigurationLoader
+    from python_search.configuration.loader import ConfigurationLoader
 
     config = ConfigurationLoader().load_config()
 
     keys = config.commands.keys()
 
-    from python_search.search.next_item_predictor.inference.inference import Inference
-    from python_search.search.next_item_predictor.inference.input import ModelInput
+    from python_search.next_item_predictor import Inference
+    from python_search.next_item_predictor import ModelInput
 
     st.write("### Prediction results")
     st.write("##### Production run: " + Inference.PRODUCTION_RUN_ID)

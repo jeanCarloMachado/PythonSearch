@@ -2,12 +2,12 @@ import datetime
 import logging
 import sys
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.search.entries_loader import EntriesLoader
-from python_search.search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
+from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
     RedisEmbeddingsReader,
 )
-from python_search.search.next_item_predictor.inference.inference import Inference
+from python_search.next_item_predictor.inference.inference import Inference
 
 
 class Evaluate:

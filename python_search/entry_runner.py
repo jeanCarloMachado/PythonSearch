@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import re
+import os
 from typing import List
 
 from python_search.apps.notification_ui import send_notification
-from python_search.config import PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.context import Context
+from python_search.core_entities import Key
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.logger import setup_run_key_logger, StreamToLogger
+from python_search.logger import setup_run_key_logger
 from python_search.exceptions import notify_exception
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
@@ -35,6 +37,7 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
+        fzf_pid_to_kill = None
     ):
         """
         Runs an entry given its name or its partial name.
@@ -44,7 +47,8 @@ class EntryRunner:
             entry_rank_position: accounts for where the entry was when it was executed, if passed it will be used for
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
-        key = entry_text.split(":")[0] if ":" in entry_text else entry_text
+
+        key = str(Key.from_fzf(entry_text))
 
         logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is
@@ -79,15 +83,16 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-        real_key: str = matches[0]
+
 
         if len(matches) > 1:
-            real_key = min(matches, key=len)
+            key = min(matches, key=len)
             send_notification(
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
-        result = InterpreterMatcher.build_instance(self.configuration).default(real_key)
+        result = InterpreterMatcher.build_instance(self.configuration).default(key)
+
 
         logger.info("Passed interpreter")
         run_performed = RunPerformed(
@@ -99,6 +104,12 @@ class EntryRunner:
         )
         logger.info(f"Run performed = {run_performed}")
         LogRunPerformedClient().send(run_performed)
+
+        # this needs to be last as it will kill the process
+        if fzf_pid_to_kill:
+            print("Killing fzf")
+            os.system(f"kill -9 {fzf_pid_to_kill}")
+
         return result
 
     def _matching_keys(self, key: str) -> List[str]:

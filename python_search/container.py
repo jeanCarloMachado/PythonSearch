@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from typing import Optional
 
 from python_search.config import MLFlowConfig
 
@@ -17,7 +18,18 @@ def build_and_run():
     run()
 
 
-def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
+def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None, name: Optional[str] = None):
+    """
+    Runs inside the docker container
+
+    :param cmd:
+    :param entrypoint:
+    :param port:
+    :param restart:
+    :param extra_env_vars:
+    :param name:
+    :return:
+    """
 
     if entrypoint:
         entrypoint = f" --entrypoint '{entrypoint}'"
@@ -53,11 +65,24 @@ def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None):
 
     environment_variables = " ".join(env_vars)
 
+    name_expr = ""
+    if name:
+        name_expr = f" --name {name} "
+
     LIMIT_CPU = 8
-    cmd = f"docker run {port} {restart_exp} --expose=8000 --expose 4040 --expose 6380 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
+    cmd = f"docker run {name_expr} {port} {restart_exp} --expose=8000 --expose 4040 --expose 6380 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
     print("Cmd: " + cmd)
     os.system(cmd)
 
+def run_webserver():
+    name="python_search_webserver"
+    _stop_and_remove_by_name(name)
+
+    run(
+        cmd="python_search_webapi",
+        port="8000:8000",
+        name=name,
+    )
 
 def sh():
     shell()
@@ -87,19 +112,14 @@ def run_mlflow(restart=False):
     )
 
 
-def run_webserver(restart=False, force_restart=False):
-    if restart or force_restart:
-        _restart_by_port(8000)
-
-    run(
-        cmd="python_search_webapi",
-        port="8000:8000",
-        restart=restart,
-    )
 
 def _restart_by_port(port):
     print("Stopping previously running container")
     os.system(f"docker stop $(docker ps | grep -i {port} | cut -d ' ' -f1) ; sleep 3")
+
+def _stop_and_remove_by_name(name):
+    print("Stopping previously running container")
+    os.system(f"docker stop {name} ; docker rm {name}")
 
 def run_streamlit(restart=False, disable_password=False):
 

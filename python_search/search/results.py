@@ -17,8 +17,11 @@ class FzfOptimizedSearchResults:
     Builds the list of results ready to be consumed by fzf
     """
 
+    degraded_message = ""
+
     def __init__(self):
         self._today = datetime.datetime.now()
+
 
     @timeit
     def build_entries_result(
@@ -27,6 +30,8 @@ class FzfOptimizedSearchResults:
         """Print results"""
         position = 1
         result = ""
+        if self.degraded_message:
+            result = f"Degraded: {self.degraded_message}\n"
         for name, content in entries:
             try:
                 if "snippet" in content:
@@ -69,7 +74,7 @@ class FzfOptimizedSearchResults:
 
             position = position + 1
 
-            content_str = f"{name}:" + content_str
+            content_str = f"{name}                                                      :" + content_str
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')

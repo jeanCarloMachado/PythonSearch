@@ -1,6 +1,6 @@
 from typing import List
 
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 
 
 class EntriesLoader:

@@ -3,7 +3,7 @@ from __future__ import annotations
 import shutil
 from datetime import datetime
 
-from python_search.config import PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.events.run_performed import RunPerformed
 
 

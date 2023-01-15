@@ -1,8 +1,8 @@
 from pyspark.sql import DataFrame
 
-from python_search.config import ConfigurationLoader
-from python_search.search.next_item_predictor.inference.inference import Inference
-from python_search.search.next_item_predictor.inference.input import ModelInput
+from python_search.configuration.loader import ConfigurationLoader
+from python_search.next_item_predictor.inference.inference import Inference
+from python_search.next_item_predictor.inference.input import ModelInput
 
 
 class OfflineEvaluation:
@@ -30,26 +30,29 @@ class OfflineEvaluation:
         number_of_existing_keys = len(self._configuration.commands.keys())
         for index, row in test_df.iterrows():
 
+            key = row['key']
+            previous_key = row.get('previous_key')
+            previous_previous_key = row.get('previous_previous_key')
+
             if (
                 not self._key_exists(row["key"])
-                or not self._key_exists(row["previous_key"])
-                or not self._key_exists(row["previous_previous_key"])
+                or ('previous_key' in row and not self._key_exists(row["previous_key"]))
+                or ('previous_previous_key' in row and not self._key_exists(row["previous_previous_key"]))
             ):
                 print(
-                    f"Key pair does not exist any longer ({row['previous_key']}, {row['key']})"
+                    f"Members of entry do not existly any longer ({key}, {previous_key}, {previous_previous_key})"
                 )
                 continue
 
             input = ModelInput(
-                hour=row["hour"],
-                month=row["month"],
-                previous_key=row["previous_key"],
-                previous_previous_key=row["previous_previous_key"],
+                hour=row.get("hour"),
+                month=row.get("month"),
+                previous_key=previous_key,
+                previous_previous_key=previous_previous_key,
             )
             result = inference.get_ranking(predefined_input=input)
 
             metadata = {
-                "pair": row["previous_key"] + " -> " + row["key"],
                 "position_target": result.index(row["key"]),
                 "Len": len(result),
                 "type of result": type(result),

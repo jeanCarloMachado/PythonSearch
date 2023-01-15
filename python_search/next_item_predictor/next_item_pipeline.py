@@ -4,17 +4,16 @@ import os
 from typing import List, Literal, Optional
 
 import numpy as np
-from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import SparkSession
 from sklearn.model_selection import train_test_split
 
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.events.run_performed.clean import RunPerformedCleaning
-from python_search.search.next_item_predictor.mlflow_logger import configure_mlflow
-from python_search.search.next_item_predictor.offline_evaluation import (
+from python_search.next_item_predictor.mlflow_logger import configure_mlflow
+from python_search.next_item_predictor.offline_evaluation import (
     OfflineEvaluation,
 )
-from python_search.search.next_item_predictor.train_xgboost import TrainXGBoost
-from python_search.search.next_item_predictor.training_dataset import TrainingDataset
-
+from python_search.next_item_predictor.train_xgboost import TrainXGBoost
 
 class NextItemPredictorPipeline:
     """
@@ -24,25 +23,16 @@ class NextItemPredictorPipeline:
     model_types: Literal["xgboost", "keras"] = "xgboost"
 
     def __init__(self):
-        os.environ["TIME_IT"] = "1"
-        print('Overriding pyspark python executable')
+        self._fix_python_interpreter_pyspark()
 
-        from subprocess import PIPE, Popen
-        command = "whereis python"
-        with Popen(command, stdout=PIPE, stderr=None, shell=True) as process:
-            output = process.communicate()[0].decode("utf-8")
-        print(f"Where is ouptut: {output}")
-        # get only the path and remove new line in the end
-        path = output.split(' ')[1].split("\n")[0]
-        print(f"Using the following path: {path}")
-        os.environ['PYSPARK_PYTHON'] = path
-        os.environ['PYSPARK_DRIVER_PYTHON'] = path
+        configuration = ConfigurationLoader().load_config()
+        self._model = configuration.get_next_item_predictor_model()
 
     def run(
         self,
         train_only: Optional[List[model_types]] = ['xgboost'],
         use_cache=False,
-        clean_first=True,
+        clean_events_first=False,
         skip_offline_evaluation=False,
     ):
         """
@@ -51,7 +41,7 @@ class NextItemPredictorPipeline:
         Args:
             train_only:
             use_cache:
-            clean_first:
+            clean_events_first:
 
         Returns:
 
@@ -65,14 +55,13 @@ class NextItemPredictorPipeline:
         else:
             print("Training only: ", train_only)
 
-        if clean_first:
+        if clean_events_first:
             RunPerformedCleaning().clean()
 
-        dataset: DataFrame = TrainingDataset().build(use_cache)
-        from python_search.search.next_item_predictor.transform import ModelTransform
+        dataset = self._model.build_dataset()
 
-        X, Y = ModelTransform().transform_collection(dataset, use_cache=use_cache)
-        from python_search.search.next_item_predictor.train_keras import TrainKeras
+        X, Y = self._model.transform_collection(dataset)
+        from python_search.next_item_predictor.train_keras import TrainKeras
 
         X_train, X_test, Y_train, Y_test = train_test_split(
             X, Y, test_size=TrainKeras.TEST_SPLIT_SIZE, random_state=42
@@ -96,7 +85,7 @@ class NextItemPredictorPipeline:
         if "keras" in train_only:
             mlflow = configure_mlflow()
             with mlflow.start_run():
-                from python_search.search.next_item_predictor.train_keras import (
+                from python_search.next_item_predictor.train_keras import (
                     TrainKeras,
                 )
 
@@ -110,6 +99,20 @@ class NextItemPredictorPipeline:
 
     def _spark(self):
         return SparkSession.builder.getOrCreate()
+
+    def _fix_python_interpreter_pyspark(self):
+        print('Overriding pyspark python executable')
+
+        from subprocess import PIPE, Popen
+        command = "whereis python"
+        with Popen(command, stdout=PIPE, stderr=None, shell=True) as process:
+            output = process.communicate()[0].decode("utf-8")
+        print(f"Where is ouptut: {output}")
+        # get only the path and remove new line in the end
+        path = output.split(' ')[1].split("\n")[0]
+        print(f"Using the following path: {path}")
+        os.environ['PYSPARK_PYTHON'] = path
+        os.environ['PYSPARK_DRIVER_PYTHON'] = path
 
 
 def main():

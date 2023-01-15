@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.9.8"
+version = "0.9.9"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -50,7 +50,8 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 python_search = 'python_search.cli:main'
-next_item_pipeline = 'python_search.search.next_item_predictor.next_item_pipeline:main'
+next_item_pipeline = 'python_search.next_item_predictor.next_item_pipeline:main'
+next_item = 'python_search.next_item_predictor.next_item_pipeline:main'
 collect_input = 'python_search.apps.collect_input:main'
 clipboard = 'python_search.apps.clipboard:main'
 notify_send = 'python_search.apps.notification_ui:main'
@@ -66,6 +67,7 @@ ps_container = 'python_search.container:start'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
 aps_webapi = 'python_search.sdk.web_api_sdk:main'
 wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = []}
+events_etl = 'python_search.events.events_etl:main'
 
 [tool.poetry.extras]
 server = [

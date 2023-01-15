@@ -11,18 +11,18 @@ from python_search.interpreter.cmd import CmdInterpreter
 class FileInterpreter(BaseInterpreter):
     def __init__(self, cmd: Any, context: Context = None):
         self.context = context
-        self.cmd = {}
+        self.cmd = cmd
 
         if type(cmd) == str:
             self.cmd = {"file": cmd}
-            return
 
-        if type(cmd) is dict and "file" in cmd:
-            self.cmd = cmd
-            return
+        if type(cmd) == dict and "file" not in cmd:
+            raise CommandDoNotMatchException(
+                f"Not Valid {self.__class__.__name__} command {cmd}"
+            )
 
-        if type(cmd) is str and FileInterpreter.file_exists(cmd):
-            self.cmd["file"] = cmd
+        print(cmd)
+        if FileInterpreter.file_exists(self.cmd['file']):
             return
 
         raise CommandDoNotMatchException(

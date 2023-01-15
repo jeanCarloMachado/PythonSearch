@@ -2,10 +2,10 @@ from typing import List, Tuple
 import random
 import sys
 import numpy as np
-from python_search.config import ConfigurationLoader
+from python_search.configuration.loader import ConfigurationLoader
 from keras import layers
 import keras
-from python_search.search.next_item_predictor.mlflow_logger import configure_mlflow
+from python_search.next_item_predictor import configure_mlflow
 
 
 def extract_string_from_entries(entries) -> List[str]:

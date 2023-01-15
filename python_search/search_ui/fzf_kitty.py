@@ -1,7 +1,7 @@
 import os
 
 from python_search.apps.terminal import Terminal
-from python_search.config import PythonSearchConfiguration
+from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
 
 
@@ -48,9 +48,11 @@ class FzfInKitty:
         --tiebreak={FzfInKitty.RANK_TIE_BREAK} \
         --extended \
         --reverse \
+        --no-separator \
         --info=inline \
         --cycle \
         --no-hscroll \
+        --ellipsis='' \
         --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
         --preview-window=right,{FzfInKitty.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
@@ -83,10 +85,10 @@ class FzfInKitty:
         return cmd
 
     def _run_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(LOG_FILE=/tmp/log_run_key_fzf nohup python_search run_key {{}} --query_used {{q}} && kill -9 $PPID)"  """
+        return f"""--bind "{shortcut}:execute-silent:(run_key {{}} --query_used {{q}} --fzf_pid_to_kill $PPID {{}} &)"  """
 
     def _edit_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key {{}} & disown && kill -9 $PPID ) "  """
+        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key --fzf_pid_to_kill $PPID {{}}  & disown)" """
 
     def _get_rankging_generate_cmd(self, reload=False):
         # in mac we need tensorflow to be installed via conda
