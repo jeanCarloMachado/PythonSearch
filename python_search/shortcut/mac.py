@@ -102,7 +102,7 @@ class Mac:
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command =  {HOME}/projects/PythonSearch/wrap_log_command.sh python_search run_key "{key}"
+command =  run_key "{key}" --from_shortcut True
 workdir =
 enabled = yes
 """

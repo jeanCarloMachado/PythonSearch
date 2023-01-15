@@ -48,14 +48,7 @@ class NextItemModelV2(ModelInterface):
         # decrement the position of the performed entries, it starts at 1 there but at the ranking event at 0
         self._performed_df = self._decrement_entry_position()
 
-
-        # remove ranks without performed keys in it
-        performed_uuids = self._performed_df.select('uuid').withColumnRenamed('uuid', 'performed_uuid')
-        self._ranking_df = performed_uuids.join(self._ranking_df, on=performed_uuids.performed_uuid == self._ranking_df.uuid, how='left')
-        self._ranking_df = self._ranking_df.drop('performed_uuid')
-        self._ranking_df = self._ranking_df.withColumn('position', F.col('position').cast('int'))
-        print(f'Ranks entries with executed item: {self._ranking_df.count()}')
-
+        self._ranking_df = self._remove_rankings_without_performed_entries()
 
         # remove entries that contain the performed key from ranking_df
         performed_keys = self._performed_df.select(F.col('key').alias('performed_key'), F.col('uuid').alias('performed_uuid'),
@@ -66,17 +59,8 @@ class NextItemModelV2(ModelInterface):
                                  how='left_anti')
 
 
+        self._ranking_df = self._add_share_words_count_as_ranking_label()
 
-
-        ## add number of same words as feature
-        performed_key_and_uuid = self._performed_df.select(F.col('uuid').alias('uuid_performed'), F.col('key').alias('key_performed'))
-        same_words_df = performed_key_and_uuid.join(self._ranking_df, on=performed_key_and_uuid.uuid_performed == self._ranking_df.uuid, how='left')
-        udf_f = udf(number_of_same_words_from_row)
-        same_words_df = same_words_df.withColumn('share_words_count', udf_f(struct([same_words_df[x] for x in same_words_df.columns])))
-        self._ranking_df = same_words_df.drop('uuid_performed').drop('key_performed')
-
-        # add same words as criteria for label
-        self._ranking_df = self._ranking_df.withColumn('label', F.when(F.col('share_words_count') > 0, 2).otherwise(F.col('label')))
 
         self._ranking_df.printSchema()
         self._performed_df.printSchema()
@@ -101,6 +85,25 @@ class NextItemModelV2(ModelInterface):
             dataset.show(n=10, truncate=False)
 
         return dataset
+
+    def _remove_rankings_without_performed_entries(self):
+        # remove ranks without performed keys in it
+        performed_uuids = self._performed_df.select('uuid').withColumnRenamed('uuid', 'performed_uuid')
+        self._ranking_df = performed_uuids.join(self._ranking_df, on=performed_uuids.performed_uuid == self._ranking_df.uuid, how='left')
+        self._ranking_df = self._ranking_df.drop('performed_uuid')
+        self._ranking_df = self._ranking_df.withColumn('position', F.col('position').cast('int'))
+        print(f'Ranks entries with executed item: {self._ranking_df.count()}')
+        return self._ranking_df
+
+    def _add_share_words_count_as_ranking_label(self):
+        ## add number of same words as temporary feature to update the label
+        performed_key_and_uuid = self._performed_df.select(F.col('uuid').alias('uuid_performed'), F.col('key').alias('key_performed'))
+        same_words_df = performed_key_and_uuid.join(self._ranking_df, on=performed_key_and_uuid.uuid_performed == self._ranking_df.uuid, how='left')
+        udf_f = udf(number_of_same_words_from_row)
+        same_words_df = same_words_df.withColumn('share_words_count', udf_f(struct([same_words_df[x] for x in same_words_df.columns])))
+        self._ranking_df = same_words_df.drop('uuid_performed').drop('key_performed')
+        # add same words as criteria for label
+        return self._ranking_df.withColumn('label', F.when(F.col('share_words_count') > 0, 2).otherwise(F.col('label')))
 
     def _decrement_entry_position(self):
         print('Decrementing performed entries position')

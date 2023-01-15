@@ -203,13 +203,6 @@ def _error_handler(e):
     raise e
 
 
-def _run_key_bin():
-    """
-    Entry point to run a key
-    """
-    import fire
-
-    fire.Fire(PythonSearchCli().run_key)
 
 
 def main():
