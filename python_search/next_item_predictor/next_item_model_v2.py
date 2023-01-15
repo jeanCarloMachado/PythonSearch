@@ -43,7 +43,6 @@ class NextItemModelV2(ModelInterface):
 
 
         self._performed_df = self._get_performed_entries_dataset()
-        self._performed_df = self._performed_df.withColumn('share_words_count', F.lit(0))
 
         # decrement the position of the performed entries, it starts at 1 there but at the ranking event at 0
         self._performed_df = self._decrement_entry_position()
@@ -131,13 +130,21 @@ class NextItemModelV2(ModelInterface):
         return base_entries.withColumn('label', F.lit(0))
 
     def _get_performed_entries_dataset(self) -> DataFrame:
+        """
+        Loads and returns a DataFrame of performed entries from the EntryExecutedDataset
+        :return:
+        """
         from python_search.events.run_performed.dataset import EntryExecutedDataset
         import pyspark.sql.functions as F
         performed_entries = EntryExecutedDataset().load_clean()
         performed_entries = performed_entries.filter("rank_uuid IS NOT NULL and rank_position IS NOT NULL").select(
             F.col("key"), F.col("rank_position").alias('position'), F.col("rank_uuid").alias('uuid'),
             F.col("timestamp").alias('datetime'))
-        return performed_entries.withColumn('label', F.lit(5))
+        performed_entries = performed_entries.withColumn('label', F.lit(5))
+
+        performed_entries.withColumn('share_words_count', F.lit(0))
+
+        return performed_entries
 
     def transform_collection(
             self, dataset: DataFrame
