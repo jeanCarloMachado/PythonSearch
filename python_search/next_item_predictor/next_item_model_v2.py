@@ -13,7 +13,7 @@ from python_search.next_item_predictor.features.entry_embeddings.entry_embedding
     create_key_indexed_embedding
 from python_search.next_item_predictor.model_interface import ModelInterface
 
-def number_of_same_words(key1, key2):
+def number_of_same_words(key1, key2) -> int:
     count = 0
     for i in key1.split(' '):
         for j in key2.split(' '):

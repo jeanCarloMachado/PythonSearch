@@ -21,13 +21,29 @@ class EntryCaptureGUI:
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
 
+    def launch_v2(
+            self,
+            description: str = "",
+            content: str = "",
+            description_with_clipboard=False,
+    ) -> GuiEntryData:
+        if description_with_clipboard:
+            generate_body = True
+            from python_search.apps.clipboard import Clipboard
+            clipboard_content = Clipboard().get_content()
+            description = description + clipboard_content
+
+
+        return self.launch(default_key=description, default_content=content, generate_body=generate_body)
+
     def launch(
         self,
-        title: str = "New Entry",
+        title: str = "New",
         default_key: str = "",
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
+        generate_body=False
     ) -> GuiEntryData:
         """
         Launch the _entries capture GUI.
@@ -56,12 +72,17 @@ class EntryCaptureGUI:
 
         tags_chucks = self._chunks_of_tags(self._tags, 4)
 
+
         if not default_key:
             default_key = self.genearte_key_from_content(default_content)
 
-        key_name_input = sg.Input(
+        if generate_body:
+            default_content = ChatGPT().answer(default_key)
+
+
+        key_name_input = sg.Multiline(
             key="key", default_text=default_key, expand_x=True, expand_y=True,
-            size=(15, 1),
+            size=(15, 5),
         )
 
 
@@ -74,13 +95,13 @@ class EntryCaptureGUI:
             size=(15, 7),
         )
         layout = [
-            [sg.Text("Key name")],
+            [sg.Text("Desc. / Title")],
             [
                 key_name_input
             ],
-            [sg.Text("Entry content")],
+            [sg.Text("Content")],
             [content_input],
-            [sg.Text("Generator"), sg.Button("Content", key="-generate-body-"), sg.Button("Title", key="-generate-title-")],
+            [sg.Text("Generator"), sg.Button("Content", key="-generate-body-"), sg.Button("Desc. / Title", key="-generate-title-")],
             [sg.Text("Type")],
             [entry_type, sg.Button("Try it", key="-try-entry-")],
             [sg.Text("Tags")],
@@ -98,26 +119,22 @@ class EntryCaptureGUI:
         # workaround for mac bug
 
 
-        window["key"].bind("<Return>", "_Enter")
-        window["content"].bind("<Return>", "_Enter")
-        window["type"].bind("<Return>", "_Enter")
         window["key"].bind("<Escape>", "_Esc")
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
 
-        threading.Thread(
-            target=self._predict_entry_type, args=(window, default_content), daemon=True
-        ).start()
-
+        self._predict_entry_type_thread(default_content, window)
         while True:
             event, values = window.read()
             if event and (event == "-generate-body-"):
-                window['content'].update(ChatGPT().answer(values['key']))
+                new_content = ChatGPT().answer(values['key'])
+                window['content'].update(new_content)
+                #self._predict_entry_type_thread(new_content, window)
 
             if event and (event == "-generate-title-"):
                 window['key'].update(self.genearte_key_from_content(values['content']))
 
-            if event and (event == "write" or event.endswith("_Enter")):
+            if event and event == "write":
                 break
 
             if event == "-type-inference-ready-":
@@ -152,6 +169,11 @@ class EntryCaptureGUI:
 
     def genearte_key_from_content(self, content: str) -> str:
         return ChatGPT().answer("generate a description in the imperative form with most 5 words of the follwing text: " + content)
+
+    def _predict_entry_type_thread(self, content, window):
+        threading.Thread(
+            target=self._predict_entry_type, args=(window, content), daemon=True
+        ).start()
 
     def _report_actual(self, data: GuiEntryData):
         if not self._prediction_uuid:
@@ -221,6 +243,8 @@ class GuiEntryData:
     type: str
     tags: List[str]
 
+def main():
+    fire.Fire(EntryCaptureGUI().launch_v2)
 
 if __name__ == "__main__":
     fire.Fire(EntryCaptureGUI().launch)

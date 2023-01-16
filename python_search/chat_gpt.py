@@ -15,7 +15,7 @@ class ChatGPT:
         message = CollectInput().launch()
         self.answer(message)
 
-    def given_prompt_plus_clipboard(self, given_prompt):
+    def given_prompt_plus_clipboard(self, given_prompt, return_promt=True):
         """
         Appends clipboard content to the given prompt and returns a string with the result.
 
@@ -30,23 +30,30 @@ class ChatGPT:
         prompt = f"{given_prompt}: {content}"
         result = self.answer(prompt)
 
-
-        return f"""
-Result:
-        {result}
-
-
-
-
-
+        prompt_str = f"""
+-------
 Prompt:
-        {prompt}
-        """
+{prompt}
+"""
+
+
+        if return_promt:
+            result = f"""
+{result}
+
+{prompt_str}
+            """
+        else:
+            result
+
+        print(result)
 
     def answer(self, prompt: str, debug=False):
         """
         Answer a prompt with openAI results
         """
+        if len(prompt) > 4097:
+            prompt = prompt[:4097]
 
         import openai
         openai.api_key = os.environ["OPENAI_KEY"]
