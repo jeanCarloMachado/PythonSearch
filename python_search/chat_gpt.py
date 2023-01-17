@@ -5,6 +5,12 @@ class ChatGPT:
     """
         Uses OpenAI to answer a given prompt.
     """
+
+    def __init__(self, max_tokens=500):
+
+        self.max_tokens = int(max_tokens)
+
+
     def collect_prompt_via_ui(self):
         """
         Collects a prompt from the user via a UI.
@@ -59,7 +65,6 @@ Prompt:
         openai.api_key = os.environ["OPENAI_KEY"]
         model_engine = "text-davinci-003"
         # Set the maximum number of tokens to generate in the response
-        max_tokens = 500
 
         if debug:
             print("Prompt: ", prompt)
@@ -69,7 +74,7 @@ Prompt:
             completion = openai.Completion.create(
                 engine=model_engine,
                 prompt=prompt,
-                max_tokens=max_tokens,
+                max_tokens=self.max_tokens,
                 temperature=0.5,
                 top_p=1,
                 frequency_penalty=0,
