@@ -268,7 +268,7 @@ class TrainingDataset:
         Adds the previou_key as an entry
         """
         # build pair dataset with label
-        # add literal column
+        # add literal column to window over all entries
         search_performed_df_tmpcol = df.withColumn("tmp", F.lit("toremove"))
         window = Window.partitionBy("tmp").orderBy("timestamp")
 

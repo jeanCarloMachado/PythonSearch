@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 
 from python_search.events.latest_used_entries import RecentKeys
+from python_search.logger import setup_inference_logger
 from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
     EmbeddingSerialization,
     RedisEmbeddingsReader,
@@ -19,13 +20,14 @@ class InferenceEmbeddingsLoader:
         self.all_keys = copy.copy(list(all_keys))
         self.latest_used_entries = RecentKeys()
         self.embedding_mapping = RedisEmbeddingsReader().load(self.all_keys)
+        self._logger = setup_inference_logger()
 
     def get_embedding_from_key(self, key: str):
         """
         Return an embedding based on the keys
         """
         if not key in self.embedding_mapping or self.embedding_mapping[key] is None:
-            print(
+            self._logger.info(
                 f"The embedding for ({key}) is empty in redis. Syncing the missing keys"
             )
             RedisEmbeddingsWriter().sync_missing()
@@ -43,17 +45,17 @@ class InferenceEmbeddingsLoader:
         Look into the recently used keys and return the most recent for which there are embeddings
         """
         iterator = self.latest_used_entries.get_latest_used_keys()
-        print("On get_recent_key all keys size: " + str(len(self.all_keys)))
-        print("Number of latest used keys: " + str(len(iterator)))
+        self._logger.info("On get_recent_key all keys size: " + str(len(self.all_keys)))
+        self._logger.info("Number of latest used keys: " + str(len(iterator)))
 
-        print("Mapping size: " + str(len(self.embedding_mapping)))
+        self._logger.info("Mapping size: " + str(len(self.embedding_mapping)))
         first_found = False
         for previous_key in iterator:
             if previous_key not in self.embedding_mapping:
-                print(f"Key {previous_key} not found in mapping")
+                self._logger.info(f"Key {previous_key} not found in mapping")
                 continue
             if not self.embedding_mapping[previous_key]:
-                print("Key found but no content in: ", previous_key)
+                self._logger.info("Key found but no content in: ", previous_key)
                 continue
 
             if second_recent and not first_found:

@@ -103,7 +103,7 @@ class EntryCaptureGUI:
             ],
             [sg.Text("Content")],
             [content_input],
-            [sg.Text("Generator"), sg.Button("Content", key="-generate-body-"), sg.Button("Desc. / Title", key="-generate-title-"), sg.Input(500, key='generation-size')],
+            [sg.Text("Generator"), sg.Button("Content", key="-generate-body-"), sg.Button("Desc. / Title", key="-generate-title-"), sg.Text("Size"), sg.Input(500, key='generation-size', expand_x=False)],
             [sg.Text("Type")],
             [entry_type, sg.Button("Try it", key="-try-entry-")],
             [sg.Text("Tags")],

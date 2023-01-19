@@ -92,13 +92,13 @@ class FzfInKitty:
 
     def _get_rankging_generate_cmd(self, reload=False):
         # in mac we need tensorflow to be installed via conda
-        if self.configuration.supported_features.is_dynamic_ranking_supported():
+        if self.configuration.use_webservice:
             if reload:
                 return f"curl -s localhost:8000/ranking/reload_and_generate"
 
             return f"curl -s localhost:8000/ranking/generate"
-
-        return f"python_search _ranking search"
+        else:
+            return f"python_search _ranking search"
 
     def _launch_terminal(self, internal_cmd: str) -> None:
 

@@ -71,7 +71,7 @@ class Inference:
         result.sort(key=lambda x: x[1], reverse=True)
 
         only_keys = [entry[0] for entry in result]
-        logger.info("Ranking inference succeeded")
+        logger.info("Ranking inference succeeded, top results {}".format(only_keys[:3]))
 
         # logger.debug("Only keys: ", only_keys)
         return only_keys

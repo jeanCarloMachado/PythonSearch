@@ -55,7 +55,7 @@ class RegisterNew:
         self.entry_inserter.insert(key, dict_entry)
 
     def _sanitize_key(self, key):
-        return key.replace("\n", " ").replace(":", " ")
+        return key.replace("\n", " ").replace(":", " ").strip()
 
     @notify_exception()
     def launch_ui(self, default_type=None, default_key=None, default_content=None):
