@@ -36,14 +36,6 @@ class FzfInKitty:
     def run(self) -> None:
         self._launch_terminal(self._fzf.get_cmd())
 
-    def _get_background_color(self):
-        if self.configuration.get_fzf_theme() == "light":
-            return " -o background=#ffffff "
-
-        if self.configuration.get_fzf_theme() == "dark":
-            return " -o background=#000000 "
-
-        return " "
 
     def _launch_terminal(self, internal_cmd: str) -> None:
 
@@ -51,6 +43,7 @@ class FzfInKitty:
         if is_mac():
             font = "Pragmata Pro"
 
+        terminal = Terminal()
         launch_cmd = f"""nice -19 kitty \
         --title {self.title} \
         -o draw_minimal_borders=no \
@@ -64,9 +57,9 @@ class FzfInKitty:
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
         -o font_family="{font}" \
-        {self._get_background_color()} \
+        {terminal.get_background_color()} \
         -o font_size={FzfInKitty.FONT_SIZE} \
-        {Terminal.GLOBAL_TERMINAL_PARAMS} \
+        {terminal.GLOBAL_TERMINAL_PARAMS} \
          {internal_cmd}
         """
         self._logger.info(f"Command performed:\n {internal_cmd}")
@@ -85,7 +78,7 @@ class Fzf:
         os.system(self.get_cmd())
 
     def get_cmd(self):
-        cmd = f"""bash -c ' export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
+        cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
         --tiebreak={Fzf.RANK_TIE_BREAK} \
         --extended \
@@ -128,7 +121,7 @@ class Fzf:
         if self.configuration.get_fzf_theme() == "light":
             return ' --color="fg:#4d4d4c,bg:#ffffff,hl:#d7005f,info:#4271ae,prompt:#8959a8,pointer:#d7005f,marker:#4271ae,spinner:#4271ae,header:#4271ae,fg+:#4d4d4c,bg+:#ffffff,hl+:#d7005f" '
 
-        if self.configuration.get_fzf_theme() == "dark":
+        if self.configuration.get_fzf_theme() == "dracula":
             return ' --color="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#6272a4" '
 
         return " "
