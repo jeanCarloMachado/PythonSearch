@@ -61,7 +61,7 @@ class Fzf:
             kill_expr = ' --fzf_pid_to_kill $PPID '
 
         return f"""--bind "{shortcut}:execute-silent:(run_key {{}} --query_used {{q}} {kill_expr} {{}} &)" \
-        --bind "{shortcut}:+reload:(sleep 2 && {self._get_rankging_generate_cmd(reload=True)})" \
+        --bind "{shortcut}:+reload:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
 
