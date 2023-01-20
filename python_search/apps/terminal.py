@@ -53,6 +53,6 @@ class Terminal:
             return " -o background=#ffffff "
 
         if self.configuration.get_fzf_theme() == "dracula":
-            return " -o background=#282a36 "
+            return " -o background=#282a36 -o foreground=#ffffff "
 
         return " "
