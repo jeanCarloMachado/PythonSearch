@@ -41,7 +41,7 @@ class Fzf:
         --bind "ctrl-k:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
         --bind "ctrl-s:execute-silent:(nohup python_search search_edit {{}} && kill -9 $PPID)" \
-        --bind "ctrl-r:reload:({self._get_rankging_generate_cmd(reload=True)})" \
+        --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
         --bind "esc:abort" \
@@ -61,7 +61,7 @@ class Fzf:
             kill_expr = ' --fzf_pid_to_kill $PPID '
 
         return f"""--bind "{shortcut}:execute-silent:(run_key {{}} --query_used {{q}} {kill_expr} {{}} &)" \
-        --bind "{shortcut}:+reload:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
+        --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
 
