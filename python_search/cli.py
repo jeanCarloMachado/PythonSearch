@@ -9,7 +9,7 @@ from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
-from python_search.search_ui.fzf_kitty import FzfInKitty
+from python_search.search_ui.fzf_kitty import FzfInKitty, Fzf
 from python_search.search_ui.preview import Preview
 from python_search.exceptions import notify_exception
 
@@ -64,11 +64,15 @@ class PythonSearchCli:
         self.configuration = configuration
         self.run_key = EntryRunner(self.configuration).run
 
-    def search(self):
+    def search(self, only_fzf=False):
         """
         Opens the Search UI. Main entrypoint of the application
         """
+        if only_fzf:
+            return Fzf(self.configuration).run()
+
         FzfInKitty(self.configuration).run()
+
 
     @notify_exception()
     def edit_main(self):

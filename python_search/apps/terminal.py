@@ -9,7 +9,7 @@ class Terminal:
 
     # these parameters are applied both to all kitty windows of pythons search
     # including the generic params and the python search main window
-    GLOBAL_TERMINAL_PARAMS = " -o remember_window_size=yes -o placement_strategy=center -o confirm_os_window_close=0  -o remember_window_size=n -o macos_quit_when_last_window_closed=yes "
+    GLOBAL_TERMINAL_PARAMS = " -o remember_window_size=yes -o confirm_os_window_close=0  -o remember_window_size=n -o macos_quit_when_last_window_closed=yes "
 
     # this parameters are applied to cli_cmd terminals
 

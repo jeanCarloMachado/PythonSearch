@@ -32,7 +32,7 @@ class PythonSearchConfiguration(EntriesGroup):
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
-        default_fzf_theme: Optional[Literal["light"]] = None,
+        default_fzf_theme: Optional[Literal["light", "dark"]] = None,
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False
     ):
@@ -71,7 +71,7 @@ class PythonSearchConfiguration(EntriesGroup):
         if custom_window_size:
             self._custom_window_size = custom_window_size
 
-        self._use_webservice = use_webservice
+        self.use_webservice = use_webservice
 
 
     def get_next_item_predictor_model(self):
