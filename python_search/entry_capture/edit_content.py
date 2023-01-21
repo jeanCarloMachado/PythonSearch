@@ -62,8 +62,9 @@ class EditKey:
 
         # @ todo make this editor generic
 
+        terminal  = Terminal()
         cmd: str = (
-            f"MY_TITLE='GrimorieSearchRun' kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
+            f"MY_TITLE='GrimorieSearchRun' kitty {terminal.GENERIC_TERMINAL_PARAMS} {terminal.get_background_color()} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
             f"; {self._get_open_text_editor_command(file_name, line)} "
         )

@@ -118,7 +118,7 @@ class PythonSearchCli:
         """
         from python_search.apps.clipboard import Clipboard
 
-        key = entry_str.split(":")[0]
+        key = str(Key.from_fzf(entry_str))
         Clipboard().set_content(key, enable_notifications=True)
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)

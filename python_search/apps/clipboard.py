@@ -46,6 +46,9 @@ class Clipboard:
         if not content:
             raise Exception("Tryring to set empty to clipboard")
 
+        if type(content) != str:
+            raise Exception("Tryring to set a non string to clipboard")
+
         def shellquote(s):
             return "'" + s.replace("'", "\'") + "'"
 
