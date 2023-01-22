@@ -35,18 +35,28 @@ class FzfInKitty:
         self._fzf = Fzf(configuration)
 
     def run(self) -> None:
-        self._launch_terminal(self._fzf.get_cmd())
+        self._focus_or_launch()
+
+    def _focus_or_launch(self):
+        """
+        Focuses the terminal if it is already open
+        """
+        os.system("kitty @ --to unix:/tmp/mykitty focus-window")
+        if not os.path.exists('/tmp/mykitty'):
+            self._launch(self._fzf.get_cmd())
 
 
-    def _launch_terminal(self, internal_cmd: str) -> None:
+    def _launch(self, internal_cmd: str) -> None:
 
         font = "FontAwesome"
         if is_mac():
             font = "Pragmata Pro"
-
         terminal = Terminal()
+
         launch_cmd = f"""nice -19 kitty \
         --title {self.title} \
+        --listen-on unix:/tmp/mykitty \
+        -o allow_remote_control=yes \
         -o draw_minimal_borders=no \
         -o window_padding_width=0  \
         -o placement_strategy=center \

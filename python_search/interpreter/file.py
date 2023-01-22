@@ -34,7 +34,7 @@ class FileInterpreter(BaseInterpreter):
         filename, file_extension = os.path.splitext(self.cmd["file"])
 
 
-        if file_extension in [".py", '.vim', '.', '.rc', '.yaml', '.yml']:
+        if file_extension in [".py", '.vim', '.', '.rc', '.yaml', '.yml', '.conf']:
             return 'docker_nvim'
 
         if is_mac():

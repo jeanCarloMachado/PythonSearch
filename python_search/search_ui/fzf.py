@@ -13,6 +13,7 @@ class Fzf:
     def run(self):
         os.system(self.get_cmd())
 
+
     def get_cmd(self):
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         fzf \
@@ -46,7 +47,7 @@ class Fzf:
         --bind "shift-up:first" \
         --bind "esc:abort" \
         --bind "ctrl-d:abort"  \
-        {self._get_fzf_theme()} ; exit 0
+        {self._get_fzf_theme()} ; rm -rf /tmp/mykitty ; exit 0
         '
         """
 
