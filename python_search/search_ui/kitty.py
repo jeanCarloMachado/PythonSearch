@@ -43,11 +43,10 @@ class FzfInKitty:
         """
         os.system("kitty @ --to unix:/tmp/mykitty focus-window")
         if not os.path.exists('/tmp/mykitty'):
-            self._launch(self._fzf.get_cmd())
+            self._launch()
 
-
-    def _launch(self, internal_cmd: str) -> None:
-
+    def _launch(self) -> None:
+        internal_cmd = self._fzf.get_cmd()
         font = "FontAwesome"
         if is_mac():
             font = "Pragmata Pro"

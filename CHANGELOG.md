@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.1 (2023-01)
+
+- Add support for chatgpt UI
+- Separate FZF and kitty
+- Always use the same kitty window
+- New model for next item predictor
+
+
 ## 0.9.8
 
 
