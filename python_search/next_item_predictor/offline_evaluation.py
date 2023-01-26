@@ -7,17 +7,17 @@ from python_search.next_item_predictor.inference.input import ModelInput
 
 class OfflineEvaluation:
     """
-    Evaluate the _model with a part of the training _entries
+    Evaluate the model with the validation set
     """
 
-    NUMBER_OF_TESTS = 100
+    NUMBER_OF_TESTS = 150
 
-    def run(self, model, dataset: DataFrame, X_test):
+    def run(self, model, dataset: DataFrame, X_test) -> dict:
         """
         Computes the average position of the entry in the validation set
         """
         self._configuration = ConfigurationLoader().load_config()
-        print("Starting offline evaluation")
+        print("Starting offline evaluation using validation set and recently trained model")
         ids = [int(x) for x in X_test[:, 0].tolist()]
         df = dataset.toPandas()
         test_df = df[df["entry_number"].isin(ids)]
@@ -40,7 +40,7 @@ class OfflineEvaluation:
                 or ('previous_previous_key' in row and not self._key_exists(row["previous_previous_key"]))
             ):
                 print(
-                    f"Members of entry do not existly any longer ({key}, {previous_key}, {previous_previous_key})"
+                    f"Members of entry do not existing any longer ({key}, {previous_key}, {previous_previous_key})"
                 )
                 continue
 

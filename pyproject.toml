@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.9.9"
+version = "0.10.1"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -58,8 +58,8 @@ notify_send = 'python_search.apps.notification_ui:main'
 python_search_infra = 'python_search.infrastructure.infrastructure:main'
 browser = 'python_search.apps.browser:main'
 python_search_webapi = 'python_search.web_api:main'
-run_entry = 'python_search.cli:_run_key_bin'
-run_key = 'python_search.cli:_run_key_bin'
+run_entry = 'python_search.entry_runner:main'
+run_key = 'python_search.entry_runner:main'
 reminders = 'python_search.plugins.reminders:main'
 feature_toggle = 'python_search.feature_toggle:FeatureToggle.main'
 generic_data_collector = 'python_search.data_collector:GenericDataCollector.initialize'
@@ -68,6 +68,9 @@ ps_webapi = 'python_search.sdk.web_api_sdk:main'
 aps_webapi = 'python_search.sdk.web_api_sdk:main'
 wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = []}
 events_etl = 'python_search.events.events_etl:main'
+chat_gpt = 'python_search.chat_gpt:main'
+entry_builder = 'python_search.entry_capture.entry_inserter_gui:main'
+entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings.entry_embeddings:main'
 
 [tool.poetry.extras]
 server = [

@@ -34,6 +34,7 @@ class NextItemPredictorPipeline:
         use_cache=False,
         clean_events_first=False,
         skip_offline_evaluation=False,
+        only_print_dataset=False,
     ):
         """
         Trains both xgboost and keras models
@@ -52,6 +53,7 @@ class NextItemPredictorPipeline:
 
         if not train_only:
             train_only = ["xgboost", "keras"]
+            print("Training all models")
         else:
             print("Training only: ", train_only)
 
@@ -59,6 +61,10 @@ class NextItemPredictorPipeline:
             RunPerformedCleaning().clean()
 
         dataset = self._model.build_dataset()
+        if only_print_dataset:
+            print(dataset.show())
+            return
+
 
         X, Y = self._model.transform_collection(dataset)
         from python_search.next_item_predictor.train_keras import TrainKeras
@@ -68,12 +74,14 @@ class NextItemPredictorPipeline:
         )
 
         X_test_p = X_test
+        # delete row number from X_test
         X_test = np.delete(X_test, 0, axis=1)
         X_train = np.delete(X_train, 0, axis=1)
 
         if "xgboost" in train_only:
             mlflow = configure_mlflow()
-            with mlflow.start_run():
+            with mlflow.start_run() as active_run:
+                print(f"Starting xgboost training, run_id {active_run.info.run_id}")
                 model = TrainXGBoost().train(X_train, X_test, Y_train, Y_test)
                 mlflow.xgboost.log_model(model, "model")
                 if not skip_offline_evaluation:
@@ -84,7 +92,8 @@ class NextItemPredictorPipeline:
 
         if "keras" in train_only:
             mlflow = configure_mlflow()
-            with mlflow.start_run():
+            with mlflow.start_run() as active_run:
+                print(f"Starting keras training, run_id {active_run.info.run_id}")
                 from python_search.next_item_predictor.train_keras import (
                     TrainKeras,
                 )

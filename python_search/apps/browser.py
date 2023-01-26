@@ -37,12 +37,14 @@ class Browser:
         if url is not None:
             url_expr = f"'{url}'"
 
-        if browser == "chrome":
-            cmd = f" open -a 'Google Chrome' {url_expr}"
-        else:
-            cmd = f" open -a Firefox {url_expr}"
+        if incognito:
+            return f'open -a "Google Chrome" --args -n --incognito "{url_expr}"'
 
-        return cmd
+
+        if browser == "chrome":
+            return f" open -a 'Google Chrome' {url_expr}"
+
+        return f" open -a Firefox {url_expr}"
 
 
 def main():

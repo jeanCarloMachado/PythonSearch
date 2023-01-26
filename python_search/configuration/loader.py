@@ -9,6 +9,14 @@ class ConfigurationLoader:
     Loads the application from the environment.py
     """
 
+    _instance = None
+
+    def get_config_instance(self):
+        if not ConfigurationLoader._instance:
+            ConfigurationLoader._instance = self.load_config()
+        return ConfigurationLoader._instance
+
+
     def load_config(self) -> PythonSearchConfiguration:
 
         folder = self.get_project_root()

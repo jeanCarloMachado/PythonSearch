@@ -20,6 +20,7 @@ class PythonSearchConfiguration(EntriesGroup):
     _initialization_time = None
     _default_text_editor = "vim"
     _default_fzf_theme = None
+    use_webservice = False
 
 
     def __init__(
@@ -31,8 +32,9 @@ class PythonSearchConfiguration(EntriesGroup):
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
-        default_fzf_theme: Optional[Literal["light"]] = None,
+        default_fzf_theme: Optional[Literal["light", "dark"]] = None,
         custom_window_size: Optional[Tuple[int, int]] = None,
+        use_webservice=False
     ):
         """
 
@@ -68,6 +70,8 @@ class PythonSearchConfiguration(EntriesGroup):
         self._default_fzf_theme = default_fzf_theme
         if custom_window_size:
             self._custom_window_size = custom_window_size
+
+        self.use_webservice = use_webservice
 
 
     def get_next_item_predictor_model(self):
