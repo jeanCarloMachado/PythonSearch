@@ -121,22 +121,20 @@ def _stop_and_remove_by_name(name):
     print("Stopping previously running container")
     os.system(f"docker stop {name} ; docker rm {name}")
 
-def run_streamlit(restart=False, disable_password=False):
+
+def run_streamlit(*, custom_entry_point: Optional[str] = None, restart=False, disable_password=False):
 
     if restart:
         _restart_by_port(8501)
 
-    run(
-        cmd="streamlit run python_search/data_ui/main.py --server.address=0.0.0.0  --server.port=8501",
-        port="8501:8501",
-        restart=restart,
-        extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
-    )
 
-def run_calendar(restart=True, disable_password=False):
+    entry_point = 'python_search/data_ui/main.py'
+    if custom_entry_point:
+        entry_point = custom_entry_point
+
     run(
-        cmd="streamlit run /entries/calendar_app.py --server.address=0.0.0.0  --server.port=8502",
-        port="8502:8502",
+        cmd=f"streamlit run {entry_point} --server.address=0.0.0.0  --server.port=8501",
+        port="8501:8501",
         restart=restart,
         extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
     )
