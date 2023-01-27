@@ -173,8 +173,15 @@ class EntryCaptureGUI:
 
     def _generate_title_thread(self, content: str, window):
         self._chat_gpt = ChatGPT(window["generation-size"].get())
+        import PySimpleGUI as sg
+        window: sg.Window = window
+        old_title = window["key"]
         def _describe_body(content: str, window):
             description = self.genearte_key_from_content(content)
+            new_title = window["key"]
+            if old_title != new_title:
+                print("Will not upgrade the title as it was already changed")
+                return
             window["key"].update(description)
 
         threading.Thread(

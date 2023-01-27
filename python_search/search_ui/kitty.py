@@ -41,8 +41,8 @@ class FzfInKitty:
         """
         Focuses the terminal if it is already open
         """
-        os.system("kitty @ --to unix:/tmp/mykitty focus-window")
-        if not os.path.exists('/tmp/mykitty'):
+        result = os.system("kitty @ --to unix:/tmp/mykitty focus-window")
+        if result != 0 or not os.path.exists('/tmp/mykitty'):
             self._launch()
 
     def _launch(self) -> None:
