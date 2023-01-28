@@ -2,7 +2,6 @@ import os
 
 from python_search.environment import is_mac
 
-
 class InstallDependencies:
     def install_all(self):
         """

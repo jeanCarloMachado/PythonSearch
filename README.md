@@ -21,7 +21,7 @@ Write a python script like this, and call it.
 ### 1. Install python search
 
 ```sh
-pip install python-search
+pip install python-search && python_search install_missing_dependencies
 ```
 
 We support **Mac and Linux**.
