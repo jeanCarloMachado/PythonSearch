@@ -22,7 +22,7 @@ class FileInterpreter(BaseInterpreter):
             )
 
         print(cmd)
-        if FileInterpreter.file_exists(self.cmd['file']):
+        if FileInterpreter.file_exists(self.cmd["file"]):
             return
 
         raise CommandDoNotMatchException(
@@ -33,9 +33,8 @@ class FileInterpreter(BaseInterpreter):
 
         filename, file_extension = os.path.splitext(self.cmd["file"])
 
-
-        if file_extension in [".py", '.vim', '.', '.rc', '.yaml', '.yml', '.conf']:
-            return 'docker_nvim'
+        if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:
+            return "docker_nvim"
 
         if is_mac():
             return "open"
@@ -57,7 +56,7 @@ class FileInterpreter(BaseInterpreter):
         cmd = f'{executable} "{self.cmd["file"]}"'
 
         final_cmd = self.cmd
-        if executable in ["vim", 'docker_nvim']:
+        if executable in ["vim", "docker_nvim"]:
             final_cmd["cli_cmd"] = cmd
         else:
             final_cmd["cmd"] = cmd

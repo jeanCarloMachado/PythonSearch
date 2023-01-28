@@ -20,7 +20,6 @@ from python_search.search_ui.serialized_entry import (
 )
 
 
-
 class EntryRunner:
     """
     Responsible to execute the _entries matched
@@ -40,7 +39,7 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
-        fzf_pid_to_kill = None
+        fzf_pid_to_kill=None,
     ):
         """
         Runs an entry given its name or its partial name.
@@ -86,8 +85,6 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-
-
         if len(matches) > 1:
             key = min(matches, key=len)
             send_notification(
@@ -95,7 +92,6 @@ class EntryRunner:
             )
 
         result = InterpreterMatcher.build_instance(self.configuration).default(key)
-
 
         self.logger.info("Passed interpreter")
         run_performed = RunPerformed(

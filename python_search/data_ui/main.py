@@ -9,8 +9,11 @@ from python_search.events.run_performed.dataset import EntryExecutedDataset
 from python_search.data_ui.training_page import load_training_page
 
 open_page = "home"
+
+
 def init():
     st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
+
 
 def sidebar():
     global open_page
@@ -51,7 +54,7 @@ def render_page():
         st.dataframe(pdf)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     init()
     sidebar()
     if check_password():

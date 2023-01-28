@@ -3,13 +3,12 @@ import os
 
 class ChatGPT:
     """
-        Uses OpenAI to answer a given prompt.
+    Uses OpenAI to answer a given prompt.
     """
 
     def __init__(self, max_tokens=500):
 
         self.max_tokens = int(max_tokens)
-
 
     def collect_prompt_via_ui(self):
         """
@@ -18,6 +17,7 @@ class ChatGPT:
         :return:
         """
         from python_search.apps.collect_input import CollectInput
+
         message = CollectInput().launch()
         self.answer(message)
 
@@ -30,7 +30,8 @@ class ChatGPT:
             str: A string with the result of combining the prompt with clipboard content.
         """
 
-        from python_search.apps.clipboard import Clipboard;
+        from python_search.apps.clipboard import Clipboard
+
         content = Clipboard().get_content()
 
         prompt = f"{given_prompt}: {content}"
@@ -41,7 +42,6 @@ class ChatGPT:
 Prompt:
 {prompt}
 """
-
 
         if return_promt:
             result = f"""
@@ -62,6 +62,7 @@ Prompt:
             prompt = prompt[:4097]
 
         import openai
+
         openai.api_key = os.environ["OPENAI_KEY"]
         model_engine = "text-davinci-003"
         # Set the maximum number of tokens to generate in the response
@@ -78,7 +79,7 @@ Prompt:
                 temperature=0.5,
                 top_p=1,
                 frequency_penalty=0,
-                presence_penalty=0
+                presence_penalty=0,
             )
         except Exception as e:
             print(f"Error {e}")
@@ -90,8 +91,10 @@ Prompt:
     def print_answer(self, prompt):
         print(self.answer(prompt))
 
+
 def main():
     import fire
+
     fire.Fire(ChatGPT)
 
 

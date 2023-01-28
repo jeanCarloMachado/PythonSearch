@@ -41,11 +41,14 @@ class EntryExecutedDataset:
         return self.spark.read.format("parquet").load_old(data_location)
 
     def load_clean(self):
-        return self.spark.read.format("parquet").schema(EntryExecutedDataset.SCHEMA).load(self.CLEAN_PATH)
+        return (
+            self.spark.read.format("parquet")
+            .schema(EntryExecutedDataset.SCHEMA)
+            .load(self.CLEAN_PATH)
+        )
 
     def load_new(self):
         from pyspark.sql.session import SparkSession
-
 
         spark = SparkSession.builder.getOrCreate()
         result_df = spark.read.json(

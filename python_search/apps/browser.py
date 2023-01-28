@@ -40,7 +40,6 @@ class Browser:
         if incognito:
             return f'open -a "Google Chrome" --args -n --incognito "{url_expr}"'
 
-
         if browser == "chrome":
             return f" open -a 'Google Chrome' {url_expr}"
 

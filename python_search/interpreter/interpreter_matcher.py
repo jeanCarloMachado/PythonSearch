@@ -20,6 +20,7 @@ INTERPRETERS_IN_ORDER = [
     CmdInterpreter,
 ]
 
+
 class InterpreterMatcher:
     """
     Matches a query with an entry interpreter
@@ -28,7 +29,7 @@ class InterpreterMatcher:
     _instance = None
 
     @staticmethod
-    def build_instance(configuration) -> 'InterpreterMatcher':
+    def build_instance(configuration) -> "InterpreterMatcher":
         """
         Singleton. Initializes a _configuration a context and a interpreter
 
@@ -47,7 +48,9 @@ class InterpreterMatcher:
         self._interpreters = INTERPRETERS_IN_ORDER
         self.logger = interpreter_logger()
 
-    def get_interpreter(self, given_input: str, skip_key_matching=False) -> BaseInterpreter:
+    def get_interpreter(
+        self, given_input: str, skip_key_matching=False
+    ) -> BaseInterpreter:
         """
         Given the string content, returns the best matched interpreter.
         Returns the instance of the matched interpreter given an text input

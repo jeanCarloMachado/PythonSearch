@@ -62,7 +62,6 @@ class Search:
 
         self._rerank_via_model()
 
-
         """Populate the variable used_entries  with the results from redis"""
         result = self._merge_with_latest_used()
 

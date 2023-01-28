@@ -25,7 +25,7 @@ class EditKey:
             return
 
         if not len(key):
-            print('Editing default')
+            print("Editing default")
             self.edit_default()
             return
 
@@ -62,7 +62,7 @@ class EditKey:
 
         # @ todo make this editor generic
 
-        terminal  = Terminal()
+        terminal = Terminal()
         cmd: str = (
             f"MY_TITLE='GrimorieSearchRun' kitty {terminal.GENERIC_TERMINAL_PARAMS} {terminal.get_background_color()} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
@@ -79,9 +79,9 @@ class EditKey:
         os.system(cmd)
 
     def _get_open_text_editor_command(self, file, line):
-        if self.configuration.get_text_editor() == 'vim':
+        if self.configuration.get_text_editor() == "vim":
             return f"{self.configuration.get_text_editor()} {file} +{line}'"
-        elif self.configuration.get_text_editor() == 'docker_nvim':
+        elif self.configuration.get_text_editor() == "docker_nvim":
             return f"{self.configuration.get_text_editor()} {file} --line={line}'"
         else:
             # if is not a known editor just open the file

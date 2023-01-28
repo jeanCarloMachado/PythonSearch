@@ -15,6 +15,7 @@ from python_search.next_item_predictor.offline_evaluation import (
 )
 from python_search.next_item_predictor.train_xgboost import TrainXGBoost
 
+
 class NextItemPredictorPipeline:
     """
     Exposes the whole ML pipeline, the runs everything
@@ -30,7 +31,7 @@ class NextItemPredictorPipeline:
 
     def run(
         self,
-        train_only: Optional[List[model_types]] = ['xgboost'],
+        train_only: Optional[List[model_types]] = ["xgboost"],
         use_cache=False,
         clean_events_first=False,
         skip_offline_evaluation=False,
@@ -64,7 +65,6 @@ class NextItemPredictorPipeline:
         if only_print_dataset:
             print(dataset.show())
             return
-
 
         X, Y = self._model.transform_collection(dataset)
         from python_search.next_item_predictor.train_keras import TrainKeras
@@ -110,18 +110,19 @@ class NextItemPredictorPipeline:
         return SparkSession.builder.getOrCreate()
 
     def _fix_python_interpreter_pyspark(self):
-        print('Overriding pyspark python executable')
+        print("Overriding pyspark python executable")
 
         from subprocess import PIPE, Popen
+
         command = "whereis python"
         with Popen(command, stdout=PIPE, stderr=None, shell=True) as process:
             output = process.communicate()[0].decode("utf-8")
         print(f"Where is ouptut: {output}")
         # get only the path and remove new line in the end
-        path = output.split(' ')[1].split("\n")[0]
+        path = output.split(" ")[1].split("\n")[0]
         print(f"Using the following path: {path}")
-        os.environ['PYSPARK_PYTHON'] = path
-        os.environ['PYSPARK_DRIVER_PYTHON'] = path
+        os.environ["PYSPARK_PYTHON"] = path
+        os.environ["PYSPARK_DRIVER_PYTHON"] = path
 
 
 def main():

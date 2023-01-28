@@ -2,6 +2,7 @@ import datetime
 import pytest
 import os
 
+
 def in_ci():
     in_ci = "CI" in os.environ
 
@@ -11,6 +12,7 @@ def in_ci():
         print("Not running in CI")
 
     return in_ci
+
 
 @pytest.mark.skipif(in_ci(), reason="cant run in CI atm")
 def test_events_still_being_produced():
@@ -23,4 +25,4 @@ def test_events_still_being_produced():
     df = EntryExecutedDataset().load_new()
     df = df.withColumn("datetime", F.from_unixtime("timestamp"))
     max_date = df.agg({"datetime": "max"}).collect()[0][0]
-    assert datetime.date.today().isoformat().split(' ')[0] == max_date.split(' ')[0]
+    assert datetime.date.today().isoformat().split(" ")[0] == max_date.split(" ")[0]

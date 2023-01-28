@@ -42,7 +42,7 @@ class PythonSearchCli:
 
     @staticmethod
     def set_project_location(location: str):
-        """For existing """
+        """For existing"""
         from python_search.init.project import Project
 
         Project().set_current_project(location)
@@ -74,7 +74,6 @@ class PythonSearchCli:
 
         FzfInKitty(self.configuration).run()
 
-
     @notify_exception()
     def edit_main(self):
         """Edit the main script"""
@@ -93,6 +92,7 @@ class PythonSearchCli:
         key = str(Key.from_fzf(entry_str))
 
         from python_search.entry_capture.edit_content import EditKey
+
         result = EditKey(self.configuration).edit_key(key, dry_run=False)
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
@@ -105,6 +105,7 @@ class PythonSearchCli:
         Used by fzf to provide Ctrl-c functionality.
         """
         from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+
         key = str(Key.from_fzf(entry_str))
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
@@ -182,7 +183,6 @@ class PythonSearchCli:
         """
         Preview().display(entry_text)
 
-
     def _entry_type_classifier(self):
 
         from python_search.entry_type.classifier_inference import (
@@ -206,8 +206,6 @@ def _error_handler(e):
     )
 
     raise e
-
-
 
 
 def main():

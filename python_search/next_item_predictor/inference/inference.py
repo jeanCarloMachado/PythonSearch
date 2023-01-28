@@ -26,7 +26,6 @@ class Inference:
 
         self.debug = os.getenv("DEBUG", False)
 
-
         configuration = (
             configuration if configuration else ConfigurationLoader().load_config()
         )
@@ -41,7 +40,9 @@ class Inference:
             logger.info("Next item predictor using run id: " + self.run_id)
 
         try:
-            self._mlflow_model = model if model else self._model.load_mlflow_model(run_id=self.run_id)
+            self._mlflow_model = (
+                model if model else self._model.load_mlflow_model(run_id=self.run_id)
+            )
         except Exception as e:
             print("Failed to load mlflow model")
             self._mlflow_model = None
@@ -65,7 +66,9 @@ class Inference:
         )
         logger.info("Inference input: " + str(inference_input.__dict__))
 
-        X = self._model.transform_single({'inference_input': inference_input, 'all_keys': self.all_keys})
+        X = self._model.transform_single(
+            {"inference_input": inference_input, "all_keys": self.all_keys}
+        )
         Y = self._predict(X)
         result = list(zip(self.all_keys, Y))
         result.sort(key=lambda x: x[1], reverse=True)

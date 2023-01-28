@@ -41,6 +41,7 @@ class Clipboard:
 
         if not content and has_stdin():
             import sys
+
             content = sys.stdin.read()
 
         if not content:
@@ -50,7 +51,7 @@ class Clipboard:
             raise Exception("Tryring to set a non string to clipboard")
 
         def shellquote(s):
-            return "'" + s.replace("'", "\'") + "'"
+            return "'" + s.replace("'", "'") + "'"
 
         sanitized = shellquote(content)
 

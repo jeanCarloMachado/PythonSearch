@@ -105,8 +105,8 @@ class NextItemModelV1(ModelInterface):
         This is an element wise search.
         """
 
-        inference_input_obj = inference_input['inference_input']
-        all_keys = inference_input['all_keys']
+        inference_input_obj = inference_input["inference_input"]
+        all_keys = inference_input["all_keys"]
 
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
             inference_input_obj.previous_key

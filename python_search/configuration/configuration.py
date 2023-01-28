@@ -22,7 +22,6 @@ class PythonSearchConfiguration(EntriesGroup):
     _default_fzf_theme = None
     use_webservice = False
 
-
     def __init__(
         self,
         *,
@@ -73,21 +72,26 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.use_webservice = use_webservice
 
-
     def get_next_item_predictor_model(self):
         """
         Return the model used by the application
 
         :return:
         """
-        #version = 'v1'
-        version = 'v2'
+        # version = 'v1'
+        version = "v2"
 
-        if version == 'v1':
-            from python_search.next_item_predictor.next_item_model_v2 import NextItemModelV1
+        if version == "v1":
+            from python_search.next_item_predictor.next_item_model_v2 import (
+                NextItemModelV1,
+            )
+
             return NextItemModelV1()
         else:
-            from python_search.next_item_predictor.next_item_model_v2 import NextItemModelV2
+            from python_search.next_item_predictor.next_item_model_v2 import (
+                NextItemModelV2,
+            )
+
             return NextItemModelV2()
 
     def get_text_editor(self):

@@ -85,7 +85,8 @@ class Mac:
         from subprocess import PIPE, Popen
 
         get_pid_app = "pgrep iCanHazShortcut"
-        import subprocess;
+        import subprocess
+
         output = subprocess.check_output(get_pid_app, shell=True, text=True)
         if len(output) < 3:
             raise Exception("Could not find PID! Restart will fail, try again.")

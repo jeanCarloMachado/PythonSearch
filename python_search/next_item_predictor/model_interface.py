@@ -3,11 +3,11 @@ from typing import Tuple
 import numpy as np
 from pyspark.sql import DataFrame
 
+
 class ModelInterface:
     """
     Sets of interfaces that need to be implemented to provide a new version of the NextItemPredictor model
     """
-
 
     def build_dataset(self) -> DataFrame:
         """
@@ -24,9 +24,7 @@ class ModelInterface:
         """
         raise Exception("Not implemented")
 
-    def transform_collection(
-            self, dataset: DataFrame
-    )->Tuple[np.ndarray, np.ndarray]:
+    def transform_collection(self, dataset: DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         """
         Returns X and Y
         :param dataset:

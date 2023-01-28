@@ -17,7 +17,9 @@ class OfflineEvaluation:
         Computes the average position of the entry in the validation set
         """
         self._configuration = ConfigurationLoader().load_config()
-        print("Starting offline evaluation using validation set and recently trained model")
+        print(
+            "Starting offline evaluation using validation set and recently trained model"
+        )
         ids = [int(x) for x in X_test[:, 0].tolist()]
         df = dataset.toPandas()
         test_df = df[df["entry_number"].isin(ids)]
@@ -30,14 +32,17 @@ class OfflineEvaluation:
         number_of_existing_keys = len(self._configuration.commands.keys())
         for index, row in test_df.iterrows():
 
-            key = row['key']
-            previous_key = row.get('previous_key')
-            previous_previous_key = row.get('previous_previous_key')
+            key = row["key"]
+            previous_key = row.get("previous_key")
+            previous_previous_key = row.get("previous_previous_key")
 
             if (
                 not self._key_exists(row["key"])
-                or ('previous_key' in row and not self._key_exists(row["previous_key"]))
-                or ('previous_previous_key' in row and not self._key_exists(row["previous_previous_key"]))
+                or ("previous_key" in row and not self._key_exists(row["previous_key"]))
+                or (
+                    "previous_previous_key" in row
+                    and not self._key_exists(row["previous_previous_key"])
+                )
             ):
                 print(
                     f"Members of entry do not existing any longer ({key}, {previous_key}, {previous_previous_key})"

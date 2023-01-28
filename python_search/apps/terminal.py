@@ -22,7 +22,6 @@ class Terminal:
     def __init__(self):
         self.configuration = ConfigurationLoader().get_config_instance()
 
-
     def wrap_cmd_into_terminal(
         self, cmd, title=None, hold_terminal_open_on_end=True
     ) -> str:
@@ -41,12 +40,9 @@ class Terminal:
         if hold_terminal_open_on_end:
             hold = " --hold "
 
-        final_cmd = (
-            f'kitty {hold} {Terminal.GENERIC_TERMINAL_PARAMS} {self.get_background_color()} -T "{title}" {cmd} '
-        )
+        final_cmd = f'kitty {hold} {Terminal.GENERIC_TERMINAL_PARAMS} {self.get_background_color()} -T "{title}" {cmd} '
 
         return final_cmd
-
 
     def get_background_color(self):
         if self.configuration.get_fzf_theme() == "light":

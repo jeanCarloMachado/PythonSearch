@@ -6,13 +6,13 @@ from python_search.configuration.configuration import PythonSearchConfiguration
 class Fzf:
     PREVIEW_PERCENTAGE_SIZE = 50
     RANK_TIE_BREAK: str = "begin,index"
+
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
         self.preview_cmd = f"python_search _preview_entry {{}} "
 
     def run(self):
         os.system(self.get_cmd())
-
 
     def get_cmd(self):
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
@@ -39,9 +39,11 @@ class Fzf:
         --bind "alt-m:execute-silent:(nohup python_search edit_main {{}} & disown)" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+first" \
-        --bind "ctrl-k:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
+        --bind "ctrl-j:down" \
+        --bind "ctrl-k:up" \
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
         --bind "ctrl-s:execute-silent:(nohup python_search search_edit {{}} && kill -9 $PPID)" \
+        --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
         --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
@@ -53,19 +55,16 @@ class Fzf:
 
         return cmd
 
-
     def _run_key(self, shortcut: str, kill_window=False) -> str:
 
-
-        kill_expr = ''
+        kill_expr = ""
         if kill_window:
-            kill_expr = ' --fzf_pid_to_kill $PPID '
+            kill_expr = " --fzf_pid_to_kill $PPID "
 
         return f"""--bind "{shortcut}:execute-silent:(run_key {{}} --query_used {{q}} {kill_expr} {{}} &)" \
         --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
-
 
     def _edit_key(self, shortcut) -> str:
         return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key --fzf_pid_to_kill $PPID {{}}  & disown)" """

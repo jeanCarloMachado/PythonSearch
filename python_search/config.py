@@ -36,6 +36,7 @@ class DataConfig:
 class MLFlowConfig:
     port = 5002
 
+
 class KafkaConfig:
     default_port: str = "9092"
     host: str = f"127.0.0.1:{default_port}"
