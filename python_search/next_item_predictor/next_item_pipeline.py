@@ -25,9 +25,9 @@ class NextItemPredictorPipeline:
 
     def __init__(self):
         self._fix_python_interpreter_pyspark()
-
         configuration = ConfigurationLoader().load_config()
         self._model = configuration.get_next_item_predictor_model()
+        self._offline_evaluation = OfflineEvaluation()
 
     def run(
         self,
@@ -61,22 +61,24 @@ class NextItemPredictorPipeline:
         if clean_events_first:
             RunPerformedCleaning().clean()
 
-        dataset = self._model.build_dataset()
+        dataset = self._model.load_or_build_dataset()
         if only_print_dataset:
             print(dataset.show())
             return
 
         X, Y = self._model.transform_collection(dataset)
-        from python_search.next_item_predictor.train_keras import TrainKeras
-
         X_train, X_test, Y_train, Y_test = train_test_split(
-            X, Y, test_size=TrainKeras.TEST_SPLIT_SIZE, random_state=42
+            X, Y, test_size=0.7, random_state=42
         )
 
-        X_test_p = X_test
+        X_test_dataset = self._offline_evaluation.get_X_test_split_of_dataset(dataset, X_test)
+
+        def delete_ids_colunn(df):
+            return np.delete(df, 0, axis=1)
+
         # delete row number from X_test
-        X_test = np.delete(X_test, 0, axis=1)
-        X_train = np.delete(X_train, 0, axis=1)
+        X_test = delete_ids_colunn(X_test)
+        X_train = delete_ids_colunn(X_train)
 
         if "xgboost" in train_only:
             mlflow = configure_mlflow()
@@ -85,8 +87,8 @@ class NextItemPredictorPipeline:
                 model = TrainXGBoost().train(X_train, X_test, Y_train, Y_test)
                 mlflow.xgboost.log_model(model, "model")
                 if not skip_offline_evaluation:
-                    offline_evaluation = OfflineEvaluation().run(
-                        model, dataset, X_test_p
+                    offline_evaluation = self._offline_evaluation.run(
+                        model, X_test_dataset
                     )
                     mlflow.log_params(offline_evaluation)
 
@@ -101,8 +103,8 @@ class NextItemPredictorPipeline:
                 model = TrainKeras().train(X_train, X_test, Y_train, Y_test)
                 mlflow.keras.log_model(model, "model", keras_module="keras")
                 if not skip_offline_evaluation:
-                    offline_evaluation = OfflineEvaluation().run(
-                        model, dataset, X_test_p
+                    offline_evaluation = self._offline_evaluation.run(
+                        model, X_test_dataset
                     )
                     mlflow.log_params(offline_evaluation)
 

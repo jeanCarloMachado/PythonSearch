@@ -4,6 +4,7 @@ import datetime
 import time
 from typing import Optional
 
+from python_search.apps.browser import Browser
 from python_search.apps.clipboard import Clipboard
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
@@ -106,14 +107,8 @@ class RegisterNew:
         if len(german_term) == 0:
             raise RegisterNewException.empty_content()
 
-        from python_search.interpreter.url import UrlInterpreter
-
         print(f"german term: {german_term}")
-        cmd = {
-            "url": f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate"
-        }
-        UrlInterpreter(cmd).interpret_default()
-        time.sleep(1)
+        Browser().open(f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate")
 
         from python_search.apps.collect_input import CollectInput
 
@@ -128,3 +123,8 @@ class RegisterNew:
         }
 
         self.entry_inserter.insert(german_term, as_dict)
+
+
+def main():
+    import fire
+    fire.Fire(RegisterNew)

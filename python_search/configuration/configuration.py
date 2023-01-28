@@ -89,10 +89,10 @@ class PythonSearchConfiguration(EntriesGroup):
             return NextItemModelV1()
         else:
             from python_search.next_item_predictor.next_item_model_v2 import (
-                NextItemModelV2,
+                NextItemBaseModelV2,
             )
 
-            return NextItemModelV2()
+            return NextItemBaseModelV2()
 
     def get_text_editor(self):
         return self._default_text_editor

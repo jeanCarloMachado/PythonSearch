@@ -1,3 +1,4 @@
+import os.path
 from typing import Tuple, Dict
 
 import numpy as np
@@ -16,7 +17,7 @@ from python_search.next_item_predictor.features.entry_embeddings import (
 from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
     create_key_indexed_embedding,
 )
-from python_search.next_item_predictor.model_interface import ModelInterface
+from python_search.next_item_predictor.model_interface import BaseModel
 
 
 def number_of_same_words(key1, key2) -> int:
@@ -32,7 +33,7 @@ def number_of_same_words_from_row(row):
     return number_of_same_words(row["key_performed"], row["key"])
 
 
-class NextItemModelV2(ModelInterface):
+class NextItemBaseModelV2(BaseModel):
     PRODUCTION_RUN_ID = "bc55a9e7acb64f6aa05b63158bad9dc6"
 
     DIMENSIONS = 384 + 1 + 384 + 384
@@ -42,8 +43,8 @@ class NextItemModelV2(ModelInterface):
         self._all_keys = configuration.commands.keys()
         self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
-    def build_dataset(self, debug=True) -> DataFrame:
 
+    def build_dataset(self, debug=True) -> DataFrame:
         print("Building dataset v2")
 
         self._ranking_df = self._get_ranking_entries_dataset()
@@ -279,6 +280,9 @@ class NextItemModelV2(ModelInterface):
         return X
 
     def load_mlflow_model(self, run_id=None):
+        if not run_id:
+            run_id = self.PRODUCTION_RUN_ID
+
         model = PythonSearchMLFlow().get_next_predictor_model(run_id=run_id)
         return model
 
