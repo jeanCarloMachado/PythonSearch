@@ -7,7 +7,6 @@ from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdInterpreter
 
-
 class FileInterpreter(BaseInterpreter):
     def __init__(self, cmd: Any, context: Context = None):
         self.context = context
@@ -21,7 +20,6 @@ class FileInterpreter(BaseInterpreter):
                 f"Not Valid {self.__class__.__name__} command {cmd}"
             )
 
-        print(cmd)
         if FileInterpreter.file_exists(self.cmd["file"]):
             return
 
@@ -36,8 +34,6 @@ class FileInterpreter(BaseInterpreter):
         if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:
             return "docker_nvim"
 
-        if is_mac():
-            return "open"
 
         if os.path.isdir(self.cmd["file"]):
             return "nautilus"

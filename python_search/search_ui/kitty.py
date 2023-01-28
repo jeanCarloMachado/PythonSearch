@@ -49,7 +49,7 @@ class FzfInKitty:
         """
         Focuses the terminal if it is already open
         """
-        result = os.system("kitty @ --to unix:/tmp/mykitty focus-window")
+        result = os.system(f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window")
         if result != 0 or not os.path.exists("/tmp/mykitty"):
             self._launch()
 
@@ -60,7 +60,7 @@ class FzfInKitty:
             font = "Pragmata Pro"
         terminal = Terminal()
 
-        launch_cmd = f"""nice -19 kitty \
+        launch_cmd = f"""nice -19 {get_kitty_cmd()} \
         --title {self.title} \
         --listen-on unix:/tmp/mykitty \
         -o allow_remote_control=yes \
@@ -85,6 +85,12 @@ class FzfInKitty:
         if result != 0:
             raise Exception("Search run fzf projection failed")
 
+
+
+def get_kitty_cmd() -> str:
+    if is_mac():
+        return "/Applications/kitty.app/Contents/MacOS/kitty"
+    return "kitty"
 
 if __name__ == "__main__":
     import fire

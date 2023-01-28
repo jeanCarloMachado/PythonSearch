@@ -12,8 +12,6 @@ from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.search_ui.kitty import FzfInKitty
 from python_search.search_ui.fzf import Fzf
 from python_search.search_ui.preview import Preview
-from python_search.exceptions import notify_exception
-
 
 class PythonSearchCli:
     """
@@ -79,12 +77,6 @@ class PythonSearchCli:
 
         FzfInKitty(self.configuration).run()
 
-    @notify_exception()
-    def edit_main(self):
-        """Edit the main script"""
-        from python_search.entry_capture.edit_content import EditKey
-
-        return EditKey(self.configuration).edit_default()
 
     def register_new_ui(self):
         """
@@ -93,18 +85,6 @@ class PythonSearchCli:
         from python_search.entry_capture.register_new import RegisterNew
 
         return RegisterNew(self.configuration).launch_ui
-
-    def edit_key(self, entry_str):
-        """Opens the key in the source code using the IDE specified in the config, defaults to vim"""
-        key = str(Key.from_fzf(entry_str))
-
-        from python_search.entry_capture.edit_content import EditKey
-
-        result = EditKey(self.configuration).edit_key(key, dry_run=False)
-        LogRunPerformedClient().send(
-            RunPerformed(key=key, query_input="", shortcut=False)
-        )
-        return result
 
     def _copy_entry_content(self, entry_str: str):
         """
@@ -140,17 +120,6 @@ class PythonSearchCli:
 
         return ShortcutGenerator(self.configuration).configure
 
-    def _search_edit(self, entry_str=None):
-        from python_search.entry_capture.edit_content import EditKey
-
-        result = EditKey(self.configuration).search_entries_directory(entry_str)
-
-        if entry_str.split(":"):
-            key = entry_str.split(":")[0]
-            LogRunPerformedClient().send(
-                RunPerformed(key=key, query_input="", shortcut=False)
-            )
-        return result
 
     def _ranking(self):
         from python_search.search.search import Search

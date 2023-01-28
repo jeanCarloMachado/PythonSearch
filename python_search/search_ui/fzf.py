@@ -1,6 +1,7 @@
 import os
 
 from python_search.configuration.configuration import PythonSearchConfiguration
+from python_search.environment import is_mac
 
 
 class Fzf:
@@ -16,7 +17,7 @@ class Fzf:
 
     def get_cmd(self):
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
-        fzf \
+        {self.get_fzf_cmd()} \
         --tiebreak={Fzf.RANK_TIE_BREAK} \
         --extended \
         --reverse \
@@ -36,13 +37,11 @@ class Fzf:
         {self._run_key("double-click")} \
         {self._edit_key('ctrl-e')} \
         {self._edit_key('right-click')} \
-        --bind "alt-m:execute-silent:(nohup python_search edit_main {{}} & disown)" \
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+first" \
         --bind "ctrl-j:down" \
         --bind "ctrl-k:up" \
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
-        --bind "ctrl-s:execute-silent:(nohup python_search search_edit {{}} && kill -9 $PPID)" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
         --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-f:first" \
@@ -54,6 +53,12 @@ class Fzf:
         """
 
         return cmd
+
+    def get_fzf_cmd(self):
+        if is_mac():
+            return "/opt/homebrew/bin/fzf"
+
+        return "fzf"
 
     def _run_key(self, shortcut: str, kill_window=False) -> str:
 
@@ -67,7 +72,7 @@ class Fzf:
         --bind "{shortcut}:+clear-screen" """
 
     def _edit_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key --fzf_pid_to_kill $PPID {{}}  & disown)" """
+        return f' --bind "{shortcut}:execute-silent:(nohup entries_editor edit_key {{}} & disown )" '
 
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
@@ -83,8 +88,10 @@ class Fzf:
         if self.configuration.use_webservice:
 
             if reload:
-                return f"curl -s localhost:8000/ranking/reload_and_generate"
+                return "curl -s localhost:8000/ranking/reload_and_generate || python_search _ranking search"
 
-            return f"curl -s localhost:8000/ranking/generate"
+            return "(curl -s localhost:8000/ranking/generate || python_search _ranking search)"
+
+
         else:
             return f"python_search _ranking search"

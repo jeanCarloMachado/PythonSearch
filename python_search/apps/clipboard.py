@@ -63,7 +63,6 @@ class Clipboard:
 
         if enable_notifications:
             from python_search.apps.notification_ui import send_notification
-
             send_notification(f"Content copied: {sanitized}")
 
         import os
