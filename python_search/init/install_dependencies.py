@@ -11,6 +11,16 @@ class InstallDependencies:
 
         self._install_fzf()
         self._install_kitty()
+        self._install_tk_mac()
+
+
+    def _install_tk_mac(self):
+
+        if not is_mac():
+            return
+
+        os.system("brew install python-tk")
+
 
     def _install_fzf(self):
         print("Installing FZF")

@@ -27,8 +27,13 @@ class PythonSearchCli:
     configuration: PythonSearchConfiguration
 
     @staticmethod
-    def install_dependencies():
-        """install dependencies"""
+    def install_missing_dependencies():
+        """
+        Install all missing dependencies that cannot be provided thorugh the default installer
+
+        For mac: brew related dependenceis
+
+        """
         from python_search.init.install_dependencies import InstallDependencies
 
         InstallDependencies().install_all()
@@ -81,11 +86,13 @@ class PythonSearchCli:
 
         return EditKey(self.configuration).edit_default()
 
-    def register_new(self):
-        """Starts the UI for collecting a new entry into pythonsearch"""
+    def register_new_ui(self):
+        """
+        Starts the UI for collecting a new entry into pythonsearch
+        """
         from python_search.entry_capture.register_new import RegisterNew
 
-        return RegisterNew(self.configuration)
+        return RegisterNew(self.configuration).launch_ui
 
     def edit_key(self, entry_str):
         """Opens the key in the source code using the IDE specified in the config, defaults to vim"""
