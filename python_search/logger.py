@@ -37,6 +37,13 @@ def setup_run_key_logger():
 
     return logger
 
+def setup_generic_stdout_logger():
+    logger = logging.getLogger("stdoutlogger")
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.INFO)
+    logger.addHandler(ch)
+    logger.setLevel(logging.INFO)
+    return logger
 
 def interpreter_logger():
     logger = logging.getLogger("interpeter_logger")
