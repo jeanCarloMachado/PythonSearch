@@ -3,6 +3,7 @@ from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
+from python_search.theme import TimeBasedThemeSelector
 
 
 class PythonSearchConfiguration(EntriesGroup):
@@ -66,7 +67,7 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor
-        self._default_fzf_theme = default_fzf_theme
+        self._default_fzf_theme = default_fzf_theme if default_fzf_theme else TimeBasedThemeSelector().get_theme()
         if custom_window_size:
             self._custom_window_size = custom_window_size
 

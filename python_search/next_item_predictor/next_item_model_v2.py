@@ -34,7 +34,7 @@ def number_of_same_words_from_row(row):
 
 
 class NextItemBaseModelV2(BaseModel):
-    PRODUCTION_RUN_ID = "bc55a9e7acb64f6aa05b63158bad9dc6"
+    PRODUCTION_RUN_ID = "6f3713f390684bef8273f6b57f944d22"
 
     DIMENSIONS = 384 + 1 + 384 + 384
 

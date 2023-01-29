@@ -23,10 +23,10 @@ class OfflineEvaluation:
 
         dataset = model_class.load_or_build_dataset()
 
-        self.run(model, dataset)
+        self.run(model, dataset.toPandas())
 
 
-    def run(self, model, dataset: DataFrame) -> dict:
+    def run(self, model, dataset: pd.DataFrame) -> dict:
         """
         Computes the average position of the entry in the validation set
         """
@@ -34,7 +34,6 @@ class OfflineEvaluation:
             "Starting offline evaluation using validation set and recently trained model"
         )
 
-        dataset = dataset.toPandas()
         inference = Inference(model=model)
 
         total_found = 0
