@@ -22,7 +22,7 @@ class EntryCaptureGUI:
         self._prediction_uuid = None
         self._chat_gpt = ChatGPT()
 
-    def launch_v2(
+    def launch_prompt(
         self,
         description: str = "",
         content: str = "",
@@ -279,7 +279,7 @@ class GuiEntryData:
 
 
 def main():
-    fire.Fire(EntryCaptureGUI().launch_v2)
+    fire.Fire(EntryCaptureGUI().launch_prompt)
 
 
 if __name__ == "__main__":
