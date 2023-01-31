@@ -26,24 +26,23 @@ PORT = 8000
 
 app = FastAPI()
 
-generator = Search(ConfigurationLoader().load_config())
-ranking_result = generator.search()
+search = Search(ConfigurationLoader().load_config())
+ranking_result = search.search()
 entry_type_inference = PredictEntryTypeInference()
 description_generator = DescriptionGenerator()
 
 
 def reload_ranking():
-    with pyroscope.tag_wrapper({"endpoint": "reload_ranking"}):
-        global generator
+        global search
         global ranking_result
         ranking_result = Search(ConfigurationLoader().reload()).search()
         return ranking_result
 
 
 @app.get("/ranking/generate", response_class=PlainTextResponse)
-def generate_ranking():
-    global ranking_result
-    return ranking_result
+def generate_ranking(skip_model: bool = False, base_rank=False):
+    print("Skip model api level: ", skip_model)
+    return search.search(skip_model=skip_model, base_rank=base_rank)
 
 
 @app.get("/ranking/reload", response_class=PlainTextResponse)
@@ -58,7 +57,7 @@ def reload_and_generate():
 
 @app.get("/_health")
 def health():
-    global generator
+    global search
 
     from python_search.events.latest_used_entries import RecentKeys
 

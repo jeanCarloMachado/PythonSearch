@@ -44,6 +44,7 @@ class Fzf:
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
         --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
+        --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
         --bind "esc:abort" \
@@ -72,7 +73,7 @@ class Fzf:
         --bind "{shortcut}:+clear-screen" """
 
     def _edit_key(self, shortcut) -> str:
-        return f' --bind "{shortcut}:execute-silent:(nohup entries_editor edit_key {{}} & disown )" '
+        return f' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" '
 
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
@@ -83,14 +84,19 @@ class Fzf:
 
         return " "
 
-    def _get_rankging_generate_cmd(self, reload=False):
+    def _get_rankging_generate_cmd(self, reload=False, base_rank=False):
         # in mac we need tensorflow to be installed via conda
         if self.configuration.use_webservice:
 
             if reload:
                 return "curl -s localhost:8000/ranking/reload_and_generate || python_search _ranking search"
 
-            return "(curl -s localhost:8000/ranking/generate || python_search _ranking search)"
+            extra_params= ""
+            if base_rank:
+                extra_params = '?base_rank=True'
+
+
+            return f"curl -s http://localhost:8000/ranking/generate{extra_params}"
 
 
         else:
