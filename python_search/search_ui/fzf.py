@@ -47,7 +47,8 @@ class Fzf:
         --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
-        --bind "esc:abort" \
+        --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
+        --bind "ctrl-k:abort" \
         --bind "ctrl-d:abort"  \
         {self._get_fzf_theme()} ; rm -rf /tmp/mykitty ; exit 0
         '
@@ -101,3 +102,15 @@ class Fzf:
 
         else:
             return f"python_search _ranking search"
+
+
+def hide_current_focused_window():
+    os.system("""osascript -e 'tell application "System Events" to keystroke "h" using {command down}'""")
+
+def main():
+    import fire
+
+    fire.Fire()
+
+if __name__ == "__main__":
+    main()

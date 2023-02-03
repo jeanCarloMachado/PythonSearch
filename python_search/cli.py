@@ -77,7 +77,6 @@ class PythonSearchCli:
 
         FzfInKitty(self.configuration).run()
 
-
     def register_new_ui(self):
         """
         Starts the UI for collecting a new entry into pythonsearch

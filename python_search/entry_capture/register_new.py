@@ -63,11 +63,9 @@ class RegisterNew:
         """
         Create a new inferred entry based on the clipboard content
         """
-
-        if not default_content:
+        if default_content is None:
             default_content = Clipboard().get_content()
 
-        # @todo reenable this once in the dockerfile
         if not default_type:
             default_type = infer_default_type(default_content)
 
@@ -87,16 +85,6 @@ class RegisterNew:
             dict_entry["tags"] = entry_data.tags
 
         self.entry_inserter.insert(key, dict_entry)
-
-    def anonymous_snippet(self):
-        """
-        Create an anonymous snippet entry
-        """
-
-        now = datetime.datetime.now()
-        key = f"no key {now.strftime('%Y %M %d %H %M %S')}"
-
-        self.launch_ui(default_key=key, default_type="Snippet")
 
     def german_from_text(self, german_term: str):
         """

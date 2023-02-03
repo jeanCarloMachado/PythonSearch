@@ -74,6 +74,7 @@ entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings.
 entries_editor = 'python_search.entry_capture.entries_editor:main'
 register_new = 'python_search.entry_capture.register_new:main'
 offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
+ps_fzf = 'python_search.search_ui.fzf:main'
 
 [tool.poetry.extras]
 server = [
@@ -93,4 +94,5 @@ server = [
     "msgpack-numpy",
     "arize",
     "jupyterlab",
+
 ]
