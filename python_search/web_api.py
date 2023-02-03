@@ -33,10 +33,10 @@ description_generator = DescriptionGenerator()
 
 
 def reload_ranking():
-        global search
-        global results
-        results = Search(ConfigurationLoader().reload()).search()
-        return results
+    global search
+    global results
+    results = Search(ConfigurationLoader().reload()).search()
+    return results
 
 
 @app.get("/ranking/generate", response_class=PlainTextResponse)
@@ -44,7 +44,7 @@ def generate_ranking(skip_model: bool = False, base_rank=False, get_latest=True)
 
     global results
     if get_latest and not base_rank:
-       return results
+        return results
     print("Skip model api level: ", skip_model)
     results = search.search(skip_model=skip_model, base_rank=base_rank)
     return results

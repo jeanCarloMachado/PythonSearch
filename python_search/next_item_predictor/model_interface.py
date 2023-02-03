@@ -11,18 +11,18 @@ class BaseModel:
     """
 
     def load_or_build_dataset(self):
-        if os.path.exists('/tmp/dataset.parquet'):
-            print('Loading dataset from /tmp/dataset.parquet')
+        if os.path.exists("/tmp/dataset.parquet"):
+            print("Loading dataset from /tmp/dataset.parquet")
             from pyspark.sql.session import SparkSession
+
             spark = SparkSession.builder.getOrCreate()
 
-            return spark.read.parquet('/tmp/dataset.parquet')
+            return spark.read.parquet("/tmp/dataset.parquet")
 
         df = self.build_dataset(debug=False)
 
-        df = df.drop('uuid')
+        df = df.drop("uuid")
         df.write.parquet("/tmp/dataset.parquet")
-
 
         return df
 

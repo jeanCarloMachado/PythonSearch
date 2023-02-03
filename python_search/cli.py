@@ -13,6 +13,7 @@ from python_search.search_ui.kitty import FzfInKitty
 from python_search.search_ui.fzf import Fzf
 from python_search.search_ui.preview import Preview
 
+
 class PythonSearchCli:
     """
     The command line application, entry point of the program.
@@ -118,7 +119,6 @@ class PythonSearchCli:
         from python_search.shortcut.generator import ShortcutGenerator
 
         return ShortcutGenerator(self.configuration).configure
-
 
     def _ranking(self):
         from python_search.search.search import Search

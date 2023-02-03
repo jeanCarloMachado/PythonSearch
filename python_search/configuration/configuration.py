@@ -67,7 +67,11 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor
-        self._default_fzf_theme = default_fzf_theme if default_fzf_theme else TimeBasedThemeSelector().get_theme()
+        self._default_fzf_theme = (
+            default_fzf_theme
+            if default_fzf_theme
+            else TimeBasedThemeSelector().get_theme()
+        )
         if custom_window_size:
             self._custom_window_size = custom_window_size
 

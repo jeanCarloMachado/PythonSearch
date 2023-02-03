@@ -13,9 +13,10 @@ class EntriesEditor:
     Set of commands to edit the _entries
     """
 
-    def __init__(self, configuration = None):
+    def __init__(self, configuration=None):
         if not configuration:
             from python_search.configuration.loader import ConfigurationLoader
+
             configuration = ConfigurationLoader().load_config()
         self.configuration = configuration
 
@@ -50,10 +51,12 @@ class EntriesEditor:
 
         self._edit_config(file, line)
 
-
     def edit_default(self):
         import os
-        os.system(f"open -a pycharm '{self.configuration.get_project_root() + '/entries_main.py'}'")
+
+        os.system(
+            f"open -a pycharm '{self.configuration.get_project_root() + '/entries_main.py'}'"
+        )
 
     def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
         """
@@ -90,4 +93,5 @@ class EntriesEditor:
 
 def main():
     import fire
+
     fire.Fire(EntriesEditor)

@@ -96,7 +96,9 @@ class RegisterNew:
             raise RegisterNewException.empty_content()
 
         print(f"german term: {german_term}")
-        Browser().open(f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate")
+        Browser().open(
+            f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate"
+        )
 
         from python_search.apps.collect_input import CollectInput
 
@@ -115,4 +117,5 @@ class RegisterNew:
 
 def main():
     import fire
+
     fire.Fire(RegisterNew)

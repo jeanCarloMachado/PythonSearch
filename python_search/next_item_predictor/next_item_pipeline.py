@@ -71,7 +71,9 @@ class NextItemPredictorPipeline:
             X, Y, test_size=0.7, random_state=42
         )
 
-        X_test_dataset = self._offline_evaluation.get_X_test_split_of_dataset(dataset, X_test)
+        X_test_dataset = self._offline_evaluation.get_X_test_split_of_dataset(
+            dataset, X_test
+        )
 
         def delete_ids_colunn(df):
             return np.delete(df, 0, axis=1)

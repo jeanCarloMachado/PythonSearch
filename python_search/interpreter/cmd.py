@@ -67,7 +67,6 @@ class CmdInterpreter(BaseInterpreter):
         if WRAP_IN_TERMINAL not in self.cmd and WRAP_IN_TERMINAL not in os.environ:
             return cmd
 
-
         logger.info("Running it in a new terminal")
 
         hold_terminal = False if "not_hold_terminal" in self.cmd else True

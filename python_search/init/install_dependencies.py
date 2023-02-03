@@ -2,6 +2,7 @@ import os
 
 from python_search.environment import is_mac
 
+
 class InstallDependencies:
     def install_all(self):
         """
@@ -30,7 +31,6 @@ class InstallDependencies:
 
         os.system("brew install python-tk")
 
-
     def _install_fzf(self):
         print("Installing FZF")
 
@@ -52,7 +52,9 @@ class InstallDependencies:
             return
 
         print("Installing brew for you...")
-        os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"')
+        os.system(
+            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        )
 
     def _exists(self, cmd: str):
         result = os.system(f"which {cmd} >/dev/null")

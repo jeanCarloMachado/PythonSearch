@@ -53,7 +53,9 @@ class Inference:
         """
         Gets the search from the next item _model
         """
-        self._logger.info("Number of existing keys for inference: " + str(len(self.all_keys)))
+        self._logger.info(
+            "Number of existing keys for inference: " + str(len(self.all_keys))
+        )
         inference_input = (
             predefined_input
             if predefined_input
@@ -74,7 +76,9 @@ class Inference:
         result.sort(key=lambda x: x[1], reverse=True)
 
         only_keys = [entry[0] for entry in result]
-        self._logger.info("Ranking inference succeeded, top results {}".format(only_keys[:3]))
+        self._logger.info(
+            "Ranking inference succeeded, top results {}".format(only_keys[:3])
+        )
 
         return only_keys
 

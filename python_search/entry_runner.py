@@ -40,7 +40,7 @@ class EntryRunner:
         gui_mode=False,
         from_shortcut=False,
         fzf_pid_to_kill=None,
-        wrap_in_terminal=False
+        wrap_in_terminal=False,
     ):
         """
         Runs an entry given its name or its partial name.
@@ -53,7 +53,7 @@ class EntryRunner:
 
         key = str(Key.from_fzf(entry_text))
         if wrap_in_terminal:
-            os.environ[WRAP_IN_TERMINAL] = '1'
+            os.environ[WRAP_IN_TERMINAL] = "1"
 
         self.logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is

@@ -40,14 +40,15 @@ class Fzf:
         {self._edit_key('ctrl-e')} \
         {self._edit_key('right-click')} \
         --bind "ctrl-l:clear-query" \
+        --bind "ctrl-l:+clear-screen" \
         --bind "ctrl-l:+first" \
+        --bind "ctrl-f:first" \
         --bind "ctrl-j:down" \
         --bind "ctrl-k:up" \
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
         --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \
-        --bind "ctrl-f:first" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
@@ -73,7 +74,7 @@ class Fzf:
 
         wrap_in_terminal_expr = ""
         if wrap_in_terminal:
-            wrap_in_terminal_expr = ' --wrap_in_terminal=True '
+            wrap_in_terminal_expr = " --wrap_in_terminal=True "
 
         return f"""--bind "{shortcut}:execute-silent:(run_key {{}}  --query_used {{q}} {kill_expr} {wrap_in_terminal_expr} {{}} &)" \
         --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
@@ -99,25 +100,27 @@ class Fzf:
             if reload:
                 return "curl -s localhost:8000/ranking/reload_and_generate || python_search _ranking search"
 
-            extra_params= ""
+            extra_params = ""
             if base_rank:
-                extra_params = '?base_rank=True'
-
+                extra_params = "?base_rank=True"
 
             return f"curl -s http://localhost:8000/ranking/generate{extra_params}"
-
 
         else:
             return f"python_search _ranking search"
 
 
 def hide_current_focused_window():
-    os.system("""osascript -e 'tell application "System Events" to keystroke "h" using {command down}'""")
+    os.system(
+        """osascript -e 'tell application "System Events" to keystroke "h" using {command down}'"""
+    )
+
 
 def main():
     import fire
 
     fire.Fire()
+
 
 if __name__ == "__main__":
     main()

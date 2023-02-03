@@ -7,6 +7,7 @@ from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdInterpreter
 
+
 class FileInterpreter(BaseInterpreter):
     """
     Interprets files
@@ -38,10 +39,9 @@ class FileInterpreter(BaseInterpreter):
         if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:
             return "docker_nvim"
 
-
         if os.path.isdir(self.cmd["file"]):
             if is_mac():
-                return 'open'
+                return "open"
             return "nautilus"
 
         if file_extension == ".pdf":
@@ -62,7 +62,7 @@ class FileInterpreter(BaseInterpreter):
             final_cmd["cli_cmd"] = cmd
         else:
             final_cmd["cmd"] = cmd
-            #final_cmd["new-window-non-cli"] = True
+            # final_cmd["new-window-non-cli"] = True
 
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 

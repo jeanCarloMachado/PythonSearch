@@ -17,7 +17,9 @@ class OfflineEvaluation:
     _NUMBER_OF_TESTS = 100
 
     def __init__(self):
-        self._configuration: PythonSearchConfiguration = ConfigurationLoader().load_config()
+        self._configuration: PythonSearchConfiguration = (
+            ConfigurationLoader().load_config()
+        )
 
     def run_current_model(self, debug_row=False):
         model_class = self._configuration.get_next_item_predictor_model()
@@ -27,7 +29,6 @@ class OfflineEvaluation:
 
         self.run(model, dataset.toPandas(), debug_row=debug_row)
 
-
     def run(self, model, dataset: pd.DataFrame, debug_row=False) -> dict:
         """
         Computes the average position of the entry in the validation set
@@ -36,20 +37,20 @@ class OfflineEvaluation:
             "Starting offline evaluation using validation set and recently trained model"
         )
 
-        inference = Inference(model=model,logger=setup_generic_stdout_logger())
+        inference = Inference(model=model, logger=setup_generic_stdout_logger())
 
         no_performed_tests = 0
         avg_position = 0
         number_of_existing_keys = len(self._configuration.commands.keys())
 
-        dataset = dataset[dataset['label'] == 5]
-        print(f"Size of dataset after filtering for positive labels: {len(dataset.index)}")
+        dataset = dataset[dataset["label"] == 5]
+        print(
+            f"Size of dataset after filtering for positive labels: {len(dataset.index)}"
+        )
         for index, row in dataset.iterrows():
 
             if not self.all_keys_exist(row):
-                print(
-                    f"Members of entry do not existing any longer skipping row"
-                )
+                print(f"Members of entry do not existing any longer skipping row")
                 continue
 
             print("Entry row: ")
@@ -75,7 +76,7 @@ class OfflineEvaluation:
 
             metadata = {
                 "position_target": result.index(key),
-                'target_key': key,
+                "target_key": key,
                 "number_of_items_in_ranking": len(result),
                 "top_result_preview": result[0:3],
                 "bottom_result_preview": result[-3:],
@@ -101,16 +102,15 @@ class OfflineEvaluation:
 
     def all_keys_exist(self, row) -> bool:
         if (
-                not row.get('key')
-                or not row.get('previous_key')
-                or not row.get('previous_previous_key')
-                or not self._key_exists(row["key"])
-                or not self._key_exists(row["previous_key"])
-                or not self._key_exists(row["previous_previous_key"])
+            not row.get("key")
+            or not row.get("previous_key")
+            or not row.get("previous_previous_key")
+            or not self._key_exists(row["key"])
+            or not self._key_exists(row["previous_key"])
+            or not self._key_exists(row["previous_previous_key"])
         ):
             return False
         return True
-
 
     def get_X_test_split_of_dataset(self, dataset: DataFrame, X_test) -> pd.DataFrame:
         """
@@ -126,9 +126,12 @@ class OfflineEvaluation:
     def _key_exists(self, key):
         return key in self._configuration.commands.keys()
 
+
 def main():
     import fire
+
     fire.Fire(OfflineEvaluation)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

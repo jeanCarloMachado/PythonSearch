@@ -43,7 +43,6 @@ class NextItemBaseModelV2(BaseModel):
         self._all_keys = configuration.commands.keys()
         self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
-
     def build_dataset(self, debug=True) -> DataFrame:
         print("Building dataset v2")
 

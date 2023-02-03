@@ -86,11 +86,11 @@ class FzfInKitty:
             raise Exception("Search run fzf projection failed")
 
 
-
 def get_kitty_cmd() -> str:
     if is_mac():
         return "/Applications/kitty.app/Contents/MacOS/kitty"
     return "kitty"
+
 
 if __name__ == "__main__":
     import fire
