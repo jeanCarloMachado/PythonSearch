@@ -48,6 +48,7 @@ class Fzf:
         --bind "ctrl-f:first" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
+        --bind "esc:+clear-query" \
         --bind "ctrl-k:abort" \
         --bind "ctrl-d:abort"  \
         {self._get_fzf_theme()} ; rm -rf /tmp/mykitty ; exit 0
