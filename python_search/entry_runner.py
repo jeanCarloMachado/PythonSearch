@@ -11,7 +11,7 @@ from python_search.context import Context
 from python_search.core_entities import Key
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
-from python_search.interpreter.cmd import CmdInterpreter
+from python_search.interpreter.cmd import CmdInterpreter, WRAP_IN_TERMINAL
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
 from python_search.exceptions import notify_exception
@@ -40,6 +40,7 @@ class EntryRunner:
         gui_mode=False,
         from_shortcut=False,
         fzf_pid_to_kill=None,
+        wrap_in_terminal=False
     ):
         """
         Runs an entry given its name or its partial name.
@@ -51,6 +52,8 @@ class EntryRunner:
         """
 
         key = str(Key.from_fzf(entry_text))
+        if wrap_in_terminal:
+            os.environ[WRAP_IN_TERMINAL] = '1'
 
         self.logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is

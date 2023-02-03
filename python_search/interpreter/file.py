@@ -8,6 +8,10 @@ from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdInterpreter
 
 class FileInterpreter(BaseInterpreter):
+    """
+    Interprets files
+    """
+
     def __init__(self, cmd: Any, context: Context = None):
         self.context = context
         self.cmd = cmd
@@ -36,6 +40,8 @@ class FileInterpreter(BaseInterpreter):
 
 
         if os.path.isdir(self.cmd["file"]):
+            if is_mac():
+                return 'open'
             return "nautilus"
 
         if file_extension == ".pdf":
@@ -56,6 +62,7 @@ class FileInterpreter(BaseInterpreter):
             final_cmd["cli_cmd"] = cmd
         else:
             final_cmd["cmd"] = cmd
+            #final_cmd["new-window-non-cli"] = True
 
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 

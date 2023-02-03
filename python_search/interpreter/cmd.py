@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 # @ todo remove this dependencies on grimoire
@@ -55,8 +56,7 @@ class CmdInterpreter(BaseInterpreter):
         if "directory" in self.cmd:
             cmd = f'cd {self.cmd["directory"]} && {cmd}'
 
-        if WRAP_IN_TERMINAL in self.cmd:
-            cmd = self._try_to_wrap_in_terminal(cmd)
+        cmd = self._try_to_wrap_in_terminal(cmd)
 
         logger.info(f"Command to run: {cmd}")
         result = self._execute(cmd)
@@ -64,8 +64,9 @@ class CmdInterpreter(BaseInterpreter):
         return self.return_result(result)
 
     def _try_to_wrap_in_terminal(self, cmd):
-        if WRAP_IN_TERMINAL not in self.cmd:
+        if WRAP_IN_TERMINAL not in self.cmd and WRAP_IN_TERMINAL not in os.environ:
             return cmd
+
 
         logger.info("Running it in a new terminal")
 
