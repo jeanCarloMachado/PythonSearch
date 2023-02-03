@@ -27,22 +27,27 @@ PORT = 8000
 app = FastAPI()
 
 search = Search(ConfigurationLoader().load_config())
-ranking_result = search.search()
+results = search.search()
 entry_type_inference = PredictEntryTypeInference()
 description_generator = DescriptionGenerator()
 
 
 def reload_ranking():
         global search
-        global ranking_result
-        ranking_result = Search(ConfigurationLoader().reload()).search()
-        return ranking_result
+        global results
+        results = Search(ConfigurationLoader().reload()).search()
+        return results
 
 
 @app.get("/ranking/generate", response_class=PlainTextResponse)
-def generate_ranking(skip_model: bool = False, base_rank=False):
+def generate_ranking(skip_model: bool = False, base_rank=False, get_latest=True):
+
+    global results
+    if get_latest and not base_rank:
+       return results
     print("Skip model api level: ", skip_model)
-    return search.search(skip_model=skip_model, base_rank=base_rank)
+    results = search.search(skip_model=skip_model, base_rank=base_rank)
+    return results
 
 
 @app.get("/ranking/reload", response_class=PlainTextResponse)
