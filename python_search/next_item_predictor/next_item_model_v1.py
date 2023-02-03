@@ -14,10 +14,10 @@ from python_search.next_item_predictor.features.entry_embeddings.entry_embedding
     create_key_indexed_embedding,
 )
 from python_search.next_item_predictor.training_dataset import TrainingDataset
-from python_search.next_item_predictor.model_interface import ModelInterface
+from python_search.next_item_predictor.model_interface import BaseModel
 
 
-class NextItemModelV1(ModelInterface):
+class NextItemBaseModelV1(BaseModel):
     """
     Transform takes an input and make it ready for inference
 
@@ -52,7 +52,7 @@ class NextItemModelV1(ModelInterface):
         Returns a pair with X, Y
         """
         print("Number of rows in the dataset: ", dataset.count())
-        print(f"Dimensions of dataset = {NextItemModelV1.DIMENSIONS}")
+        print(f"Dimensions of dataset = {NextItemBaseModelV1.DIMENSIONS}")
 
         if use_cache:
             if not os.path.exists("/tmp/X.npy") or not os.path.exists("/tmp/Y.npy"):
@@ -65,7 +65,7 @@ class NextItemModelV1(ModelInterface):
 
         embeddings_keys = self._create_embeddings_training_dataset(dataset)
         # one extra for the row number
-        X = np.zeros([dataset.count(), NextItemModelV1.DIMENSIONS + 1])
+        X = np.zeros([dataset.count(), NextItemBaseModelV1.DIMENSIONS + 1])
         Y = np.empty(dataset.count())
 
         print("X shape:", X.shape)
@@ -105,8 +105,8 @@ class NextItemModelV1(ModelInterface):
         This is an element wise search.
         """
 
-        inference_input_obj = inference_input['inference_input']
-        all_keys = inference_input['all_keys']
+        inference_input_obj = inference_input["inference_input"]
+        all_keys = inference_input["all_keys"]
 
         previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
             inference_input_obj.previous_key
@@ -118,7 +118,7 @@ class NextItemModelV1(ModelInterface):
         )
 
         # create an inference array for all keys
-        X = np.zeros([len(all_keys), NextItemModelV1.DIMENSIONS])
+        X = np.zeros([len(all_keys), NextItemBaseModelV1.DIMENSIONS])
         for i, key in enumerate(all_keys):
             key_embedding = self.inference_embeddings.get_embedding_from_key(key)
             if key_embedding is None:
@@ -167,4 +167,4 @@ class NextItemModelV1(ModelInterface):
         return model
 
     def get_run_id(self):
-        return NextItemModelV1.PRODUCTION_RUN_ID
+        return NextItemBaseModelV1.PRODUCTION_RUN_ID

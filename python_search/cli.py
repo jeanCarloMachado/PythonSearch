@@ -12,7 +12,6 @@ from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.search_ui.kitty import FzfInKitty
 from python_search.search_ui.fzf import Fzf
 from python_search.search_ui.preview import Preview
-from python_search.exceptions import notify_exception
 
 
 class PythonSearchCli:
@@ -27,8 +26,13 @@ class PythonSearchCli:
     configuration: PythonSearchConfiguration
 
     @staticmethod
-    def install_dependencies():
-        """install dependencies"""
+    def install_missing_dependencies():
+        """
+        Install all missing dependencies that cannot be provided thorugh the default installer
+
+        For mac: brew related dependenceis
+
+        """
         from python_search.init.install_dependencies import InstallDependencies
 
         InstallDependencies().install_all()
@@ -42,7 +46,7 @@ class PythonSearchCli:
 
     @staticmethod
     def set_project_location(location: str):
-        """For existing """
+        """For existing"""
         from python_search.init.project import Project
 
         Project().set_current_project(location)
@@ -74,30 +78,13 @@ class PythonSearchCli:
 
         FzfInKitty(self.configuration).run()
 
-
-    @notify_exception()
-    def edit_main(self):
-        """Edit the main script"""
-        from python_search.entry_capture.edit_content import EditKey
-
-        return EditKey(self.configuration).edit_default()
-
-    def register_new(self):
-        """Starts the UI for collecting a new entry into pythonsearch"""
+    def register_new_ui(self):
+        """
+        Starts the UI for collecting a new entry into pythonsearch
+        """
         from python_search.entry_capture.register_new import RegisterNew
 
-        return RegisterNew(self.configuration)
-
-    def edit_key(self, entry_str):
-        """Opens the key in the source code using the IDE specified in the config, defaults to vim"""
-        key = str(Key.from_fzf(entry_str))
-
-        from python_search.entry_capture.edit_content import EditKey
-        result = EditKey(self.configuration).edit_key(key, dry_run=False)
-        LogRunPerformedClient().send(
-            RunPerformed(key=key, query_input="", shortcut=False)
-        )
-        return result
+        return RegisterNew(self.configuration).launch_ui
 
     def _copy_entry_content(self, entry_str: str):
         """
@@ -105,6 +92,7 @@ class PythonSearchCli:
         Used by fzf to provide Ctrl-c functionality.
         """
         from python_search.interpreter.interpreter_matcher import InterpreterMatcher
+
         key = str(Key.from_fzf(entry_str))
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
@@ -131,18 +119,6 @@ class PythonSearchCli:
         from python_search.shortcut.generator import ShortcutGenerator
 
         return ShortcutGenerator(self.configuration).configure
-
-    def _search_edit(self, entry_str=None):
-        from python_search.entry_capture.edit_content import EditKey
-
-        result = EditKey(self.configuration).search_entries_directory(entry_str)
-
-        if entry_str.split(":"):
-            key = entry_str.split(":")[0]
-            LogRunPerformedClient().send(
-                RunPerformed(key=key, query_input="", shortcut=False)
-            )
-        return result
 
     def _ranking(self):
         from python_search.search.search import Search
@@ -182,7 +158,6 @@ class PythonSearchCli:
         """
         Preview().display(entry_text)
 
-
     def _entry_type_classifier(self):
 
         from python_search.entry_type.classifier_inference import (
@@ -206,8 +181,6 @@ def _error_handler(e):
     )
 
     raise e
-
-
 
 
 def main():

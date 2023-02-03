@@ -11,6 +11,25 @@ class InstallDependencies:
 
         self._install_fzf()
         self._install_kitty()
+        self._install_ack()
+        self._install_tk_mac()
+
+    def _install_ack(self):
+        print("Installing ack")
+        if is_mac():
+            self._install_brew_if_not_present()
+            os.system("brew install ack")
+        else:
+            print(
+                "Dont know how to install ack for your platform, please do so manually"
+            )
+
+    def _install_tk_mac(self):
+
+        if not is_mac():
+            return
+
+        os.system("brew install python-tk")
 
     def _install_fzf(self):
         print("Installing FZF")
@@ -20,18 +39,22 @@ class InstallDependencies:
 
         print("Looks like kitty is not installed in your platform. ")
         if is_mac():
-            print("Installing it for you...")
-
-            if not self._exists("brew"):
-                raise Exception(
-                    "Cannot continue without brew to install fzf. Please install brew first (https://brew.sh/)"
-                )
-
+            self._install_brew_if_not_present()
             os.system("brew install fzf")
         else:
             print(
                 "Dont know how to install fzf for your platform, please do so manually"
             )
+
+    def _install_brew_if_not_present(self):
+        if self._exists("brew"):
+            print("Brew already installed!")
+            return
+
+        print("Installing brew for you...")
+        os.system(
+            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        )
 
     def _exists(self, cmd: str):
         result = os.system(f"which {cmd} >/dev/null")

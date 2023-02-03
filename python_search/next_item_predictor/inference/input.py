@@ -29,8 +29,12 @@ class ModelInput:
     ):
         self.hour = hour
         self.month = month
-        if not previous_key or not previous_previous_key:
+        if not previous_key:
             raise ValueError("Previous keys cannot be empty")
+
+        if not previous_previous_key:
+            raise ValueError("Previous previous keys cannot be empty")
+
         self.previous_key = previous_key
         self.previous_previous_key = previous_previous_key
         self.times_used_previous = times_used_previous

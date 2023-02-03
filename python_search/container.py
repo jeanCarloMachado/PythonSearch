@@ -18,7 +18,14 @@ def build_and_run():
     run()
 
 
-def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None, name: Optional[str] = None):
+def run(
+    cmd="",
+    entrypoint="",
+    port="",
+    restart=False,
+    extra_env_vars=None,
+    name: Optional[str] = None,
+):
     """
     Runs inside the docker container
 
@@ -74,8 +81,9 @@ def run(cmd="", entrypoint="", port="", restart=False, extra_env_vars=None, name
     print("Cmd: " + cmd)
     os.system(cmd)
 
+
 def run_webserver():
-    name="python_search_webserver"
+    name = "python_search_webserver"
     _stop_and_remove_by_name(name)
 
     run(
@@ -83,6 +91,7 @@ def run_webserver():
         port="8000:8000",
         name=name,
     )
+
 
 def sh():
     shell()
@@ -112,23 +121,24 @@ def run_mlflow(restart=False):
     )
 
 
-
 def _restart_by_port(port):
     print("Stopping previously running container")
     os.system(f"docker stop $(docker ps | grep -i {port} | cut -d ' ' -f1) ; sleep 3")
+
 
 def _stop_and_remove_by_name(name):
     print("Stopping previously running container")
     os.system(f"docker stop {name} ; docker rm {name}")
 
 
-def run_streamlit(*, custom_entry_point: Optional[str] = None, restart=False, disable_password=False):
+def run_streamlit(
+    *, custom_entry_point: Optional[str] = None, restart=False, disable_password=False
+):
 
     if restart:
         _restart_by_port(8501)
 
-
-    entry_point = 'python_search/data_ui/main.py'
+    entry_point = "python_search/data_ui/main.py"
     if custom_entry_point:
         entry_point = custom_entry_point
 
@@ -138,6 +148,7 @@ def run_streamlit(*, custom_entry_point: Optional[str] = None, restart=False, di
         restart=restart,
         extra_env_vars=[" -e 'PS_DISABLE_PASSWORD=1' "] if disable_password else None,
     )
+
 
 def start():
     import fire

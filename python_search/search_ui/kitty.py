@@ -11,15 +11,23 @@ class FzfInKitty:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE : int = 15
+    FONT_SIZE: int = 15
     _default_window_size = (800, 400)
 
     configuration: PythonSearchConfiguration
 
     def __init__(self, configuration: PythonSearchConfiguration):
         custom_window_size = configuration.get_window_size()
-        self.width = custom_window_size[0] if custom_window_size else self._default_window_size[0]
-        self.height = custom_window_size[1] if custom_window_size else self._default_window_size[1]
+        self.width = (
+            custom_window_size[0]
+            if custom_window_size
+            else self._default_window_size[0]
+        )
+        self.height = (
+            custom_window_size[1]
+            if custom_window_size
+            else self._default_window_size[1]
+        )
 
         self.title = configuration.APPLICATION_TITLE
         self.configuration = configuration
@@ -41,8 +49,8 @@ class FzfInKitty:
         """
         Focuses the terminal if it is already open
         """
-        os.system("kitty @ --to unix:/tmp/mykitty focus-window")
-        if not os.path.exists('/tmp/mykitty'):
+        result = os.system(f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window")
+        if result != 0 or not os.path.exists("/tmp/mykitty"):
             self._launch()
 
     def _launch(self) -> None:
@@ -52,7 +60,7 @@ class FzfInKitty:
             font = "Pragmata Pro"
         terminal = Terminal()
 
-        launch_cmd = f"""nice -19 kitty \
+        launch_cmd = f"""nice -19 {get_kitty_cmd()} \
         --title {self.title} \
         --listen-on unix:/tmp/mykitty \
         -o allow_remote_control=yes \
@@ -76,6 +84,12 @@ class FzfInKitty:
         result = os.system(launch_cmd)
         if result != 0:
             raise Exception("Search run fzf projection failed")
+
+
+def get_kitty_cmd() -> str:
+    if is_mac():
+        return "/Applications/kitty.app/Contents/MacOS/kitty"
+    return "kitty"
 
 
 if __name__ == "__main__":

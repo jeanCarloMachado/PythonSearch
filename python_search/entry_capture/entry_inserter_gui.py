@@ -22,21 +22,25 @@ class EntryCaptureGUI:
         self._prediction_uuid = None
         self._chat_gpt = ChatGPT()
 
-    def launch_v2(
-            self,
-            description: str = "",
-            content: str = "",
-            description_with_clipboard=False,
+    def launch_prompt(
+        self,
+        description: str = "",
+        content: str = "",
+        description_with_clipboard=False,
     ) -> GuiEntryData:
         generate_body = False
         if description_with_clipboard:
             generate_body = True
             from python_search.apps.clipboard import Clipboard
+
             clipboard_content = Clipboard().get_content()
             description = description + clipboard_content
 
-
-        return self.launch(default_key=description, default_content=content, generate_body=generate_body)
+        return self.launch(
+            default_key=description,
+            default_content=content,
+            generate_body=generate_body,
+        )
 
     def launch(
         self,
@@ -45,7 +49,7 @@ class EntryCaptureGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
-        generate_body=False
+        generate_body=False,
     ) -> GuiEntryData:
         """
         Launch the _entries capture GUI.
@@ -77,16 +81,16 @@ class EntryCaptureGUI:
 
         tags_chucks = self._chunks_of_tags(self._tags, 4)
 
-
         if generate_body:
             default_content = self._chat_gpt.answer(default_key)
 
-
         key_name_input = sg.Multiline(
-            key="key", default_text=default_key, expand_x=True, expand_y=True,
+            key="key",
+            default_text=default_key,
+            expand_x=True,
+            expand_y=True,
             size=(15, 5),
         )
-
 
         content_input = sg.Multiline(
             key="content",
@@ -98,12 +102,16 @@ class EntryCaptureGUI:
         )
         layout = [
             [sg.Text("Desc. / Title")],
-            [
-                key_name_input
-            ],
+            [key_name_input],
             [sg.Text("Content")],
             [content_input],
-            [sg.Text("Generator"), sg.Button("Content", key="-generate-body-"), sg.Button("Desc. / Title", key="-generate-title-"), sg.Text("Size"), sg.Input(500, key='generation-size', expand_x=False)],
+            [
+                sg.Text("Generator"),
+                sg.Button("Content", key="-generate-body-"),
+                sg.Button("Desc. / Title", key="-generate-title-"),
+                sg.Text("Size"),
+                sg.Input(500, key="generation-size", expand_x=False),
+            ],
             [sg.Text("Type")],
             [entry_type, sg.Button("Try it", key="-try-entry-")],
             [sg.Text("Tags")],
@@ -122,7 +130,6 @@ class EntryCaptureGUI:
         if not default_key and default_content:
             self._generate_title_thread(default_content, window)
 
-
         window["key"].bind("<Escape>", "_Esc")
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
@@ -132,9 +139,9 @@ class EntryCaptureGUI:
             event, values = window.read()
             if event and (event == "-generate-body-"):
                 self._chat_gpt = ChatGPT(window["generation-size"].get())
-                new_content = self._chat_gpt.answer(values['key'])
-                window['content'].update(new_content)
-                #self._predict_entry_type_thread(new_content, window)
+                new_content = self._chat_gpt.answer(values["key"])
+                window["content"].update(new_content)
+                # self._predict_entry_type_thread(new_content, window)
 
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
@@ -147,7 +154,9 @@ class EntryCaptureGUI:
                 continue
 
             if event == "-try-entry-":
-               InterpreterMatcher.build_instance(self._configuration).get_interpreter_from_type(values['type'])(values['content']).default()
+                InterpreterMatcher.build_instance(
+                    self._configuration
+                ).get_interpreter_from_type(values["type"])(values["content"]).default()
 
             if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
                 raise Exception("Quitting window")
@@ -165,7 +174,6 @@ class EntryCaptureGUI:
             values["key"], values["content"], values["type"], selected_tags
         )
 
-
         if serialize_output:
             result = result.__dict__
 
@@ -173,17 +181,28 @@ class EntryCaptureGUI:
 
     def _generate_title_thread(self, content: str, window):
         self._chat_gpt = ChatGPT(window["generation-size"].get())
+        import PySimpleGUI as sg
+
+        window: sg.Window = window
+        old_title = window["key"]
+
         def _describe_body(content: str, window):
             description = self.genearte_key_from_content(content)
+            new_title = window["key"]
+            if old_title != new_title:
+                print("Will not upgrade the title as it was already changed")
+                return
             window["key"].update(description)
 
         threading.Thread(
             target=_describe_body, args=(content, window), daemon=True
         ).start()
 
-
     def genearte_key_from_content(self, content: str) -> str:
-        return self._chat_gpt.answer("generate a description in the imperative form with most 5 words of the follwing text: " + content)
+        return self._chat_gpt.answer(
+            "generate a description in the imperative form with most 5 words of the follwing text: "
+            + content
+        )
 
     def _predict_entry_type_thread(self, content, window):
         threading.Thread(
@@ -258,8 +277,10 @@ class GuiEntryData:
     type: str
     tags: List[str]
 
+
 def main():
-    fire.Fire(EntryCaptureGUI().launch_v2)
+    fire.Fire(EntryCaptureGUI().launch_prompt)
+
 
 if __name__ == "__main__":
     fire.Fire(EntryCaptureGUI().launch)

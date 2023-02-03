@@ -30,7 +30,9 @@ class Clipboard:
 
         return result
 
-    def set_content(self, content: Union[str, None] = None, enable_notifications=True):
+    def set_content(
+        self, content: Union[str, None] = None, enable_notifications=True, notify=False
+    ):
         """
         Put a string in the clipboard.
         If no string is provided it tries to fetch it from stdin
@@ -40,8 +42,9 @@ class Clipboard:
         """
 
         if not content and has_stdin():
-            import sys
-            content = sys.stdin.read()
+
+            data = sys.stdin.readlines()
+            content = "\n".join(data)
 
         if not content:
             raise Exception("Tryring to set empty to clipboard")
@@ -50,7 +53,7 @@ class Clipboard:
             raise Exception("Tryring to set a non string to clipboard")
 
         def shellquote(s):
-            return "'" + s.replace("'", "\'") + "'"
+            return "'" + s.replace("'", "'") + "'"
 
         sanitized = shellquote(content)
 
@@ -60,7 +63,7 @@ class Clipboard:
 
         cmd = f"echo {sanitized} | {clipboard_cmd}"
 
-        if enable_notifications:
+        if enable_notifications or notify:
             from python_search.apps.notification_ui import send_notification
 
             send_notification(f"Content copied: {sanitized}")

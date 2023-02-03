@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.10.1"
+version = "0.10.2"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -71,6 +71,10 @@ events_etl = 'python_search.events.events_etl:main'
 chat_gpt = 'python_search.chat_gpt:main'
 entry_builder = 'python_search.entry_capture.entry_inserter_gui:main'
 entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings.entry_embeddings:main'
+entries_editor = 'python_search.entry_capture.entries_editor:main'
+register_new = 'python_search.entry_capture.register_new:main'
+offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
+ps_fzf = 'python_search.search_ui.fzf:main'
 
 [tool.poetry.extras]
 server = [
@@ -90,4 +94,5 @@ server = [
     "msgpack-numpy",
     "arize",
     "jupyterlab",
+
 ]

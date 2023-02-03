@@ -11,14 +11,13 @@ from python_search.context import Context
 from python_search.core_entities import Key
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
-from python_search.interpreter.cmd import CmdInterpreter
+from python_search.interpreter.cmd import CmdInterpreter, WRAP_IN_TERMINAL
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
 from python_search.exceptions import notify_exception
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
-
 
 
 class EntryRunner:
@@ -40,7 +39,8 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
-        fzf_pid_to_kill = None
+        fzf_pid_to_kill=None,
+        wrap_in_terminal=False,
     ):
         """
         Runs an entry given its name or its partial name.
@@ -52,6 +52,8 @@ class EntryRunner:
         """
 
         key = str(Key.from_fzf(entry_text))
+        if wrap_in_terminal:
+            os.environ[WRAP_IN_TERMINAL] = "1"
 
         self.logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is
@@ -86,8 +88,6 @@ class EntryRunner:
         if force_gui_mode or gui_mode:
             Context.get_instance().enable_gui_mode()
 
-
-
         if len(matches) > 1:
             key = min(matches, key=len)
             send_notification(
@@ -95,7 +95,6 @@ class EntryRunner:
             )
 
         result = InterpreterMatcher.build_instance(self.configuration).default(key)
-
 
         self.logger.info("Passed interpreter")
         run_performed = RunPerformed(

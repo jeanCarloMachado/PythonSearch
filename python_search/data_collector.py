@@ -35,7 +35,7 @@ class GenericDataCollector:
         with open(file_name, "w") as f:
             f.write(json.dumps(data))
 
-        #self.logger.info(f"File {file_name} written successfully with data {data}")
+        # self.logger.info(f"File {file_name} written successfully with data {data}")
 
     def data_location(self, table_name) -> str:
         return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
@@ -45,7 +45,9 @@ class GenericDataCollector:
         from pyspark.sql.session import SparkSession
 
         spark = SparkSession.builder.getOrCreate()
-        result: DataFrame = spark.read.json(GenericDataCollector().data_location(table_name))
+        result: DataFrame = spark.read.json(
+            GenericDataCollector().data_location(table_name)
+        )
         return result
 
     def show_data(self, table_name):

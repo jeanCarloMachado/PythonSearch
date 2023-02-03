@@ -9,6 +9,10 @@ from python_search.interpreter.cmd import CmdInterpreter
 
 
 class FileInterpreter(BaseInterpreter):
+    """
+    Interprets files
+    """
+
     def __init__(self, cmd: Any, context: Context = None):
         self.context = context
         self.cmd = cmd
@@ -21,8 +25,7 @@ class FileInterpreter(BaseInterpreter):
                 f"Not Valid {self.__class__.__name__} command {cmd}"
             )
 
-        print(cmd)
-        if FileInterpreter.file_exists(self.cmd['file']):
+        if FileInterpreter.file_exists(self.cmd["file"]):
             return
 
         raise CommandDoNotMatchException(
@@ -33,14 +36,12 @@ class FileInterpreter(BaseInterpreter):
 
         filename, file_extension = os.path.splitext(self.cmd["file"])
 
-
-        if file_extension in [".py", '.vim', '.', '.rc', '.yaml', '.yml', '.conf']:
-            return 'docker_nvim'
-
-        if is_mac():
-            return "open"
+        if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:
+            return "docker_nvim"
 
         if os.path.isdir(self.cmd["file"]):
+            if is_mac():
+                return "open"
             return "nautilus"
 
         if file_extension == ".pdf":
@@ -57,10 +58,11 @@ class FileInterpreter(BaseInterpreter):
         cmd = f'{executable} "{self.cmd["file"]}"'
 
         final_cmd = self.cmd
-        if executable in ["vim", 'docker_nvim']:
+        if executable in ["vim", "docker_nvim"]:
             final_cmd["cli_cmd"] = cmd
         else:
             final_cmd["cmd"] = cmd
+            # final_cmd["new-window-non-cli"] = True
 
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 

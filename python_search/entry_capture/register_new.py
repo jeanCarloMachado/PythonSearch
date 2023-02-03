@@ -4,6 +4,7 @@ import datetime
 import time
 from typing import Optional
 
+from python_search.apps.browser import Browser
 from python_search.apps.clipboard import Clipboard
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
@@ -62,11 +63,9 @@ class RegisterNew:
         """
         Create a new inferred entry based on the clipboard content
         """
-
-        if not default_content:
+        if default_content is None:
             default_content = Clipboard().get_content()
 
-        # @todo reenable this once in the dockerfile
         if not default_type:
             default_type = infer_default_type(default_content)
 
@@ -87,16 +86,6 @@ class RegisterNew:
 
         self.entry_inserter.insert(key, dict_entry)
 
-    def anonymous_snippet(self):
-        """
-        Create an anonymous snippet entry
-        """
-
-        now = datetime.datetime.now()
-        key = f"no key {now.strftime('%Y %M %d %H %M %S')}"
-
-        self.launch_ui(default_key=key, default_type="Snippet")
-
     def german_from_text(self, german_term: str):
         """
         @todo move this out of here to a plugin system
@@ -106,14 +95,10 @@ class RegisterNew:
         if len(german_term) == 0:
             raise RegisterNewException.empty_content()
 
-        from python_search.interpreter.url import UrlInterpreter
-
         print(f"german term: {german_term}")
-        cmd = {
-            "url": f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate"
-        }
-        UrlInterpreter(cmd).interpret_default()
-        time.sleep(1)
+        Browser().open(
+            f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate"
+        )
 
         from python_search.apps.collect_input import CollectInput
 
@@ -128,3 +113,9 @@ class RegisterNew:
         }
 
         self.entry_inserter.insert(german_term, as_dict)
+
+
+def main():
+    import fire
+
+    fire.Fire(RegisterNew)

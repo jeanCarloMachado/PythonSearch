@@ -22,7 +22,7 @@ class Project:
         self.set_current_project(new_project_location)
 
         print(
-            f"""Project created successfully! 
+            f"""Project created successfully!
 
 Your main config script can be found at {new_project_location}/entries_main.py
 

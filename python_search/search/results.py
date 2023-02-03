@@ -22,7 +22,6 @@ class FzfOptimizedSearchResults:
     def __init__(self):
         self._today = datetime.datetime.now()
 
-
     @timeit
     def build_entries_result(
         self, entries: RankedEntries.type, ranking_uuid: str
@@ -74,7 +73,10 @@ class FzfOptimizedSearchResults:
 
             position = position + 1
 
-            content_str = f"{name}                                                      :" + content_str
+            content_str = (
+                f"{name}                                                      :"
+                + content_str
+            )
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')

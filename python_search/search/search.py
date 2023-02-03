@@ -51,20 +51,23 @@ class Search:
                 self._entries_result.degraded_message = f"{e}"
 
     @timeit
-    def search(self) -> str:
+    def search(self, skip_model=False, base_rank=False) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
+
+        base_rank: if we want to skip the model and any reranking that also happens on top
         """
 
         self._entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
-        self._rerank_via_model()
-
+        if not skip_model and not base_rank:
+            self._rerank_via_model()
 
         """Populate the variable used_entries  with the results from redis"""
-        result = self._merge_with_latest_used()
+        # skip latest entries if we want to use only the base rank
+        result = self._build_result(skip_latest=base_rank)
 
         ranknig_generated_event = RankingGenerated(
             ranking=[i[0] for i in result[0:100]]
@@ -86,7 +89,7 @@ class Search:
 
             # raise e
 
-    def _merge_with_latest_used(self) -> RankedEntries.type:
+    def _build_result(self, skip_latest=False) -> RankedEntries.type:
         """
         Merge the search with the latest entries
         """
@@ -95,7 +98,7 @@ class Search:
 
         latest_entries = self._fetch_latest_entries()
 
-        if latest_entries:
+        if latest_entries and not skip_latest:
             for key in latest_entries:
                 if key not in self._entries:
                     # key not found in _entries

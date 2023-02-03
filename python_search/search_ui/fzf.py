@@ -1,11 +1,13 @@
 import os
 
 from python_search.configuration.configuration import PythonSearchConfiguration
+from python_search.environment import is_mac
 
 
 class Fzf:
     PREVIEW_PERCENTAGE_SIZE = 50
     RANK_TIE_BREAK: str = "begin,index"
+
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
         self.preview_cmd = f"python_search _preview_entry {{}} "
@@ -13,10 +15,9 @@ class Fzf:
     def run(self):
         os.system(self.get_cmd())
 
-
     def get_cmd(self):
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
-        fzf \
+        {self.get_fzf_cmd()} \
         --tiebreak={Fzf.RANK_TIE_BREAK} \
         --extended \
         --reverse \
@@ -33,19 +34,25 @@ class Fzf:
         --margin=0% \
         --padding=0% \
         {self._run_key("enter", kill_window=False)} \
+        {self._run_key("alt-enter", wrap_in_terminal=True)} \
+        {self._run_key("ctrl-t", wrap_in_terminal=True)} \
         {self._run_key("double-click")} \
         {self._edit_key('ctrl-e')} \
         {self._edit_key('right-click')} \
-        --bind "alt-m:execute-silent:(nohup python_search edit_main {{}} & disown)" \
         --bind "ctrl-l:clear-query" \
+        --bind "ctrl-l:+clear-screen" \
         --bind "ctrl-l:+first" \
-        --bind "ctrl-k:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
-        --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
-        --bind "ctrl-s:execute-silent:(nohup python_search search_edit {{}} && kill -9 $PPID)" \
-        --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-f:first" \
+        --bind "ctrl-j:down" \
+        --bind "ctrl-k:up" \
+        --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}} && kill -9 $PPID)" \
+        --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}} && kill -9 $PPID)" \
+        --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
+        --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \
         --bind "shift-up:first" \
-        --bind "esc:abort" \
+        --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
+        --bind "esc:+clear-query" \
+        --bind "ctrl-k:abort" \
         --bind "ctrl-d:abort"  \
         {self._get_fzf_theme()} ; rm -rf /tmp/mykitty ; exit 0
         '
@@ -53,22 +60,29 @@ class Fzf:
 
         return cmd
 
+    def get_fzf_cmd(self):
+        if is_mac():
+            return "/opt/homebrew/bin/fzf"
 
-    def _run_key(self, shortcut: str, kill_window=False) -> str:
+        return "fzf"
 
+    def _run_key(self, shortcut: str, kill_window=False, wrap_in_terminal=False) -> str:
 
-        kill_expr = ''
+        kill_expr = ""
         if kill_window:
-            kill_expr = ' --fzf_pid_to_kill $PPID '
+            kill_expr = " --fzf_pid_to_kill $PPID "
 
-        return f"""--bind "{shortcut}:execute-silent:(run_key {{}} --query_used {{q}} {kill_expr} {{}} &)" \
+        wrap_in_terminal_expr = ""
+        if wrap_in_terminal:
+            wrap_in_terminal_expr = " --wrap_in_terminal=True "
+
+        return f"""--bind "{shortcut}:execute-silent:(run_key {{}}  --query_used {{q}} {kill_expr} {wrap_in_terminal_expr} {{}} &)" \
         --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
 
-
     def _edit_key(self, shortcut) -> str:
-        return f"""--bind "{shortcut}:execute-silent:(nohup python_search edit_key --fzf_pid_to_kill $PPID {{}}  & disown)" """
+        return f' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" '
 
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
@@ -79,13 +93,34 @@ class Fzf:
 
         return " "
 
-    def _get_rankging_generate_cmd(self, reload=False):
+    def _get_rankging_generate_cmd(self, reload=False, base_rank=False):
         # in mac we need tensorflow to be installed via conda
         if self.configuration.use_webservice:
 
             if reload:
-                return f"curl -s localhost:8000/ranking/reload_and_generate"
+                return "curl -s localhost:8000/ranking/reload_and_generate || python_search _ranking search"
 
-            return f"curl -s localhost:8000/ranking/generate"
+            extra_params = ""
+            if base_rank:
+                extra_params = "?base_rank=True"
+
+            return f"curl -s http://localhost:8000/ranking/generate{extra_params}"
+
         else:
             return f"python_search _ranking search"
+
+
+def hide_current_focused_window():
+    os.system(
+        """osascript -e 'tell application "System Events" to keystroke "h" using {command down}'"""
+    )
+
+
+def main():
+    import fire
+
+    fire.Fire()
+
+
+if __name__ == "__main__":
+    main()

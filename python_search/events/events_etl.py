@@ -12,7 +12,9 @@ class EventsEtl:
 
 def main():
     import fire
+
     fire.Fire(EventsEtl)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

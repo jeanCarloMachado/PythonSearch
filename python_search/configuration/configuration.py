@@ -3,6 +3,7 @@ from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
+from python_search.theme import TimeBasedThemeSelector
 
 
 class PythonSearchConfiguration(EntriesGroup):
@@ -21,7 +22,6 @@ class PythonSearchConfiguration(EntriesGroup):
     _default_text_editor = "vim"
     _default_fzf_theme = None
     use_webservice = False
-
 
     def __init__(
         self,
@@ -67,12 +67,15 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor
-        self._default_fzf_theme = default_fzf_theme
+        self._default_fzf_theme = (
+            default_fzf_theme
+            if default_fzf_theme
+            else TimeBasedThemeSelector().get_theme()
+        )
         if custom_window_size:
             self._custom_window_size = custom_window_size
 
         self.use_webservice = use_webservice
-
 
     def get_next_item_predictor_model(self):
         """
@@ -80,15 +83,21 @@ class PythonSearchConfiguration(EntriesGroup):
 
         :return:
         """
-        #version = 'v1'
-        version = 'v2'
+        # version = 'v1'
+        version = "v2"
 
-        if version == 'v1':
-            from python_search.next_item_predictor.next_item_model_v2 import NextItemModelV1
+        if version == "v1":
+            from python_search.next_item_predictor.next_item_model_v2 import (
+                NextItemModelV1,
+            )
+
             return NextItemModelV1()
         else:
-            from python_search.next_item_predictor.next_item_model_v2 import NextItemModelV2
-            return NextItemModelV2()
+            from python_search.next_item_predictor.next_item_model_v2 import (
+                NextItemBaseModelV2,
+            )
+
+            return NextItemBaseModelV2()
 
     def get_text_editor(self):
         return self._default_text_editor

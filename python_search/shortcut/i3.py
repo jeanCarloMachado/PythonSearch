@@ -3,6 +3,7 @@ import os
 
 from python_search.entries_group import EntriesGroup
 
+
 class I3:
     """
     Setup a custom way of dealing with i3 shortcuts

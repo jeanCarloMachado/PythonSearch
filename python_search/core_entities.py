@@ -10,8 +10,10 @@ from typing import List, Optional
 
 from numpy import ndarray
 
+
 class Key:
-    """ Represents a key of an entry """
+    """Represents a key of an entry"""
+
     def __init__(self, key):
         self.key = key
 

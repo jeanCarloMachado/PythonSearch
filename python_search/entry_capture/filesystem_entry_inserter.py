@@ -42,6 +42,7 @@ class FilesystemEntryInserter:
         self._append_entry(line_to_add)
 
         from python_search.events.run_performed.writer import LogRunPerformedClient
+
         LogRunPerformedClient().send(
             RunPerformed(key=key, query_input="", shortcut=False)
         )
