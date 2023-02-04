@@ -5,6 +5,9 @@ from python_search.environment import is_mac
 
 
 class Fzf:
+    """
+    FZF abstraction for the search
+    """
     PREVIEW_PERCENTAGE_SIZE = 50
     RANK_TIE_BREAK: str = "begin,index"
 
@@ -54,8 +57,7 @@ class Fzf:
         --bind "esc:+clear-query" \
         --bind "ctrl-k:abort" \
         --bind "ctrl-d:abort"  \
-        {self._get_fzf_theme()} ; rm -rf /tmp/mykitty ; exit 0
-        '
+        {self._get_fzf_theme()} ; rm -rf /tmp/mykitty ; exit 0'
         """
 
         return cmd
@@ -82,7 +84,7 @@ class Fzf:
         --bind "{shortcut}:+clear-screen" """
 
     def _edit_key(self, shortcut) -> str:
-        return f' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" '
+        return f' --bind "{shortcut}:execute-silent:(( ps_fzf hide_current_focused_window ; entries_editor edit_key {{}} ) & disown )" '
 
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
