@@ -2,7 +2,7 @@
 
 ## 0.10.3
 
-- Installation automations
+- Installation automations for mac
 
 ## 0.10.1 (2023-01)
 
