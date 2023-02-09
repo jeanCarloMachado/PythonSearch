@@ -62,7 +62,8 @@ class Fzf:
 
     def get_fzf_cmd(self):
         if is_mac():
-            return "/opt/homebrew/bin/fzf"
+            return '/usr/local/bin/fzf'
+            #return "/opt/homebrew/bin/fzf"
 
         return "fzf"
 
