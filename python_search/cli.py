@@ -18,7 +18,7 @@ class PythonSearchCli:
     """
     The command line application, entry point of the program.
 
-    Try to avoid adding direct commands, prefer instead to add objects as parts of functions
+    Try to avoid adding direct commands, prefer instead to add objects as parts of functions:
     """
 
     # all commands that are not self-explanatory should not be part of the main api, thus are marked as private.
@@ -58,15 +58,15 @@ class PythonSearchCli:
         """
         if not configuration:
             logging.debug("No _configuration provided, using default")
+
             try:
                 configuration = ConfigurationLoader().load_config()
-            except Exception as e:
-                print(f"Did not find any config to load, error: {e}")
-
-                # early return so we dont set the remaining attributes
+            except BaseException as e:
+                print(str(e))
                 return
 
         self.configuration = configuration
+        # @todo remove this use the binary instead
         self.run_key = EntryRunner(self.configuration).run
 
     def search(self, only_fzf=False):

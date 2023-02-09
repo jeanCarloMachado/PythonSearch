@@ -4,15 +4,25 @@ from python_search.environment import is_mac
 
 
 class InstallDependencies:
+    """
+    Install dependencies that cannot be served via pip
+    """
+
     def install_all(self):
         """
-        Install all depenenceis to make python search work
+        Install all dependencies to make python search work
         """
 
         self._install_fzf()
         self._install_kitty()
         self._install_ack()
         self._install_tk_mac()
+        self._install_zsh_mac()
+        self._install_shortcut_mac()
+
+        print("""
+Installation successful!
+        """)
 
     def _install_ack(self):
         print("Installing ack")
@@ -31,6 +41,20 @@ class InstallDependencies:
 
         os.system("brew install python-tk")
 
+    def _install_zsh_mac(self):
+
+        if not is_mac():
+            return
+
+        os.system("brew install zsh")
+
+    def _install_shortcut_mac(self):
+
+        if not is_mac():
+            return
+
+        os.system("brew install icanhazshortcut")
+
     def _install_fzf(self):
         print("Installing FZF")
 
@@ -47,6 +71,7 @@ class InstallDependencies:
             )
 
     def _install_brew_if_not_present(self):
+        print("Brew checking...")
         if self._exists("brew"):
             print("Brew already installed!")
             return
