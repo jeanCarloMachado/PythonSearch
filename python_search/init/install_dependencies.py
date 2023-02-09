@@ -53,7 +53,12 @@ Installation successful!
         if not is_mac():
             return
 
+
         os.system("brew install icanhazshortcut")
+
+        HOME = os.environ['HOME']
+
+        os.system(f"curl https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/39af8851f8d229892077b8c030eb79314127d2a3/docs/config.ini.part1 --output {HOME}/.config/iCanHazShortcut/config.ini.part1")
 
     def _install_fzf(self):
         print("Installing FZF")

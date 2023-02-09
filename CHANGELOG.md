@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.3
+
+- Installation automations
+
 ## 0.10.1 (2023-01)
 
 - Add support for chatgpt UI

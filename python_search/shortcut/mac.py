@@ -1,6 +1,6 @@
 import os
 import time
-
+import subprocess
 
 class Mac:
     """
@@ -69,7 +69,6 @@ class Mac:
 
         print(f"Done! {Mac.START_SHORTCUT_NUMBER}  shortcuts generated")
 
-        import subprocess
 
         number_of_items = subprocess.getoutput(
             f"grep '\[shortcut' {self.config_folder}config.ini | wc -l"
@@ -82,14 +81,17 @@ class Mac:
 
     def _stop_app(self):
         print("Killing shortcut app")
-        from subprocess import PIPE, Popen
 
         get_pid_app = "pgrep iCanHazShortcut"
-        import subprocess
 
-        output = subprocess.check_output(get_pid_app, shell=True, text=True)
+        try:
+            output = subprocess.check_output(get_pid_app, shell=True, text=True)
+        except Exception as e:
+            print("Could not find PID! Restart will fail, try again.")
+            return
         if len(output) < 3:
-            raise Exception("Could not find PID! Restart will fail, try again.")
+            print("Could not find PID! Restart will fail, try again.")
+            return
 
         os.system("kill -9 " + output)
         time.sleep(3)
