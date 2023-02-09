@@ -59,7 +59,7 @@ Installation successful!
         HOME = os.environ['HOME']
 
         print("Downloading keyboard config ")
-        self.download_file('https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/39af8851f8d229892077b8c030eb79314127d2a3/docs/config.ini.part1', f'{HOME}/.config/iCanHazShortcut/config.ini.part1')
+        self.download_file('https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/docs/config.ini.part1', f'{HOME}/.config/iCanHazShortcut/config.ini.part1')
 
         print("Downloading bom script ")
         self.download_file("https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/add_bom_to_file.sh", '/usr/local/bin/add_bom_to_file.sh')

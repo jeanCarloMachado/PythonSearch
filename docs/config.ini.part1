@@ -1,7 +1,7 @@
 ﻿﻿
 [main]
 config version = 2
-shell = /bin/zsh -l
+shell = /bin/zsh
 populate_menu_with_actions = yes
 show_hotkeys_in_menu = yes
 check_for_updates = yes
