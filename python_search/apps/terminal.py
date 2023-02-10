@@ -46,7 +46,8 @@ class Terminal:
 
     def get_background_color(self):
         if self.configuration.get_fzf_theme() == "light":
-            return " -o background=#ffffff "
+            #return " -o background=#ffffff "
+            return " "
 
         if self.configuration.get_fzf_theme() == "dracula":
             return " -o background=#282a36 -o foreground=#ffffff "
