@@ -62,7 +62,7 @@ class Search:
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
-        if not skip_model and not base_rank:
+        if not skip_model and not base_rank and self._configuration.use_webservice:
             self._rerank_via_model()
 
         """Populate the variable used_entries  with the results from redis"""
