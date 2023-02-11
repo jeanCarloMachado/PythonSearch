@@ -27,6 +27,14 @@ pip install python-search && python_search install_missing_dependencies
 We support **Mac and Linux**.
 If you want to develop python-search install it via [the instructions in the contributing doc](CONTRIBUTING.md)
 
+Everything in python search you do through the cli tool.
+To understand the options run:
+
+```sh
+python_search --help
+```
+
+
 ### 2. Initialize your entries project
 
 ```sh
@@ -43,12 +51,7 @@ Done! You can run the search UI by running.
 python_search search
 ```
 
-Basically everything in python search you do through the cli tool.
-To understand the options run:
 
-```sh
-python_search --help
-```
 
 You can also find the [code documentation here](https://jeancarlomachado.net/PythonSearch/).
 
