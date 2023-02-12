@@ -1,5 +1,4 @@
 import logging
-import sys
 
 
 def setup_inference_logger():
@@ -34,6 +33,10 @@ def setup_run_key_logger():
     fh = logging.FileHandler("/tmp/run_key.txt")
     fh.setLevel(logging.DEBUG)
     logger.addHandler(fh)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    logger.addHandler(ch)
+    logger.setLevel(logging.DEBUG)
 
     return logger
 
