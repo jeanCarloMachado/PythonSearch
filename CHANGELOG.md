@@ -3,6 +3,7 @@
 ## 0.10.4
 
 - Installation automations for mac
+- Remove deafult theme customizations
 
 ## 0.10.3
 
