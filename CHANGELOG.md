@@ -1,5 +1,8 @@
 # Changelog
+## 0.10.5
 
+- Small UI-Fixes on Linux
+ 
 ## 0.10.4
 
 - Installation automations for mac
