@@ -166,9 +166,10 @@ class EntryCaptureGUI:
         logging.info("values", values)
 
         selected_tags = []
-        for key, value in values.items():
-            if key in self._tags and value == True:
-                selected_tags.append(key)
+        if self._tags:
+            for key, value in values.items():
+                if key in self._tags and value is True:
+                    selected_tags.append(key)
 
         result = GuiEntryData(
             values["key"], values["content"], values["type"], selected_tags
@@ -261,6 +262,8 @@ class EntryCaptureGUI:
 
     def _chunks_of_tags(self, lst, n):
         """Yield successive n-sized chunks from lst."""
+        if not lst:
+            return []
         for i in range(0, len(lst), n):
             yield lst[i : i + n]
 

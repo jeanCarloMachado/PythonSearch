@@ -23,7 +23,7 @@ class Gnome:
                 shortcut_found = True
 
         if not shortcut_found:
-            print("No shorcut found for gnome")
+            print("No shortcut found for gnome")
 
     def _reset(self):
         """reset existing shortcuts, necessary only for gnome"""
