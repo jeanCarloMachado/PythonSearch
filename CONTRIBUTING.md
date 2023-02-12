@@ -7,7 +7,7 @@
 
 # Requirements
 
-On every change make sure to change the CHANGELOG.md
+On every change that modifies the code make sure to change the CHANGELOG.md and to increase the version in pyproject.toml
 
 ## Generating code docs
 
