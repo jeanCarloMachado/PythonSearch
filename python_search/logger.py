@@ -1,5 +1,5 @@
 import logging
-
+import sys
 
 def setup_inference_logger():
     logger = logging.getLogger("inference")
@@ -11,7 +11,7 @@ def setup_inference_logger():
 
     # ch = logging.StreamHandler(sys.stdout)
     # ch.setLevel(logging.INFO)
-    ##logger.addHandler(ch)
+    # logger.addHandler(ch)
 
     return logger
 
