@@ -75,13 +75,8 @@ Installation successful!
             return
 
         print("Looks like kitty is not installed in your platform. ")
-        if is_mac():
-            self._install_brew_if_not_present()
-            os.system("brew install fzf")
-        else:
-            print(
-                "Dont know how to install fzf for your platform, please do so manually"
-            )
+        HOME = os.environ['HOME']
+        os.system(f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; {HOME}/.fzf/install """)
 
     def _install_brew_if_not_present(self):
         print("Brew checking...")

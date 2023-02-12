@@ -16,3 +16,15 @@ Run the following command and commit the results.
 ```sh
  pdoc --skip-errors --html python_search
 ```
+
+
+## Developing python search 
+
+Instead of installing python search from the terminal you need to install it from your local copy.
+
+Use:
+
+```py
+
+pip install -e .
+```

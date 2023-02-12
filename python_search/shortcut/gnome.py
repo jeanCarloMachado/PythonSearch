@@ -18,7 +18,7 @@ class Gnome:
             if type(content) is dict and "gnome_shortcut" in content:
                 logging.info(f"Generating shortcut for {key}")
                 identifier = self._generate_identifier(key)
-                cmd = f'python_search run_key "{identifier}" --force_gui_mode=1 --from_shortcut=1'
+                cmd = f'run_key "{key}" --from_shortcut=True'
                 self.generate_shortcut(identifier, cmd, content["gnome_shortcut"])
                 shortcut_found = True
 
@@ -89,10 +89,10 @@ class Gnome:
             subprocess.call(["/bin/bash", "-c", cmd])
 
     def _generate_identifier(self, string):
-        """
-        strip the string from all special characters lefting only [A-B-09]
-        """
-        result = "".join(e for e in string if e.isalnum())
-        result = result.lower()
+       """
+       strip the string from all special characters lefting only [A-B-09]
+       """
+       result = "".join(e for e in string if e.isalnum())
+       result = result.lower()
 
-        return result
+       return result
