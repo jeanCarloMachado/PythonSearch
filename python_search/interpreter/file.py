@@ -25,7 +25,8 @@ class FileInterpreter(BaseInterpreter):
                 f"Not Valid {self.__class__.__name__} command {cmd}"
             )
 
-        if FileInterpreter.file_exists(self.cmd["file"]):
+
+        if self.cmd["file"].startswith("/") or FileInterpreter.file_exists(self.cmd["file"]):
             return
 
         raise CommandDoNotMatchException(
