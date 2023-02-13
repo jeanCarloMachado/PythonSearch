@@ -10,7 +10,6 @@ import fire
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
-from python_search.infrastructure.arize import Arize
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 
@@ -81,8 +80,6 @@ class EntryCaptureGUI:
 
         tags_chucks = self._chunks_of_tags(self._tags, 4)
 
-        if generate_body:
-            default_content = self._chat_gpt.answer(default_key)
 
         key_name_input = sg.Multiline(
             key="key",
@@ -101,7 +98,7 @@ class EntryCaptureGUI:
             size=(15, 7),
         )
         layout = [
-            [sg.Text("Desc. / Title")],
+            [sg.Text("Entry name")],
             [key_name_input],
             [sg.Text("Content")],
             [content_input],
@@ -126,22 +123,19 @@ class EntryCaptureGUI:
             finalize=True,
         )
 
-        # workaround for mac bug
-        if not default_key and default_content:
-            self._generate_title_thread(default_content, window)
 
         window["key"].bind("<Escape>", "_Esc")
         window["content"].bind("<Escape>", "_Esc")
         window["type"].bind("<Escape>", "_Esc")
 
         self._predict_entry_type_thread(default_content, window)
+        self._generate_body_thread(default_key, window)
         while True:
             event, values = window.read()
             if event and (event == "-generate-body-"):
                 self._chat_gpt = ChatGPT(window["generation-size"].get())
                 new_content = self._chat_gpt.answer(values["key"])
                 window["content"].update(new_content)
-                # self._predict_entry_type_thread(new_content, window)
 
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
@@ -179,6 +173,21 @@ class EntryCaptureGUI:
 
         return result
 
+
+    def _generate_body_thread(self, title: str, window):
+        self._chat_gpt = ChatGPT(window["generation-size"].get())
+        import PySimpleGUI as sg
+
+        window: sg.Window = window
+
+        def _describe_body(title: str, window):
+            description = self._chat_gpt.answer(title)
+            window["content"].update(description)
+
+        threading.Thread(
+            target=_describe_body, args=(title, window), daemon=True
+        ).start()
+
     def _generate_title_thread(self, content: str, window):
         self._chat_gpt = ChatGPT(window["generation-size"].get())
         import PySimpleGUI as sg
@@ -204,34 +213,11 @@ class EntryCaptureGUI:
             + content
         )
 
+
     def _predict_entry_type_thread(self, content, window):
         threading.Thread(
             target=self._predict_entry_type, args=(window, content), daemon=True
         ).start()
-
-    def _report_actual(self, data: GuiEntryData):
-        if not self._prediction_uuid:
-            print("No prediction uuid, skipping report")
-            return
-
-        if not Arize.is_installed():
-            return
-        arize_client = Arize().get_client()
-
-        from arize.utils.types import Environments, ModelTypes
-
-        data = {
-            "model_id": Arize.MODEL_ID,
-            "model_version": Arize.MODEL_VERSION,
-            "model_type": ModelTypes.SCORE_CATEGORICAL,
-            "environment": Environments.PRODUCTION,
-            "prediction_id": self._prediction_uuid,
-            "actual_label": data.type,
-        }
-        print(f"Data to send arize: {data}")
-
-        arize_result = arize_client.log(**data)
-        Arize.arize_responses_helper(arize_result)
 
     def _predict_entry_type(self, window, content):
         result = ClassifierInferenceClient().predict_from_content(content)
