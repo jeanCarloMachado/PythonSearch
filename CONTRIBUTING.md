@@ -16,3 +16,15 @@ Run the following command and commit the results.
 ```sh
  pdoc --skip-errors --html python_search
 ```
+
+
+## Develping python search
+
+1. Clone the repo
+
+2. Install the repo code in your enviroment
+
+```sh
+cd PythonSearchRepo ; 
+pip install -e .
+```
