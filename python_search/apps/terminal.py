@@ -40,7 +40,8 @@ class Terminal:
         if hold_terminal_open_on_end:
             hold = " --hold "
 
-        final_cmd = f'kitty {hold} {Terminal.GENERIC_TERMINAL_PARAMS} {self.get_background_color()} -T "{title}" {cmd} '
+        from python_search.search_ui.kitty import get_kitty_cmd
+        final_cmd = f'{get_kitty_cmd()} {hold} {Terminal.GENERIC_TERMINAL_PARAMS} {self.get_background_color()} -T "{title}" {cmd} '
 
         return final_cmd
 
