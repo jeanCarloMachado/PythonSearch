@@ -6,12 +6,14 @@ from dataclasses import dataclass
 from typing import List
 
 import fire
+import PySimpleGUI as sg
 
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
+from python_search.apps.notification_ui import send_notification
 
 
 class EntryCaptureGUI:
@@ -43,7 +45,7 @@ class EntryCaptureGUI:
 
     def launch(
         self,
-        title: str = "New",
+        window_title: str = "New",
         default_key: str = "",
         default_content: str = "",
         serialize_output=False,
@@ -58,7 +60,6 @@ class EntryCaptureGUI:
             default_content = ""
 
         print("Default key: ", default_key)
-        import PySimpleGUI as sg
 
         self._sg = sg
 
@@ -117,7 +118,7 @@ class EntryCaptureGUI:
         ]
 
         window = sg.Window(
-            title,
+            window_title,
             layout,
             font=("Helvetica", font_size),
             finalize=True,
@@ -129,13 +130,12 @@ class EntryCaptureGUI:
         window["type"].bind("<Escape>", "_Esc")
 
         self._predict_entry_type_thread(default_content, window)
-        self._generate_body_thread(default_key, window)
+        if default_key:
+            self._generate_body_thread(default_key, window)
         while True:
             event, values = window.read()
             if event and (event == "-generate-body-"):
-                self._chat_gpt = ChatGPT(window["generation-size"].get())
-                new_content = self._chat_gpt.answer(values["key"])
-                window["content"].update(new_content)
+                self._generate_body_thread(values["key"], window)
 
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
@@ -175,8 +175,10 @@ class EntryCaptureGUI:
 
 
     def _generate_body_thread(self, title: str, window):
+
+        send_notification(f"Starting to generate body")
+
         self._chat_gpt = ChatGPT(window["generation-size"].get())
-        import PySimpleGUI as sg
 
         window: sg.Window = window
 
@@ -189,6 +191,7 @@ class EntryCaptureGUI:
         ).start()
 
     def _generate_title_thread(self, content: str, window):
+        send_notification(f"Starting to generate title")
         self._chat_gpt = ChatGPT(window["generation-size"].get())
         import PySimpleGUI as sg
 
