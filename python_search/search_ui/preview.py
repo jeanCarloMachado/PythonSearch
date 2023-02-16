@@ -36,9 +36,13 @@ class Preview:
 
     def _print_values(self, data):
         print("")
-        print(f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}')
+        print(f"{data['key']}")
 
-        print(f"{self._color_str(data['key'], Fore.YELLOW)}")
+        if data["value"]:
+            print("")
+            print(f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}')
+        print("")
+
         print(f"Type: {data['type']}")
         if "description" in data:
             print(f"Description: {data['description']}")
@@ -51,8 +55,8 @@ class Preview:
         if "position" in data:
             print("Position: " + data["position"])
 
-        if "uuid" in data:
-            print("Uuid: " + data["uuid"][0:8])
+        #if "uuid" in data:
+        #    print("Uuid: " + data["uuid"][0:8])
 
     def _get_color_for_type(self, type):
         if type == "Cmd":
