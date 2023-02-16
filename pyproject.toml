@@ -71,6 +71,7 @@ wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = [
 events_etl = 'python_search.events.events_etl:main'
 chat_gpt = 'python_search.chat_gpt:main'
 entry_builder = 'python_search.entry_capture.entry_inserter_gui:main'
+prompt_editor = 'python_search.entry_capture.entry_inserter_gui:main'
 entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings.entry_embeddings:main'
 entries_editor = 'python_search.entry_capture.entries_editor:main'
 register_new = 'python_search.entry_capture.register_new:main'
