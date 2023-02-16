@@ -36,18 +36,15 @@ class Preview:
 
     def _print_values(self, data):
         print("")
-        print(
-            data["type"]
-            + ": "
-            + self._color_str(data["value"], self._get_color_for_type(data["type"]))
-        )
-        print(f"Key: {self._color_str(data['key'], Fore.YELLOW)}")
+        print(f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}')
+
+        print(f"{self._color_str(data['key'], Fore.YELLOW)}")
+        print(f"Type: {data['type']}")
         if "description" in data:
             print(f"Description: {data['description']}")
 
         if "created_at" in data:
             print("Created at: " + data["created_at"])
-            print("Entry Age: " + data["entry_age"])
 
         if "tags" in data:
             print(f"Tags: {data['tags']}")

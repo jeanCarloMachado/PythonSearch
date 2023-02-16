@@ -83,7 +83,6 @@ class PythonSearchConfiguration(EntriesGroup):
 
         :return:
         """
-        # version = 'v1'
         version = "v2"
 
         if version == "v1":

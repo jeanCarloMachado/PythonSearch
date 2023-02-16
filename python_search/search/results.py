@@ -43,28 +43,6 @@ class FzfOptimizedSearchResults:
                 content["generated_acronyms"] = generate_acronyms(name)
                 content["uuid"] = ranking_uuid
                 content["tags"] = content["tags"] if "tags" in content else []
-                if "created_at" in content:
-                    date_created = parser.parse(content["created_at"])
-                    days_ago = (self._today - date_created).days
-
-                    content["tags"].append(f"created_{days_ago}_days_ago")
-
-                    if days_ago == 0:
-                        content["tags"].append(f"today_created")
-                    elif days_ago == 1:
-                        content["tags"].append(f"yesterday_created")
-                    if days_ago < 7:
-                        content["tags"].append(f"this_week_created")
-                    if days_ago > 7 and days_ago < 14:
-                        content["tags"].append(f"previous_week_created")
-                    if days_ago < 30:
-                        content["tags"].append(f"this_month_created")
-                    if days_ago > 30 and days_ago < 60:
-                        content["tags"].append(f"previous_month_created")
-                    if days_ago < 365:
-                        content["tags"].append(f"this_year_created")
-                    if days_ago > 365:
-                        content["tags"].append(f"previous_year_created")
 
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:
