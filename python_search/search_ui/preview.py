@@ -48,15 +48,13 @@ class Preview:
             print(f"Description: {data['description']}")
 
         if "created_at" in data:
-            print("Created at: " + data["created_at"])
+            print("Created at: " + data["created_at"].split('.')[0])
 
         if "tags" in data:
             print(f"Tags: {data['tags']}")
         if "position" in data:
             print("Position: " + data["position"])
 
-        #if "uuid" in data:
-        #    print("Uuid: " + data["uuid"][0:8])
 
     def _get_color_for_type(self, type):
         if type == "Cmd":

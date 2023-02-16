@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.5
+
+- [Backward incompatible] default_fzf_theme renamed to fzf_theme
+- Improve preview window
+
 ## 0.10.4
 
 - Installation automations for mac
