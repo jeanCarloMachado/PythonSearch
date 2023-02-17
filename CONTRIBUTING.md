@@ -18,7 +18,7 @@ Run the following command and commit the results.
 ```
 
 
-## Develping python search
+## Developing python search
 
 1. Clone the repo
 
