@@ -24,7 +24,7 @@ pip install -e .
 git checkout -b my_dev_branch
 ```
 
-# Requirements
+# Sending a modification
 
 On every change that modifies the code make sure to change the CHANGELOG.md and to increase the version in pyproject.toml
 
