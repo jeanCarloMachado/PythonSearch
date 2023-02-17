@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.7
+- Removing Support for i3 in Favor of GNOME
+- Fixing smaller issues with setting up python_search in GNOME
+
 ## 0.10.6
 
 - [Backward incompatible] default_fzf_theme renamed to fzf_theme
