@@ -3,6 +3,7 @@
 ## 0.10.6
 
 - [Backward incompatible] default_fzf_theme renamed to fzf_theme
+- Imrpove fzf themes 
 - Improve preview window
  
 ## 0.10.5
