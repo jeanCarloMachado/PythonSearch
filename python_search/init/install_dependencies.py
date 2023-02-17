@@ -1,6 +1,6 @@
 import os
 
-from python_search.environment import is_mac
+from python_search.environment import is_mac, is_archlinux
 
 
 class InstallDependencies:
@@ -19,6 +19,7 @@ class InstallDependencies:
         self._install_tk_mac()
         self._install_zsh_mac()
         self._install_shortcut_mac()
+        self._install_wctrl()
 
         print("""
 Installation successful!
@@ -109,3 +110,7 @@ Installation successful!
 
         # sets a light theme in kitty
         os.system("kitty +kitten themes --reload-in=all One Half Light")
+
+    def _install_wctrl(self):
+        if is_archlinux():
+            os.system("sudo pacman -S wmctrl")
