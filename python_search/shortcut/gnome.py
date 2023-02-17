@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import logging
 import subprocess
+import os
 
 from python_search.entries_group import EntriesGroup
 
@@ -10,7 +11,7 @@ class Gnome:
         self.configuration = configuration
 
     def generate(self):
-        print("Generating gnome shortctus")
+        print("Generating gnome shortcuts")
         self._reset()
 
         shortcut_found = False
@@ -18,7 +19,7 @@ class Gnome:
             if type(content) is dict and "gnome_shortcut" in content:
                 logging.info(f"Generating shortcut for {key}")
                 identifier = self._generate_identifier(key)
-                cmd = f'python_search run_key "{identifier}" --force_gui_mode=1 --from_shortcut=1'
+                cmd = f'run_key "{key}" --from_shortcut=1'
                 self.generate_shortcut(identifier, cmd, content["gnome_shortcut"])
                 shortcut_found = True
 
@@ -27,14 +28,7 @@ class Gnome:
 
     def _reset(self):
         """reset existing shortcuts, necessary only for gnome"""
-
-        from python_search.interpreter.cmd import CmdInterpreter
-
-        CmdInterpreter(
-            {
-                "cmd": "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
-            }
-        )
+        os.system("gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys")
 
     def generate_shortcut(self, name: str, command: str, binding: str):
         """
