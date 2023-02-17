@@ -16,7 +16,7 @@ class InstallDependencies:
         self._install_fzf()
         self._install_kitty()
         self._install_ack()
-        self._install_tk_mac()
+        self._install_tk()
         self._install_zsh_mac()
         self._install_shortcut_mac()
         self._install_wctrl()
@@ -35,12 +35,13 @@ Installation successful!
                 "Dont know how to install ack for your platform, please do so manually"
             )
 
-    def _install_tk_mac(self):
+    def _install_tk(self):
 
-        if not is_mac():
-            return
+        if is_mac():
+            os.system("brew install python-tk")
+        if is_archlinux():
+            os.system("sudo pacman -S tk")
 
-        os.system("brew install python-tk")
 
     def _install_zsh_mac(self):
 
