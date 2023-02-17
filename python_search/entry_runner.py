@@ -59,9 +59,6 @@ class EntryRunner:
         # if there are : in the line just take all before it as it is
         # usually the key from fzf, and our keys do not accept :
 
-        if from_shortcut:
-            send_notification(f"{key}")
-
         metadata = decode_serialized_data_from_entry_text(entry_text, self.logger)
         self.logger.info(f"Decoded metadata {metadata}")
         rank_position = metadata.get("position")
