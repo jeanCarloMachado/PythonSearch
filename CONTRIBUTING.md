@@ -1,13 +1,33 @@
 # Setup machine for development of PythonSearch
 
 
-1. Clone python search source code
-2. Install it in a local python, (conda or virtualenviroment recommended)
+
+## Developing PythonSearch
+
+1. Clone the repo
+
+```sh
+git clone git@github.com:jeanCarloMachado/PythonSearch.git
+```
+
+2. Install the repo code in your enviroment
+
+```sh
+cd PythonSearch ; 
+# install the program in devevelopment mode
+pip install -e .
+```
+
 3. Create a feature branch, develop it!
 
-# Requirements
+```
+git checkout -b my_dev_branch
+```
+
+# Sending a modification
 
 On every change that modifies the code make sure to change the CHANGELOG.md and to increase the version in pyproject.toml
+
 
 ## Generating code docs
 
@@ -15,16 +35,4 @@ Run the following command and commit the results.
 
 ```sh
  pdoc --skip-errors --html python_search
-```
-
-
-## Develping python search
-
-1. Clone the repo
-
-2. Install the repo code in your enviroment
-
-```sh
-cd PythonSearchRepo ; 
-pip install -e .
 ```

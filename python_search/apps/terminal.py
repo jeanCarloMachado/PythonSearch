@@ -13,7 +13,6 @@ class Terminal:
     # including the generic params and the python search main window
     GLOBAL_TERMINAL_PARAMS = " -o remember_window_size=yes -o confirm_os_window_close=0  -o remember_window_size=n -o macos_quit_when_last_window_closed=yes "
 
-    # this parameters are applied to cli_cmd terminals
 
     DEFAULT_HEIGHT = 500
     DEFAULT_WIDTH = 900
@@ -40,16 +39,16 @@ class Terminal:
         if hold_terminal_open_on_end:
             hold = " --hold "
 
-        final_cmd = f'kitty {hold} {Terminal.GENERIC_TERMINAL_PARAMS} {self.get_background_color()} -T "{title}" {cmd} '
+        from python_search.search_ui.kitty import get_kitty_cmd
+        final_cmd = f'{get_kitty_cmd()} {hold} {Terminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
 
         return final_cmd
 
     def get_background_color(self):
         if self.configuration.get_fzf_theme() == "light":
-            #return " -o background=#ffffff "
-            return " "
+            return " -o background=#ffffff "
 
-        if self.configuration.get_fzf_theme() == "dracula":
+        if self.configuration.get_fzf_theme() in ["dracula", 'dark']:
             return " -o background=#282a36 -o foreground=#ffffff "
 
         return " "

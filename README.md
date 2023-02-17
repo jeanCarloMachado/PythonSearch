@@ -2,7 +2,7 @@
 
 With python search you collect and retrieve and refactor information efficiently.
 
-- collect commands, scripts, snippets, urls, files, efficiently as python dictionaries
+- collect commands, scripts, prompts, snippets, urls, files, efficiently as python dictionaries
 - search them using a smart (ML based) ranking or add shortcuts to them
 - refactor, reuse, generate and further automate entries as they are code
 - execute the registered entries possibly customizing the execution behaviour
@@ -51,9 +51,11 @@ Done! You can run the search UI by running.
 python_search search
 ```
 
-
-
 You can also find the [code documentation here](https://jeancarlomachado.net/PythonSearch/).
+
+## CHATGPT integration is now available!
+
+You can customize templated prompts, use them for different content and save them in python search see our [integration docs for details](https://github.com/jeanCarloMachado/PythonSearch/blob/main/docs/intergrate_chatgpt.md)
 
 ## Got an issue?
 

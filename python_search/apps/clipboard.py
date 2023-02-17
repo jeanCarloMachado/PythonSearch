@@ -41,8 +41,9 @@ class Clipboard:
         :return:
         """
 
-        if not content and has_stdin():
 
+        if not content:
+            import sys
             data = sys.stdin.readlines()
             content = "\n".join(data)
 
@@ -65,7 +66,6 @@ class Clipboard:
 
         if enable_notifications or notify:
             from python_search.apps.notification_ui import send_notification
-
             send_notification(f"Content copied: {sanitized}")
 
         import os
@@ -73,19 +73,6 @@ class Clipboard:
         print(cmd)
         return os.system(cmd)
 
-
-def has_stdin() -> bool:
-    import select
-    import sys
-
-    return select.select(
-        [
-            sys.stdin,
-        ],
-        [],
-        [],
-        0.0,
-    )[0]
 
 
 def main():
