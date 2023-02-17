@@ -1,6 +1,12 @@
 # Changelog
 
+## 0.10.8
+
+- Improve prompt editor experience 
+- Improve archlinux installation process
+ 
 ## 0.10.7
+
 - Removing Support for i3 in Favor of GNOME
 - Fixing smaller issues with setting up python_search in GNOME
 
