@@ -55,7 +55,7 @@ You can also find the [code documentation here](https://jeancarlomachado.net/Pyt
 
 ## CHATGPT integration is now available!
 
-You can customize templated prompts, use them for different content and save them in python search](https://github.com/jeanCarloMachado/PythonSearch/blob/main/docs/intergrate_chatgpt.md)
+You can customize templated prompts, use them for different content and save them in python search see our [integration docs for details](https://github.com/jeanCarloMachado/PythonSearch/blob/main/docs/intergrate_chatgpt.md)
 
 ## Got an issue?
 
