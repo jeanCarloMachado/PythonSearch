@@ -20,6 +20,7 @@ class InstallDependencies:
         self._install_zsh_mac()
         self._install_shortcut_mac()
         self._install_wctrl()
+        self._install_xsel()
 
         print("""
 Installation successful!
@@ -115,3 +116,6 @@ Installation successful!
     def _install_wctrl(self):
         if is_archlinux():
             os.system("sudo pacman -S wmctrl")
+    def _install_xsel(self):
+        if is_archlinux():
+            os.system("sudo pacman -S xsel")

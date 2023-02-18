@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType
-
 from python_search.config import DataConfig
 from python_search.data_collector import GenericDataCollector
+
+
+
 
 
 class EntryExecutedDataset:
@@ -16,20 +17,23 @@ class EntryExecutedDataset:
     FILE_NAME = "run_performed"
     NEW_FILE_NAME = "searches_performed"
     CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + FILE_NAME
-    SCHEMA = StructType(
-        [
-            StructField("key", StringType(), True),
-            StructField("query_input", StringType(), True),
-            StructField("shortcut", StringType(), True),
-            StructField("rank_uuid", StringType(), True),
-            StructField("rank_position", IntegerType(), True),
-            StructField("timestamp", StringType(), True),
-        ]
-    )
 
     def __init__(self, spark=None):
+
+        # For illustrative purposes.
+        from pyspark.sql.types import StructType, StructField, StringType, IntegerType
         from pyspark.sql.session import SparkSession
 
+        self.SCHEMA = StructType(
+            [
+                StructField("key", StringType(), True),
+                StructField("query_input", StringType(), True),
+                StructField("shortcut", StringType(), True),
+                StructField("rank_uuid", StringType(), True),
+                StructField("rank_position", IntegerType(), True),
+                StructField("timestamp", StringType(), True),
+            ]
+        )
         self.spark = spark if spark else SparkSession.builder.getOrCreate()
 
     def load_old(self):
@@ -38,6 +42,8 @@ class EntryExecutedDataset:
         """
         data_location = "file://" + DataConfig.SEARCH_RUNS_PERFORMED_FOLDER
         print("Loading data from: {}".format(data_location))
+
+
         return self.spark.read.format("parquet").load_old(data_location)
 
     def load_clean(self):
