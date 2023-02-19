@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import datetime
-import time
 from typing import Optional
 
 from python_search.apps.browser import Browser
@@ -10,7 +8,8 @@ from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )
-from python_search.entry_capture.entry_inserter_gui import EntryCaptureGUI, GuiEntryData
+from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import EntryCaptureGUI, GuiEntryData
+
 from python_search.entry_type.entity import infer_default_type
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
@@ -75,6 +74,9 @@ class RegisterNew:
             default_key=default_key,
             default_type=default_type,
         )
+        self.save_entry_data(entry_data)
+
+    def save_entry_data(self, entry_data: GuiEntryData):
         key = self._sanitize_key(entry_data.key)
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self.configuration

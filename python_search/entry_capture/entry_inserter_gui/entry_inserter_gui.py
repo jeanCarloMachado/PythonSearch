@@ -11,6 +11,7 @@ import PySimpleGUI as sg
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
+from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 from python_search.apps.notification_ui import send_notification
@@ -19,32 +20,16 @@ from python_search.apps.notification_ui import send_notification
 class EntryCaptureGUI:
     _ENTRY_NAME_INPUT = "-entry-name-"
     _ENTRY_BODY_INPUT = "-entry-body-"
+    _ENTRY_NAME_INPUT_SIZE = (17, 7)
+    _ENTRY_BODY_INPUT_SIZE = (17, 10)
 
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
         self._chat_gpt = ChatGPT()
+        self.FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
 
-    def launch_prompt(
-        self,
-        description: str = "",
-        content: str = "",
-        description_with_clipboard=False,
-    ) -> GuiEntryData:
-        generate_body = False
-        if description_with_clipboard:
-            generate_body = True
-            from python_search.apps.clipboard import Clipboard
-
-            clipboard_content = Clipboard().get_content()
-            description = description + clipboard_content
-
-        return self.launch(
-            default_key=description,
-            default_content=content,
-            generate_body=generate_body,
-        )
 
     def launch(
         self,
@@ -53,6 +38,7 @@ class EntryCaptureGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
+        generate_body=False,
     ) -> GuiEntryData:
         """
         Launch the _entries capture GUI.
@@ -88,7 +74,7 @@ class EntryCaptureGUI:
             default_text=default_key,
             expand_x=True,
             expand_y=True,
-            size=(15, 5),
+            size=self._ENTRY_NAME_INPUT_SIZE
         )
 
         content_input = sg.Multiline(
@@ -97,7 +83,7 @@ class EntryCaptureGUI:
             expand_x=True,
             expand_y=True,
             no_scrollbar=False,
-            size=(15, 7),
+            size=self._ENTRY_BODY_INPUT_SIZE
         )
         layout = [
             [sg.Text("Description")],
@@ -121,7 +107,7 @@ class EntryCaptureGUI:
         window = sg.Window(
             window_title,
             layout,
-            font=("Helvetica", font_size),
+            font=(self.FONT, font_size),
             finalize=True,
         )
 
@@ -131,7 +117,7 @@ class EntryCaptureGUI:
         window["type"].bind("<Escape>", "_Esc")
 
         self._predict_entry_type_thread(default_content, window)
-        if default_key:
+        if default_key or generate_body:
             self._generate_body_thread(default_key, window)
         while True:
             event, values = window.read()

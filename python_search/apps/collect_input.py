@@ -6,7 +6,7 @@ from python_search.apps.clipboard import Clipboard
 
 class CollectInput:
     """
-    Ask the user for input and return the entered _entries
+    GUI window to capture user input and returns the entered data. It also allows the user to prefill the input field with content from their clipboard.
     """
 
     def launch(

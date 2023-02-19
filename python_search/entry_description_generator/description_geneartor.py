@@ -13,6 +13,9 @@ class EntryKeyGeneratorCmd(BaseModel):
 
 
 class DescriptionGenerator:
+    """
+    This code is part of a DescriptionGenerator class that is used to generate descriptions for entries. It uses a model to predict the next character in the description based on the inputted content and temperature.
+    """
 
     RUN_ID = "054613ec285f4b1c86ee81de98b08d06"
 
