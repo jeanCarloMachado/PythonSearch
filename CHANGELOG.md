@@ -4,6 +4,7 @@
 
 - Improve prompt editor experience 
 - Improve archlinux installation process
+- Support for "<CLIPBOARD>" in prompts to replace with clipboard content
  
 ## 0.10.7
 

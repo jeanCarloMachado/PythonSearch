@@ -4,6 +4,9 @@ from python_search.entry_capture.register_new import RegisterNew
 
 
 class PromptEditor:
+    """
+    The purpose of this code is to launch a pre-defined prompt for the user to interact with CHATGPT and to furhter refine it
+    """
     def launch_prompt(
         self,
         prompt_text: str = "",
