@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import List
 
 import fire
-import PySimpleGUI as sg
 
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
@@ -29,6 +28,9 @@ class EntryCaptureGUI:
         self._prediction_uuid = None
         self._chat_gpt = ChatGPT()
         self.FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
+        import PySimpleGUI as sg
+
+        self.sg = sg
 
 
     def launch(
@@ -51,11 +53,11 @@ class EntryCaptureGUI:
 
 
         config = ConfigurationLoader().load_config()
-        sg.theme(config.simple_gui_theme)
+        self.sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
 
 
-        entry_type = sg.Combo(
+        entry_type = self.sg.Combo(
             [
                 "Snippet",
                 "Cmd",
@@ -69,7 +71,7 @@ class EntryCaptureGUI:
 
         tags_chucks = self._chunks_of_tags(self._tags, 4)
 
-        key_name_input = sg.Multiline(
+        key_name_input = self.sg.Multiline(
             key=self._ENTRY_NAME_INPUT,
             default_text=default_key,
             expand_x=True,
@@ -77,7 +79,7 @@ class EntryCaptureGUI:
             size=self._ENTRY_NAME_INPUT_SIZE
         )
 
-        content_input = sg.Multiline(
+        content_input = self.sg.Multiline(
             key=self._ENTRY_BODY_INPUT,
             default_text=default_content,
             expand_x=True,
@@ -86,25 +88,25 @@ class EntryCaptureGUI:
             size=self._ENTRY_BODY_INPUT_SIZE
         )
         layout = [
-            [sg.Text("Description")],
+            [self.sg.Text("Description")],
             [key_name_input],
-            [sg.Text("Body")],
+            [self.sg.Text("Body")],
             [content_input],
             [
-                sg.Text("Generator"),
-                sg.Button("Body", key="-generate-body-"),
-                sg.Button("Description", key="-generate-title-"),
-                sg.Text("Response Size"),
-                sg.Input(500, key="generation-size", expand_x=False),
+                self.sg.Text("Generator"),
+                self.sg.Button("Body", key="-generate-body-"),
+                self.sg.Button("Description", key="-generate-title-"),
+                self.sg.Text("Response Size"),
+                self.sg.Input(500, key="generation-size", expand_x=False),
             ],
-            [sg.Text("Type")],
-            [entry_type, sg.Button("Try it", key="-try-entry-")],
-            [sg.Text("Tags")],
+            [self.sg.Text("Type")],
+            [entry_type, self.sg.Button("Try it", key="-try-entry-")],
+            [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
-            [sg.Button("Write entry", key="write")],
+            [self.sg.Button("Write entry", key="write")],
         ]
 
-        window = sg.Window(
+        window = self.sg.Window(
             window_title,
             layout,
             font=(self.FONT, font_size),
@@ -121,7 +123,7 @@ class EntryCaptureGUI:
             self._generate_body_thread(default_key, window)
         while True:
             event, values = window.read()
-            if event == sg.WINDOW_CLOSED:
+            if event == self.sg.WINDOW_CLOSED:
                 raise Exception("Window closed")
 
             if "Escape" in event:
@@ -172,6 +174,7 @@ class EntryCaptureGUI:
 
         self._chat_gpt = ChatGPT(window["generation-size"].get())
 
+        import PySimpleGUI as sg
         window: sg.Window = window
 
         def _describe_body(title: str, window):
@@ -238,7 +241,7 @@ class EntryCaptureGUI:
         window.write_event_value("-generated-key-ready-", description)
 
     def _checkbox_list(self, tags):
-        return ([sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
+        return ([self.sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
 
     def _chunks_of_tags(self, lst, n):
         """Yield successive n-sized chunks from lst."""
