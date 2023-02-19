@@ -36,7 +36,7 @@ class BaseInterpreter:
         return result
 
     def _confirmed_continue(self) -> bool:
-        from python_search.entry_capture.ui import AskQuestion
+        from python_search.entry_capture.ask_question_ui import AskQuestion
 
         result = AskQuestion().ask(
             f"Type (y) if you wanna to proceed to run command: {self.cmd['cmd']}"

@@ -14,7 +14,19 @@ def in_ci():
     return in_ci
 
 
-@pytest.mark.skipif(in_ci(), reason="cant run in CI atm")
+def has_pyspark():
+    import importlib.util
+
+    package_name = 'pyspark'
+    spec = importlib.util.find_spec(package_name)
+    if spec is None:
+        print(package_name + " is not installed so will skip the tests")
+        return False
+
+    return True
+
+
+@pytest.mark.skipif(in_ci() or not has_pyspark(), reason="cant run in CI atm")
 def test_events_still_being_produced():
     """
     Asserts that we are producing events (having at least one produced today)

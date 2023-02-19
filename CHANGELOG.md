@@ -1,6 +1,13 @@
 # Changelog
 
+## 0.10.8
+
+- Improve prompt editor experience 
+- Improve archlinux installation process
+- Support for "<CLIPBOARD>" in prompts to replace with clipboard content
+ 
 ## 0.10.7
+
 - Removing Support for i3 in Favor of GNOME
 - Fixing smaller issues with setting up python_search in GNOME
 

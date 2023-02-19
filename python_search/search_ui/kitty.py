@@ -41,6 +41,7 @@ class FzfInKitty:
 
         self._logger = logger
         self._fzf = Fzf(configuration)
+        self.FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
 
     def run(self) -> None:
         self._focus_or_launch()
@@ -55,9 +56,6 @@ class FzfInKitty:
 
     def _launch(self) -> None:
         internal_cmd = self._fzf.get_cmd()
-        font = "FontAwesome"
-        if is_mac():
-            font = "Pragmata Pro"
         terminal = Terminal()
 
         launch_cmd = f"""nice -19 {get_kitty_cmd()} \
@@ -74,7 +72,7 @@ class FzfInKitty:
         -o active_tab_title_template=none \
         -o initial_window_width={self.width}  \
         -o initial_window_height={self.height} \
-        -o font_family="{font}" \
+        -o font_family="{self.FONT}" \
         {terminal.get_background_color()} \
         -o font_size={FzfInKitty.FONT_SIZE} \
         {terminal.GLOBAL_TERMINAL_PARAMS} \

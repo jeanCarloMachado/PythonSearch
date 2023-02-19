@@ -6,42 +6,32 @@ from dataclasses import dataclass
 from typing import List
 
 import fire
-import PySimpleGUI as sg
 
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
+from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 from python_search.apps.notification_ui import send_notification
 
 
 class EntryCaptureGUI:
+    _ENTRY_NAME_INPUT = "-entry-name-"
+    _ENTRY_BODY_INPUT = "-entry-body-"
+    _ENTRY_NAME_INPUT_SIZE = (17, 7)
+    _ENTRY_BODY_INPUT_SIZE = (17, 10)
+
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
         self._chat_gpt = ChatGPT()
+        self.FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
+        import PySimpleGUI as sg
 
-    def launch_prompt(
-        self,
-        description: str = "",
-        content: str = "",
-        description_with_clipboard=False,
-    ) -> GuiEntryData:
-        generate_body = False
-        if description_with_clipboard:
-            generate_body = True
-            from python_search.apps.clipboard import Clipboard
+        self.sg = sg
 
-            clipboard_content = Clipboard().get_content()
-            description = description + clipboard_content
-
-        return self.launch(
-            default_key=description,
-            default_content=content,
-            generate_body=generate_body,
-        )
 
     def launch(
         self,
@@ -61,13 +51,13 @@ class EntryCaptureGUI:
 
         print("Default key: ", default_key)
 
-        self._sg = sg
 
         config = ConfigurationLoader().load_config()
-        sg.theme(config.simple_gui_theme)
+        self.sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
 
-        entry_type = sg.Combo(
+
+        entry_type = self.sg.Combo(
             [
                 "Snippet",
                 "Cmd",
@@ -81,61 +71,66 @@ class EntryCaptureGUI:
 
         tags_chucks = self._chunks_of_tags(self._tags, 4)
 
-
-        key_name_input = sg.Multiline(
-            key="key",
+        key_name_input = self.sg.Multiline(
+            key=self._ENTRY_NAME_INPUT,
             default_text=default_key,
             expand_x=True,
             expand_y=True,
-            size=(15, 5),
+            size=self._ENTRY_NAME_INPUT_SIZE
         )
 
-        content_input = sg.Multiline(
-            key="content",
+        content_input = self.sg.Multiline(
+            key=self._ENTRY_BODY_INPUT,
             default_text=default_content,
             expand_x=True,
             expand_y=True,
             no_scrollbar=False,
-            size=(15, 7),
+            size=self._ENTRY_BODY_INPUT_SIZE
         )
         layout = [
-            [sg.Text("Entry name")],
+            [self.sg.Text("Description")],
             [key_name_input],
-            [sg.Text("Content")],
+            [self.sg.Text("Body")],
             [content_input],
             [
-                sg.Text("Generator"),
-                sg.Button("Content", key="-generate-body-"),
-                sg.Button("Desc. / Title", key="-generate-title-"),
-                sg.Text("Size"),
-                sg.Input(500, key="generation-size", expand_x=False),
+                self.sg.Text("Generator"),
+                self.sg.Button("Body", key="-generate-body-"),
+                self.sg.Button("Description", key="-generate-title-"),
+                self.sg.Text("Response Size"),
+                self.sg.Input(500, key="generation-size", expand_x=False),
             ],
-            [sg.Text("Type")],
-            [entry_type, sg.Button("Try it", key="-try-entry-")],
-            [sg.Text("Tags")],
+            [self.sg.Text("Type")],
+            [entry_type, self.sg.Button("Try it", key="-try-entry-")],
+            [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
-            [sg.Button("Write", key="write")],
+            [self.sg.Button("Write entry", key="write")],
         ]
 
-        window = sg.Window(
+        window = self.sg.Window(
             window_title,
             layout,
-            font=("Helvetica", font_size),
+            font=(self.FONT, font_size),
             finalize=True,
         )
 
 
-        window["key"].bind("<Escape>", "_Esc")
-        window["content"].bind("<Escape>", "_Esc")
+        window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
+        window[self._ENTRY_BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "_Esc")
 
         self._predict_entry_type_thread(default_content, window)
-        if default_key:
+        if default_key or generate_body:
             self._generate_body_thread(default_key, window)
         while True:
             event, values = window.read()
+            if event == self.sg.WINDOW_CLOSED:
+                raise Exception("Window closed")
+
+            if "Escape" in event:
+                raise Exception("Window closed")
+
             if event and (event == "-generate-body-"):
-                self._generate_body_thread(values["key"], window)
+                self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
 
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
@@ -150,10 +145,8 @@ class EntryCaptureGUI:
             if event == "-try-entry-":
                 InterpreterMatcher.build_instance(
                     self._configuration
-                ).get_interpreter_from_type(values["type"])(values["content"]).default()
+                ).get_interpreter_from_type(values["type"])(values[self._ENTRY_BODY_INPUT]).default()
 
-            if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
-                raise Exception("Quitting window")
 
         window.hide()
         window.close()
@@ -166,7 +159,7 @@ class EntryCaptureGUI:
                     selected_tags.append(key)
 
         result = GuiEntryData(
-            values["key"], values["content"], values["type"], selected_tags
+            values[self._ENTRY_NAME_INPUT], values[self._ENTRY_BODY_INPUT], values["type"], selected_tags
         )
 
         if serialize_output:
@@ -181,11 +174,12 @@ class EntryCaptureGUI:
 
         self._chat_gpt = ChatGPT(window["generation-size"].get())
 
+        import PySimpleGUI as sg
         window: sg.Window = window
 
         def _describe_body(title: str, window):
             description = self._chat_gpt.answer(title)
-            window["content"].update(description)
+            window[self._ENTRY_BODY_INPUT].update(description)
 
         threading.Thread(
             target=_describe_body, args=(title, window), daemon=True
@@ -197,15 +191,15 @@ class EntryCaptureGUI:
         import PySimpleGUI as sg
 
         window: sg.Window = window
-        old_title = window["key"]
+        old_title = window[self._ENTRY_NAME_INPUT]
 
         def _describe_body(content: str, window):
             description = self.genearte_key_from_content(content)
-            new_title = window["key"]
+            new_title = window[self._ENTRY_NAME_INPUT]
             if old_title != new_title:
                 print("Will not upgrade the title as it was already changed")
                 return
-            window["key"].update(description)
+            window[self._ENTRY_NAME_INPUT].update(description)
 
         threading.Thread(
             target=_describe_body, args=(content, window), daemon=True
@@ -247,7 +241,7 @@ class EntryCaptureGUI:
         window.write_event_value("-generated-key-ready-", description)
 
     def _checkbox_list(self, tags):
-        return ([self._sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
+        return ([self.sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
 
     def _chunks_of_tags(self, lst, n):
         """Yield successive n-sized chunks from lst."""
