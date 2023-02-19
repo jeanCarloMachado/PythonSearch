@@ -100,22 +100,22 @@ class EntryCaptureGUI:
             size=(15, 7),
         )
         layout = [
-            [sg.Text("Entry name")],
+            [sg.Text("Description")],
             [key_name_input],
-            [sg.Text("Content")],
+            [sg.Text("Body")],
             [content_input],
             [
                 sg.Text("Generator"),
-                sg.Button("Content", key="-generate-body-"),
-                sg.Button("Desc. / Title", key="-generate-title-"),
-                sg.Text("Size"),
+                sg.Button("Body", key="-generate-body-"),
+                sg.Button("Description", key="-generate-title-"),
+                sg.Text("Response Size"),
                 sg.Input(500, key="generation-size", expand_x=False),
             ],
             [sg.Text("Type")],
             [entry_type, sg.Button("Try it", key="-try-entry-")],
             [sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
-            [sg.Button("Write", key="write")],
+            [sg.Button("Write entry", key="write")],
         ]
 
         window = sg.Window(
