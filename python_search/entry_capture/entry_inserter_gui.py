@@ -18,6 +18,7 @@ from python_search.apps.notification_ui import send_notification
 
 class EntryCaptureGUI:
     _ENTRY_NAME_INPUT = "-entry-name-"
+    _ENTRY_BODY_INPUT = "-entry-body-"
 
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
@@ -91,7 +92,7 @@ class EntryCaptureGUI:
         )
 
         content_input = sg.Multiline(
-            key="content",
+            key=self._ENTRY_BODY_INPUT,
             default_text=default_content,
             expand_x=True,
             expand_y=True,
@@ -126,7 +127,7 @@ class EntryCaptureGUI:
 
 
         window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
-        window["content"].bind("<Escape>", "Escape")
+        window[self._ENTRY_BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "_Esc")
 
         self._predict_entry_type_thread(default_content, window)
@@ -156,7 +157,7 @@ class EntryCaptureGUI:
             if event == "-try-entry-":
                 InterpreterMatcher.build_instance(
                     self._configuration
-                ).get_interpreter_from_type(values["type"])(values["content"]).default()
+                ).get_interpreter_from_type(values["type"])(values[self._ENTRY_BODY_INPUT]).default()
 
 
         window.hide()
@@ -170,7 +171,7 @@ class EntryCaptureGUI:
                     selected_tags.append(key)
 
         result = GuiEntryData(
-            values[self._ENTRY_NAME_INPUT], values["content"], values["type"], selected_tags
+            values[self._ENTRY_NAME_INPUT], values[self._ENTRY_BODY_INPUT], values["type"], selected_tags
         )
 
         if serialize_output:
@@ -189,7 +190,7 @@ class EntryCaptureGUI:
 
         def _describe_body(title: str, window):
             description = self._chat_gpt.answer(title)
-            window["content"].update(description)
+            window[self._ENTRY_BODY_INPUT].update(description)
 
         threading.Thread(
             target=_describe_body, args=(title, window), daemon=True
