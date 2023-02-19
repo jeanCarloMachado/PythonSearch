@@ -17,6 +17,8 @@ from python_search.apps.notification_ui import send_notification
 
 
 class EntryCaptureGUI:
+    _ENTRY_NAME_INPUT = "-entry-name-"
+
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
@@ -50,7 +52,6 @@ class EntryCaptureGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
-        generate_body=False,
     ) -> GuiEntryData:
         """
         Launch the _entries capture GUI.
@@ -61,11 +62,11 @@ class EntryCaptureGUI:
 
         print("Default key: ", default_key)
 
-        self._sg = sg
 
         config = ConfigurationLoader().load_config()
         sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
+
 
         entry_type = sg.Combo(
             [
@@ -81,9 +82,8 @@ class EntryCaptureGUI:
 
         tags_chucks = self._chunks_of_tags(self._tags, 4)
 
-
         key_name_input = sg.Multiline(
-            key="key",
+            key=self._ENTRY_NAME_INPUT,
             default_text=default_key,
             expand_x=True,
             expand_y=True,
@@ -125,8 +125,8 @@ class EntryCaptureGUI:
         )
 
 
-        window["key"].bind("<Escape>", "_Esc")
-        window["content"].bind("<Escape>", "_Esc")
+        window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
+        window["content"].bind("<Escape>", "Escape")
         window["type"].bind("<Escape>", "_Esc")
 
         self._predict_entry_type_thread(default_content, window)
@@ -134,8 +134,14 @@ class EntryCaptureGUI:
             self._generate_body_thread(default_key, window)
         while True:
             event, values = window.read()
+            if event == sg.WINDOW_CLOSED:
+                raise Exception("Window closed")
+
+            if "Escape" in event:
+                raise Exception("Window closed")
+
             if event and (event == "-generate-body-"):
-                self._generate_body_thread(values["key"], window)
+                self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
 
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
@@ -152,8 +158,6 @@ class EntryCaptureGUI:
                     self._configuration
                 ).get_interpreter_from_type(values["type"])(values["content"]).default()
 
-            if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
-                raise Exception("Quitting window")
 
         window.hide()
         window.close()
@@ -166,7 +170,7 @@ class EntryCaptureGUI:
                     selected_tags.append(key)
 
         result = GuiEntryData(
-            values["key"], values["content"], values["type"], selected_tags
+            values[self._ENTRY_NAME_INPUT], values["content"], values["type"], selected_tags
         )
 
         if serialize_output:
@@ -197,15 +201,15 @@ class EntryCaptureGUI:
         import PySimpleGUI as sg
 
         window: sg.Window = window
-        old_title = window["key"]
+        old_title = window[self._ENTRY_NAME_INPUT]
 
         def _describe_body(content: str, window):
             description = self.genearte_key_from_content(content)
-            new_title = window["key"]
+            new_title = window[self._ENTRY_NAME_INPUT]
             if old_title != new_title:
                 print("Will not upgrade the title as it was already changed")
                 return
-            window["key"].update(description)
+            window[self._ENTRY_NAME_INPUT].update(description)
 
         threading.Thread(
             target=_describe_body, args=(content, window), daemon=True
@@ -247,7 +251,7 @@ class EntryCaptureGUI:
         window.write_event_value("-generated-key-ready-", description)
 
     def _checkbox_list(self, tags):
-        return ([self._sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
+        return ([sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
 
     def _chunks_of_tags(self, lst, n):
         """Yield successive n-sized chunks from lst."""
