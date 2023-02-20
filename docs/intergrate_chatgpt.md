@@ -1,5 +1,4 @@
-# Enable ChatGPT content/title generation
-
+# Enable ChatGPT entry geneartion and prompt automation
 To enable ChatGPT in python_search, you will need to add your OpenAI API key as an environment variable in your initialization files. To generate an OpenAI API key, go to openai.com and scroll down to "API", log-in, and press "View API-Keys". Generate a new secret key and copy it.
 
 Once you have your API key, add it to your initialization files as "export OPENAI_KEY=[Key here]".
