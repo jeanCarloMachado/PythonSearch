@@ -3,18 +3,18 @@ import sys
 
 def setup_inference_logger():
     logger = logging.getLogger("inference")
-    logger.setLevel(logging.WARN)
 
     fh = logging.FileHandler("/tmp/inference.txt")
-    fh.setLevel(logging.DEBUG)
+    fh.setLevel(logging.WARNING)
     logger.addHandler(fh)
 
-    # ch = logging.StreamHandler(sys.stdout)
-    # ch.setLevel(logging.INFO)
-    # logger.addHandler(ch)
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.DEBUG)
+    logger.addHandler(ch)
+
+    logger.setLevel(logging.DEBUG)
 
     return logger
-
 
 def setup_preview_logger():
     """
