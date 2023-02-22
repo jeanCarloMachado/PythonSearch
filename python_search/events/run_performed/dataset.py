@@ -59,7 +59,7 @@ class EntryExecutedDataset:
         spark = SparkSession.builder.getOrCreate()
         result_df = spark.read.json(
             GenericDataCollector().data_location(EntryExecutedDataset.NEW_FILE_NAME),
-            schema=EntryExecutedDataset.SCHEMA,
+            schema=EntryExecutedDataset().SCHEMA,
         )
 
         return result_df
