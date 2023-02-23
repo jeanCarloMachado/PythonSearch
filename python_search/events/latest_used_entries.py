@@ -9,7 +9,6 @@ class RecentKeys:
     """
 
     _blacklisted_items = ["python search main entry"]
-
     _used_keys = []
 
     def get_latest_used_keys(self) -> List[str]:

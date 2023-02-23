@@ -80,14 +80,13 @@ class Search:
         return result_str
 
     def _rerank_via_model(self):
+        if not self._inference:
+            return
         try:
             self._ranked_keys = self._inference.get_ranking()
             self._ranking_method_used = "RankingNextModel"
         except Exception as e:
-
             print(f"Failed to perform inference, reason {e}")
-
-            # raise e
 
     def _build_result(self, skip_latest=False) -> RankedEntries.type:
         """
@@ -97,6 +96,7 @@ class Search:
         result = []
 
         latest_entries = self._fetch_latest_entries()
+        self.logger.debug(f"Latest entries {latest_entries}")
 
         if latest_entries and not skip_latest:
             for key in latest_entries:

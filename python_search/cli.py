@@ -166,6 +166,12 @@ class PythonSearchCli:
 
         return EntryTypeClassifierAPI
 
+    def edit_entries_main(self):
+        """Edit the entries_main script"""
+
+        from python_search.entry_capture.entries_editor import EntriesEditor
+        return EntriesEditor(self.configuration).edit_default()
+
 
 def _error_handler(e):
     import sys
