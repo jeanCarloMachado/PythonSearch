@@ -49,7 +49,6 @@ def generate_ranking(skip_model: bool = False, base_rank=False, get_latest=True)
     results = search.search(skip_model=skip_model, base_rank=base_rank)
     return results
 
-
 @app.get("/ranking/reload", response_class=PlainTextResponse)
 def reload():
     reload_ranking()

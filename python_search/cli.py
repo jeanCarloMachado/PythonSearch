@@ -4,7 +4,7 @@ from typing import Optional
 from python_search.apps.window_manager import WindowManager
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.core_entities import Key
+from python_search.core_entities.core_entities import Key
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.events.run_performed import RunPerformed
