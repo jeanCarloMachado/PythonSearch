@@ -17,7 +17,7 @@ def in_ci():
 def has_pyspark():
     import importlib.util
 
-    package_name = 'pyspark'
+    package_name = "pyspark"
     spec = importlib.util.find_spec(package_name)
     if spec is None:
         print(package_name + " is not installed so will skip the tests")

@@ -4,7 +4,6 @@ from python_search.interpreter.base import BaseInterpreter
 
 class PythonInterpreter(BaseInterpreter):
     def __init__(self, cmd, context=None):
-
         self.context = context
 
         if type(cmd) is dict and "callable" in cmd:

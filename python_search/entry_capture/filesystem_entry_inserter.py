@@ -22,7 +22,6 @@ class FilesystemEntryInserter:
         self._new_entries_string = FilesystemEntryInserter.NEW_ENTRIES_STRING
 
     def insert(self, key: str, entry: dict):
-
         entry["created_at"] = datetime.now().isoformat()
 
         if "tags" in entry and self._configuration.tags_dependent_inserter_marks:

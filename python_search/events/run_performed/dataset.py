@@ -4,9 +4,6 @@ from python_search.config import DataConfig
 from python_search.data_collector import GenericDataCollector
 
 
-
-
-
 class EntryExecutedDataset:
     """
     Poit of access for the searches performed
@@ -19,7 +16,6 @@ class EntryExecutedDataset:
     CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + FILE_NAME
 
     def __init__(self, spark=None):
-
         # For illustrative purposes.
         from pyspark.sql.types import StructType, StructField, StringType, IntegerType
         from pyspark.sql.session import SparkSession
@@ -43,7 +39,6 @@ class EntryExecutedDataset:
         data_location = "file://" + DataConfig.SEARCH_RUNS_PERFORMED_FOLDER
         print("Loading data from: {}".format(data_location))
 
-
         return self.spark.read.format("parquet").load_old(data_location)
 
     def load_clean(self):
@@ -59,7 +54,7 @@ class EntryExecutedDataset:
         spark = SparkSession.builder.getOrCreate()
         result_df = spark.read.json(
             GenericDataCollector().data_location(EntryExecutedDataset.NEW_FILE_NAME),
-            schema=EntryExecutedDataset.SCHEMA,
+            schema=EntryExecutedDataset().SCHEMA,
         )
 
         return result_df

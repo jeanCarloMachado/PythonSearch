@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.10.8"
+version = "0.10.9"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -50,7 +50,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-python_search = 'python_search.cli:main'
+python_search = 'python_search.python_search_cli:main'
 next_item_pipeline = 'python_search.next_item_predictor.next_item_pipeline:main'
 next_item = 'python_search.next_item_predictor.next_item_pipeline:main'
 collect_input = 'python_search.apps.collect_input:main'
@@ -75,6 +75,7 @@ prompt_editor = 'python_search.apps.prompt_editor:main'
 entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings.entry_embeddings:main'
 entries_editor = 'python_search.entry_capture.entries_editor:main'
 register_new = 'python_search.entry_capture.register_new:main'
+share_entry = 'python_search.share:main'
 offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
 ps_fzf = 'python_search.search_ui.fzf:main'
 

@@ -19,7 +19,6 @@ class PythonSearchMLFlow:
     """
 
     def __init__(self):
-
         self.debug = os.getenv("PS_DEBUG", False)
         import mlflow
 

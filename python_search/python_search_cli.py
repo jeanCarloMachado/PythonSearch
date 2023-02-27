@@ -4,7 +4,7 @@ from typing import Optional
 from python_search.apps.window_manager import WindowManager
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.core_entities import Key
+from python_search.core_entities.core_entities import Key
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.events.run_performed import RunPerformed
@@ -16,9 +16,7 @@ from python_search.search_ui.preview import Preview
 
 class PythonSearchCli:
     """
-    The command line application, entry point of the program.
-
-    Try to avoid adding direct commands, prefer instead to add objects as parts of functions:
+    Welcome to PythonSearch, An open-source assistant that helps you collect, retrieve and refactor information (and programs) efficiently using Python
     """
 
     # all commands that are not self-explanatory should not be part of the main api, thus are marked as private.
@@ -28,9 +26,7 @@ class PythonSearchCli:
     @staticmethod
     def install_missing_dependencies():
         """
-        Install all missing dependencies that cannot be provided thorugh the default installer
-
-        For mac: brew related dependenceis
+        Install all missing dependencies that cannot be provided through the default installer
 
         """
         from python_search.init.install_dependencies import InstallDependencies
@@ -39,23 +35,23 @@ class PythonSearchCli:
 
     @staticmethod
     def new_project(project_name: str):
-        """Create a new project in the current directory with the given name"""
+        """
+        Create a new project in the current directory with the given name
+        """
         from python_search.init.project import Project
 
         Project().new_project(project_name)
 
     @staticmethod
     def set_project_location(location: str):
-        """For existing"""
+        """
+        If you have a python search project already you can specify its location with this command
+        """
         from python_search.init.project import Project
 
         Project().set_current_project(location)
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
-        """
-        Keep this constructor small and import dependencies inside the functions
-        so they keep being fast
-        """
         if not configuration:
             logging.debug("No _configuration provided, using default")
 
@@ -80,7 +76,7 @@ class PythonSearchCli:
 
     def register_new_ui(self):
         """
-        Starts the UI for collecting a new entry into pythonsearch
+        Starts the UI for collecting a new entry into python search
         """
         from python_search.entry_capture.register_new import RegisterNew
 
@@ -114,7 +110,7 @@ class PythonSearchCli:
 
     def configure_shortcuts(self):
         """
-        Generate shorcuts for the appliable environments
+        Generate shortcuts for the current configuration
         """
         from python_search.shortcut.generator import ShortcutGenerator
 
@@ -159,7 +155,6 @@ class PythonSearchCli:
         Preview().display(entry_text)
 
     def _entry_type_classifier(self):
-
         from python_search.entry_type.classifier_inference import (
             ClassifierInferenceClient,
         )
@@ -169,6 +164,13 @@ class PythonSearchCli:
                 self.inference_client = ClassifierInferenceClient
 
         return EntryTypeClassifierAPI
+
+    def edit_entries_main(self):
+        """Edit the entries_main script"""
+
+        from python_search.entry_capture.entries_editor import EntriesEditor
+
+        return EntriesEditor(self.configuration).edit_default()
 
 
 def _error_handler(e):

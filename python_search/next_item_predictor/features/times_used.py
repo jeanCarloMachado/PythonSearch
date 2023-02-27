@@ -22,7 +22,6 @@ class TimesUsed:
         return self._df
 
     def get_value(self, key) -> int:
-
         result = self._pandas_df[self._pandas_df["key"] == key]
 
         if result is None or result.empty:

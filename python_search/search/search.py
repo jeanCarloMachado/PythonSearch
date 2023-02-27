@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from collections import namedtuple
 from typing import List, Literal, Optional
 
@@ -12,6 +11,7 @@ from python_search.events.ranking_generated import (
 )
 from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
+from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
 from python_search.search.results import FzfOptimizedSearchResults
 
@@ -35,17 +35,19 @@ class Search:
         self._entries_result = FzfOptimizedSearchResults()
         self._entries: Optional[dict] = None
         self._ranking_generator_writer = RankingGeneratedWriter()
+        self.logger = setup_inference_logger()
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
 
         if self._feature_toggle.is_enabled("ranking_next"):
+            self.logger.info("Reaching ranking next component")
             from python_search.next_item_predictor.inference.inference import Inference
 
             try:
                 self._inference = Inference(self._configuration)
-            except Exception as e:
-                print(
+            except BaseException as e:
+                self.logger.error(
                     f"Could not initialize the inference component. Proceeding without inference, details: {e}"
                 )
                 self._entries_result.degraded_message = f"{e}"
@@ -65,7 +67,9 @@ class Search:
         if not skip_model and not base_rank and self._configuration.use_webservice:
             self._rerank_via_model()
 
-        """Populate the variable used_entries  with the results from redis"""
+        """
+        Populate the variable used_entries  with the results from redis
+        """
         # skip latest entries if we want to use only the base rank
         result = self._build_result(skip_latest=base_rank)
 
@@ -80,14 +84,13 @@ class Search:
         return result_str
 
     def _rerank_via_model(self):
+        if not self._inference:
+            return
         try:
             self._ranked_keys = self._inference.get_ranking()
             self._ranking_method_used = "RankingNextModel"
         except Exception as e:
-
             print(f"Failed to perform inference, reason {e}")
-
-            # raise e
 
     def _build_result(self, skip_latest=False) -> RankedEntries.type:
         """
@@ -108,7 +111,7 @@ class Search:
 
                 # sometimes there can be a bug of saving something other than dicts as _entries
                 if type(content) != dict:
-                    logging.warning(f"Entry is not a dict {content}")
+                    self.logger.warning(f"Entry is not a dict {content}")
                     continue
 
                 content["tags"] = content.get("tags", []) + ["RecentlyUsed"]

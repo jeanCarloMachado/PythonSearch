@@ -22,7 +22,6 @@ class Inference:
         model: Optional[Any] = None,
         logger=None,
     ):
-
         self.debug = os.getenv("DEBUG", False)
 
         configuration = (

@@ -7,6 +7,8 @@ Feel free to delete all the _entries here. You will want to versionate your _ent
 import datetime
 import os
 
+from python_search.official_entries.entries import OfficialEntries
+
 entries = {
     # NEW_ENTRIES_HERE
     "register new entry": {
@@ -51,4 +53,4 @@ entries = {
 
 from python_search.configuration.configuration import PythonSearchConfiguration
 
-config = PythonSearchConfiguration(entries=entries)
+config = PythonSearchConfiguration(entries=entries, entries_groups=OfficialEntries)

@@ -17,7 +17,6 @@ class ConfigurationLoader:
         return ConfigurationLoader._instance
 
     def load_config(self) -> PythonSearchConfiguration:
-
         folder = self.get_project_root()
         config_location = f"{folder}/entries_main.py"
 

@@ -8,7 +8,7 @@ from python_search.apps.notification_ui import send_notification
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.context import Context
-from python_search.core_entities import Key
+from python_search.core_entities.core_entities import Key
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter, WRAP_IN_TERMINAL

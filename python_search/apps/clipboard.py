@@ -1,4 +1,4 @@
-import sys
+import os
 from typing import Union
 from python_search.environment import is_mac
 
@@ -41,9 +41,9 @@ class Clipboard:
         :return:
         """
 
-
         if not content:
             import sys
+
             data = sys.stdin.readlines()
             content = "\n".join(data)
 
@@ -64,15 +64,15 @@ class Clipboard:
 
         cmd = f"echo {sanitized} | {clipboard_cmd}"
 
+        print(f"Setting clipboard content: {sanitized}")
+        result = os.system(cmd)
+        if result != 0:
+            raise Exception("Failed to set clipboard content")
+
         if enable_notifications or notify:
             from python_search.apps.notification_ui import send_notification
+
             send_notification(f"Content copied: {sanitized}")
-
-        import os
-
-        print(cmd)
-        return os.system(cmd)
-
 
 
 def main():

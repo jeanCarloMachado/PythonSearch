@@ -18,7 +18,6 @@ def init():
 def sidebar():
     global open_page
     with st.sidebar:
-
         if st.button("HomePage"):
             open_page = "home"
 

@@ -6,7 +6,6 @@ from python_search.apps.terminal import Terminal
 
 class AskQuestion:
     def ask(self, message: str) -> str:
-
         message = self._sanitize_message(message)
         content_file = "/tmp/python_search_input"
         if os.path.exists(content_file):

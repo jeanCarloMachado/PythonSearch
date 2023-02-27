@@ -1,4 +1,6 @@
-from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import EntryCaptureGUI
+from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
+    EntryCaptureGUI,
+)
 from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.register_new import RegisterNew
 
@@ -7,6 +9,7 @@ class PromptEditor:
     """
     The purpose of this code is to launch a pre-defined prompt for the user to interact with CHATGPT and to furhter refine it
     """
+
     def launch_prompt(
         self,
         prompt_text: str = "",
@@ -24,7 +27,7 @@ class PromptEditor:
 
         result = EntryCaptureGUI().launch(
             default_key=key,
-            default_content='',
+            default_content="",
             generate_body=True,
         )
         RegisterNew().save_entry_data(result)
@@ -32,7 +35,7 @@ class PromptEditor:
         return result
 
 
-
 def main():
     import fire
+
     fire.Fire(PromptEditor().launch_prompt)

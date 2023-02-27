@@ -76,7 +76,12 @@ def run(
     if name:
         name_expr = f" --name {name} "
 
-    LIMIT_CPU = 8
+    LIMIT_CPU = os.cpu_count()
+    print(f"Found {LIMIT_CPU} CPUs in the machine")
+    LIMIT_CPU = os.environ["LIMIT_CPU"] if "LIMIT_CPU" in os.environ else LIMIT_CPU
+    # more than 5 cpus is hardly useful
+    if LIMIT_CPU > 5:
+        LIMIT_CPU = 5
     cmd = f"docker run {name_expr} {port} {restart_exp} --expose=8000 --expose 4040 --expose 6380 --cpus={LIMIT_CPU} {environment_variables} -it {volumes} {entrypoint} ps {cmd}"
     print("Cmd: " + cmd)
     os.system(cmd)
@@ -102,7 +107,6 @@ def shell():
 
 
 def run_jupyter(with_token=False, restart=False):
-
     token_expression = " --NotebookApp.token=''"
     if with_token:
         token_expression = ""
@@ -134,7 +138,6 @@ def _stop_and_remove_by_name(name):
 def run_streamlit(
     *, custom_entry_point: Optional[str] = None, restart=False, disable_password=False
 ):
-
     if restart:
         _restart_by_port(8501)
 

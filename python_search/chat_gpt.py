@@ -7,7 +7,6 @@ class ChatGPT:
     """
 
     def __init__(self, max_tokens=500):
-
         self.max_tokens = int(max_tokens)
 
     def collect_prompt_via_ui(self):
