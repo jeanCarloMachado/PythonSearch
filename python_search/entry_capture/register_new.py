@@ -8,7 +8,10 @@ from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )
-from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import EntryCaptureGUI, GuiEntryData
+from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
+    EntryCaptureGUI,
+    GuiEntryData,
+)
 
 from python_search.entry_type.entity import infer_default_type
 from python_search.exceptions import RegisterNewException
@@ -23,7 +26,6 @@ class RegisterNew:
     """
 
     def __init__(self, configuration=None):
-
         if not configuration:
             configuration = ConfigurationLoader().load_config()
 

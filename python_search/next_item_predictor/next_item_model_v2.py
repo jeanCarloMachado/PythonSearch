@@ -214,7 +214,6 @@ class NextItemBaseModelV2(BaseModel):
         collected_rows = dataset.collect()
 
         for i, row in enumerate(collected_rows):
-
             X[i] = np.concatenate(
                 [
                     # adds entry number so we can index and select the right row afterwards

@@ -25,7 +25,6 @@ class PredictEntryTypeInference:
     def predict_entry_type(
         self, entry_data: EntryData
     ) -> Tuple[EntryType, PredictionUuid]:
-
         from python_search.search.models import PythonSearchMLFlow
 
         model = PythonSearchMLFlow().get_entry_type_classifier(

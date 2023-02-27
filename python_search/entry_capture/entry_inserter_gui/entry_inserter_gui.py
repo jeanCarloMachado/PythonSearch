@@ -32,7 +32,6 @@ class EntryCaptureGUI:
 
         self.sg = sg
 
-
     def launch(
         self,
         window_title: str = "New",
@@ -51,11 +50,9 @@ class EntryCaptureGUI:
 
         print("Default key: ", default_key)
 
-
         config = ConfigurationLoader().load_config()
         self.sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
-
 
         entry_type = self.sg.Combo(
             [
@@ -76,7 +73,7 @@ class EntryCaptureGUI:
             default_text=default_key,
             expand_x=True,
             expand_y=True,
-            size=self._ENTRY_NAME_INPUT_SIZE
+            size=self._ENTRY_NAME_INPUT_SIZE,
         )
 
         content_input = self.sg.Multiline(
@@ -85,7 +82,7 @@ class EntryCaptureGUI:
             expand_x=True,
             expand_y=True,
             no_scrollbar=False,
-            size=self._ENTRY_BODY_INPUT_SIZE
+            size=self._ENTRY_BODY_INPUT_SIZE,
         )
         layout = [
             [self.sg.Text("Description")],
@@ -112,7 +109,6 @@ class EntryCaptureGUI:
             font=(self.FONT, font_size),
             finalize=True,
         )
-
 
         window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
         window[self._ENTRY_BODY_INPUT].bind("<Escape>", "Escape"),
@@ -145,8 +141,9 @@ class EntryCaptureGUI:
             if event == "-try-entry-":
                 InterpreterMatcher.build_instance(
                     self._configuration
-                ).get_interpreter_from_type(values["type"])(values[self._ENTRY_BODY_INPUT]).default()
-
+                ).get_interpreter_from_type(values["type"])(
+                    values[self._ENTRY_BODY_INPUT]
+                ).default()
 
         window.hide()
         window.close()
@@ -159,7 +156,10 @@ class EntryCaptureGUI:
                     selected_tags.append(key)
 
         result = GuiEntryData(
-            values[self._ENTRY_NAME_INPUT], values[self._ENTRY_BODY_INPUT], values["type"], selected_tags
+            values[self._ENTRY_NAME_INPUT],
+            values[self._ENTRY_BODY_INPUT],
+            values["type"],
+            selected_tags,
         )
 
         if serialize_output:
@@ -167,14 +167,13 @@ class EntryCaptureGUI:
 
         return result
 
-
     def _generate_body_thread(self, title: str, window):
-
         send_notification(f"Starting to generate body")
 
         self._chat_gpt = ChatGPT(window["generation-size"].get())
 
         import PySimpleGUI as sg
+
         window: sg.Window = window
 
         def _describe_body(title: str, window):
@@ -210,7 +209,6 @@ class EntryCaptureGUI:
             "generate a description in the imperative form with most 5 words of the follwing text: "
             + content
         )
-
 
     def _predict_entry_type_thread(self, content, window):
         threading.Thread(

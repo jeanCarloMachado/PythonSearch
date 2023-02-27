@@ -48,7 +48,6 @@ class OfflineEvaluation:
             f"Size of dataset after filtering for positive labels: {len(dataset.index)}"
         )
         for index, row in dataset.iterrows():
-
             if not self.all_keys_exist(row):
                 print(f"Members of entry do not existing any longer skipping row")
                 continue

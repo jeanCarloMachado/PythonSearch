@@ -47,7 +47,9 @@ class Search:
             try:
                 self._inference = Inference(self._configuration)
             except BaseException as e:
-                self.logger.error(f"Could not initialize the inference component. Proceeding without inference, details: {e}")
+                self.logger.error(
+                    f"Could not initialize the inference component. Proceeding without inference, details: {e}"
+                )
                 self._entries_result.degraded_message = f"{e}"
 
     @timeit
@@ -65,7 +67,9 @@ class Search:
         if not skip_model and not base_rank and self._configuration.use_webservice:
             self._rerank_via_model()
 
-        """Populate the variable used_entries  with the results from redis"""
+        """
+        Populate the variable used_entries  with the results from redis
+        """
         # skip latest entries if we want to use only the base rank
         result = self._build_result(skip_latest=base_rank)
 
@@ -96,7 +100,6 @@ class Search:
         result = []
 
         latest_entries = self._fetch_latest_entries()
-        self.logger.debug(f"Latest entries {latest_entries}")
 
         if latest_entries and not skip_latest:
             for key in latest_entries:

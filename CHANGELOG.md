@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.9
+
+- Improve docs
+- Add feature to share entry <Ctrl+S> in fzf to do it.
+
+
 ## 0.10.8
 
 - Improve prompt editor experience 

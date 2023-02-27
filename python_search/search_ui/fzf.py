@@ -63,12 +63,11 @@ class Fzf:
 
     def get_fzf_cmd(self):
         if is_mac():
-            return '/usr/local/bin/fzf'
+            return "/usr/local/bin/fzf"
 
         return "fzf"
 
     def _run_key(self, shortcut: str, kill_window=False, wrap_in_terminal=False) -> str:
-
         kill_expr = ""
         if kill_window:
             kill_expr = " --fzf_pid_to_kill $PPID "
@@ -87,7 +86,7 @@ class Fzf:
 
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
-            return '--color=bg+:#ffffff,bg:#ffffff,hl:#719872,fg:#616161,header:#719872,info:#727100,pointer:#E12672,marker:#E17899,fg+:#616161,preview-bg:#ffffff,prompt:#0099BD,hl+:#719899'
+            return "--color=bg+:#ffffff,bg:#ffffff,hl:#719872,fg:#616161,header:#719872,info:#727100,pointer:#E12672,marker:#E17899,fg+:#616161,preview-bg:#ffffff,prompt:#0099BD,hl+:#719899"
 
         if self.configuration.get_fzf_theme() in ["dark", "dracula"]:
             return ' --color="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#6272a4" '
@@ -97,7 +96,6 @@ class Fzf:
     def _get_rankging_generate_cmd(self, reload=False, base_rank=False):
         # in mac we need tensorflow to be installed via conda
         if self.configuration.use_webservice:
-
             if reload:
                 return "curl -s localhost:8000/ranking/reload_and_generate || python_search _ranking search"
 

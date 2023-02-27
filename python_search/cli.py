@@ -155,7 +155,6 @@ class PythonSearchCli:
         Preview().display(entry_text)
 
     def _entry_type_classifier(self):
-
         from python_search.entry_type.classifier_inference import (
             ClassifierInferenceClient,
         )
@@ -170,6 +169,7 @@ class PythonSearchCli:
         """Edit the entries_main script"""
 
         from python_search.entry_capture.entries_editor import EntriesEditor
+
         return EntriesEditor(self.configuration).edit_default()
 
 

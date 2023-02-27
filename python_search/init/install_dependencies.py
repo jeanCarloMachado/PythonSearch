@@ -22,9 +22,11 @@ class InstallDependencies:
         self._install_wctrl()
         self._install_xsel()
 
-        print("""
+        print(
+            """
 Installation successful!
-        """)
+        """
+        )
 
     def _install_ack(self):
         print("Installing ack")
@@ -37,35 +39,36 @@ Installation successful!
             )
 
     def _install_tk(self):
-
         if is_mac():
             os.system("brew install python-tk")
         if is_archlinux():
             os.system("sudo pacman -S tk")
 
-
     def _install_zsh_mac(self):
-
         if not is_mac():
             return
 
         os.system("brew install zsh")
 
     def _install_shortcut_mac(self):
-
         if not is_mac():
             return
 
-
         os.system("brew install icanhazshortcut")
 
-        HOME = os.environ['HOME']
+        HOME = os.environ["HOME"]
 
         print("Downloading keyboard config ")
-        self.download_file('https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/docs/config.ini.part1', f'{HOME}/.config/iCanHazShortcut/config.ini.part1')
+        self.download_file(
+            "https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/docs/config.ini.part1",
+            f"{HOME}/.config/iCanHazShortcut/config.ini.part1",
+        )
 
         print("Downloading bom script ")
-        self.download_file("https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/add_bom_to_file.sh", '/usr/local/bin/add_bom_to_file.sh')
+        self.download_file(
+            "https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/add_bom_to_file.sh",
+            "/usr/local/bin/add_bom_to_file.sh",
+        )
         os.system("chmod +x /usr/local/bin/add_bom_to_file.sh")
 
     def download_file(self, url, destination):
@@ -78,8 +81,10 @@ Installation successful!
             return
 
         print("Looks like kitty is not installed in your platform. ")
-        HOME = os.environ['HOME']
-        os.system(f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; {HOME}/.fzf/install """)
+        HOME = os.environ["HOME"]
+        os.system(
+            f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; {HOME}/.fzf/install """
+        )
 
     def _install_brew_if_not_present(self):
         print("Brew checking...")
@@ -116,6 +121,7 @@ Installation successful!
     def _install_wctrl(self):
         if is_archlinux():
             os.system("sudo pacman -S wmctrl")
+
     def _install_xsel(self):
         if is_archlinux():
             os.system("sudo pacman -S xsel")

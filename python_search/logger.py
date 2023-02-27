@@ -1,6 +1,7 @@
 import logging
 import sys
 
+
 def setup_inference_logger():
     logger = logging.getLogger("inference")
 
@@ -15,6 +16,7 @@ def setup_inference_logger():
     logger.setLevel(logging.DEBUG)
 
     return logger
+
 
 def setup_preview_logger():
     """

@@ -5,17 +5,14 @@ from python_search.exceptions import notify_exception
 
 
 class ShareEntry:
-
     def __init__(self):
         self._entries = ConfigurationLoader().load_entries()
 
     @notify_exception()
     def share_key(self, key: str):
-
         key = str(Key.from_fzf(key))
         if key not in self._entries:
             raise Exception(f"Entry {key} not found")
-
 
         entry = Entry(key, self._entries[key])
         result = f'"{entry.key}": {entry.get_only_content()}'
@@ -25,11 +22,11 @@ class ShareEntry:
         return result
 
 
-
 def main():
     import fire
+
     fire.Fire(ShareEntry)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -40,7 +40,9 @@ class Preview:
 
         if data["value"]:
             print("")
-            print(f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}')
+            print(
+                f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}'
+            )
         print("")
 
         print(f"Type: {data['type']}")
@@ -48,13 +50,12 @@ class Preview:
             print(f"Description: {data['description']}")
 
         if "created_at" in data:
-            print("Created at: " + data["created_at"].split('.')[0])
+            print("Created at: " + data["created_at"].split(".")[0])
 
         if "tags" in data:
             print(f"Tags: {data['tags']}")
         if "position" in data:
             print("Position: " + data["position"])
-
 
     def _get_color_for_type(self, type):
         if type == "Cmd":
@@ -102,7 +103,6 @@ class Preview:
             result["value"] = dill.source.getsource(value)
 
         if "created_at" in entry_data:
-
             creation_date = parser.parse(entry_data["created_at"])
             today = datetime.now()
             result["created_at"] = str(creation_date)

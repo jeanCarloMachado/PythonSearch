@@ -38,7 +38,6 @@ class DescriptionGenerator:
             return
 
     def generate(self, cmd: EntryKeyGeneratorCmd):
-
         result = ""
         for i in range(0, max_chars_from_key):
             text = cmd.content
@@ -61,7 +60,6 @@ class DescriptionGenerator:
         return np.argmax(probas)
 
     def _transform(self, text):
-
         text_len = len(text)
         missing_spaces = text_len < (maxlen - 3)
 

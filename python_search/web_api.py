@@ -41,13 +41,13 @@ def reload_ranking():
 
 @app.get("/ranking/generate", response_class=PlainTextResponse)
 def generate_ranking(skip_model: bool = False, base_rank=False, get_latest=True):
-
     global results
     if get_latest and not base_rank:
         return results
     print("Skip model api level: ", skip_model)
     results = search.search(skip_model=skip_model, base_rank=base_rank)
     return results
+
 
 @app.get("/ranking/reload", response_class=PlainTextResponse)
 def reload():
@@ -76,7 +76,6 @@ def health():
 
 @app.post("/log_run")
 def log_run(event: RunPerformed):
-
     RecentKeys.add_latest_used(event.key)
     RunPerformedWriter().write(event)
     # regenerate the search after running a key
@@ -104,7 +103,6 @@ def recent_history_endpoint():
 
 
 def main():
-
     import os
 
     import uvicorn

@@ -2,6 +2,7 @@ import os
 import time
 import subprocess
 
+
 class Mac:
     """
     Mac support for tool iCanHazShortcut
@@ -68,7 +69,6 @@ class Mac:
         os.system("open -a iCanHazShortcut")
 
         print(f"Done! {Mac.START_SHORTCUT_NUMBER}  shortcuts generated")
-
 
         number_of_items = subprocess.getoutput(
             f"grep '\[shortcut' {self.config_folder}config.ini | wc -l"

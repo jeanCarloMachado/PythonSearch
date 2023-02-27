@@ -3,7 +3,6 @@ import concurrent.futures as cf
 
 
 class Arize:
-
     MODEL_ID = "entry_type_classifier_v2"
     MODEL_VERSION = "v5"
 

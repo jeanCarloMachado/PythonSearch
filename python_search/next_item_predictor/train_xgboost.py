@@ -9,7 +9,6 @@ Model = Any
 
 class TrainXGBoost:
     def train(self, X_train, X_test, Y_train, Y_test) -> Model:
-
         model = xgb.XGBRegressor(
             tree_method="hist",
             eval_metric=mean_absolute_error,
@@ -26,7 +25,6 @@ class TrainXGBoost:
         return model
 
     def _evaluate_metrics(self, model, display_metrics=False):
-
         results = model.evals_result()
         epochs = len(results["validation_0"]["rmse"])
         x_axis = range(0, epochs)

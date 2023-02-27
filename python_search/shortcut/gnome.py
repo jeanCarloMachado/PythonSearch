@@ -28,7 +28,9 @@ class Gnome:
 
     def _reset(self):
         """reset existing shortcuts, necessary only for gnome"""
-        os.system("gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys")
+        os.system(
+            "gsettings reset-recursively org.gnome.settings-daemon.plugins.media-keys"
+        )
 
     def generate_shortcut(self, name: str, command: str, binding: str):
         """
@@ -83,10 +85,10 @@ class Gnome:
             subprocess.call(["/bin/bash", "-c", cmd])
 
     def _generate_identifier(self, string):
-       """
-       strip the string from all special characters lefting only [A-B-09]
-       """
-       result = "".join(e for e in string if e.isalnum())
-       result = result.lower()
+        """
+        strip the string from all special characters lefting only [A-B-09]
+        """
+        result = "".join(e for e in string if e.isalnum())
+        result = result.lower()
 
-       return result
+        return result

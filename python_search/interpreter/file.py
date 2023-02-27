@@ -25,8 +25,9 @@ class FileInterpreter(BaseInterpreter):
                 f"Not Valid {self.__class__.__name__} command {cmd}"
             )
 
-
-        if self.cmd["file"].startswith("/") or FileInterpreter.file_exists(self.cmd["file"]):
+        if self.cmd["file"].startswith("/") or FileInterpreter.file_exists(
+            self.cmd["file"]
+        ):
             return
 
         raise CommandDoNotMatchException(
@@ -34,7 +35,6 @@ class FileInterpreter(BaseInterpreter):
         )
 
     def get_executable(self):
-
         filename, file_extension = os.path.splitext(self.cmd["file"])
 
         if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:

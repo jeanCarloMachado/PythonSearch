@@ -10,7 +10,6 @@ Model = Any
 
 
 class TrainKeras:
-
     EPOCHS = 30
     TEST_SPLIT_SIZE = 0.10
     BATCH_SIZE = 128
@@ -23,7 +22,6 @@ class TrainKeras:
         os.environ["TIME_IT"] = "1"
 
     def train(self, X_train, X_test, Y_train, Y_test) -> Model:
-
         print("Starting train with N epochs, N=", self.epochs)
         print(
             {

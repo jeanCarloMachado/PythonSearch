@@ -24,7 +24,6 @@ class DataExporter:
     ]
 
     def export_as_text(self):
-
         entries = ConfigurationLoader().load_entries()
 
         data = ""

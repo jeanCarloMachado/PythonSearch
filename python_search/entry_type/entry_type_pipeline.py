@@ -21,7 +21,6 @@ from keras.utils.np_utils import to_categorical
 
 
 class Pipeline:
-
     INPUT_DIMENSIONS = 384 + 2
 
     def __init__(self):

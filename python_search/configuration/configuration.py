@@ -32,7 +32,9 @@ class PythonSearchConfiguration(EntriesGroup):
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
-        fzf_theme: Literal["light", "dark", "dracula", "default", "automatic"] = "automatic",
+        fzf_theme: Literal[
+            "light", "dark", "dracula", "default", "automatic"
+        ] = "automatic",
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False
     ):
@@ -69,7 +71,7 @@ class PythonSearchConfiguration(EntriesGroup):
         self._default_text_editor = default_text_editor
         self._fzf_theme = (
             fzf_theme
-            if fzf_theme != 'automatic'
+            if fzf_theme != "automatic"
             else TimeBasedThemeSelector().get_theme()
         )
         if custom_window_size:
