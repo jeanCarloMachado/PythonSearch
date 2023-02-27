@@ -50,7 +50,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-python_search = 'python_search.cli:main'
+python_search = 'python_search.python_search_cli:main'
 next_item_pipeline = 'python_search.next_item_predictor.next_item_pipeline:main'
 next_item = 'python_search.next_item_predictor.next_item_pipeline:main'
 collect_input = 'python_search.apps.collect_input:main'
