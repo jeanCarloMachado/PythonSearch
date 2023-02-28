@@ -7,6 +7,7 @@ from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities.core_entities import Key
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
+from python_search.error.exception import notify_exception
 from python_search.events.run_performed import RunPerformed
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.search_ui.kitty import FzfInKitty
@@ -172,17 +173,11 @@ class PythonSearchCli:
 
         return EntriesEditor(self.configuration).edit_default()
 
+    @notify_exception()
+    def _simulate_error(self):
+        raise Exception("This is a test error")
 
-def _error_handler(e):
-    import sys
-    import traceback
 
-    exc_info = sys.exc_info()
-    logging.warning(
-        f"Unhandled exception: {e}".join(traceback.format_exception(*exc_info))
-    )
-
-    raise e
 
 
 def main():

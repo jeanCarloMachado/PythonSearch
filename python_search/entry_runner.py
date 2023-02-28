@@ -14,7 +14,7 @@ from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter, WRAP_IN_TERMINAL
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
-from python_search.exceptions import notify_exception
+from python_search.error.exception import notify_exception
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
