@@ -33,5 +33,3 @@ class MissingConfigException:
         raise MissingConfigException(
             "The python search configuration was not found. Run python_search setup to initialize a new config"
         )
-
-

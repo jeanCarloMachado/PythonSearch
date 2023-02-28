@@ -39,7 +39,6 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
-        fzf_pid_to_kill=None,
         wrap_in_terminal=False,
     ):
         """
@@ -101,13 +100,7 @@ class EntryRunner:
             rank_uuid=metadata.get("uuid"),
             rank_position=metadata.get("position"),
         )
-        self.logger.info(f"Run performed = {run_performed}")
         LogRunPerformedClient().send(run_performed)
-
-        # this needs to be last as it will kill the process
-        if fzf_pid_to_kill:
-            print("Killing fzf")
-            os.system(f"kill -9 {fzf_pid_to_kill}")
 
         return result
 

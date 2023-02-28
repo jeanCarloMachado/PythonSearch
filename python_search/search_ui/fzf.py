@@ -33,7 +33,7 @@ class Fzf:
         --border=none \
         --margin=0% \
         --padding=0% \
-        {self._run_key("enter", kill_window=False)} \
+        {self._run_key("enter")} \
         {self._run_key("alt-enter", wrap_in_terminal=True)} \
         {self._run_key("ctrl-t", wrap_in_terminal=True)} \
         {self._run_key("double-click")} \
@@ -67,16 +67,12 @@ class Fzf:
 
         return "fzf"
 
-    def _run_key(self, shortcut: str, kill_window=False, wrap_in_terminal=False) -> str:
-        kill_expr = ""
-        if kill_window:
-            kill_expr = " --fzf_pid_to_kill $PPID "
-
+    def _run_key(self, shortcut: str,  wrap_in_terminal=False) -> str:
         wrap_in_terminal_expr = ""
         if wrap_in_terminal:
             wrap_in_terminal_expr = " --wrap_in_terminal=True "
 
-        return f"""--bind "{shortcut}:execute-silent:(run_key {{}}  --query_used {{q}} {kill_expr} {wrap_in_terminal_expr} {{}} &)" \
+        return f"""--bind "{shortcut}:execute-silent:(run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
         --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """

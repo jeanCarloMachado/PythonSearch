@@ -1,4 +1,3 @@
-
 import PySimpleGUI as sg
 
 from python_search.environment import is_mac
@@ -7,16 +6,20 @@ from python_search.environment import is_mac
 def run(text=None):
     if not text:
         import sys
+
         data = sys.stdin.readlines()
         text = "\n".join(data)
 
     layout = [[sg.Text(text)], [sg.Button("Close")]]
 
-    sg.theme('SystemDefault1')
+    sg.theme("SystemDefault1")
     _FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
     # Create the window
-    window = sg.Window("Error Window", layout, font = (_FONT, 15),)
-
+    window = sg.Window(
+        "Error Window",
+        layout,
+        font=(_FONT, 15),
+    )
 
     # Create an event loop
     while True:
@@ -28,11 +31,12 @@ def run(text=None):
 
     window.close()
 
+
 def main():
     import fire
+
     fire.Fire()
+
 
 if __name__ == "__main__":
     main()
-
-

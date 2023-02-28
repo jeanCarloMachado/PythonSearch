@@ -178,8 +178,6 @@ class PythonSearchCli:
         raise Exception("This is a test error")
 
 
-
-
 def main():
     import fire
 

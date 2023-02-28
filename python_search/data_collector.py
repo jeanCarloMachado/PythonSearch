@@ -9,7 +9,7 @@ class GenericDataCollector:
     A generic data writer component that works tightly integrated with spark
     """
 
-    BASE_DATA_DESTINATION_DIR = os.environ["HOME"] + "/.data/data_collection"
+    BASE_DATA_DESTINATION_DIR = os.environ["HOME"] + "/.python_search/data/"
 
     @staticmethod
     def initialize():
