@@ -30,6 +30,7 @@ class EntryRunner:
             configuration = ConfigurationLoader().load_config()
         self.configuration = configuration
         self.logger = setup_run_key_logger()
+        self._log_run_client = LogRunPerformedClient(configuration)
 
     @notify_exception()
     def run(
@@ -100,7 +101,7 @@ class EntryRunner:
             rank_uuid=metadata.get("uuid"),
             rank_position=metadata.get("position"),
         )
-        LogRunPerformedClient().send(run_performed)
+        self._log_run_client.send(run_performed)
 
         return result
 

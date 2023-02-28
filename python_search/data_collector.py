@@ -35,7 +35,7 @@ class GenericDataCollector:
         with open(file_name, "w") as f:
             f.write(json.dumps(data))
 
-        # self.logger.info(f"File {file_name} written successfully with data {data}")
+        self.logger.info(f"File {file_name} written successfully with data {data}")
 
     def data_location(self, table_name) -> str:
         return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
