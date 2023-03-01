@@ -1,5 +1,7 @@
 # PythonSearch
 
+![UIS](uis.png)
+
 With python search you collect and retrieve and refactor information efficiently.
 
 - collect commands, scripts, prompts, snippets, urls, files, efficiently as python dictionaries
@@ -9,8 +11,7 @@ With python search you collect and retrieve and refactor information efficiently
  
 Check out [these slides](https://docs.google.com/presentation/d/10J0n0wdXYKCtB-tr2z4twY3T4TFBb8h2EGZghw7q1hk/edit#slide=id.p) if you want to know more
 
-<img src="https://i.imgur.com/pECSsjc.gif" width="720"/>
-
+<img src="https://i.imgur.com/pECSsjc.gif" width="620"/>
 
 
 For an example of how an entries could look like see [here](https://github.com/jeanCarloMachado/PythonSearch/blob/e424868662bda4d9daa314e6e77d4cc79a511a95/python_search/init/entries_main.py).

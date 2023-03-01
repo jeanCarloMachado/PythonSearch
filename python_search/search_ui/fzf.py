@@ -34,7 +34,6 @@ class Fzf:
         --margin=0% \
         --padding=0% \
         {self._run_key("enter")} \
-        {self._run_key("alt-enter", wrap_in_terminal=True)} \
         {self._run_key("ctrl-t", wrap_in_terminal=True)} \
         {self._run_key("double-click")} \
         {self._edit_key('ctrl-e')} \
