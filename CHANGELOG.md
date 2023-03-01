@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.10
+
+- Improve docs about search ui
+- Add error panel to display exception traces
+- Add project image
+
 ## 0.10.9
 
 - Improve docs

@@ -1,7 +1,5 @@
-import os
 from typing import Union
 from python_search.environment import is_mac
-
 
 def chomp(x):
     """remove special chars from end of string"""
@@ -64,14 +62,15 @@ class Clipboard:
 
         cmd = f"echo {sanitized} | {clipboard_cmd}"
 
-        print(f"Setting clipboard content: {sanitized}")
-        result = os.system(cmd)
-        if result != 0:
-            raise Exception("Failed to set clipboard content")
+
+        from subprocess import PIPE, Popen
+        with Popen(cmd, stdout=PIPE, stderr=None, shell=True) as process:
+            output = process.communicate()[0].decode("utf-8")
+            if process.returncode != 0:
+                raise Exception("Failed to copy to clipboard " + output)
 
         if enable_notifications or notify:
             from python_search.apps.notification_ui import send_notification
-
             send_notification(f"Content copied: {sanitized}")
 
 

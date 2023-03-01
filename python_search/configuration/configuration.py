@@ -8,7 +8,7 @@ from python_search.theme import TimeBasedThemeSelector
 
 class PythonSearchConfiguration(EntriesGroup):
     """
-    The main _configuration of Python Search
+    The main configuration of Python Search
     Everything to customize about the application is configurable via code through this class
     """
 
@@ -36,7 +36,8 @@ class PythonSearchConfiguration(EntriesGroup):
             "light", "dark", "dracula", "default", "automatic"
         ] = "automatic",
         custom_window_size: Optional[Tuple[int, int]] = None,
-        use_webservice=False
+        use_webservice=False,
+        collect_data: bool =False,
     ):
         """
 
@@ -48,6 +49,8 @@ class PythonSearchConfiguration(EntriesGroup):
         :param default_text_editor:
         :param fzf_theme: the theme to use for fzf
         :param custom_window_size: the size of the fzf window
+        :param use_webservice: if True, the ranking will be generated via a webservice
+        :param collect_data: if True, we will collect data about the entries you run in your machine
         """
         if entries:
             self.commands = entries
@@ -78,6 +81,7 @@ class PythonSearchConfiguration(EntriesGroup):
             self._custom_window_size = custom_window_size
 
         self.use_webservice = use_webservice
+        self.collect_data = collect_data
 
     def get_next_item_predictor_model(self):
         """

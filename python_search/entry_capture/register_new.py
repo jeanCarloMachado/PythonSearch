@@ -17,7 +17,7 @@ from python_search.entry_type.entity import infer_default_type
 from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.exceptions import notify_exception
+from python_search.error.exception import notify_exception
 
 
 class RegisterNew:

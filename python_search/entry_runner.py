@@ -14,7 +14,7 @@ from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter, WRAP_IN_TERMINAL
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
-from python_search.exceptions import notify_exception
+from python_search.error.exception import notify_exception
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
@@ -30,6 +30,7 @@ class EntryRunner:
             configuration = ConfigurationLoader().load_config()
         self.configuration = configuration
         self.logger = setup_run_key_logger()
+        self._log_run_client = LogRunPerformedClient(configuration)
 
     @notify_exception()
     def run(
@@ -39,7 +40,6 @@ class EntryRunner:
         force_gui_mode=False,
         gui_mode=False,
         from_shortcut=False,
-        fzf_pid_to_kill=None,
         wrap_in_terminal=False,
     ):
         """
@@ -101,13 +101,7 @@ class EntryRunner:
             rank_uuid=metadata.get("uuid"),
             rank_position=metadata.get("position"),
         )
-        self.logger.info(f"Run performed = {run_performed}")
-        LogRunPerformedClient().send(run_performed)
-
-        # this needs to be last as it will kill the process
-        if fzf_pid_to_kill:
-            print("Killing fzf")
-            os.system(f"kill -9 {fzf_pid_to_kill}")
+        self._log_run_client.send(run_performed)
 
         return result
 

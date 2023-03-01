@@ -27,7 +27,7 @@ class EntryCaptureGUI:
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
         self._chat_gpt = ChatGPT()
-        self.FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
+        self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
         import PySimpleGUI as sg
 
         self.sg = sg
@@ -106,7 +106,7 @@ class EntryCaptureGUI:
         window = self.sg.Window(
             window_title,
             layout,
-            font=(self.FONT, font_size),
+            font=(self._FONT, font_size),
             finalize=True,
         )
 
@@ -120,10 +120,10 @@ class EntryCaptureGUI:
         while True:
             event, values = window.read()
             if event == self.sg.WINDOW_CLOSED:
-                raise Exception("Window closed")
+                import sys; sys.exit(1)
 
             if "Escape" in event:
-                raise Exception("Window closed")
+                import sys; sys.exit(1)
 
             if event and (event == "-generate-body-"):
                 self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
