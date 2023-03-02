@@ -1,10 +1,12 @@
 import os
+from python_search.error.exception import notify_exception
 
 
 class ChatGPT:
     """
     Uses OpenAI to answer a given prompt.
     """
+    MODEL_ENGINE = "text-davinci-003"
 
     def __init__(self, max_tokens=500):
         self.max_tokens = int(max_tokens)
@@ -53,6 +55,7 @@ Prompt:
 
         print(result)
 
+    @notify_exception()
     def answer(self, prompt: str, debug=False):
         """
         Answer a prompt with openAI results
@@ -63,26 +66,21 @@ Prompt:
         import openai
 
         openai.api_key = os.environ["OPENAI_KEY"]
-        model_engine = "text-davinci-003"
         # Set the maximum number of tokens to generate in the response
 
         if debug:
             print("Prompt: ", prompt)
 
         # Generate a response
-        try:
-            completion = openai.Completion.create(
-                engine=model_engine,
-                prompt=prompt,
-                max_tokens=self.max_tokens,
-                temperature=0.5,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
-            )
-        except Exception as e:
-            print(f"Error {e}")
-            return ""
+        completion = openai.Completion.create(
+            engine=self.MODEL_ENGINE,
+            prompt=prompt,
+            max_tokens=self.max_tokens,
+            temperature=0.5,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
 
         # Print the response
         return completion.choices[0].text.strip()
