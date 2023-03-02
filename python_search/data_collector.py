@@ -23,8 +23,6 @@ class GenericDataCollector:
 
         datetime.now().timestamp()
 
-        import os
-
         os.system(
             f"mkdir -p {GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
         )

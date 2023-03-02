@@ -3,6 +3,8 @@
 ## 0.10.11
 
 - Improve docs about shortcuts
+- Add docs about data collection
+- Fix bug printing trash on the search
 
 ## 0.10.10
 
