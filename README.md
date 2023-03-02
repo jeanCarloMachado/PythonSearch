@@ -68,7 +68,7 @@ Create a github issue to report it or send a patch.
 
 Feature contributions are also welcomed! If you want to be part of the roadmap discussions reach out.
 
-## Supported System
+## Supported Systems
 
 Currently Python_Search officially supports GNOME, XFCE and MacOS. It used to support i3, this legacy was removed a few updates ago but could be added
 again if necessary. Compatibility is mainly a matter of automating keybinds for each specific system. You can also make your own "integration" for 
