@@ -8,3 +8,9 @@ To enable it, you need to enable it in your PythonSearchConfiguration:
 ```py
 configuration = PythonSearchConfig(...collect_data=False)
 ```
+
+Your data can then be found inside:
+
+```
+ $HOME/.python_search/data/
+ ```
