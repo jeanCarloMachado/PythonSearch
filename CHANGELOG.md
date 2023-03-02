@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.11
+
+- Improve docs about shortcuts
+
 ## 0.10.10
 
 - Improve docs about search ui
