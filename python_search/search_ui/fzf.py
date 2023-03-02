@@ -54,7 +54,7 @@ class Fzf:
         --bind "esc:+clear-query" \
         --bind "ctrl-k:abort" \
         --bind "ctrl-d:abort"  \
-        {self._get_fzf_theme()} ; rm -rf /tmp/mykitty ; exit 0
+        {self._get_fzf_theme()} ; exit 0
         '
         """
 
@@ -108,7 +108,6 @@ def hide_current_focused_window():
     os.system(
         """osascript -e 'tell application "System Events" to keystroke "h" using {command down}'"""
     )
-
 
 def main():
     import fire

@@ -1,11 +1,12 @@
 import os
 
-
 def send_notification(message: str):
+    """
+    Sends a system notification and sanitizes in case of special chars
+    """
     from python_search.environment import is_mac
 
-    """Sends a system notification and sanitizes in case of special chars"""
-    clean = message.replace("'", "")
+    clean = message.replace("'", "").replace('"', "")
 
     cmd = f"notify-send '{clean}'"
     if is_mac():

@@ -61,7 +61,6 @@ class Clipboard:
 
         cmd = f"cat /tmp/clipboard_content | {clipboard_cmd}"
 
-
         from subprocess import PIPE, Popen
         with Popen(cmd, stdout=PIPE, stderr=None, shell=True) as process:
             output = process.communicate()[0].decode("utf-8")
