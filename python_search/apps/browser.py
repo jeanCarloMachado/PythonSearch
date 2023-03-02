@@ -1,6 +1,7 @@
 from __future__ import annotations
-
+from python_search.environment import is_mac, is_linux
 from typing import Optional, Literal
+import os
 
 
 class Browser:
@@ -8,7 +9,7 @@ class Browser:
     Abstracts the browser features cross-platform
     """
 
-    BROSERS = Literal["firefox", "chrome"]
+    BROWSERS = Literal["firefox", "chrome"]
 
     def open(self, url: Optional[str] = None, app_mode=False, incognito=False) -> None:
         """
@@ -17,7 +18,7 @@ class Browser:
         params = locals()
         del params["self"]
         cmd_to_run = self.open_shell_cmd(**params)
-        print("Comand to run:", cmd_to_run)
+        print("Command to run:", cmd_to_run)
 
         import os
 
@@ -28,22 +29,26 @@ class Browser:
         url: Optional[str] = None,
         app_mode=False,
         incognito=False,
-        browser: Optional[BROSERS] = None,
+        browser: Optional[BROWSERS] = None,
     ) -> str:
         """
         Returns the shell command to open the browser
         """
+        local_browser = os.environ["BROWSER"]
         url_expr = ""
         if url is not None:
             url_expr = f"'{url}'"
 
+        if is_linux():
+            return f"{local_browser} {url_expr}"
+
         if incognito:
             return f'open -a "Google Chrome" --args -n --incognito "{url_expr}"'
 
-        if browser == "chrome":
+        if is_mac():
             return f" open -a 'Google Chrome' {url_expr}"
 
-        return f" open -a Firefox {url_expr}"
+        #return f"firefox {url_expr}"
 
 
 def main():
