@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.11
+
+- Improve docs about shortcuts
+- Add docs about data collection
+- Fix bug printing trash on the search
+- Fix copy to clipboard with special characters
+
 ## 0.10.10
 
 - Improve docs about search ui

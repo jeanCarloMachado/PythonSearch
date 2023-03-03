@@ -51,17 +51,15 @@ class Clipboard:
         if type(content) != str:
             raise Exception("Tryring to set a non string to clipboard")
 
-        def shellquote(s):
-            return "'" + s.replace("'", "'") + "'"
-
-        sanitized = shellquote(content)
+        # overrides previous content
+        with open("/tmp/clipboard_content", "w") as f:
+            f.write(content)
 
         clipboard_cmd = "xsel --clipboard --primary --input"
         if is_mac():
             clipboard_cmd = "pbcopy"
 
-        cmd = f"echo {sanitized} | {clipboard_cmd}"
-
+        cmd = f"cat /tmp/clipboard_content | {clipboard_cmd}"
 
         from subprocess import PIPE, Popen
         with Popen(cmd, stdout=PIPE, stderr=None, shell=True) as process:
@@ -71,7 +69,7 @@ class Clipboard:
 
         if enable_notifications or notify:
             from python_search.apps.notification_ui import send_notification
-            send_notification(f"Content copied: {sanitized}")
+            send_notification(f"Content copied: {content}")
 
 
 def main():

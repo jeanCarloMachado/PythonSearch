@@ -15,9 +15,9 @@ class ShareEntry:
             raise Exception(f"Entry {key} not found")
 
         entry = Entry(key, self._entries[key])
-        result = f'"{entry.key}": {entry.get_only_content()}'
+        result = f'{entry.key}: {entry.get_only_content()}'
 
-        Clipboard().set_content(result)
+        Clipboard().set_content(result, enable_notifications=True, notify=True)
 
         return result
 

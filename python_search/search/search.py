@@ -17,7 +17,6 @@ from python_search.search.results import FzfOptimizedSearchResults
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
-
 class Search:
     """
     Generates the search for python search
