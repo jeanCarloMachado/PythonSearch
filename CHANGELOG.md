@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.13
+
+-Adding support for XFCE
+-Removing more legacy i3 Code
+-New is_linux function
+-Changing default browser logic
+
+
 ## 0.10.11
 
 - Improve docs about shortcuts
