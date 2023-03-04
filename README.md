@@ -68,6 +68,10 @@ Create a github issue to report it or send a patch.
 
 Feature contributions are also welcomed! If you want to be part of the roadmap discussions reach out.
 
+## Supported Systems
+
+PythonSearch officially supports MacOS and Linux. 
+
 ## Legal
 
 This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full text.\

@@ -8,18 +8,16 @@ class WindowManager:
 
     @staticmethod
     def load_from_environment() -> "WindowManager":
-        if WindowManager.is_i3():
-            return I3()
-
         return Gnome()
 
-    @staticmethod
-    def is_i3():
-        return not WindowManager.is_gnome()
 
     @staticmethod
     def is_gnome():
         return 0 == os.system("wmctrl -m | grep -i gnome ")
+
+    @staticmethod
+    def is_xfce():
+        return 0 == os.system("wmctrl -m | grep -i xfwm4")
 
     def hide_window(self, title):
         raise Exception("Not implemented")

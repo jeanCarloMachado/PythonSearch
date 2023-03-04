@@ -3,6 +3,7 @@ from python_search.entries_group import EntriesGroup
 from python_search.environment import is_mac
 from python_search.shortcut.gnome import Gnome
 from python_search.shortcut.mac import Mac
+from python_search.shortcut.xfce import XFCE
 
 
 class ShortcutGenerator:
@@ -14,6 +15,7 @@ class ShortcutGenerator:
         self.configuration = configuration
         self.mac = Mac(self.configuration)
         self.gnome = Gnome(self.configuration)
+        self.xfce = XFCE(self.configuration)
 
     def configure(self):
         if is_mac():
@@ -22,4 +24,8 @@ class ShortcutGenerator:
 
         if WindowManager.is_gnome():
             self.gnome.generate()
+            return
+
+        if WindowManager.is_xfce():
+            self.xfce.generate()
             return

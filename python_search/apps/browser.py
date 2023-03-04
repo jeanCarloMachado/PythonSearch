@@ -1,6 +1,7 @@
 from __future__ import annotations
-
+from python_search.environment import is_mac, is_linux
 from typing import Optional, Literal
+import os
 
 
 class Browser:
@@ -8,7 +9,7 @@ class Browser:
     Abstracts the browser features cross-platform
     """
 
-    BROSERS = Literal["firefox", "chrome"]
+    BROWSERS = Literal["firefox", "chrome"]
 
     def open(self, url: Optional[str] = None, app_mode=False, incognito=False) -> None:
         """
@@ -17,9 +18,7 @@ class Browser:
         params = locals()
         del params["self"]
         cmd_to_run = self.open_shell_cmd(**params)
-        print("Comand to run:", cmd_to_run)
-
-        import os
+        print("Command to run:", cmd_to_run)
 
         os.system(cmd_to_run)
 
@@ -28,22 +27,35 @@ class Browser:
         url: Optional[str] = None,
         app_mode=False,
         incognito=False,
-        browser: Optional[BROSERS] = None,
+        browser: Optional[BROWSERS] = None,
     ) -> str:
         """
         Returns the shell command to open the browser
         """
+
         url_expr = ""
         if url is not None:
             url_expr = f"'{url}'"
 
-        if incognito:
-            return f'open -a "Google Chrome" --args -n --incognito "{url_expr}"'
+        if browser == 'chrome':
+            return self._chrome(url_expr)
 
-        if browser == "chrome":
-            return f" open -a 'Google Chrome' {url_expr}"
+        return self._firefox(url_expr)
 
-        return f" open -a Firefox {url_expr}"
+    def _firefox(self, url):
+        if is_mac():
+            return f"open -a Firefox {url}"
+
+        return f"firefox {url}"
+
+    def _chrome(self, url: str):
+        if is_mac():
+            return f" open -a 'Google Chrome' {url}"
+
+        if is_linux():
+            local_browser = os.environ["BROWSER"]
+            return f"{local_browser} {url}"
+
 
 
 def main():
