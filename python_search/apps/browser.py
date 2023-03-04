@@ -20,8 +20,6 @@ class Browser:
         cmd_to_run = self.open_shell_cmd(**params)
         print("Command to run:", cmd_to_run)
 
-        import os
-
         os.system(cmd_to_run)
 
     def open_shell_cmd(
@@ -34,21 +32,30 @@ class Browser:
         """
         Returns the shell command to open the browser
         """
-        local_browser = os.environ["BROWSER"]
+
         url_expr = ""
         if url is not None:
             url_expr = f"'{url}'"
 
-        if is_linux():
-            return f"{local_browser} {url_expr}"
+        if browser == 'chrome':
+            return self._chrome(url_expr)
 
-        if incognito:
-            return f'open -a "Google Chrome" --args -n --incognito "{url_expr}"'
+        return self._firefox(url_expr)
 
+    def _firefox(self, url):
         if is_mac():
-            return f" open -a 'Google Chrome' {url_expr}"
+            return f"open -a Firefox {url}"
 
-        #return f"firefox {url_expr}"
+        return f"firefox {url}"
+
+    def _chrome(self, url: str):
+        if is_mac():
+            return f" open -a 'Google Chrome' {url}"
+
+        if is_linux():
+            local_browser = os.environ["BROWSER"]
+            return f"{local_browser} {url}"
+
 
 
 def main():
