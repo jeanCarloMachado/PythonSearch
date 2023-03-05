@@ -3,10 +3,10 @@ from __future__ import annotations
 import streamlit as st
 
 
-from python_search.data_ui.app_functions import check_password
+from python_search.web_ui.app_functions import check_password
 from python_search.events.run_performed.dataset import EntryExecutedDataset
 
-from python_search.data_ui.training_page import load_training_page
+from python_search.web_ui.training_page import load_training_page
 
 open_page = "home"
 
@@ -34,7 +34,7 @@ def sidebar():
 def render_page():
     global open_page
     if open_page == "home":
-        from python_search.data_ui.entries_page import load_homepage
+        from python_search.web_ui.entries_page import load_homepage
 
         load_homepage()
 
@@ -42,7 +42,7 @@ def render_page():
         load_training_page()
 
     if open_page == "results":
-        import python_search.data_ui.results_page as results_page
+        import python_search.web_ui.results_page as results_page
 
         results_page.load_results_page()
 

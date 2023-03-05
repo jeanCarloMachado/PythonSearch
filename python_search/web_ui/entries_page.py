@@ -4,7 +4,7 @@ import subprocess
 
 import streamlit as st
 
-from python_search.data_ui.app_functions import restart_app
+from python_search.web_ui.app_functions import restart_app
 
 
 def extract_value_from_entry(entry):
