@@ -11,7 +11,7 @@ class Browser:
 
     BROWSERS = Literal["firefox", "chrome"]
 
-    def open(self, url: Optional[str] = None, app_mode=False, incognito=False) -> None:
+    def open(self, url: Optional[str] = None, app_mode=False, incognito=False, browser: Optional[BROWSERS] = None) -> None:
         """
         performs the open
         """

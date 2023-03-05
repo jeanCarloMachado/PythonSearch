@@ -1,18 +1,12 @@
 from __future__ import annotations
 
 import os
-import subprocess
-
 import streamlit as st
-
+import subprocess
 
 def restart_app():
     result = subprocess.check_output("pkill streamlit", shell=True, text=True)
     st.write(f"Result: {result}")
-
-
-import streamlit as st
-
 
 def check_password():
     """Returns `True` if the user had the correct password."""
