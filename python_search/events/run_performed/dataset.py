@@ -14,6 +14,7 @@ class EntryExecutedDataset:
     FILE_NAME = "run_performed"
     NEW_FILE_NAME = "searches_performed"
     CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + FILE_NAME
+    SCHEMA = None
 
     def __init__(self, spark=None):
         # For illustrative purposes.
@@ -44,7 +45,7 @@ class EntryExecutedDataset:
     def load_clean(self):
         return (
             self.spark.read.format("parquet")
-            .schema(EntryExecutedDataset.SCHEMA)
+            .schema(EntryExecutedDataset().SCHEMA)
             .load(self.CLEAN_PATH)
         )
 

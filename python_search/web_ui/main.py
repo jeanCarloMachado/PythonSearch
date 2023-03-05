@@ -47,10 +47,8 @@ def render_page():
         results_page.load_results_page()
 
     if open_page == "searches_performed_dataset":
-        st.write("## Searches performed dataset")
-        search_performed_df = EntryExecutedDataset().load_clean()
-        pdf = search_performed_df.toPandas()
-        st.dataframe(pdf)
+        from python_search.web_ui.searches_performed import render
+        render()
 
 
 if __name__ == "__main__":
