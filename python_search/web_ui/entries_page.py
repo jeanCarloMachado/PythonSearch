@@ -31,13 +31,6 @@ def load_homepage():
 
     col1, col2, col3 = st.columns([1, 1, 1])
 
-    with col1:
-        if st.button("Sync current host"):
-            result = subprocess.check_output(
-                "/src/sync_hosts.py sync", shell=True, text=True
-            )
-            st.write(f"Result: {result}")
-            restart_app()
     with col2:
         if st.button("Restart"):
             restart_app()

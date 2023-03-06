@@ -2,33 +2,33 @@ from __future__ import annotations
 
 import streamlit as st
 
-
 from python_search.web_ui.app_functions import check_password
-from python_search.events.run_performed.dataset import EntryExecutedDataset
 
 from python_search.web_ui.training_page import load_training_page
 
-open_page = "home"
 
+open_page = st.experimental_get_query_params().get("page", ["home"])[0]
 
 def init():
     st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
 
 
+
 def sidebar():
     global open_page
     with st.sidebar:
-        if st.button("HomePage"):
-            open_page = "home"
-
+        st.markdown(
+            '<a href="?page=home" target="_self">Home</a>', unsafe_allow_html=True
+        )
+        st.markdown(
+            '<a href="?page=entry_executed" target="_self">Entry Executed Dataset</a>', unsafe_allow_html=True
+        )
         if st.button("Results evaluation"):
             open_page = "results"
 
         if st.button("Training Dataset"):
             open_page = "training"
 
-        if st.button("Searches Performed Dataset"):
-            open_page = "searches_performed_dataset"
 
 
 def render_page():
@@ -46,8 +46,8 @@ def render_page():
 
         results_page.load_results_page()
 
-    if open_page == "searches_performed_dataset":
-        from python_search.web_ui.searches_performed import render
+    if open_page == "entry_executed":
+        from python_search.web_ui.entries_executed import render
         render()
 
 
