@@ -42,7 +42,7 @@ class EntryCaptureGUI:
         generate_body=False,
     ) -> GuiEntryData:
         """
-        Launch the _entries capture GUI.
+        Launch the entries capture GUI.
         """
 
         if default_content is None:

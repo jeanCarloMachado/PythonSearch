@@ -23,11 +23,11 @@ def sidebar():
         st.markdown(
             '<a href="?page=entry_executed" target="_self">Entry Executed Dataset</a>', unsafe_allow_html=True
         )
-        if st.button("Results evaluation"):
-            open_page = "results"
+        #if st.button("Results evaluation"):
+        #    open_page = "results"
 
-        if st.button("Training Dataset"):
-            open_page = "training"
+        #if st.button("Training Dataset"):
+        #    open_page = "training"
 
 
 
