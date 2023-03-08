@@ -7,17 +7,12 @@ import numpy as np
 from pydantic import BaseModel
 
 from python_search.entry_type.entity import EntryType
-from python_search.infrastructure.arize import Arize
 
 PredictionUuid = str
 
 
 class PredictEntryTypeInference:
     PRODUCTION_RUN_ID = "004224c854464ec296b5f648bd3f74f5"
-
-    def __init__(self):
-        # Instantiate an Arize Client object using your API and Space keys
-        self._arize_client = Arize().get_client()
 
     def predict_entry_type_from_dict(self, entry: dict) -> EntryType:
         return self.predict_entry_type(EntryData(**entry))
@@ -55,27 +50,7 @@ class PredictEntryTypeInference:
         value, prediction_label = get_value_and_label(result[0])
 
         prediction_uuid = str(uuid.uuid4())
-        if Arize.is_installed():
-            from arize.utils.types import ModelTypes, Environments, Embedding
-
-            arize_result = self._arize_client.log(
-                model_id=Arize.MODEL_ID,
-                model_version=Arize.MODEL_VERSION,
-                model_type=ModelTypes.SCORE_CATEGORICAL,
-                environment=Environments.PRODUCTION,
-                prediction_id=prediction_uuid,
-                features={"has_pipe": has_pipe, "has_double_minus": has_double_minus},
-                embedding_features={
-                    "content": Embedding(vector=data[0], data=entry_data.content)
-                },
-                prediction_label=(prediction_label, float(value)),
-            )
-            Arize.arize_responses_helper(arize_result)
-
-        print("Predicted label: ", prediction_label)
-
         return prediction_label, prediction_uuid
-
 
 class ClassifierInferenceClient:
     def predict_from_content(self, content: str):
