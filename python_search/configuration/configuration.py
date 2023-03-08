@@ -5,7 +5,6 @@ from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
 from python_search.theme import TimeBasedThemeSelector
 
-
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search
