@@ -1,4 +1,3 @@
-import pyspark.sql.functions as F
 from pyspark.sql import DataFrame
 
 from python_search.events.run_performed.dataset import EntryExecutedDataset
@@ -10,6 +9,7 @@ class TimesUsed:
     """
 
     def __init__(self):
+        import pyspark.sql.functions as F
         _df = EntryExecutedDataset().load_clean()
         self._df = (
             _df.groupBy("key")
