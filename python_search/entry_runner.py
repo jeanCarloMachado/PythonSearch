@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import os
 from typing import List
+from datetime import datetime
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities.core_entities import Key
@@ -26,6 +27,7 @@ class EntryRunner:
             configuration = ConfigurationLoader().load_config()
         self._configuration = configuration
         self._logger = setup_run_key_logger()
+        self._earliest_execution = datetime.now()
 
     @notify_exception()
     def run(
@@ -84,15 +86,17 @@ class EntryRunner:
         result = InterpreterMatcher.build_instance(self._configuration).default(key)
 
         self._logger.info("Passed interpreter")
-        from python_search.events.run_performed import RunPerformed
+        from python_search.events.run_performed import EntryExecuted
         from python_search.events.run_performed.writer import LogRunPerformedClient
 
-        run_performed = RunPerformed(
+        run_performed = EntryExecuted(
             key=key,
             query_input=query_used,
             shortcut=from_shortcut,
             rank_uuid=metadata.get("uuid"),
             rank_position=metadata.get("position"),
+            earliest_time=self._earliest_execution.isoformat(),
+            after_execution_time=datetime.now().isoformat(),
         )
         LogRunPerformedClient(self._configuration).send(run_performed)
 

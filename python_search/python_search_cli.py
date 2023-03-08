@@ -8,7 +8,7 @@ from python_search.core_entities.core_entities import Key
 from python_search.entry_runner import EntryRunner
 from python_search.environment import is_mac
 from python_search.error.exception import notify_exception
-from python_search.events.run_performed import RunPerformed
+from python_search.events.run_performed import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.search_ui.kitty import FzfInKitty
 from python_search.search_ui.fzf import Fzf
@@ -94,7 +94,7 @@ class PythonSearchCli:
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
         LogRunPerformedClient().send(
-            RunPerformed(key=key, query_input="", shortcut=False)
+            EntryExecuted(key=key, query_input="", shortcut=False)
         )
 
     def _copy_key_only(self, entry_str: str):
@@ -106,7 +106,7 @@ class PythonSearchCli:
         key = str(Key.from_fzf(entry_str))
         Clipboard().set_content(key, enable_notifications=True)
         LogRunPerformedClient().send(
-            RunPerformed(key=key, query_input="", shortcut=False)
+            EntryExecuted(key=key, query_input="", shortcut=False)
         )
 
     def configure_shortcuts(self):
