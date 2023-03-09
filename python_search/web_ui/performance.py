@@ -4,8 +4,9 @@ import streamlit as st
 from python_search.events.run_performed.dataset import EntryExecutedDataset
 
 
-
 def render():
+    import sys;
+    st.write(sys.executable)
     search_performed_df = EntryExecutedDataset().load_new()
     df = search_performed_df.toPandas()
 
