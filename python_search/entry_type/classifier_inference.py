@@ -52,6 +52,7 @@ class PredictEntryTypeInference:
         prediction_uuid = str(uuid.uuid4())
         return prediction_label, prediction_uuid
 
+
 class ClassifierInferenceClient:
     def predict_from_content(self, content: str):
         return self.predict(EntryData(content=content))

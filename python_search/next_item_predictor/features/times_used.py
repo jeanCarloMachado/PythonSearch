@@ -10,6 +10,7 @@ class TimesUsed:
 
     def __init__(self):
         import pyspark.sql.functions as F
+
         _df = EntryExecutedDataset().load_clean()
         self._df = (
             _df.groupBy("key")

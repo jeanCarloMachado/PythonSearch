@@ -9,8 +9,10 @@ from training_page import load_training_page
 
 open_page = st.experimental_get_query_params().get("page", ["home"])[0]
 
+
 def init():
     st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
+
 
 def sidebar():
     global open_page
@@ -19,10 +21,12 @@ def sidebar():
             '<a href="?page=home" target="_self">Home</a>', unsafe_allow_html=True
         )
         st.markdown(
-            '<a href="?page=entry_executed" target="_self">Entry Executed Dataset</a>', unsafe_allow_html=True
+            '<a href="?page=entry_executed" target="_self">Entry Executed Dataset</a>',
+            unsafe_allow_html=True,
         )
         st.markdown(
-            '<a href="?page=performance" target="_self">Performance</a>', unsafe_allow_html=True
+            '<a href="?page=performance" target="_self">Performance</a>',
+            unsafe_allow_html=True,
         )
 
 
@@ -30,6 +34,7 @@ def render_page():
     global open_page
     if open_page == "home":
         from entries_page import load_homepage
+
         load_homepage()
 
     if open_page == "training":
@@ -42,10 +47,12 @@ def render_page():
 
     if open_page == "entry_executed":
         from entry_executed import render
+
         render()
 
     if open_page == "performance":
         from performance import render
+
         render()
 
 

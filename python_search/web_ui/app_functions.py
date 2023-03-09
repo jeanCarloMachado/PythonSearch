@@ -4,9 +4,11 @@ import os
 import streamlit as st
 import subprocess
 
+
 def restart_app():
     result = subprocess.check_output("pkill streamlit", shell=True, text=True)
     st.write(f"Result: {result}")
+
 
 def check_password():
     """Returns `True` if the user had the correct password."""

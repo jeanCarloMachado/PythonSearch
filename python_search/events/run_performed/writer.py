@@ -4,16 +4,16 @@ from python_search.events.run_performed import EntryExecuted
 
 
 class LogRunPerformedClient:
-
     def __init__(self, configuration):
         self._configuration = configuration
+
     def send(self, data: EntryExecuted):
         if not self._configuration.collect_data:
-            #print("Skip collecting run performed data as collect_data is disabled")
+            # print("Skip collecting run performed data as collect_data is disabled")
             return
 
         if not self._configuration.use_webservice:
-            #print("Logging entry executed")
+            # print("Logging entry executed")
             RunPerformedWriter().write(data)
             return
 

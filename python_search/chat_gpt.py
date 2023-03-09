@@ -6,6 +6,7 @@ class ChatGPT:
     """
     Uses OpenAI to answer a given prompt.
     """
+
     MODEL_ENGINE = "text-davinci-003"
 
     def __init__(self, max_tokens=500):

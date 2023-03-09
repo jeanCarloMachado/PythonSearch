@@ -10,7 +10,6 @@ class WindowManager:
     def load_from_environment() -> "WindowManager":
         return Gnome()
 
-
     @staticmethod
     def is_gnome():
         return 0 == os.system("wmctrl -m | grep -i gnome ")

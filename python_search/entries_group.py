@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 
+
 class EntriesGroup:
     """
     Main _configuration of the application. Customers are supposed to pass their own

@@ -22,7 +22,7 @@ class EntryRunner:
     This class has to be optimized for performance so be mindful of imports.
     """
 
-    def __init__(self, configuration = None):
+    def __init__(self, configuration=None):
         if not configuration:
             configuration = ConfigurationLoader().load_config()
         self._configuration = configuration
@@ -75,10 +75,10 @@ class EntryRunner:
         """
         )
 
-
         if len(matches) > 1:
             key = min(matches, key=len)
             from python_search.apps.notification_ui import send_notification
+
             send_notification(
                 f"Multiple matches for this key {matches} using the smaller"
             )

@@ -24,7 +24,6 @@ class EntryExecuted(BaseModel):
     earliest_time: Optional[str] = None
     after_execution_time: Optional[str] = None
 
-
     @staticmethod
     def get_schema():
         return "key string, query_input string, shortcut string, rank_uuid string"

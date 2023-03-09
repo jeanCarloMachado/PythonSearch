@@ -9,7 +9,7 @@ def render():
     search_performed_df = EntryExecutedDataset().load_new()
     df = search_performed_df.toPandas()
 
-    df['time'] = pd.to_datetime(df["timestamp"], unit='s')
+    df["time"] = pd.to_datetime(df["timestamp"], unit="s")
 
     st.dataframe(df)
 
@@ -20,18 +20,12 @@ def render():
     st.write("## Summary ")
     st.write(df.describe())
 
-
-    df['time_index'] = df['time']
+    df["time_index"] = df["time"]
     df.set_index("time_index", inplace=True)
     st.write("## Entry executed timeline by hour")
-    timeseries = df.groupby(pd.Grouper(freq = '1H')).count()['key']
-    #st.write(timeseries)
+    timeseries = df.groupby(pd.Grouper(freq="1H")).count()["key"]
+    # st.write(timeseries)
     st.line_chart(timeseries)
-
 
     st.write("## Ranking position")
     st.line_chart(df["rank_position"])
-
-
-
-

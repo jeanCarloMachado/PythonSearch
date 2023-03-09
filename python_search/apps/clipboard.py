@@ -1,6 +1,7 @@
 from typing import Union
 from python_search.environment import is_mac
 
+
 def chomp(x):
     """remove special chars from end of string"""
     if x.endswith("\r\n"):
@@ -62,6 +63,7 @@ class Clipboard:
         cmd = f"cat /tmp/clipboard_content | {clipboard_cmd}"
 
         from subprocess import PIPE, Popen
+
         with Popen(cmd, stdout=PIPE, stderr=None, shell=True) as process:
             output = process.communicate()[0].decode("utf-8")
             if process.returncode != 0:
@@ -69,6 +71,7 @@ class Clipboard:
 
         if enable_notifications or notify:
             from python_search.apps.notification_ui import send_notification
+
             send_notification(f"Content copied: {content}")
 
 
