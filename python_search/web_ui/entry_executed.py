@@ -5,7 +5,7 @@ from python_search.events.run_performed.dataset import EntryExecutedDataset
 
 
 def render():
-    st.write("## Entry Executed Dataset")
+    st.write("## Entry Executed overview")
     search_performed_df = EntryExecutedDataset().load_new()
     df = search_performed_df.toPandas()
 

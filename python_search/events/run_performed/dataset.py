@@ -29,6 +29,8 @@ class EntryExecutedDataset:
                 StructField("rank_uuid", StringType(), True),
                 StructField("rank_position", IntegerType(), True),
                 StructField("timestamp", StringType(), True),
+                StructField("earliest_time", StringType(), True),
+                StructField("after_execution_time", StringType(), True),
             ]
         )
         self.spark = spark if spark else SparkSession.builder.getOrCreate()

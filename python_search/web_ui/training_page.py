@@ -1,6 +1,5 @@
 import streamlit as st
 
-from python_search.next_item_predictor.training_dataset import TrainingDataset
 
 
 def load_training_page():
@@ -21,5 +20,6 @@ def load_training_page():
 
 
 def load_dataset():
+    from python_search.next_item_predictor.training_dataset import TrainingDataset
     df = TrainingDataset().build(use_cache=True)
     return df
