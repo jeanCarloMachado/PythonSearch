@@ -11,7 +11,7 @@ open_page = st.experimental_get_query_params().get("page", ["home"])[0]
 
 
 def init():
-    st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
+    st.set_page_config(layout="wide")
 
 
 def sidebar():

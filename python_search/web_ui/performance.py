@@ -5,8 +5,6 @@ from python_search.events.run_performed.dataset import EntryExecutedDataset
 
 
 def render():
-    import sys;
-    st.write(sys.executable)
     search_performed_df = EntryExecutedDataset().load_new()
     df = search_performed_df.toPandas()
 
@@ -19,8 +17,6 @@ def render():
 
     df["diff"] = df["after_execution_time"] - df["earliest_time"]
     df["diff"] = df["diff"].dt.total_seconds()
-
-    # st.code(df[['diff', 'after_execution_time', 'earliest_time']])
 
     df = df[["diff"]]
 
