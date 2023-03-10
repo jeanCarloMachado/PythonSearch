@@ -71,7 +71,7 @@ class Search:
         Populate the variable used_entries  with the results from redis
         """
         # skip latest entries if we want to use only the base rank
-        result = self._build_result(skip_latest=base_rank)
+        result = self._build_result()
 
         ranknig_generated_event = RankingGenerated(
             ranking=[i[0] for i in result[0:100]]
@@ -92,32 +92,12 @@ class Search:
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
 
-    def _build_result(self, skip_latest=False) -> RankedEntries.type:
+    def _build_result(self) -> RankedEntries.type:
         """
         Merge the search with the latest entries
         """
 
-        result = []
-
-        latest_entries = self._fetch_latest_entries()
-
-        if latest_entries and not skip_latest:
-            for key in latest_entries:
-                if key not in self._entries:
-                    # key not found in _entries
-                    continue
-
-                content = self._entries[key]
-
-                # sometimes there can be a bug of saving something other than dicts as _entries
-                if type(content) != dict:
-                    self.logger.warning(f"Entry is not a dict {content}")
-                    continue
-
-                content["tags"] = content.get("tags", []) + ["RecentlyUsed"]
-                result.append((key, content))
-                # delete key
-                self._ranked_keys.remove(key)
+        result = self._latest_keys()
 
         for key in self._ranked_keys:
             if key not in self._entries:
@@ -134,6 +114,30 @@ class Search:
             result.append((key, entry))
 
         # the result is the one to be returned, final_key_list is to be used in the cache
+        return result
+
+    def _latest_keys(self):
+        result = []
+
+        latest_entries = self._fetch_latest_entries()
+        if latest_entries:
+            for key in latest_entries:
+                if key not in self._entries:
+                    # key not found in _entries
+                    continue
+
+                content = self._entries[key]
+
+                # sometimes there can be a bug of saving something other than dicts as _entries
+                if type(content) != dict:
+                    self.logger.warning(f"Entry is not a dict {content}")
+                    continue
+
+                content["tags"] = content.get("tags", []) + ["RecentlyUsed"]
+                result.append((key, content))
+                # delete key
+                if key in self._ranked_keys:
+                    self._ranked_keys.remove(key)
         return result
 
     def _fetch_latest_entries(self):

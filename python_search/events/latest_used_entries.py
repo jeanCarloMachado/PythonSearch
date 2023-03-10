@@ -2,6 +2,9 @@
 
 from typing import List
 
+from python_search.events.run_performed.dataset import EntryExecutedDataset
+
+
 class RecentKeys:
     """
     Contains the latest used keys and the API to add new ones.
@@ -15,7 +18,9 @@ class RecentKeys:
         return a list of unike used keys ordered by the last time they were used
         the most recent in the top.
         """
-        return RecentKeys._used_keys
+        df = EntryExecutedDataset().load_new()
+        df = df.sort('timestamp', ascending=False).limit(10)
+        return [ i[0] for i in df.select('key').collect() ]
 
     @staticmethod
     def add_latest_used(key):
