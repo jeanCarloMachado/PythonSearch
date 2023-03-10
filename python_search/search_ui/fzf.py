@@ -46,6 +46,8 @@ class Fzf:
         --bind "ctrl-k:up" \
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}})" \
         --bind "ctrl-s:execute-silent:(share_entry share_key {{}})" \
+        --bind "ctrl-p:execute-silent:(prompt_editor --prompt_text={{q}})" \
+        --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
         --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \

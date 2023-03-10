@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11
+
+- Add google it script (ctrl-g)
+- Add prompt editor to fzf search (ctrl-p)
+
 ## 0.10.14
 
 - Added examples for body generation

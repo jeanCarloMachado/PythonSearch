@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.10.14"
+version = "0.11.0"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -79,6 +79,7 @@ share_entry = 'python_search.share:main'
 offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
 ps_fzf = 'python_search.search_ui.fzf:main'
 error_panel = 'python_search.error.error_pane:main'
+google_it = 'python_search.apps.google_it:main'
 
 [tool.poetry.extras]
 server = [
