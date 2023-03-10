@@ -105,7 +105,7 @@ class Mac:
 [shortcut{number}]
 shortcut = {shortcut}
 action = {key}{number}
-command =  run_key "{key}" --from_shortcut True
+command = run_key "{key}" --from_shortcut True
 workdir =
 enabled = yes
 """

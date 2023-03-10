@@ -1,5 +1,5 @@
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.data_ui.entries_page import extract_value_from_entry
+from python_search.web_ui.entries_page import extract_value_from_entry
 
 
 class DataExporter:

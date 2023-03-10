@@ -31,10 +31,13 @@ def setup_preview_logger():
 
 
 def setup_run_key_logger():
+    """
+    Code has to be fast
+    """
     logger = logging.getLogger("run-key")
-    fh = logging.FileHandler("/tmp/run_key.txt")
-    fh.setLevel(logging.DEBUG)
-    logger.addHandler(fh)
+    # fh = logging.FileHandler("/tmp/run_key.txt")
+    # fh.setLevel(logging.DEBUG)
+    # logger.addHandler(fh)
 
     ch = logging.StreamHandler()
     ch.setLevel(logging.WARNING)

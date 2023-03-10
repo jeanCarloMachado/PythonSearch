@@ -2,15 +2,11 @@ from __future__ import annotations
 
 import re
 import os
-from typing import List, Optional
+from typing import List
+from datetime import datetime
 
-from python_search.apps.notification_ui import send_notification
-from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.context import Context
 from python_search.core_entities.core_entities import Key
-from python_search.events.run_performed import RunPerformed
-from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.interpreter.cmd import CmdInterpreter, WRAP_IN_TERMINAL
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
@@ -22,23 +18,22 @@ from python_search.search_ui.serialized_entry import (
 
 class EntryRunner:
     """
-    Responsible to execute the _entries matched
+    Responsible to execute the entries matched
+    This class has to be optimized for performance so be mindful of imports.
     """
 
-    def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
+    def __init__(self, configuration=None):
         if not configuration:
             configuration = ConfigurationLoader().load_config()
-        self.configuration = configuration
-        self.logger = setup_run_key_logger()
-        self._log_run_client = LogRunPerformedClient(configuration)
+        self._configuration = configuration
+        self._logger = setup_run_key_logger()
+        self._earliest_execution = datetime.now()
 
     @notify_exception()
     def run(
         self,
         entry_text: str,
         query_used: str = "",
-        force_gui_mode=False,
-        gui_mode=False,
         from_shortcut=False,
         wrap_in_terminal=False,
     ):
@@ -55,12 +50,10 @@ class EntryRunner:
         if wrap_in_terminal:
             os.environ[WRAP_IN_TERMINAL] = "1"
 
-        self.logger.info("Arrived at run key")
         # if there are : in the line just take all before it as it is
         # usually the key from fzf, and our keys do not accept :
 
-        metadata = decode_serialized_data_from_entry_text(entry_text, self.logger)
-        self.logger.info(f"Decoded metadata {metadata}")
+        metadata = decode_serialized_data_from_entry_text(entry_text, self._logger)
         rank_position = metadata.get("position")
 
         # when there are no matches we actually will use the query and interpret it
@@ -73,7 +66,7 @@ class EntryRunner:
         if not matches:
             raise Exception(f"No key matches you given requested key: {key}")
 
-        self.logger.info(
+        self._logger.info(
             f"""
             Matches of key: {key}
             matches: {matches}
@@ -82,26 +75,30 @@ class EntryRunner:
         """
         )
 
-        if force_gui_mode or gui_mode:
-            Context.get_instance().enable_gui_mode()
-
         if len(matches) > 1:
             key = min(matches, key=len)
+            from python_search.apps.notification_ui import send_notification
+
             send_notification(
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
-        result = InterpreterMatcher.build_instance(self.configuration).default(key)
+        result = InterpreterMatcher.build_instance(self._configuration).default(key)
 
-        self.logger.info("Passed interpreter")
-        run_performed = RunPerformed(
+        self._logger.info("Passed interpreter")
+        from python_search.events.run_performed import EntryExecuted
+        from python_search.events.run_performed.writer import LogRunPerformedClient
+
+        run_performed = EntryExecuted(
             key=key,
             query_input=query_used,
             shortcut=from_shortcut,
             rank_uuid=metadata.get("uuid"),
             rank_position=metadata.get("position"),
+            earliest_time=self._earliest_execution.isoformat(),
+            after_execution_time=datetime.now().isoformat(),
         )
-        self._log_run_client.send(run_performed)
+        LogRunPerformedClient(self._configuration).send(run_performed)
 
         return result
 
@@ -114,11 +111,11 @@ class EntryRunner:
         key_regex = re.compile(key)
 
         matching_keys = []
-        for registered_key in self.configuration.get_keys():
+        for registered_key in self._configuration.get_keys():
             encoded_registered_key = generate_identifier(registered_key)
             matches_kv_encoded = key_regex.search(encoded_registered_key)
             if matches_kv_encoded:
-                self.logger.info(f"{key} matches {encoded_registered_key}")
+                self._logger.info(f"{key} matches {encoded_registered_key}")
                 matching_keys.append(registered_key)
 
         return matching_keys

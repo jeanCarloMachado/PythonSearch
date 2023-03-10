@@ -16,7 +16,6 @@ def notify_exception():
                 from python_search.apps.notification_ui import send_notification
                 import sys, traceback
 
-
                 send_notification(f"Exception {e}")
                 os.system(f"echo '{traceback.format_exc()}' |  error_panel run")
                 raise e

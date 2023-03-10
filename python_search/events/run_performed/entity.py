@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from typing import Optional
-
 from pydantic import BaseModel
 
 
-class RunPerformed(BaseModel):
+class EntryExecuted(BaseModel):
     """
     Main event of the application.
     Identifies a search being executed
@@ -22,6 +21,8 @@ class RunPerformed(BaseModel):
     timestamp: Optional[str] = None
     rank_uuid: Optional[str] = None
     rank_position: Optional[int] = None
+    earliest_time: Optional[str] = None
+    after_execution_time: Optional[str] = None
 
     @staticmethod
     def get_schema():

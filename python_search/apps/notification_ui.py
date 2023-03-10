@@ -1,5 +1,6 @@
 import os
 
+
 def send_notification(message: str):
     """
     Sends a system notification and sanitizes in case of special chars

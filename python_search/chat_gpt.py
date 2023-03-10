@@ -6,6 +6,7 @@ class ChatGPT:
     """
     Uses OpenAI to answer a given prompt.
     """
+
     MODEL_ENGINE = "text-davinci-003"
 
     def __init__(self, max_tokens=500):
@@ -56,7 +57,7 @@ Prompt:
         print(result)
 
     @notify_exception()
-    def answer(self, prompt: str, debug=False):
+    def answer(self, prompt: str, debug=False, max_tokens=500):
         """
         Answer a prompt with openAI results
         """

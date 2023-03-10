@@ -37,7 +37,7 @@ class PythonSearchConfiguration(EntriesGroup):
         ] = "automatic",
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False,
-        collect_data: bool=False,
+        collect_data: bool = False,
     ):
         """
 

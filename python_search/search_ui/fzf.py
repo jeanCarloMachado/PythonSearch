@@ -66,7 +66,7 @@ class Fzf:
 
         return "fzf"
 
-    def _run_key(self, shortcut: str,  wrap_in_terminal=False) -> str:
+    def _run_key(self, shortcut: str, wrap_in_terminal=False) -> str:
         wrap_in_terminal_expr = ""
         if wrap_in_terminal:
             wrap_in_terminal_expr = " --wrap_in_terminal=True "
@@ -108,6 +108,7 @@ def hide_current_focused_window():
     os.system(
         """osascript -e 'tell application "System Events" to keystroke "h" using {command down}'"""
     )
+
 
 def main():
     import fire

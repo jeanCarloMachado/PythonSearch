@@ -9,6 +9,7 @@ import fire
 
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
+from python_search.entry_generator import EntryGenerator
 from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
@@ -27,6 +28,7 @@ class EntryCaptureGUI:
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
         self._chat_gpt = ChatGPT()
+        self._entry_generator = EntryGenerator()
         self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
         import PySimpleGUI as sg
 
@@ -42,7 +44,7 @@ class EntryCaptureGUI:
         generate_body=False,
     ) -> GuiEntryData:
         """
-        Launch the _entries capture GUI.
+        Launch the entries capture GUI.
         """
 
         if default_content is None:
@@ -120,10 +122,14 @@ class EntryCaptureGUI:
         while True:
             event, values = window.read()
             if event == self.sg.WINDOW_CLOSED:
-                import sys; sys.exit(1)
+                import sys
+
+                sys.exit(1)
 
             if "Escape" in event:
-                import sys; sys.exit(1)
+                import sys
+
+                sys.exit(1)
 
             if event and (event == "-generate-body-"):
                 self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
@@ -170,14 +176,14 @@ class EntryCaptureGUI:
     def _generate_body_thread(self, title: str, window):
         send_notification(f"Starting to generate body")
 
-        self._chat_gpt = ChatGPT(window["generation-size"].get())
-
         import PySimpleGUI as sg
 
         window: sg.Window = window
 
         def _describe_body(title: str, window):
-            description = self._chat_gpt.answer(title)
+            body_size = window["generation-size"].get()
+            description = self._entry_generator.generate_body(title, body_size)
+
             window[self._ENTRY_BODY_INPUT].update(description)
 
         threading.Thread(

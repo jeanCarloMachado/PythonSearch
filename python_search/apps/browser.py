@@ -11,7 +11,13 @@ class Browser:
 
     BROWSERS = Literal["firefox", "chrome"]
 
-    def open(self, url: Optional[str] = None, app_mode=False, incognito=False) -> None:
+    def open(
+        self,
+        url: Optional[str] = None,
+        app_mode=False,
+        incognito=False,
+        browser: Optional[BROWSERS] = None,
+    ) -> None:
         """
         performs the open
         """
@@ -37,10 +43,13 @@ class Browser:
         if url is not None:
             url_expr = f"'{url}'"
 
-        if browser == 'chrome':
+        if browser == "chrome":
             return self._chrome(url_expr)
 
-        return self._firefox(url_expr)
+        if browser == "firefox":
+            return self._firefox(url_expr)
+
+        return self._chrome(url_expr)
 
     def _firefox(self, url):
         if is_mac():
@@ -55,7 +64,6 @@ class Browser:
         if is_linux():
             local_browser = os.environ["BROWSER"]
             return f"{local_browser} {url}"
-
 
 
 def main():

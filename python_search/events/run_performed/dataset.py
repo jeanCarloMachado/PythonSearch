@@ -3,7 +3,6 @@ from __future__ import annotations
 from python_search.config import DataConfig
 from python_search.data_collector import GenericDataCollector
 
-
 class EntryExecutedDataset:
     """
     Poit of access for the searches performed
@@ -14,6 +13,7 @@ class EntryExecutedDataset:
     FILE_NAME = "run_performed"
     NEW_FILE_NAME = "searches_performed"
     CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + FILE_NAME
+    SCHEMA = None
 
     def __init__(self, spark=None):
         # For illustrative purposes.
@@ -28,6 +28,8 @@ class EntryExecutedDataset:
                 StructField("rank_uuid", StringType(), True),
                 StructField("rank_position", IntegerType(), True),
                 StructField("timestamp", StringType(), True),
+                StructField("earliest_time", StringType(), True),
+                StructField("after_execution_time", StringType(), True),
             ]
         )
         self.spark = spark if spark else SparkSession.builder.getOrCreate()
@@ -44,7 +46,7 @@ class EntryExecutedDataset:
     def load_clean(self):
         return (
             self.spark.read.format("parquet")
-            .schema(EntryExecutedDataset.SCHEMA)
+            .schema(EntryExecutedDataset().SCHEMA)
             .load(self.CLEAN_PATH)
         )
 
