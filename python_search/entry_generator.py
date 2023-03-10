@@ -16,6 +16,7 @@ create databricks connect conda: conda env create -f environment.py.yml
 zusatz: additive
 ceo of open ai: Sam Altman
 erfassen: capture
+open ai documentation: https://platform.openai.com/docs/introduction
 {entry_description}: 
         """
 
