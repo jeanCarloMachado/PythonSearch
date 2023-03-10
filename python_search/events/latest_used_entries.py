@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-
+import json
+import os
 from typing import List
 
 from python_search.events.run_performed.dataset import EntryExecutedDataset
@@ -18,9 +19,32 @@ class RecentKeys:
         return a list of unike used keys ordered by the last time they were used
         the most recent in the top.
         """
-        df = EntryExecutedDataset().load_new()
-        df = df.sort('timestamp', ascending=False).limit(10)
-        return [ i[0] for i in df.select('key').collect() ]
+
+        ds = EntryExecutedDataset
+        path = ds.load_new_path()
+        #print("Loading data from: {}".format(path))
+        import glob
+        list_of_files = sorted(filter(os.path.isfile,
+                                      glob.glob(path + '/*')))
+
+        result = []
+
+        HISTORY_SIZE = 30
+        for file in list_of_files[-HISTORY_SIZE:]:
+            try:
+                data = json.load(open(file, 'r'))
+            except:
+                continue
+
+            key = data['key']
+            if not key:
+                continue
+            result.append(key)
+
+        result = list(dict.fromkeys(result))
+        result.reverse()
+
+        return result
 
     @staticmethod
     def add_latest_used(key):

@@ -142,8 +142,6 @@ class Search:
 
     def _fetch_latest_entries(self):
         """Populate the variable used_entries  with the results from redis"""
-        if not self._feature_toggle.is_enabled("ranking_latest_used"):
-            return
 
         entries = RecentKeys().get_latest_used_keys()
 
