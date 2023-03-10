@@ -57,7 +57,7 @@ Prompt:
         print(result)
 
     @notify_exception()
-    def answer(self, prompt: str, debug=False):
+    def answer(self, prompt: str, debug=False, max_tokens=500):
         """
         Answer a prompt with openAI results
         """
