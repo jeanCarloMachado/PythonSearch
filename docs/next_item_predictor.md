@@ -2,11 +2,15 @@
 
 Next item predictor is the model that optimizes the ranking.
 
-Trainng the model:
-
-
-install extras
+## Install extras
 ```sh 
 pip install '.[server]'
 
 ```
+
+## Training the model
+
+```
+next_item_pipeline run
+```
+
