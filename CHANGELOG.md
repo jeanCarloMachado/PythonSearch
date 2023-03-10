@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.14
+
+- Added examples for body generation
+- Streamlit improvements
+  - Add performance page
+
 ## 0.10.13
 
 -Adding support for XFCE
