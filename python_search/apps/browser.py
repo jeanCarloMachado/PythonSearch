@@ -49,6 +49,9 @@ class Browser:
         if browser == "firefox":
             return self._firefox(url_expr)
 
+        if is_linux():
+            return self._firefox(url_expr)
+
         return self._chrome(url_expr)
 
     def _firefox(self, url):

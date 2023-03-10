@@ -54,6 +54,7 @@ class Fzf:
         --bind "esc:+clear-query" \
         --bind "ctrl-k:abort" \
         --bind "ctrl-d:abort"  \
+        --bind "ctrl-g:execute-silent:(prompt_editor --prompt_text {{q}})" \
         {self._get_fzf_theme()} ; exit 0
         '
         """

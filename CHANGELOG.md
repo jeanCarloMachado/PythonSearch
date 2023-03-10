@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.15
+
+- Press CTRL+G when searching for an entry, that doesn't exist yet, to auto generate it and save it with GPT3
+- Fixing is_linux() and url entry behaviour on linux
+
 ## 0.10.14
 
 - Added examples for body generation
@@ -9,10 +14,10 @@
 
 ## 0.10.13
 
--Adding support for XFCE
--Removing more legacy i3 Code
--New is_linux function
--Changing default browser logic
+- Adding support for XFCE
+- Removing more legacy i3 Code
+- New is_linux function
+- Changing default browser logic
 
 
 ## 0.10.11
