@@ -12,4 +12,4 @@ def is_archlinux():
 
 
 def is_linux():
-    return 0 == os.system("/etc/*release | grep -i  linux")
+    return 0 == os.system("cat /etc/*release | grep -i  linux")
