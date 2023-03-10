@@ -2,7 +2,6 @@
 
 from typing import List
 
-
 class RecentKeys:
     """
     Contains the latest used keys and the API to add new ones.
@@ -32,5 +31,4 @@ class RecentKeys:
 
 if __name__ == "__main__":
     import fire
-
     fire.Fire(RecentKeys)
