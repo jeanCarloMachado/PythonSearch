@@ -56,7 +56,7 @@ Done! You can run the search UI by running.
 python_search search
 ```
 
-## CHATGPT integration is now available!
+## LLM/ChatGPT integration is now available!
 
 You can customize templated prompts, use them for different content and save them in python search see our [integration docs for details](https://github.com/jeanCarloMachado/PythonSearch/blob/main/docs/intergrate_chatgpt.md)
 
