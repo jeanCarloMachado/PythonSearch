@@ -40,7 +40,7 @@ class Search:
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
 
-        if True or self._feature_toggle.is_enabled("ranking_next"):
+        if self._feature_toggle.is_enabled("ranking_next"):
             self.logger.debug("Reaching ranking next component")
             from python_search.next_item_predictor.inference.inference import Inference
 
