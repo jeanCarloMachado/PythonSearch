@@ -40,8 +40,8 @@ class Search:
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
 
-        if self._feature_toggle.is_enabled("ranking_next"):
-            self.logger.info("Reaching ranking next component")
+        if True or self._feature_toggle.is_enabled("ranking_next"):
+            self.logger.debug("Reaching ranking next component")
             from python_search.next_item_predictor.inference.inference import Inference
 
             try:
@@ -51,6 +51,7 @@ class Search:
                     f"Could not initialize the inference component. Proceeding without inference, details: {e}"
                 )
                 self._entries_result.degraded_message = f"{e}"
+        self._recent_keys = RecentKeys()
 
     @timeit
     def search(self, skip_model=False, base_rank=False) -> str:
@@ -143,7 +144,7 @@ class Search:
     def _fetch_latest_entries(self):
         """Populate the variable used_entries  with the results from redis"""
 
-        entries = RecentKeys().get_latest_used_keys()
+        entries = self._recent_keys.get_latest_used_keys()
 
         # only use the latest 7 entries for the top of the search
         return entries[: self.NUMBER_OF_LATEST_ENTRIES]

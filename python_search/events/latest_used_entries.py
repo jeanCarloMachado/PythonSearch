@@ -14,7 +14,7 @@ class RecentKeys:
     _blacklisted_items = ["python search main entry"]
     _used_keys = []
 
-    def get_latest_used_keys(self) -> List[str]:
+    def get_latest_used_keys(self, history_size=6) -> List[str]:
         """
         return a list of unike used keys ordered by the last time they were used
         the most recent in the top.
@@ -29,8 +29,7 @@ class RecentKeys:
 
         result = []
 
-        HISTORY_SIZE = 30
-        list_of_files = list_of_files[-HISTORY_SIZE:]
+        list_of_files = list_of_files[-history_size:]
         list_of_files.reverse()
         for file in list_of_files:
             try:

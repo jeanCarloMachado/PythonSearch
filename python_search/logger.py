@@ -3,7 +3,7 @@ import sys
 
 
 def setup_inference_logger():
-    logger = logging.getLogger("inference")
+    logger = logging.getLogger("inference_logger")
 
     fh = logging.FileHandler("/tmp/inference.txt")
     fh.setLevel(logging.WARNING)
@@ -13,7 +13,7 @@ def setup_inference_logger():
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
 
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     return logger
 

@@ -1,11 +1,12 @@
 import os
-from typing import Literal, Optional
+from typing import Optional
 
 from mlflow.entities import RunInfo
 
 from python_search.configuration.data_config import DataConfig
 
-BASE_MLFLOW_LOCATON = "/entries/mlflow"
+
+BASE_MLFLOW_LOCATON = DataConfig().MLFLOW_MODELS_PATH
 
 NEXT_ITEM_PREDICTOR_PROJECT_NUMBER = "2"
 ENTRY_TYPE_CLASSIFIER_PROJECT_NUMBER = "4"
@@ -23,7 +24,7 @@ class PythonSearchMLFlow:
         import mlflow
 
         self.mlflow_instance = mlflow
-        self.mlflow_instance.set_tracking_uri(f"file:{DataConfig.MLFLOW_MODELS_PATH}")
+        self.mlflow_instance.set_tracking_uri(f"file:{DataConfig().MLFLOW_MODELS_PATH}")
 
     def get_latest_next_predictor_run(self) -> RunInfo:
         from mlflow.tracking import MlflowClient
