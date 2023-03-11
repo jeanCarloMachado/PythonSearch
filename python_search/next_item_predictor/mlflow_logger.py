@@ -2,7 +2,7 @@ from typing import Optional
 
 import mlflow
 
-from python_search.config import DataConfig
+from python_search.configuration.data_config import DataConfig
 
 
 def configure_mlflow(experiment_name: Optional[str] = None):

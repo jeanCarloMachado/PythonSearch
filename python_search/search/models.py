@@ -3,7 +3,7 @@ from typing import Literal, Optional
 
 from mlflow.entities import RunInfo
 
-from python_search.config import DataConfig
+from python_search.configuration.data_config import DataConfig
 
 BASE_MLFLOW_LOCATON = "/entries/mlflow"
 
