@@ -10,7 +10,7 @@ class DataConfig:
 
     def __init__(self):
         project_root = ConfigurationLoader().get_entries_project_root()
-        self.MLFLOW_MODELS_PATH = f"/{project_root}/mlflow"
+        self.MLFLOW_MODELS_PATH = f"{project_root}/mlflow"
 
 
     # output of the _model

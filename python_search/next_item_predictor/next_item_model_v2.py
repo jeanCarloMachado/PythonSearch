@@ -1,4 +1,3 @@
-import os.path
 from typing import Tuple, Dict
 
 import numpy as np
@@ -8,12 +7,11 @@ from pyspark.sql.functions import udf, struct
 import pyspark.sql.functions as F
 
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.events.run_performed.clean import RunPerformedCleaning
 from python_search.next_item_predictor.inference.input import ModelInput
 from python_search.next_item_predictor.v2.previous_key_feature import PreviousKey
 from python_search.search.models import PythonSearchMLFlow
 from python_search.next_item_predictor.features.entry_embeddings import (
-    InferenceEmbeddingsLoader,
+    EntriesEmbeddings,
 )
 from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
     create_key_indexed_embedding,

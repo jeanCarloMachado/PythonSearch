@@ -100,7 +100,7 @@ class RedisEmbeddingsWriter:
 
 
 class EmbeddingSerialization:
-    """Responsible to encode the numpy embeddings in a format readis can read and write from and to"""
+    """Responsible to encode the numpy embeddings in a format redis can read and write from and to"""
 
     @staticmethod
     def read(embedding):
