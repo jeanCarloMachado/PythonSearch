@@ -8,6 +8,7 @@ from pyspark.sql.functions import udf, struct
 import pyspark.sql.functions as F
 
 from python_search.configuration.loader import ConfigurationLoader
+from python_search.events.run_performed.clean import RunPerformedCleaning
 from python_search.next_item_predictor.inference.input import ModelInput
 from python_search.next_item_predictor.v2.previous_key_feature import PreviousKey
 from python_search.search.models import PythonSearchMLFlow
@@ -44,6 +45,7 @@ class NextItemBaseModelV2(BaseModel):
         #self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
 
     def build_dataset(self, debug=True) -> DataFrame:
+        print("Cleaning dataset")
         print("Building dataset v2")
 
         self._ranking_df = self._get_ranking_entries_dataset()

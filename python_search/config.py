@@ -14,22 +14,20 @@ class DataConfig:
     """
 
     # output of the _model
-    base_data_folder = f"{os.environ['HOME']}/.data/data/python_search"
-    BASE_DATA_COLLECTOR_FOLDER = f"{os.environ['HOME']}/.data/data_collection"
-    prediction_batch_location = base_data_folder + "/predict_input_lenght/latest"
+    BASE_DATA_FOLDER = f"{os.environ['HOME']}/.python_search/data"
+    BASE_DATA_COLLECTOR_FOLDER = f"{os.environ['HOME']}/.python_search/data"
+    prediction_batch_location = BASE_DATA_FOLDER + "/predict_input_lenght/latest"
     # a copy of the search run _entries for the feature store
-    entries_dump = base_data_folder + "/entries_dumped/latest"
-    entries_dump_file = base_data_folder + "/entries_dumped/latest/000.parquet"
+    entries_dump = BASE_DATA_FOLDER + "/entries_dumped/latest"
+    entries_dump_file = BASE_DATA_FOLDER + "/entries_dumped/latest/000.parquet"
     cached_configuration = "/tmp/search_and_run_configuration_cached"
     # this path exists in the docker container but not necessarily in the host
     MLFLOW_MODELS_PATH = f"/entries/mlflow"
     BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v1"
     ENTRY_TYPE_CLASSIFIER_EXPERIMENT_NAME = f"entry_type_classifier_v2"
-    DATA_WAREHOUSE_FOLDER = base_data_folder + "/data_warehouse"
-    CLEAN_EVENTS_FOLDER = DATA_WAREHOUSE_FOLDER + "/clean"
     SEARCH_RUNS_PERFORMED_FOLDER = (
-        base_data_folder + "/data_warehouse/dataframes/SearchRunPerformed"
+            BASE_DATA_FOLDER + "/data_warehouse/dataframes/SearchRunPerformed"
     )
 
 

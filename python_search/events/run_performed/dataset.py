@@ -10,9 +10,9 @@ class EntryExecutedDataset:
     """
 
     columns = ["key", "query_input", "shortcut", "rank_uuid", "timestamp"]
-    FILE_NAME = "run_performed"
+    FILE_NAME = "searches_performed_clean"
     NEW_FILE_NAME = "searches_performed"
-    CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + FILE_NAME
+    CLEAN_PATH = DataConfig.BASE_DATA_FOLDER + "/" + FILE_NAME
     SCHEMA = None
 
     def __init__(self, spark=None):
