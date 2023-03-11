@@ -7,10 +7,10 @@ from pyspark.sql import DataFrame
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.search.models import PythonSearchMLFlow
-from python_search.next_item_predictor.features.entry_embeddings import (
+from python_search.next_item_predictor.features.inference_embeddings import (
     EntriesEmbeddings,
 )
-from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
+from python_search.next_item_predictor.features.inference_embeddings.entry_embeddings import (
     create_key_indexed_embedding,
 )
 from python_search.next_item_predictor.training_dataset import TrainingDataset

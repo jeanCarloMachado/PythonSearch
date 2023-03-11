@@ -122,6 +122,7 @@ def create_embeddings_from_strings(keys: List[str]) -> ndarray:
 
 def create_key_indexed_embedding(keys) -> dict[str, np.ndarray]:
     """
+    @deprecated use entry_embeddings class instead.
     Create an embedding dict
     """
     unique_keys = list(set(keys))

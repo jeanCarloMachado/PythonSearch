@@ -7,15 +7,10 @@ from pyspark.sql.functions import udf, struct
 import pyspark.sql.functions as F
 
 from python_search.configuration.loader import ConfigurationLoader
+from python_search.next_item_predictor.features.entry_embeddings import EntryEmbeddings
 from python_search.next_item_predictor.inference.input import ModelInput
 from python_search.next_item_predictor.v2.previous_key_feature import PreviousKey
 from python_search.search.models import PythonSearchMLFlow
-from python_search.next_item_predictor.features.entry_embeddings import (
-    EntriesEmbeddings,
-)
-from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
-    create_key_indexed_embedding,
-)
 from python_search.next_item_predictor.model_interface import BaseModel
 
 
@@ -40,7 +35,7 @@ class NextItemBaseModelV2(BaseModel):
     def __init__(self):
         configuration = ConfigurationLoader().load_config()
         self._all_keys = configuration.commands.keys()
-        #self.inference_embeddings = InferenceEmbeddingsLoader(self._all_keys)
+        self.entry_embedding = EntryEmbeddings.load_cached_or_build()
 
     def build_dataset(self, debug=True) -> DataFrame:
         print("Cleaning dataset")
@@ -249,18 +244,18 @@ class NextItemBaseModelV2(BaseModel):
 
         timestamp = int(datetime.now().timestamp())
 
-        previous_key_embedding = self.inference_embeddings.get_embedding_from_key(
+        previous_key_embedding = self.entry_embedding.get_key_embedding(
             inference_input_obj.previous_key
         )
         previous_previous_key_embedding = (
-            self.inference_embeddings.get_embedding_from_key(
+            self.entry_embedding.get_key_embedding(
                 inference_input_obj.previous_previous_key
             )
         )
 
         X = np.zeros([len(all_keys), self.DIMENSIONS])
         for i, key in enumerate(all_keys):
-            key_embedding = self.inference_embeddings.get_embedding_from_key(key)
+            key_embedding = self.entry_embedding.get_key_embedding(key)
 
             if key_embedding is None:
                 print(f"No embeddings for key: '{key}'")
