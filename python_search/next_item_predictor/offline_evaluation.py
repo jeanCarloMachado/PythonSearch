@@ -60,6 +60,7 @@ class OfflineEvaluation:
             previous_previous_key = row.get("previous_previous_key")
 
             no_performed_tests += 1
+            print(f"Iteration number: {no_performed_tests}")
             if no_performed_tests == OfflineEvaluation._NUMBER_OF_TESTS:
                 break
 

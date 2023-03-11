@@ -8,6 +8,8 @@ import pyspark.sql.functions as F
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.next_item_predictor.features.entry_embeddings import EntryEmbeddings
+from python_search.next_item_predictor.features.inference_embeddings.inference_embeddings import \
+    create_key_indexed_embedding
 from python_search.next_item_predictor.inference.input import ModelInput
 from python_search.next_item_predictor.v2.previous_key_feature import PreviousKey
 from python_search.search.models import PythonSearchMLFlow

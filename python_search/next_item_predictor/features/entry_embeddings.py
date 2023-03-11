@@ -65,7 +65,7 @@ class EntryEmbeddings:
         match = self._df[self._df.index == key].values
 
         if len(match):
-            return match[0]
+            return match[0][0]
 
         return None
 
