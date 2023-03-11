@@ -22,7 +22,7 @@ class RecentKeys:
 
         ds = EntryExecutedDataset
         path = ds.load_new_path()
-        #print("Loading data from: {}".format(path))
+
         import glob
         list_of_files = sorted(filter(os.path.isfile,
                                       glob.glob(path + '/*')))
@@ -30,9 +30,12 @@ class RecentKeys:
         result = []
 
         HISTORY_SIZE = 30
-        for file in list_of_files[-HISTORY_SIZE:]:
+        list_of_files = list_of_files[-HISTORY_SIZE:]
+        list_of_files.reverse()
+        for file in list_of_files:
             try:
                 data = json.load(open(file, 'r'))
+                #print(data)
             except:
                 continue
 
@@ -41,8 +44,9 @@ class RecentKeys:
                 continue
             result.append(key)
 
-        result = list(dict.fromkeys(result))
-        result.reverse()
+        seen = set()
+        seen_add = seen.add
+        result = [x for x in result if not (x in seen or seen_add(x))]
 
         return result
 
