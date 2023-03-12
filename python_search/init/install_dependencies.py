@@ -57,8 +57,8 @@ Installation successful!
         os.system("brew install icanhazshortcut")
 
         HOME = os.environ["HOME"]
+        # the branch to download the files from
         branch = "main"
-        branch = '0_11'
 
         print("Downloading keyboard config ")
         self.download_file(
