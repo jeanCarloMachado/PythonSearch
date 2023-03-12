@@ -59,7 +59,9 @@ class RecentKeys:
 
         RecentKeys._used_keys = [key] + RecentKeys._used_keys
 
-
-if __name__ == "__main__":
+def main():
     import fire
     fire.Fire(RecentKeys)
+
+if __name__ == "__main__":
+    main()
