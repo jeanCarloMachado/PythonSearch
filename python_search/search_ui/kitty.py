@@ -1,9 +1,13 @@
 import os
 
+import logging
+import sys
+
 from python_search.apps.terminal import Terminal
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
 from python_search.search_ui.fzf import Fzf
+
 
 
 class FzfInKitty:
@@ -14,52 +18,56 @@ class FzfInKitty:
     FONT_SIZE: int = 15
     _default_window_size = (800, 400)
 
-    configuration: PythonSearchConfiguration
+    _configuration: PythonSearchConfiguration
 
     def __init__(self, configuration: PythonSearchConfiguration):
+
+        logger = logging.getLogger(name="search_ui")
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+        logger.setLevel(logging.DEBUG)
+        self._logger = logger
+
+        self._configuration = configuration
         custom_window_size = configuration.get_window_size()
-        self.width = (
+        self._width = (
             custom_window_size[0]
             if custom_window_size
             else self._default_window_size[0]
         )
-        self.height = (
+        self._height = (
             custom_window_size[1]
             if custom_window_size
             else self._default_window_size[1]
         )
 
-        self.title = configuration.APPLICATION_TITLE
-        self.configuration = configuration
+        self._title = configuration.APPLICATION_TITLE
 
-        import logging
-        import sys
-
-        logger = logging.getLogger(name="search_ui")
-        logger.addHandler(logging.StreamHandler(sys.stdout))
-        logger.setLevel(logging.DEBUG)
-
-        self._logger = logger
+        self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
         self._fzf = Fzf(configuration)
-        self.FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
 
     def run(self) -> None:
-        self._focus_or_launch()
+        if not self.try_to_focus():
+            self.launch()
 
-    def _focus_or_launch(self):
+
+    @staticmethod
+    def try_to_focus():
         """
         Focuses the terminal if it is already open
         """
-        result = os.system(f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window")
-        if result != 0 or not os.path.exists("/tmp/mykitty"):
-            self._launch()
+        if not os.path.exists("/tmp/mykitty"):
+            return False
 
-    def _launch(self) -> None:
+        result = os.system(f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window")
+
+        return result == 0
+
+    def launch(self) -> None:
         internal_cmd = self._fzf.get_cmd()
         terminal = Terminal()
 
         launch_cmd = f"""nice -19 {get_kitty_cmd()} \
-        --title {self.title} \
+        --title {self._title} \
         --listen-on unix:/tmp/mykitty \
         -o allow_remote_control=yes \
         -o draw_minimal_borders=no \
@@ -70,9 +78,9 @@ class FzfInKitty:
         -o hide_window_decorations=titlebar-only \
         -o background_opacity=1 \
         -o active_tab_title_template=none \
-        -o initial_window_width={self.width}  \
-        -o initial_window_height={self.height} \
-        -o font_family="{self.FONT}" \
+        -o initial_window_width={self._width}  \
+        -o initial_window_height={self._height} \
+        -o font_family="{self._FONT}" \
         {terminal.get_background_color()} \
         -o font_size={FzfInKitty.FONT_SIZE} \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
