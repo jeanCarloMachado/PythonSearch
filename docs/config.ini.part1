@@ -24,6 +24,6 @@ workdir_column_width = 100
 [shortcut1]
 shortcut = ⌃Space
 action = run python search
-command = python_search search
+command = python_search_search run
 workdir =
 enabled = yes

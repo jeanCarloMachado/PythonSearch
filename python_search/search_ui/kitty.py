@@ -3,10 +3,7 @@ import os
 import logging
 import sys
 
-from python_search.apps.terminal import Terminal
-from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
-from python_search.search_ui.fzf import Fzf
 
 
 
@@ -18,15 +15,18 @@ class FzfInKitty:
     FONT_SIZE: int = 15
     _default_window_size = (800, 400)
 
-    _configuration: PythonSearchConfiguration
+    _configuration = None
 
-    def __init__(self, configuration: PythonSearchConfiguration):
+    def __init__(self, configuration = None):
 
         logger = logging.getLogger(name="search_ui")
         logger.addHandler(logging.StreamHandler(sys.stdout))
         logger.setLevel(logging.DEBUG)
         self._logger = logger
 
+        if not configuration:
+            from python_search.configuration.loader import ConfigurationLoader
+            configuration = ConfigurationLoader().load_config()
         self._configuration = configuration
         custom_window_size = configuration.get_window_size()
         self._width = (
@@ -43,11 +43,13 @@ class FzfInKitty:
         self._title = configuration.APPLICATION_TITLE
 
         self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
+        from python_search.search_ui.fzf import Fzf
         self._fzf = Fzf(configuration)
 
-    def run(self) -> None:
-        if not self.try_to_focus():
-            self.launch()
+    @staticmethod
+    def run() -> None:
+        if not FzfInKitty.try_to_focus():
+            FzfInKitty().launch()
 
 
     @staticmethod
@@ -64,6 +66,7 @@ class FzfInKitty:
 
     def launch(self) -> None:
         internal_cmd = self._fzf.get_cmd()
+        from python_search.apps.terminal import Terminal
         terminal = Terminal()
 
         launch_cmd = f"""nice -19 {get_kitty_cmd()} \
@@ -97,8 +100,9 @@ def get_kitty_cmd() -> str:
         return "/Applications/kitty.app/Contents/MacOS/kitty"
     return "kitty"
 
+def main():
+    import fire
+    fire.Fire(FzfInKitty)
 
 if __name__ == "__main__":
-    import fire
-
-    fire.Fire()
+    main()
