@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.11.0"
+version = "0.12.0"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -73,7 +73,7 @@ events_etl = 'python_search.events.events_etl:main'
 chat_gpt = 'python_search.chat_gpt:main'
 entry_builder = 'python_search.entry_capture.entry_inserter_gui.entry_inserter_gui:main'
 prompt_editor = 'python_search.apps.prompt_editor:main'
-entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings.entry_embeddings:main'
+entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings:main'
 entries_editor = 'python_search.entry_capture.entries_editor:main'
 register_new = 'python_search.entry_capture.register_new:main'
 share_entry = 'python_search.share:main'
@@ -85,7 +85,7 @@ recent_keys = 'python_search.events.latest_used_entries:main'
 python_search_search = 'python_search.search_ui.kitty:main'
 
 [tool.poetry.extras]
-server = [
+model = [
     "pyspark",
     "mlflow",
     "keras",
@@ -103,4 +103,5 @@ server = [
     "arize",
     "jupyterlab",
     "scikit-learn",
+    'sentence_transformers',
 ]

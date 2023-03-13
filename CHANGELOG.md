@@ -4,6 +4,7 @@
 
 - Add google it script (ctrl-g)
 - Add prompt editor to fzf search (ctrl-p)
+- 
 
 ## 0.10.14
 

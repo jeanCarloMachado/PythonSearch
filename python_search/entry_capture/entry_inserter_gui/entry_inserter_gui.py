@@ -113,14 +113,16 @@ class EntryCaptureGUI:
         )
 
         window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
+        window[self._ENTRY_NAME_INPUT].bind("<Control_L><s>", "CTRL-s")
         window[self._ENTRY_BODY_INPUT].bind("<Escape>", "Escape"),
-        window["type"].bind("<Escape>", "_Esc")
+        window["type"].bind("<Escape>", "Escape")
 
         self._predict_entry_type_thread(default_content, window)
         if default_key or generate_body:
             self._generate_body_thread(default_key, window)
         while True:
             event, values = window.read()
+            print("Event: ", event)
             if event == self.sg.WINDOW_CLOSED:
                 import sys
 
@@ -128,17 +130,16 @@ class EntryCaptureGUI:
 
             if "Escape" in event:
                 import sys
-
                 sys.exit(1)
+
+            if event and (event == "write" or event == "-entry-name-CTRL-s"):
+                break
 
             if event and (event == "-generate-body-"):
                 self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
 
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
-
-            if event and event == "write":
-                break
 
             if event == "-type-inference-ready-":
                 window["type"].update(values[event])

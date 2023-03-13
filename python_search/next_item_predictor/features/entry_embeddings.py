@@ -74,7 +74,10 @@ class EntryEmbeddings:
         return self._df.index.values
 
 
-if __name__ == "__main__":
+def main():
     import fire
     fire.Fire(EntryEmbeddings)
+
+if __name__ == "__main__":
+    main()
 

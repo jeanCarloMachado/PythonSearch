@@ -249,11 +249,13 @@ class NextItemBaseModelV2(BaseModel):
         previous_key_embedding = self.entry_embedding.get_key_embedding(
             inference_input_obj.previous_key
         )
+        print(f"Embedding for prvious key: '{inference_input_obj.previous_key}' shape: {previous_key_embedding.shape}")
         previous_previous_key_embedding = (
             self.entry_embedding.get_key_embedding(
                 inference_input_obj.previous_previous_key
             )
         )
+        print(f"Embedding for previous previous key: '{inference_input_obj.previous_previous_key}' shape: {previous_previous_key_embedding.shape}")
 
         X = np.zeros([len(all_keys), self.DIMENSIONS])
         for i, key in enumerate(all_keys):
@@ -263,6 +265,7 @@ class NextItemBaseModelV2(BaseModel):
                 print(f"No embeddings for key: '{key}'")
                 continue
 
+            print(f"Embedding for key: '{key}' shape: {key_embedding.shape}")
             X[i] = np.concatenate(
                 (
                     key_embedding,
