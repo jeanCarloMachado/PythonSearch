@@ -1,6 +1,10 @@
 import os
 import time
 import subprocess
+import shutil
+from typing import Optional
+
+from python_search.search_ui.kitty import FzfInKitty
 
 
 class Mac:
@@ -18,20 +22,29 @@ class Mac:
         self.config_folder = f'{os.environ["HOME"]}/.config/iCanHazShortcut/'
 
     def generate(self):
-        print("Generating macos shortctus")
+        print("Generating macos shortcuts")
 
         self._stop_app()
 
         shortcut_found = False
-        # starts with number 2 as number 1 is static in config.part1
 
-        import shutil
+        BASE_CONFIG_LOCATION = os.environ.get("BASE_CONFIG_LOCATION", self.config_folder)
+        print("Base config location: ", BASE_CONFIG_LOCATION)
 
         shutil.copyfile(
-            f"{self.config_folder}/config.ini.part1", f"{self.config_folder}/config.ini"
+            f"{BASE_CONFIG_LOCATION}/config.ini.part1", f"{self.config_folder}/config.ini"
         )
 
         content_to_write = ""
+
+        content_to_write += self._add_shortcut(
+            '⌃Space',
+            'Launch python search',
+            Mac.START_SHORTCUT_NUMBER,
+            FzfInKitty.focus_kitty_command() + ' || python_search_search launch'
+        )
+        Mac.START_SHORTCUT_NUMBER += 1
+
         for key, content in list(self.configuration.commands.items()):
             if not type(content) is dict:
                 continue
@@ -68,16 +81,29 @@ class Mac:
         print("Restarting shortcut app")
         os.system("open -a iCanHazShortcut")
 
-        print(f"Done! {Mac.START_SHORTCUT_NUMBER}  shortcuts generated")
+        print(f"Done! {Mac.START_SHORTCUT_NUMBER} shortcuts generated")
 
         number_of_items = subprocess.getoutput(
             f"grep '\[shortcut' {self.config_folder}config.ini | wc -l"
         )
         print(f"In the file we found {number_of_items} items")
 
-    def _add_shortcut(self, shortcut: str, key: str, shortcut_number) -> str:
+    def _add_shortcut(self, shortcut: str, key: str, shortcut_number, custom_cmd: Optional[str] = None) -> str:
         print(f"Generating shortcut for {key}")
-        return self._entry(shortcut, key, shortcut_number)
+        if custom_cmd is None:
+            custom_cmd = f'run_key "{key}"'
+
+
+
+        return f"""
+
+[shortcut{shortcut_number}]
+shortcut = {shortcut}
+action = {key}{shortcut_number}
+command = {custom_cmd} --from_shortcut True
+workdir =
+enabled = yes
+"""
 
     def _stop_app(self):
         print("Killing shortcut app")
@@ -96,16 +122,3 @@ class Mac:
         os.system("kill -9 " + output)
         time.sleep(3)
 
-    def _entry(self, shortcut, key, number) -> str:
-        HOME = os.environ["HOME"]
-        shortcut = shortcut
-        # @todo make the first shortcut system independent
-        return f"""
-
-[shortcut{number}]
-shortcut = {shortcut}
-action = {key}{number}
-command = run_key "{key}" --from_shortcut True
-workdir =
-enabled = yes
-"""

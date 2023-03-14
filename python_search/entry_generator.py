@@ -7,8 +7,9 @@ class EntryGenerator:
         self._chat_gpt = ChatGPT()
 
 
-    def generate_body(self, entry_description, body_size=500):
-        prompt = f"""generate a command body following the pattern:
+    def generate_body(self, prompt, body_size=500, fine_tune=False):
+        if fine_tune:
+            prompt = f"""generate a command body following the pattern:
 write python executable in screen to debug: import sys ; st.write(sys.executable)
 pandas str expression to deal with string columns example: suburb_D = df[df.Suburb.str.startswith("D")] suburb_D.head()
 conda enviroment folder: /Users/jean.machado/anaconda3/envs/
@@ -17,8 +18,8 @@ zusatz: additive
 ceo of open ai: Sam Altman
 erfassen: capture
 open ai documentation: https://platform.openai.com/docs/introduction
-{entry_description}: 
-        """
+{prompt}: 
+            """
 
         return self._chat_gpt.answer(prompt, max_tokens=body_size)
 

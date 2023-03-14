@@ -6,7 +6,6 @@ import sys
 from python_search.environment import is_mac
 
 
-
 class FzfInKitty:
     """
     Renders the search ui using fzf + termite terminal
@@ -60,9 +59,14 @@ class FzfInKitty:
         if not os.path.exists("/tmp/mykitty"):
             return False
 
-        result = os.system(f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window")
+        result = os.system(FzfInKitty.focus_kitty_command())
 
         return result == 0
+
+    @staticmethod
+    def focus_kitty_command():
+        return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
+
 
     def launch(self) -> None:
         internal_cmd = self._fzf.get_cmd()

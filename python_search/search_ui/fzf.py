@@ -107,9 +107,11 @@ class Fzf:
 
 
 def hide_current_focused_window():
+    """Used by fzf to hide the current focused window when pressing esc"""
     os.system(
         """osascript -e 'tell application "System Events" to keystroke "h" using {command down}'"""
     )
+
 
 
 def main():
