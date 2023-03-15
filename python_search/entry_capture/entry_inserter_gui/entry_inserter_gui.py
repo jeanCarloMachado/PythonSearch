@@ -68,7 +68,8 @@ class EntryCaptureGUI:
             default_value=default_type,
         )
 
-        tags_chucks = self._chunks_of_tags(self._tags, 4)
+        TAGS_PER_ROW = 6
+        tags_chucks = self._chunks_of_tags(self._tags, TAGS_PER_ROW)
 
         key_name_input = self.sg.Multiline(
             key=self._ENTRY_NAME_INPUT,
@@ -91,15 +92,14 @@ class EntryCaptureGUI:
             [key_name_input],
             [self.sg.Text("Body")],
             [content_input],
+            [self.sg.Text("Type"), entry_type, self.sg.Button("Try entry", key="-try-entry-")],
             [
                 self.sg.Text("Generator"),
-                self.sg.Button("Body", key="-generate-body-"),
+                self.sg.Button("Entry Body", key="-generate-body-"),
                 self.sg.Button("Description", key="-generate-title-"),
-                self.sg.Text("Response Size"),
-                self.sg.Input(500, key="generation-size", expand_x=False),
+                self.sg.Text("Response Tokens"),
+                self.sg.Input(500, key="generation-size", size=(5, 1)),
             ],
-            [self.sg.Text("Type")],
-            [entry_type, self.sg.Button("Try it", key="-try-entry-")],
             [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
             [self.sg.Button("Write entry", key="write")],
@@ -223,6 +223,10 @@ class EntryCaptureGUI:
         ).start()
 
     def _predict_entry_type(self, window, content):
+        if not self._configuration.use_webservice:
+            print("Cant predict entry type as webservice is not enabled")
+            return
+
         result = ClassifierInferenceClient().predict_from_content(content)
 
         if not result:
