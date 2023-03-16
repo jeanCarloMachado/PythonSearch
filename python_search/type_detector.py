@@ -5,7 +5,7 @@ class TypeDetector():
 
 
     def detect(self, key, content):
-        if content.startswith("http://") or content.startswith("http://"):
+        if content.startswith("https://") or content.startswith("http://"):
             return 'Url'
 
         prompt = f""" return one of the following types (Snippet, File, Cmd)
