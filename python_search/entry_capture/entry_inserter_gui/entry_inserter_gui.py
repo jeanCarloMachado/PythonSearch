@@ -15,6 +15,7 @@ from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 from python_search.apps.notification_ui import send_notification
+from python_search.type_detector import TypeDetector
 
 
 class EntryCaptureGUI:
@@ -88,16 +89,15 @@ class EntryCaptureGUI:
             size=self._ENTRY_BODY_INPUT_SIZE,
         )
         layout = [
-            [self.sg.Text("Description")],
+            [self.sg.Text("Key")],
             [key_name_input],
             [self.sg.Text("Body")],
             [content_input],
-            [self.sg.Text("Type"), entry_type, self.sg.Button("Try entry", key="-try-entry-")],
             [
-                self.sg.Text("Generator"),
-                self.sg.Button("Entry Body", key="-generate-body-"),
-                self.sg.Button("Description", key="-generate-title-"),
-                self.sg.Text("Response Tokens"),
+                self.sg.Text("Type"), entry_type, self.sg.Button("Try Entry", key="-try-entry-"), self.sg.Push(),
+                self.sg.Button("Generate Body", key="-generate-body-"),
+                self.sg.Button("Generate Key", key="-generate-title-"),
+                self.sg.Text("Tokens"),
                 self.sg.Input(500, key="generation-size", size=(5, 1)),
             ],
             [self.sg.Text("Tags")],
@@ -223,17 +223,12 @@ class EntryCaptureGUI:
         ).start()
 
     def _predict_entry_type(self, window, content):
-        if not self._configuration.use_webservice:
-            print("Cant predict entry type as webservice is not enabled")
+
+        new_type = TypeDetector().detect('', content)
+
+        if not new_type:
             return
 
-        result = ClassifierInferenceClient().predict_from_content(content)
-
-        if not result:
-            return
-
-        new_type = result[0]
-        self._prediction_uuid = result[1]
         print(f"New type: {new_type}, uuid: {self._prediction_uuid}")
         window.write_event_value("-type-inference-ready-", new_type)
 
