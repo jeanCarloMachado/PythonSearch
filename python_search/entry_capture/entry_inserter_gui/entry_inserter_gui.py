@@ -54,8 +54,6 @@ class EntryCaptureGUI:
 
         print("Default key: ", default_key)
 
-        if not default_key and default_content.startswith("http"):
-            default_key = self._get_page_title(default_content)
 
         config = ConfigurationLoader().load_config()
         self.sg.theme(config.simple_gui_theme)
@@ -124,6 +122,10 @@ class EntryCaptureGUI:
         self._predict_entry_type_thread(default_content, window)
         if default_key or generate_body:
             self._generate_body_thread(default_key, window)
+
+        if not default_key and default_content.startswith("http"):
+            self._update_title_with_url_title_thread(default_content, window)
+
         while True:
             event, values = window.read()
             print("Event: ", event)
@@ -207,6 +209,25 @@ class EntryCaptureGUI:
         if not process.returncode == 0:
             return ""
         return output
+
+    def _update_title_with_url_title_thread(self, content: str, window):
+        send_notification(f"Starting to get url title")
+        self._chat_gpt = ChatGPT(window["generation-size"].get())
+        import PySimpleGUI as sg
+
+        window: sg.Window = window
+
+        def _update_title(content: str, window):
+            new_title = self._get_page_title(content)
+            old_title = window[self._ENTRY_NAME_INPUT]
+            if old_title == new_title:
+                print("Will not upgrade the title as it was already changed")
+                return
+            window[self._ENTRY_NAME_INPUT].update(new_title)
+
+        threading.Thread(
+            target=_update_title, args=(content, window), daemon=True
+        ).start()
 
     def _generate_title_thread(self, content: str, window):
         send_notification(f"Starting to generate title")
