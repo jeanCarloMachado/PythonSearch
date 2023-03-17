@@ -7,10 +7,10 @@ from typing import List
 
 import fire
 
+from python_search.error.exception import notify_exception;
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_generator import EntryGenerator
-from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
@@ -35,6 +35,7 @@ class EntryCaptureGUI:
 
         self.sg = sg
 
+    @notify_exception()
     def launch(
         self,
         window_title: str = "New",
@@ -52,6 +53,9 @@ class EntryCaptureGUI:
             default_content = ""
 
         print("Default key: ", default_key)
+
+        if not default_key and default_content.startswith("http"):
+            default_key = self._get_page_title(default_content)
 
         config = ConfigurationLoader().load_config()
         self.sg.theme(config.simple_gui_theme)
@@ -190,6 +194,19 @@ class EntryCaptureGUI:
         threading.Thread(
             target=_describe_body, args=(title, window), daemon=True
         ).start()
+
+
+    def _get_page_title(self, url):
+        import subprocess
+
+        cmd = f"""curl -f -L {url} | python -c 'import sys, re; result = re.findall("<title>(.*?)</title>", str(sys.stdin.read()));  print(result[0])'"""
+        from subprocess import PIPE, Popen
+
+        with Popen(cmd, stdout=PIPE, stderr=None, shell=True) as process:
+            output = process.communicate()[0].decode("utf-8")
+        if not process.returncode == 0:
+            return ""
+        return output
 
     def _generate_title_thread(self, content: str, window):
         send_notification(f"Starting to generate title")
