@@ -54,7 +54,6 @@ class EntryCaptureGUI:
 
         print("Default key: ", default_key)
 
-
         config = ConfigurationLoader().load_config()
         self.sg.theme(config.simple_gui_theme)
         font_size = config.simple_gui_font_size
@@ -120,7 +119,7 @@ class EntryCaptureGUI:
         window["type"].bind("<Escape>", "Escape")
 
         self._predict_entry_type_thread(default_content, window)
-        if default_key or generate_body:
+        if (default_key and not default_content) or generate_body:
             self._generate_body_thread(default_key, window)
 
         if not default_key and default_content.startswith("http"):

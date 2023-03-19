@@ -35,7 +35,7 @@ class Entry:
     key: str
     value: Optional[dict]
 
-    def __init__(self, key: str, value: dict = None):
+    def __init__(self, key: str = None, value: dict = None):
         """
         :param name: the name of the entry
         :param value: the value of the entry

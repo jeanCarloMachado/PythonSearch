@@ -13,11 +13,11 @@ class EntryGenerator:
 
     def generate_body(self, prompt, body_size=500, fine_tune=False):
         if fine_tune:
-            prompt = f"""generate a command body following the pattern: name: content | Type (one of the following snippet, cmd, url, file)
+            prompt = f"""generate a command body following the pattern: name: content | Type (one of the following snippet, cli_cmd, url, file)
 write python executable in screen to debug: import sys ; st.write(sys.executable) | snippet
 pandas str expression to deal with string columns example: suburb_D = df[df.Suburb.str.startswith("D")] suburb_D.head() | file
 conda enviroment folder: /Users/jean.machado/anaconda3/envs/ | file
-create databricks connect conda: conda env create -f environment.py.yml | cmd
+create databricks connect conda: conda env create -f environment.py.yml | cli_cmd
 zusatz: additive | snippet
 ceo of open ai: Sam Altman | snippet
 erfassen: capture | snippet
@@ -31,7 +31,7 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
     def fzf_formatted(self, query):
         import os
         os.system(f"echo '{query}'>> /tmp/query_log")
-        SECONDS_TO_WAIT = 1
+        SECONDS_TO_WAIT = 1.3
         import time;  time.sleep(SECONDS_TO_WAIT)
 
         # if after 3 seconds teh last query is the same we then can continue to query it
