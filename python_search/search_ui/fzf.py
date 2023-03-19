@@ -1,4 +1,5 @@
 import os
+import sys
 
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
@@ -17,7 +18,7 @@ class Fzf:
 
         if 'ONLY_PRINT' in os.environ:
             print(cmd)
-            return
+            sys.exit(0)
 
 
         os.system(cmd)

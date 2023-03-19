@@ -64,7 +64,7 @@ class FzfInKitty:
         return result == 0
 
     @staticmethod
-    def focus_or_open(self, configuration):
+    def focus_or_open(configuration):
         if not FzfInKitty.try_to_focus():
             FzfInKitty(configuration).launch()
 
