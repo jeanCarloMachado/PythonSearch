@@ -83,6 +83,7 @@ error_panel = 'python_search.error.error_pane:main'
 google_it = 'python_search.apps.google_it:main'
 recent_keys = 'python_search.events.latest_used_entries:main'
 python_search_search = 'python_search.search_ui.kitty:main'
+entry_generator = 'python_search.entry_generator:main'
 
 [tool.poetry.extras]
 model = [

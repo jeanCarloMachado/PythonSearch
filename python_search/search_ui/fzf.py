@@ -13,7 +13,14 @@ class Fzf:
         self.preview_cmd = f"python_search _preview_entry {{}} "
 
     def run(self):
-        os.system(self.get_cmd())
+        cmd = self.get_cmd()
+
+        if 'ONLY_PRINT' in os.environ:
+            print(cmd)
+            return
+
+
+        os.system(cmd)
 
     def get_cmd(self):
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
@@ -25,10 +32,10 @@ class Fzf:
         --info=inline \
         --cycle \
         --no-hscroll \
-        --ellipsis='' \
-        --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
         --preview-window=right,{Fzf.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
+        --ellipsis='' \
+        --hscroll-off=0 \
         -i \
         --border=none \
         --margin=0% \
@@ -51,6 +58,7 @@ class Fzf:
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
         --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \
+        --bind "change:reload-sync:(entry_generator fzf_formatted {{q}}  & {self._get_rankging_generate_cmd(reload=True)} )" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \

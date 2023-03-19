@@ -73,8 +73,7 @@ class PythonSearchCli:
         if only_fzf:
             return Fzf(self.configuration).run()
 
-        if not FzfInKitty.try_to_focus():
-            FzfInKitty(self.configuration).launch()
+        FzfInKitty.focus_or_open(self.configuration)
 
     def register_new_ui(self):
         """

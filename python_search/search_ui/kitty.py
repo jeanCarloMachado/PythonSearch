@@ -64,6 +64,11 @@ class FzfInKitty:
         return result == 0
 
     @staticmethod
+    def focus_or_open(self, configuration):
+        if not FzfInKitty.try_to_focus():
+            FzfInKitty(configuration).launch()
+
+    @staticmethod
     def focus_kitty_command():
         return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
 
