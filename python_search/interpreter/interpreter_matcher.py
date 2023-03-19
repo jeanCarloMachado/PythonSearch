@@ -49,23 +49,23 @@ class InterpreterMatcher:
         self.logger = interpreter_logger()
 
     def get_interpreter(
-        self, given_input: str, skip_key_matching=False
+        self, input_str: str, skip_key_matching=False
     ) -> BaseInterpreter:
         """
         Given the string content, returns the best matched interpreter.
         Returns the instance of the matched interpreter given an text input
         """
-        self.context.set_input(given_input)
+        self.context.set_input(input_str)
 
         if not skip_key_matching:
             try:
                 # tries to get the real key if it exists
-                key = self._get_key(given_input)
-                given_input = self._configuration.get_command(key)
+                key = self._get_key(input_str)
+                input_str = self._configuration.get_command(key)
             except Exception as e:
                 self.logger.error(e)
 
-        return self._match_interpreter(given_input)
+        return self._match_interpreter(input_str)
 
     def get_interpreter_from_type(self, type: str) -> BaseInterpreter:
         """
@@ -87,12 +87,12 @@ class InterpreterMatcher:
 
         raise Exception(f"Could not find a matching interpreter for string {type}")
 
-    def default(self, given_input: str):
+    def default(self, input_str: str, skip_key_matching=False):
         """
         Applies the default behaviour to an interpreter
         """
 
-        specific_interpreter = self.get_interpreter(given_input)
+        specific_interpreter = self.get_interpreter(input_str, skip_key_matching)
 
         return specific_interpreter.default()
 

@@ -28,10 +28,14 @@ class Preview:
         """
         key = self._extract_key(entry_text)
         if not self._key_exists(key):
-            print(f"Not found as key {entry_text}")
-            return
-
-        data = self._build_values_to_print(entry_text)
+            key_lenght = len(entry_text.split(":")[0])
+            content = entry_text[key_lenght + 1:]
+            import json
+            entry_data = json.loads(content.strip())
+            print("\nNew key")
+        else:
+            entry_data = self._load_key_data(key)
+        data = self._build_values_to_print(entry_text, key, entry_data)
         self._print_values(data)
 
     def _print_values(self, data):
@@ -72,14 +76,11 @@ class Preview:
         key = key.strip()
         return key
 
-    def _build_values_to_print(self, entry_text) -> dict:
+    def _build_values_to_print(self, entry_text, key, entry_data) -> dict:
         # the entry content is after the key + a ":" character
-        key = self._extract_key(entry_text)
-
         result = {}
         result["type"] = "Unknown"
         result["key"] = key
-        entry_data = self._load_key_data(key)
         if "url" in entry_data:
             result["value"] = entry_data.get("url")
             result["type"] = "Url"

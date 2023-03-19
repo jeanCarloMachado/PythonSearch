@@ -1,3 +1,6 @@
+import json
+import sys
+
 from python_search.chat_gpt import ChatGPT
 from python_search.error.exception import notify_exception
 
@@ -10,15 +13,15 @@ class EntryGenerator:
 
     def generate_body(self, prompt, body_size=500, fine_tune=False):
         if fine_tune:
-            prompt = f"""generate a command body following the pattern: name: content | Type (one of the following Snippet, Cmd, Url, File)
-write python executable in screen to debug: import sys ; st.write(sys.executable) | Snippet
-pandas str expression to deal with string columns example: suburb_D = df[df.Suburb.str.startswith("D")] suburb_D.head() | File
-conda enviroment folder: /Users/jean.machado/anaconda3/envs/ | File
-create databricks connect conda: conda env create -f environment.py.yml | Cmd
-zusatz: additive | Snippet
-ceo of open ai: Sam Altman | Snippet
-erfassen: capture | Snippet
-open ai documentation: https://platform.openai.com/docs/introduction | Url
+            prompt = f"""generate a command body following the pattern: name: content | Type (one of the following snippet, cmd, url, file)
+write python executable in screen to debug: import sys ; st.write(sys.executable) | snippet
+pandas str expression to deal with string columns example: suburb_D = df[df.Suburb.str.startswith("D")] suburb_D.head() | file
+conda enviroment folder: /Users/jean.machado/anaconda3/envs/ | file
+create databricks connect conda: conda env create -f environment.py.yml | cmd
+zusatz: additive | snippet
+ceo of open ai: Sam Altman | snippet
+erfassen: capture | snippet
+open ai documentation: https://platform.openai.com/docs/introduction | url
 {prompt}: 
             """
 
@@ -26,8 +29,22 @@ open ai documentation: https://platform.openai.com/docs/introduction | Url
 
     @notify_exception()
     def fzf_formatted(self, query):
-        return ""
+        import os
+        os.system(f"echo '{query}'>> /tmp/query_log")
+        SECONDS_TO_WAIT = 1
+        import time;  time.sleep(SECONDS_TO_WAIT)
+
+        # if after 3 seconds teh last query is the same we then can continue to query it
+        with open("/tmp/query_log", "r") as f:
+            last_query = f.readlines()[-1].strip()
+            if last_query.strip() != query.strip():
+                print("Wont continue due ot last query not being the same as the current one")
+                sys.exit(1)
+
+
+
         result = self.generate_body(query, body_size=500, fine_tune=True)
+
 
         type = result.split('|')[-1]
         content = result[0:-len(type) - 1]
@@ -39,7 +56,7 @@ open ai documentation: https://platform.openai.com/docs/introduction | Url
             type: content,
         }
 
-        return f"""{query}: {dict}"""
+        return f"""{query}                                           : {json.dumps(dict)}"""
 
 
 def main():

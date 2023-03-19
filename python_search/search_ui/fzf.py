@@ -16,10 +16,6 @@ class Fzf:
     def run(self):
         cmd = self.get_cmd()
 
-        if 'ONLY_PRINT' in os.environ:
-            print(cmd)
-            sys.exit(0)
-
 
         os.system(cmd)
 
@@ -68,6 +64,10 @@ class Fzf:
         {self._get_fzf_theme()} ; exit 0
         '
         """
+        if 'ONLY_PRINT' in os.environ:
+            print(cmd)
+            sys.exit(0)
+
 
         return cmd
 

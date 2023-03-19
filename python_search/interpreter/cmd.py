@@ -1,7 +1,6 @@
 import os
 from typing import Optional
 
-# @ todo remove this dependencies on grimoire
 from python_search.apps.notification_ui import send_notification
 from python_search.apps.terminal import Terminal
 from python_search.context import Context

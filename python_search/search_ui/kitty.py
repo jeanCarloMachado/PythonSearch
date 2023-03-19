@@ -41,7 +41,7 @@ class FzfInKitty:
 
         self._title = configuration.APPLICATION_TITLE
 
-        self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
+        self._FONT = "FontAwesome" if not is_mac() else "Menlo"
         from python_search.search_ui.fzf import Fzf
         self._fzf = Fzf(configuration)
 
@@ -74,9 +74,10 @@ class FzfInKitty:
 
 
     def launch(self) -> None:
-        internal_cmd = self._fzf.get_cmd()
         from python_search.apps.terminal import Terminal
         terminal = Terminal()
+
+        fzf_cmd = self._fzf.get_cmd()
 
         launch_cmd = f"""nice -19 {get_kitty_cmd()} \
         --title {self._title} \
@@ -96,9 +97,8 @@ class FzfInKitty:
         {terminal.get_background_color()} \
         -o font_size={FzfInKitty.FONT_SIZE} \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
-         {internal_cmd}
+         {fzf_cmd}
         """
-        self._logger.info(f"Command performed:\n {internal_cmd}")
         result = os.system(launch_cmd)
         if result != 0:
             raise Exception("Search run fzf projection failed")
