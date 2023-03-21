@@ -4,7 +4,7 @@
 
 - Add google it script (ctrl-g)
 - Add prompt editor to fzf search (ctrl-p)
-- 
+- Add new entry suggestions at typing time using chatgpt
 
 ## 0.10.14
 

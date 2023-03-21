@@ -6,7 +6,6 @@ def load_results_page():
 
     config = ConfigurationLoader().load_config()
 
-    keys = config.commands.keys()
 
     from python_search.next_item_predictor import Inference
     from python_search.next_item_predictor import ModelInput

@@ -55,7 +55,8 @@ class EntryCaptureGUI:
         print("Default key: ", default_key)
 
         config = ConfigurationLoader().load_config()
-        self.sg.theme(config.simple_gui_theme)
+        self.sg.theme('Dark')
+        self.sg.theme_slider_color("#000000")
         font_size = config.simple_gui_font_size
 
         entry_type = self.sg.Combo(
@@ -79,6 +80,7 @@ class EntryCaptureGUI:
             expand_x=True,
             expand_y=True,
             size=self._ENTRY_NAME_INPUT_SIZE,
+            no_scrollbar=True,
         )
 
         content_input = self.sg.Multiline(
@@ -86,24 +88,30 @@ class EntryCaptureGUI:
             default_text=default_content,
             expand_x=True,
             expand_y=True,
-            no_scrollbar=False,
+            no_scrollbar=True,
             size=self._ENTRY_BODY_INPUT_SIZE,
         )
+
+        colors = ("#FFFFFF", self.sg.theme_input_background_color())
+        print(colors)
+
         layout = [
             [self.sg.Text("Key")],
             [key_name_input],
             [self.sg.Text("Body")],
             [content_input],
             [
-                self.sg.Text("Type"), entry_type, self.sg.Button("Try Entry", key="-try-entry-"), self.sg.Push(),
-                self.sg.Button("Generate Body", key="-generate-body-"),
-                self.sg.Button("Generate Key", key="-generate-title-"),
-                self.sg.Text("Tokens"),
-                self.sg.Input(500, key="generation-size", size=(5, 1)),
+                self.sg.Text("Type"), entry_type, self.sg.Button("Try Entry", key="-try-entry-", button_color=colors, border_width=0), self.sg.Push(),
+            ],
+            [
+                self.sg.Button("Generate Body", key="-generate-body-", button_color=colors, border_width=0),
+                self.sg.Button("Generate Key", key="-generate-title-", button_color=colors, border_width=0),
+                self.sg.Combo(['text-davinci-003', 'curie:ft-jean-personal-2023-03-20-21-40-47'], size=(10, 1), key='-model-', default_value='text-davinci-003'),
+                self.sg.Input(500, key="generation-size", size=(4, 1)),
             ],
             [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
-            [self.sg.Button("Write entry", key="write")],
+            [self.sg.Button("Write entry", key="write", button_color=colors, border_width=0)],
         ]
 
         window = self.sg.Window(
@@ -185,10 +193,12 @@ class EntryCaptureGUI:
         import PySimpleGUI as sg
 
         window: sg.Window = window
+        model = window["-model-"].get()
+        print("Selected model: ", model)
 
         def _describe_body(title: str, window):
             body_size = window["generation-size"].get()
-            description = self._entry_generator.generate_body(title, body_size)
+            description = self._entry_generator.generate_body(prompt=title, max_tokens=body_size, model=model)
 
             window[self._ENTRY_BODY_INPUT].update(description)
 

@@ -57,7 +57,7 @@ Prompt:
         print(result)
 
     @notify_exception()
-    def answer(self, prompt: str, debug=False, max_tokens=500):
+    def answer(self, prompt: str, debug=False, max_tokens=500, model=None):
         """
         Answer a prompt with openAI results
         """
@@ -73,9 +73,16 @@ Prompt:
         if debug:
             print("Prompt: ", prompt)
 
+        engine = self.MODEL_ENGINE
+        if model is not None:
+            engine = None
+
+
+
         # Generate a response
         completion = openai.Completion.create(
-            engine=self.MODEL_ENGINE,
+            model=model,
+            engine=engine,
             prompt=prompt,
             max_tokens=self.max_tokens,
             temperature=0.5,
