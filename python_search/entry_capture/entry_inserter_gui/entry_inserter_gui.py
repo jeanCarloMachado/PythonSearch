@@ -69,6 +69,8 @@ class EntryCaptureGUI:
             ],
             key="type",
             default_value=default_type,
+            button_background_color=self.sg.theme_background_color(),
+            button_arrow_color=self.sg.theme_background_color(),
         )
 
         TAGS_PER_ROW = 6
@@ -106,7 +108,14 @@ class EntryCaptureGUI:
             [
                 self.sg.Button("Generate Body", key="-generate-body-", button_color=colors, border_width=0),
                 self.sg.Button("Generate Key", key="-generate-title-", button_color=colors, border_width=0),
-                self.sg.Combo(['text-davinci-003', 'curie:ft-jean-personal-2023-03-20-21-40-47'], size=(10, 1), key='-model-', default_value='text-davinci-003'),
+                self.sg.Combo(
+                    ['text-davinci-003', 'curie:ft-jean-personal-2023-03-20-21-40-47'],
+                    size=(13, 1),
+                    key='-model-',
+                    default_value='text-davinci-003',
+                    button_background_color=self.sg.theme_background_color(),
+                    button_arrow_color=self.sg.theme_background_color(),
+                ),
                 self.sg.Input(500, key="generation-size", size=(4, 1)),
             ],
             [self.sg.Text("Tags")],
