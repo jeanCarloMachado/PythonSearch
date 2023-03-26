@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
-
+import json
+import os
 from typing import List
+
+from python_search.events.run_performed.dataset import EntryExecutedDataset
 
 
 class RecentKeys:
@@ -11,12 +14,39 @@ class RecentKeys:
     _blacklisted_items = ["python search main entry"]
     _used_keys = []
 
-    def get_latest_used_keys(self) -> List[str]:
+    def get_latest_used_keys(self, history_size=6) -> List[str]:
         """
         return a list of unike used keys ordered by the last time they were used
         the most recent in the top.
         """
-        return RecentKeys._used_keys
+
+        ds = EntryExecutedDataset
+        path = ds.load_new_path()
+
+        import glob
+        list_of_files = sorted(filter(os.path.isfile,
+                                      glob.glob(path + '/*')))
+
+        result = []
+
+        list_of_files = list_of_files[-history_size:]
+        list_of_files.reverse()
+        for file in list_of_files:
+            try:
+                data = json.load(open(file, 'r'))
+            except:
+                continue
+
+            key = data['key']
+            if not key:
+                continue
+            result.append(key)
+
+        seen = set()
+        seen_add = seen.add
+        result = [x for x in result if not (x in seen or seen_add(x))]
+
+        return result
 
     @staticmethod
     def add_latest_used(key):
@@ -29,8 +59,9 @@ class RecentKeys:
 
         RecentKeys._used_keys = [key] + RecentKeys._used_keys
 
+def main():
+    import fire
+    fire.Fire(RecentKeys)
 
 if __name__ == "__main__":
-    import fire
-
-    fire.Fire(RecentKeys)
+    main()

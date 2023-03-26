@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from python_search.config import DataConfig
+from python_search.configuration.data_config import DataConfig
 from python_search.data_collector import GenericDataCollector
 
 class EntryExecutedDataset:
@@ -10,9 +10,9 @@ class EntryExecutedDataset:
     """
 
     columns = ["key", "query_input", "shortcut", "rank_uuid", "timestamp"]
-    FILE_NAME = "run_performed"
+    FILE_NAME = "searches_performed_clean"
     NEW_FILE_NAME = "searches_performed"
-    CLEAN_PATH = DataConfig.CLEAN_EVENTS_FOLDER + "/" + FILE_NAME
+    CLEAN_PATH = DataConfig.BASE_DATA_FOLDER + "/" + FILE_NAME
     SCHEMA = None
 
     def __init__(self, spark=None):
@@ -38,7 +38,7 @@ class EntryExecutedDataset:
         """
         Load old original events stored via spark-streaming
         """
-        data_location = "file://" + DataConfig.SEARCH_RUNS_PERFORMED_FOLDER
+        data_location = "file://" + DataConfig.OLD_SEARCH_RUNS_PERFORMED_FOLDER
         print("Loading data from: {}".format(data_location))
 
         return self.spark.read.format("parquet").load_old(data_location)
@@ -55,8 +55,13 @@ class EntryExecutedDataset:
 
         spark = SparkSession.builder.getOrCreate()
         result_df = spark.read.json(
-            GenericDataCollector().data_location(EntryExecutedDataset.NEW_FILE_NAME),
+            self.load_new_path(),
             schema=EntryExecutedDataset().SCHEMA,
         )
 
         return result_df
+
+    @staticmethod
+    def load_new_path():
+        return GenericDataCollector().data_location(EntryExecutedDataset.NEW_FILE_NAME)
+

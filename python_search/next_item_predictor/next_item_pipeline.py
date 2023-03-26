@@ -33,7 +33,7 @@ class NextItemPredictorPipeline:
         self,
         train_only: Optional[List[model_types]] = ["xgboost"],
         use_cache=False,
-        clean_events_first=False,
+        clean_events_first=True,
         skip_offline_evaluation=False,
         only_print_dataset=False,
     ):

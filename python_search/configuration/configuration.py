@@ -22,13 +22,13 @@ class PythonSearchConfiguration(EntriesGroup):
     _default_text_editor = "vim"
     _fzf_theme = None
     use_webservice = False
+    rerank_via_model = False
 
     def __init__(
         self,
         *,
         entries: Optional[dict] = None,
         entries_groups: Optional[List[EntriesGroup]] = None,
-        supported_features: Optional[PythonSearchFeaturesSupport] = None,
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
@@ -37,13 +37,13 @@ class PythonSearchConfiguration(EntriesGroup):
         ] = "automatic",
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False,
+        rerank_via_model=False,
         collect_data: bool = False,
     ):
         """
 
         :param entries:
         :param entries_groups:
-        :param supported_features:
         :param default_tags:
         :param tags_dependent_inserter_marks:
         :param default_text_editor:
@@ -58,17 +58,13 @@ class PythonSearchConfiguration(EntriesGroup):
         if entries_groups:
             self.aggregate_commands(entries_groups)
 
-        if supported_features:
-            self.supported_features: PythonSearchFeaturesSupport = supported_features
-        else:
-            self.supported_features: PythonSearchFeaturesSupport = (
-                PythonSearchFeaturesSupport.default()
-            )
+        self.supported_features: PythonSearchFeaturesSupport = PythonSearchFeaturesSupport.default()
 
         if default_tags:
             self._default_tags = default_tags
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
+        self.rerank_via_model = rerank_via_model
 
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor

@@ -3,14 +3,14 @@ import uuid
 
 from python_search.entry_type.classifier_inference import get_value_and_label
 from python_search.entry_type.entity import EntryType
-from python_search.config import DataConfig
+from python_search.configuration.data_config import DataConfig
 from python_search.configuration.loader import ConfigurationLoader
 import pandas as pd
 import matplotlib.pyplot as plt
 
 from python_search.infrastructure.arize import Arize
 from python_search.next_item_predictor import configure_mlflow
-from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
+from python_search.next_item_predictor.features.inference_embeddings.entry_embeddings import (
     create_embeddings_from_strings,
 )
 import os

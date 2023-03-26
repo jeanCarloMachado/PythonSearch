@@ -100,7 +100,7 @@ class RedisEmbeddingsWriter:
 
 
 class EmbeddingSerialization:
-    """Responsible to encode the numpy embeddings in a format readis can read and write from and to"""
+    """Responsible to encode the numpy embeddings in a format redis can read and write from and to"""
 
     @staticmethod
     def read(embedding):
@@ -122,6 +122,7 @@ def create_embeddings_from_strings(keys: List[str]) -> ndarray:
 
 def create_key_indexed_embedding(keys) -> dict[str, np.ndarray]:
     """
+    @deprecated use entry_embeddings class instead.
     Create an embedding dict
     """
     unique_keys = list(set(keys))

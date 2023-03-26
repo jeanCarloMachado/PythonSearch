@@ -20,10 +20,3 @@ shortcut_column_width = 80
 action_column_width = 100
 command_column_width = 120
 workdir_column_width = 100
-
-[shortcut1]
-shortcut = ⌃Space
-action = run python search
-command = python_search search
-workdir =
-enabled = yes

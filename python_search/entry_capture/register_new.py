@@ -5,11 +5,12 @@ from typing import Optional
 from python_search.apps.browser import Browser
 from python_search.apps.clipboard import Clipboard
 from python_search.configuration.loader import ConfigurationLoader
+from python_search.core_entities.core_entities import Key, Entry
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )
 from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
-    EntryCaptureGUI,
+    NewEntryGUI,
     GuiEntryData,
 )
 
@@ -59,6 +60,17 @@ class RegisterNew:
     def _sanitize_key(self, key):
         return key.replace("\n", " ").replace(":", " ").strip()
 
+    def launch_from_fzf(self, key_expression):
+        import json
+        key = str(Key.from_fzf(key_expression))
+        key_len = len(key_expression.split(':')[0])
+        body = key_expression[key_len+1:]
+        body = json.loads(body.strip())
+        content = Entry(key, body).get_only_content()
+
+        self.launch_ui(default_key=key, default_content=content)
+
+
     @notify_exception()
     def launch_ui(self, default_type=None, default_key=None, default_content=None):
         """
@@ -70,7 +82,7 @@ class RegisterNew:
         if not default_type:
             default_type = infer_default_type(default_content)
 
-        entry_data: GuiEntryData = EntryCaptureGUI().launch(
+        entry_data: GuiEntryData = NewEntryGUI().launch(
             "New Entry",
             default_content=default_content,
             default_key=default_key,

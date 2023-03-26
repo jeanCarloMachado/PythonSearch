@@ -25,6 +25,10 @@ def sidebar():
             unsafe_allow_html=True,
         )
         st.markdown(
+            '<a href="?page=entrygenerator" target="_self">Entry generator</a>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
             '<a href="?page=performance" target="_self">Performance</a>',
             unsafe_allow_html=True,
         )
@@ -48,6 +52,10 @@ def render_page():
     if open_page == "entry_executed":
         from entry_executed import render
 
+        render()
+
+    if open_page == "entrygenerator":
+        from entry_generator_page import render
         render()
 
     if open_page == "performance":

@@ -9,7 +9,6 @@ from python_search.events.ranking_generated import (
     RankingGenerated,
     RankingGeneratedWriter,
 )
-from python_search.feature_toggle import FeatureToggle
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
@@ -30,7 +29,6 @@ class Search:
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self._configuration = configuration
-        self._feature_toggle = FeatureToggle()
         self._model = None
         self._entries_result = FzfOptimizedSearchResults()
         self._entries: Optional[dict] = None
@@ -40,8 +38,8 @@ class Search:
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
 
-        if self._feature_toggle.is_enabled("ranking_next"):
-            self.logger.info("Reaching ranking next component")
+        if configuration.rerank_via_model:
+            self.logger.debug("Reaching ranking next component")
             from python_search.next_item_predictor.inference.inference import Inference
 
             try:
@@ -51,9 +49,10 @@ class Search:
                     f"Could not initialize the inference component. Proceeding without inference, details: {e}"
                 )
                 self._entries_result.degraded_message = f"{e}"
+        self._recent_keys = RecentKeys()
 
     @timeit
-    def search(self, skip_model=False, base_rank=False) -> str:
+    def search(self, skip_model=False, base_rank=False, stop_on_failure=False) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
 
@@ -64,14 +63,14 @@ class Search:
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
-        if not skip_model and not base_rank and self._configuration.use_webservice:
-            self._rerank_via_model()
+        if not skip_model and not base_rank and self._configuration.rerank_via_model:
+            self._try_torerank_via_model(stop_on_failure=stop_on_failure)
 
         """
         Populate the variable used_entries  with the results from redis
         """
         # skip latest entries if we want to use only the base rank
-        result = self._build_result(skip_latest=base_rank)
+        result = self._build_result()
 
         ranknig_generated_event = RankingGenerated(
             ranking=[i[0] for i in result[0:100]]
@@ -83,7 +82,7 @@ class Search:
 
         return result_str
 
-    def _rerank_via_model(self):
+    def _try_torerank_via_model(self, stop_on_failure=False):
         if not self._inference:
             return
         try:
@@ -91,33 +90,15 @@ class Search:
             self._ranking_method_used = "RankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
+            if stop_on_failure:
+                raise e
 
-    def _build_result(self, skip_latest=False) -> RankedEntries.type:
+    def _build_result(self) -> RankedEntries.type:
         """
         Merge the search with the latest entries
         """
 
-        result = []
-
-        latest_entries = self._fetch_latest_entries()
-
-        if latest_entries and not skip_latest:
-            for key in latest_entries:
-                if key not in self._entries:
-                    # key not found in _entries
-                    continue
-
-                content = self._entries[key]
-
-                # sometimes there can be a bug of saving something other than dicts as _entries
-                if type(content) != dict:
-                    self.logger.warning(f"Entry is not a dict {content}")
-                    continue
-
-                content["tags"] = content.get("tags", []) + ["RecentlyUsed"]
-                result.append((key, content))
-                # delete key
-                self._ranked_keys.remove(key)
+        result = self._latest_keys()
 
         for key in self._ranked_keys:
             if key not in self._entries:
@@ -136,12 +117,34 @@ class Search:
         # the result is the one to be returned, final_key_list is to be used in the cache
         return result
 
+    def _latest_keys(self):
+        result = []
+
+        latest_entries = self._fetch_latest_entries()
+        if latest_entries:
+            for key in latest_entries:
+                if key not in self._entries:
+                    # key not found in _entries
+                    continue
+
+                content = self._entries[key]
+
+                # sometimes there can be a bug of saving something other than dicts as _entries
+                if type(content) != dict:
+                    self.logger.warning(f"Entry is not a dict {content}")
+                    continue
+
+                content["tags"] = content.get("tags", []) + ["RecentlyUsed"]
+                result.append((key, content))
+                # delete key
+                if key in self._ranked_keys:
+                    self._ranked_keys.remove(key)
+        return result
+
     def _fetch_latest_entries(self):
         """Populate the variable used_entries  with the results from redis"""
-        if not self._feature_toggle.is_enabled("ranking_latest_used"):
-            return
 
-        entries = RecentKeys().get_latest_used_keys()
+        entries = self._recent_keys.get_latest_used_keys()
 
         # only use the latest 7 entries for the top of the search
         return entries[: self.NUMBER_OF_LATEST_ENTRIES]

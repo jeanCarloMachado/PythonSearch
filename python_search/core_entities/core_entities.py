@@ -35,7 +35,7 @@ class Entry:
     key: str
     value: Optional[dict]
 
-    def __init__(self, key: str, value: dict = None):
+    def __init__(self, key: str = None, value: dict = None):
         """
         :param name: the name of the entry
         :param value: the value of the entry
@@ -43,21 +43,53 @@ class Entry:
         self.key = key
         self.value = value
 
-    def get_only_content(self):
+    def get_only_content(self, return_str: bool = False):
+        if not self.value:
+            return ''
+        if type(self.value) == str:
+            result = self.value
+            return result
+
+
         if "url" in self.value:
-            return self.value.get("url")
+            result = self.value.get("url")
 
         if "file" in self.value:
-            return self.value.get("file")
+            result = self.value.get("file")
 
         if "snippet" in self.value:
-            return self.value.get("snippet")
+            result = self.value.get("snippet")
 
         if "cli_cmd" in self.value or "cmd" in self.value:
-            return self.value.get("cli_cmd", self.value.get("cmd"))
+            result = self.value.get("cli_cmd", self.value.get("cmd"))
 
         if "callable" in self.value:
             value = self.value.get("callable")
             import dill
 
-            return dill.source.getsource(value)
+            result = dill.source.getsource(value)
+
+        if return_str:
+            return str(result)
+
+        return result
+    def get_only_type(self):
+        if not self.value:
+            return 'snippet'
+
+        if "url" in self.value:
+            return 'url'
+
+        if "file" in self.value:
+            return 'file'
+
+        if "snippet" in self.value:
+            return 'snippet'
+
+        if "cli_cmd" in self.value or "cmd" in self.value:
+            return 'cli_cmd'
+
+        if "callable" in self.value:
+            return 'callable'
+
+        return 'snippet'

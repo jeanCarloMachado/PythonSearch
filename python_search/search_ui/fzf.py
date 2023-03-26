@@ -1,4 +1,5 @@
 import os
+import sys
 
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
@@ -13,7 +14,10 @@ class Fzf:
         self.preview_cmd = f"python_search _preview_entry {{}} "
 
     def run(self):
-        os.system(self.get_cmd())
+        cmd = self.get_cmd()
+
+
+        os.system(cmd)
 
     def get_cmd(self):
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
@@ -25,10 +29,10 @@ class Fzf:
         --info=inline \
         --cycle \
         --no-hscroll \
-        --ellipsis='' \
-        --hscroll-off=0 \
         --preview "{self.preview_cmd}" \
         --preview-window=right,{Fzf.PREVIEW_PERCENTAGE_SIZE}%,wrap,border-left \
+        --ellipsis='' \
+        --hscroll-off=0 \
         -i \
         --border=none \
         --margin=0% \
@@ -45,10 +49,14 @@ class Fzf:
         --bind "ctrl-j:down" \
         --bind "ctrl-k:up" \
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}})" \
-        --bind "ctrl-s:execute-silent:(share_entry share_key {{}})" \
+        --bind "ctrl-n:execute-silent:(nohup register_new launch_from_fzf {{}} & )" \
+        --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
+        --bind "ctrl-p:execute-silent:(nohup prompt_editor --prompt_text={{q}})" \
+        --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
         --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
         --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \
+        --bind "change:reload-sync:(entry_generator fzf_formatted {{q}}  & {self._get_rankging_generate_cmd(reload=True)} )" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
@@ -57,6 +65,10 @@ class Fzf:
         {self._get_fzf_theme()} ; exit 0
         '
         """
+        if 'ONLY_PRINT' in os.environ:
+            print(cmd)
+            sys.exit(0)
+
 
         return cmd
 
@@ -71,7 +83,7 @@ class Fzf:
         if wrap_in_terminal:
             wrap_in_terminal_expr = " --wrap_in_terminal=True "
 
-        return f"""--bind "{shortcut}:execute-silent:(run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
+        return f"""--bind "{shortcut}:execute-silent:(nohup run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
         --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
@@ -105,9 +117,11 @@ class Fzf:
 
 
 def hide_current_focused_window():
+    """Used by fzf to hide the current focused window when pressing esc"""
     os.system(
         """osascript -e 'tell application "System Events" to keystroke "h" using {command down}'"""
     )
+
 
 
 def main():

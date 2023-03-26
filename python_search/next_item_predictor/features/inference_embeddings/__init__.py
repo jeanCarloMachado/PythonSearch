@@ -4,17 +4,14 @@ import copy
 
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.logger import setup_inference_logger
-from python_search.next_item_predictor.features.entry_embeddings.entry_embeddings import (
+from python_search.next_item_predictor.features.inference_embeddings.inference_embeddings import (
     EmbeddingSerialization,
     RedisEmbeddingsReader,
     RedisEmbeddingsWriter,
 )
 
 
-class InferenceEmbeddingsLoader:
-    """
-    @Todo, unify embeddings loading for inference but not training
-    """
+class EntriesEmbeddings:
 
     def __init__(self, all_keys):
         self.all_keys = copy.copy(list(all_keys))

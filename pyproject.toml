@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "python-search"
-version = "0.10.14"
+version = "0.12.0"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.8,<=3.11"
 fire = "^0.4.0"
 pydantic = "^1.9.1"
 PyYAML = "^6.0"
@@ -36,6 +36,7 @@ streamlit = {version = "^1.14.1", optional = true, python = "3.10"}
 pyroscope-io = "^0.8.0"
 tensorflow-macos = {version = "^2.11.0", optional = true, platform = "mac"}
 openai = ">=0.27.0"
+scikit-learn = {version = "^1.2.2", optional = true}
 
 
 [tool.poetry.dev-dependencies]
@@ -72,16 +73,20 @@ events_etl = 'python_search.events.events_etl:main'
 chat_gpt = 'python_search.chat_gpt:main'
 entry_builder = 'python_search.entry_capture.entry_inserter_gui.entry_inserter_gui:main'
 prompt_editor = 'python_search.apps.prompt_editor:main'
-entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings.entry_embeddings:main'
+entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings:main'
 entries_editor = 'python_search.entry_capture.entries_editor:main'
 register_new = 'python_search.entry_capture.register_new:main'
 share_entry = 'python_search.share:main'
 offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
 ps_fzf = 'python_search.search_ui.fzf:main'
 error_panel = 'python_search.error.error_pane:main'
+google_it = 'python_search.apps.google_it:main'
+recent_keys = 'python_search.events.latest_used_entries:main'
+python_search_search = 'python_search.search_ui.kitty:main'
+entry_generator = 'python_search.entry_generator:main'
 
 [tool.poetry.extras]
-server = [
+model = [
     "pyspark",
     "mlflow",
     "keras",
@@ -98,5 +103,6 @@ server = [
     "msgpack-numpy",
     "arize",
     "jupyterlab",
-
+    "scikit-learn",
+    'sentence_transformers',
 ]

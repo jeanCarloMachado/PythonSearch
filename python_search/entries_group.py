@@ -72,4 +72,4 @@ class EntriesGroup:
 
         from python_search.configuration.loader import ConfigurationLoader
 
-        return ConfigurationLoader().get_project_root()
+        return ConfigurationLoader().get_entries_project_root()

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11
+
+- Add google it script (ctrl-g)
+- Many improvements related to LLMs
+    - Generate new prompt via shortcut on entry editor (ctrl-g)
+    - Add prompt editor to fzf search (ctrl-p)
+    - Add new entry suggestions at typing time using chatgpt
+
 ## 0.10.14
 
 - Added examples for body generation

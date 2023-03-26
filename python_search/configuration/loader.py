@@ -17,7 +17,7 @@ class ConfigurationLoader:
         return ConfigurationLoader._instance
 
     def load_config(self) -> PythonSearchConfiguration:
-        folder = self.get_project_root()
+        folder = self.get_entries_project_root()
         config_location = f"{folder}/entries_main.py"
 
         if not os.path.exists(config_location):
@@ -48,7 +48,10 @@ class ConfigurationLoader:
 
         return copy.deepcopy(entries_main.config)
 
-    def get_project_root(self):
+    def get_entries_project_root(self):
+        """
+        Get entries project folder
+        """
         env_name = "PS_ENTRIES_HOME"
         current_project_location = (
             os.environ["HOME"] + "/.config/python_search/current_project"
@@ -60,7 +63,7 @@ class ConfigurationLoader:
             logging.debug(
                 f"Env exists and takes precedence: {env_name}={os.environ[env_name]}"
             )
-            folder = os.environ[env_name]
+            return os.environ[env_name]
 
         if os.path.isfile(current_project_location):
             with open(current_project_location) as f:

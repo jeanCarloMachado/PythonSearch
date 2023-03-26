@@ -7,17 +7,18 @@ from typing import List
 
 import fire
 
+from python_search.error.exception import notify_exception;
 from python_search.chat_gpt import ChatGPT
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_generator import EntryGenerator
-from python_search.entry_type.classifier_inference import ClassifierInferenceClient
 from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 from python_search.apps.notification_ui import send_notification
+from python_search.type_detector import TypeDetector
 
 
-class EntryCaptureGUI:
+class NewEntryGUI:
     _ENTRY_NAME_INPUT = "-entry-name-"
     _ENTRY_BODY_INPUT = "-entry-body-"
     _ENTRY_NAME_INPUT_SIZE = (17, 7)
@@ -34,6 +35,7 @@ class EntryCaptureGUI:
 
         self.sg = sg
 
+    @notify_exception()
     def launch(
         self,
         window_title: str = "New",
@@ -53,7 +55,8 @@ class EntryCaptureGUI:
         print("Default key: ", default_key)
 
         config = ConfigurationLoader().load_config()
-        self.sg.theme(config.simple_gui_theme)
+        self.sg.theme('Dark')
+        self.sg.theme_slider_color("#000000")
         font_size = config.simple_gui_font_size
 
         entry_type = self.sg.Combo(
@@ -66,9 +69,12 @@ class EntryCaptureGUI:
             ],
             key="type",
             default_value=default_type,
+            button_background_color=self.sg.theme_background_color(),
+            button_arrow_color=self.sg.theme_background_color(),
         )
 
-        tags_chucks = self._chunks_of_tags(self._tags, 4)
+        TAGS_PER_ROW = 6
+        tags_chucks = self._chunks_of_tags(self._tags, TAGS_PER_ROW)
 
         key_name_input = self.sg.Multiline(
             key=self._ENTRY_NAME_INPUT,
@@ -76,6 +82,7 @@ class EntryCaptureGUI:
             expand_x=True,
             expand_y=True,
             size=self._ENTRY_NAME_INPUT_SIZE,
+            no_scrollbar=True,
         )
 
         content_input = self.sg.Multiline(
@@ -83,26 +90,37 @@ class EntryCaptureGUI:
             default_text=default_content,
             expand_x=True,
             expand_y=True,
-            no_scrollbar=False,
+            no_scrollbar=True,
             size=self._ENTRY_BODY_INPUT_SIZE,
         )
+
+        colors = ("#FFFFFF", self.sg.theme_input_background_color())
+        print(colors)
+
         layout = [
-            [self.sg.Text("Description")],
+            [self.sg.Text("Key")],
             [key_name_input],
             [self.sg.Text("Body")],
             [content_input],
             [
-                self.sg.Text("Generator"),
-                self.sg.Button("Body", key="-generate-body-"),
-                self.sg.Button("Description", key="-generate-title-"),
-                self.sg.Text("Response Size"),
-                self.sg.Input(500, key="generation-size", expand_x=False),
+                self.sg.Text("Type"), entry_type, self.sg.Button("Try Entry", key="-try-entry-", button_color=colors, border_width=0), self.sg.Push(),
             ],
-            [self.sg.Text("Type")],
-            [entry_type, self.sg.Button("Try it", key="-try-entry-")],
+            [
+                self.sg.Button("Generate Body", key="-generate-body-", button_color=colors, border_width=0),
+                self.sg.Button("Generate Key", key="-generate-title-", button_color=colors, border_width=0),
+                self.sg.Combo(
+                    ['text-davinci-003', 'curie:ft-jean-personal-2023-03-20-21-40-47'],
+                    size=(13, 1),
+                    key='-model-',
+                    default_value='text-davinci-003',
+                    button_background_color=self.sg.theme_background_color(),
+                    button_arrow_color=self.sg.theme_background_color(),
+                ),
+                self.sg.Input(500, key="generation-size", size=(4, 1)),
+            ],
             [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
-            [self.sg.Button("Write entry", key="write")],
+            [self.sg.Button("Write entry", key="write", button_color=colors, border_width=0)],
         ]
 
         window = self.sg.Window(
@@ -113,14 +131,21 @@ class EntryCaptureGUI:
         )
 
         window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
+        window[self._ENTRY_NAME_INPUT].bind("<Control_L><s>", "CTRL-s")
+        window[self._ENTRY_NAME_INPUT].bind("<Control_L><g>", "CTRL-g")
         window[self._ENTRY_BODY_INPUT].bind("<Escape>", "Escape"),
-        window["type"].bind("<Escape>", "_Esc")
+        window["type"].bind("<Escape>", "Escape")
 
         self._predict_entry_type_thread(default_content, window)
-        if default_key or generate_body:
+        if (default_key and not default_content) or generate_body:
             self._generate_body_thread(default_key, window)
+
+        if not default_key and default_content.startswith("http"):
+            self._update_title_with_url_title_thread(default_content, window)
+
         while True:
             event, values = window.read()
+            print("Event: ", event)
             if event == self.sg.WINDOW_CLOSED:
                 import sys
 
@@ -128,17 +153,16 @@ class EntryCaptureGUI:
 
             if "Escape" in event:
                 import sys
-
                 sys.exit(1)
 
-            if event and (event == "-generate-body-"):
+            if event and (event == "write" or event == "-entry-name-CTRL-s"):
+                break
+
+            if event and (event == "-generate-body-" or event == "-entry-name-CTRL-g"):
                 self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
 
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
-
-            if event and event == "write":
-                break
 
             if event == "-type-inference-ready-":
                 window["type"].update(values[event])
@@ -179,15 +203,49 @@ class EntryCaptureGUI:
         import PySimpleGUI as sg
 
         window: sg.Window = window
+        model = window["-model-"].get()
+        print("Selected model: ", model)
 
         def _describe_body(title: str, window):
             body_size = window["generation-size"].get()
-            description = self._entry_generator.generate_body(title, body_size)
+            description = self._entry_generator.generate_body(prompt=title, max_tokens=body_size, model=model)
 
             window[self._ENTRY_BODY_INPUT].update(description)
 
         threading.Thread(
             target=_describe_body, args=(title, window), daemon=True
+        ).start()
+
+
+    def _get_page_title(self, url):
+        import subprocess
+
+        cmd = f"""curl -f -L {url} | python -c 'import sys, re; result = re.findall("<title>(.*?)</title>", str(sys.stdin.read()));  print(result[0])'"""
+        from subprocess import PIPE, Popen
+
+        with Popen(cmd, stdout=PIPE, stderr=None, shell=True) as process:
+            output = process.communicate()[0].decode("utf-8")
+        if not process.returncode == 0:
+            return ""
+        return output
+
+    def _update_title_with_url_title_thread(self, content: str, window):
+        send_notification(f"Starting to get url title")
+        self._chat_gpt = ChatGPT(window["generation-size"].get())
+        import PySimpleGUI as sg
+
+        window: sg.Window = window
+
+        def _update_title(content: str, window):
+            new_title = self._get_page_title(content)
+            old_title = window[self._ENTRY_NAME_INPUT]
+            if old_title == new_title:
+                print("Will not upgrade the title as it was already changed")
+                return
+            window[self._ENTRY_NAME_INPUT].update(new_title)
+
+        threading.Thread(
+            target=_update_title, args=(content, window), daemon=True
         ).start()
 
     def _generate_title_thread(self, content: str, window):
@@ -222,13 +280,12 @@ class EntryCaptureGUI:
         ).start()
 
     def _predict_entry_type(self, window, content):
-        result = ClassifierInferenceClient().predict_from_content(content)
 
-        if not result:
+        new_type = TypeDetector().detect('', content)
+
+        if not new_type:
             return
 
-        new_type = result[0]
-        self._prediction_uuid = result[1]
         print(f"New type: {new_type}, uuid: {self._prediction_uuid}")
         window.write_event_value("-type-inference-ready-", new_type)
 
@@ -269,8 +326,8 @@ class GuiEntryData:
 
 
 def main():
-    fire.Fire(EntryCaptureGUI().launch_prompt)
+    fire.Fire(NewEntryGUI().launch_prompt)
 
 
 if __name__ == "__main__":
-    fire.Fire(EntryCaptureGUI().launch)
+    fire.Fire(NewEntryGUI().launch)

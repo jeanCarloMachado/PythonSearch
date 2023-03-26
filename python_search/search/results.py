@@ -5,8 +5,6 @@ import json
 import logging
 import os
 
-from dateutil import parser
-
 from python_search.acronyms import generate_acronyms
 from python_search.infrastructure.performance import timeit
 from python_search.search.ranked_entries import RankedEntries
@@ -26,7 +24,7 @@ class FzfOptimizedSearchResults:
     def build_entries_result(
         self, entries: RankedEntries.type, ranking_uuid: str
     ) -> str:
-        """Print results"""
+        """ Build the string to be printed in fzf """
         position = 1
         result = ""
         if self.degraded_message:
@@ -43,6 +41,11 @@ class FzfOptimizedSearchResults:
                 content["generated_acronyms"] = generate_acronyms(name)
                 content["uuid"] = ranking_uuid
                 content["tags"] = content["tags"] if "tags" in content else []
+
+                initials = ""
+                for word in name.split(" "):
+                    initials += word[0]
+                content["tags"].append(initials)
 
                 content_str = json.dumps(content, default=tuple, ensure_ascii=True)
             except BaseException as e:

@@ -57,21 +57,24 @@ Installation successful!
         os.system("brew install icanhazshortcut")
 
         HOME = os.environ["HOME"]
+        # the branch to download the files from
+        branch = "main"
 
         print("Downloading keyboard config ")
         self.download_file(
-            "https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/docs/config.ini.part1",
+            f"https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/{branch}/docs/config.ini.part1",
             f"{HOME}/.config/iCanHazShortcut/config.ini.part1",
         )
 
         print("Downloading bom script ")
         self.download_file(
-            "https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/main/add_bom_to_file.sh",
+            f"https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/{branch}/add_bom_to_file.sh",
             "/usr/local/bin/add_bom_to_file.sh",
         )
         os.system("chmod +x /usr/local/bin/add_bom_to_file.sh")
 
     def download_file(self, url, destination):
+        print(f"Downloading file from '{url}' into '{destination}'")
         os.system(f"curl {url} --output {destination}")
 
     def _install_fzf(self):

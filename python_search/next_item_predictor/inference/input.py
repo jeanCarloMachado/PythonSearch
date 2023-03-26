@@ -4,7 +4,6 @@ import datetime
 import os
 from typing import Optional
 
-from python_search.next_item_predictor.features.times_used import TimesUsed
 
 
 class ModelInput:
@@ -14,8 +13,6 @@ class ModelInput:
     previous_previous_key: str
     times_used_previous: int
     times_used_previous_previous: int
-
-    _times_used: Optional[TimesUsed] = None
 
     def __init__(
         self,
@@ -40,15 +37,6 @@ class ModelInput:
         self.times_used_previous = times_used_previous
         self.times_used_previous_previous = times_used_previous_previous
 
-        if not ModelInput._times_used:
-            ModelInput._times_used = TimesUsed()
-
-        if not times_used_previous:
-            self.times_used_previous = ModelInput._times_used.get_value(previous_key)
-        if not times_used_previous_previous:
-            self.times_used_previous_previous = ModelInput._times_used.get_value(
-                previous_previous_key
-            )
 
     @staticmethod
     def with_given_keys(previous_key: str, previous_previous_key: str) -> "ModelInput":
@@ -68,6 +56,6 @@ class ModelInput:
             previous_previous_key=previous_previous_key,
         )
 
-        print("Inference input: ", instance.__dict__)
+        #logging.("Inference input: ", instance.__dict__)
 
         return instance
