@@ -3,14 +3,14 @@ import sys
 import os
 import time
 
-from python_search.chat_gpt import ChatGPT
+from python_search.chat_gpt import LLMPrompt
 from python_search.error.exception import notify_exception
 
 
 class EntryGenerator:
 
     def __init__(self):
-        self._chat_gpt = ChatGPT()
+        self._chat_gpt = LLMPrompt()
 
     def generate_body(self, *, prompt, max_tokens=500, fine_tuned=False, few_shot=False, model=None):
         if few_shot:

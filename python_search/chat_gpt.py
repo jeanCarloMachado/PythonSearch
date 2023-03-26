@@ -1,8 +1,11 @@
 import os
+
+
 from python_search.error.exception import notify_exception
 
+SUPPORTED_MODELS = ['gpt-3.5-turbo','text-davinci-003','curie:ft-jean-personal-2023-03-20-21-40-47']
 
-class ChatGPT:
+class LLMPrompt:
     """
     Uses OpenAI to answer a given prompt.
     """
@@ -57,13 +60,16 @@ Prompt:
         print(result)
 
     @notify_exception()
-    def answer(self, prompt: str, debug=False, max_tokens=500, model=None):
+    def answer(self, prompt: str, debug=False, max_tokens=500, model=None) -> str:
         """
         Answer a prompt with openAI results
         """
         if len(prompt) > 4097:
             prompt = prompt[:4097]
         self.max_tokens= int(max_tokens)
+
+        if model == 'gpt-3.5-turbo':
+            return ChatAPI().prompt(prompt)
 
         import openai
 
@@ -96,10 +102,24 @@ Prompt:
         print(self.answer(prompt))
 
 
+class ChatAPI:
+    def prompt(self, text)-> str:
+        import openai
+        openai.api_key = os.environ["OPENAI_KEY"]
+        result = openai.ChatCompletion.create(
+            model='gpt-3.5-turbo',
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant"},
+                {"role": "user", "content": text}
+            ],
+        )
+        return result.choices[0].message.content
+
+
 def main():
     import fire
 
-    fire.Fire(ChatGPT)
+    fire.Fire()
 
 
 if __name__ == "__main__":

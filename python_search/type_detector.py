@@ -1,4 +1,4 @@
-from python_search.chat_gpt import ChatGPT
+from python_search.chat_gpt import LLMPrompt
 
 
 class TypeDetector():
@@ -16,7 +16,7 @@ class TypeDetector():
         {key} : {content} = 
         """
 
-        result = ChatGPT().answer(prompt, max_tokens=20)
+        result = LLMPrompt().answer(prompt, max_tokens=20)
         if result not in ['Snippet', 'File', 'Cmd']:
             print('Failed to detect type, defaulting to Snippet')
             result = 'Snippet'

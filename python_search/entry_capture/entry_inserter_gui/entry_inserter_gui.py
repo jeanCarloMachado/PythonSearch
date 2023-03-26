@@ -8,7 +8,7 @@ from typing import List
 import fire
 
 from python_search.error.exception import notify_exception;
-from python_search.chat_gpt import ChatGPT
+from python_search.chat_gpt import LLMPrompt, SUPPORTED_MODELS
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_generator import EntryGenerator
 from python_search.environment import is_mac
@@ -28,7 +28,7 @@ class NewEntryGUI:
         self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
-        self._chat_gpt = ChatGPT()
+        self._chat_gpt = LLMPrompt()
         self._entry_generator = EntryGenerator()
         self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
         import PySimpleGUI as sg
@@ -109,10 +109,10 @@ class NewEntryGUI:
                 self.sg.Button("Generate Body", key="-generate-body-", button_color=colors, border_width=0),
                 self.sg.Button("Generate Key", key="-generate-title-", button_color=colors, border_width=0),
                 self.sg.Combo(
-                    ['text-davinci-003', 'curie:ft-jean-personal-2023-03-20-21-40-47'],
+                    SUPPORTED_MODELS,
                     size=(13, 1),
                     key='-model-',
-                    default_value='text-davinci-003',
+                    default_value=SUPPORTED_MODELS[0],
                     button_background_color=self.sg.theme_background_color(),
                     button_arrow_color=self.sg.theme_background_color(),
                 ),
@@ -231,7 +231,7 @@ class NewEntryGUI:
 
     def _update_title_with_url_title_thread(self, content: str, window):
         send_notification(f"Starting to get url title")
-        self._chat_gpt = ChatGPT(window["generation-size"].get())
+        self._chat_gpt = LLMPrompt(window["generation-size"].get())
         import PySimpleGUI as sg
 
         window: sg.Window = window
@@ -250,7 +250,7 @@ class NewEntryGUI:
 
     def _generate_title_thread(self, content: str, window):
         send_notification(f"Starting to generate title")
-        self._chat_gpt = ChatGPT(window["generation-size"].get())
+        self._chat_gpt = LLMPrompt(window["generation-size"].get())
         import PySimpleGUI as sg
 
         window: sg.Window = window
