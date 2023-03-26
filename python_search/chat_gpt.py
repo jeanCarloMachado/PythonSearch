@@ -77,8 +77,6 @@ Prompt:
         if model is not None:
             engine = None
 
-
-
         # Generate a response
         completion = openai.Completion.create(
             model=model,

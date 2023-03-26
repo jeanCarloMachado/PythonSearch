@@ -10,7 +10,7 @@ from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )
 from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
-    EntryCaptureGUI,
+    NewEntryGUI,
     GuiEntryData,
 )
 
@@ -82,7 +82,7 @@ class RegisterNew:
         if not default_type:
             default_type = infer_default_type(default_content)
 
-        entry_data: GuiEntryData = EntryCaptureGUI().launch(
+        entry_data: GuiEntryData = NewEntryGUI().launch(
             "New Entry",
             default_content=default_content,
             default_key=default_key,

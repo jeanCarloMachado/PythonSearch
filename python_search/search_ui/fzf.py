@@ -83,7 +83,7 @@ class Fzf:
         if wrap_in_terminal:
             wrap_in_terminal_expr = " --wrap_in_terminal=True "
 
-        return f"""--bind "{shortcut}:execute-silent:(run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
+        return f"""--bind "{shortcut}:execute-silent:(nohup run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
         --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """

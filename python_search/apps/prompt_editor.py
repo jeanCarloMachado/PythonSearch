@@ -1,5 +1,5 @@
 from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
-    EntryCaptureGUI,
+    NewEntryGUI,
 )
 from python_search.apps.clipboard import Clipboard
 from python_search.entry_capture.register_new import RegisterNew
@@ -25,7 +25,7 @@ class PromptEditor:
         else:
             key = prompt_text
 
-        result = EntryCaptureGUI().launch(
+        result = NewEntryGUI().launch(
             default_key=key,
             default_content="",
             generate_body=True,

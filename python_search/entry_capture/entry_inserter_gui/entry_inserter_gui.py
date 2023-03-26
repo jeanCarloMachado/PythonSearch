@@ -18,7 +18,7 @@ from python_search.apps.notification_ui import send_notification
 from python_search.type_detector import TypeDetector
 
 
-class EntryCaptureGUI:
+class NewEntryGUI:
     _ENTRY_NAME_INPUT = "-entry-name-"
     _ENTRY_BODY_INPUT = "-entry-body-"
     _ENTRY_NAME_INPUT_SIZE = (17, 7)
@@ -132,6 +132,7 @@ class EntryCaptureGUI:
 
         window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
         window[self._ENTRY_NAME_INPUT].bind("<Control_L><s>", "CTRL-s")
+        window[self._ENTRY_NAME_INPUT].bind("<Control_L><g>", "CTRL-g")
         window[self._ENTRY_BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "Escape")
 
@@ -157,7 +158,7 @@ class EntryCaptureGUI:
             if event and (event == "write" or event == "-entry-name-CTRL-s"):
                 break
 
-            if event and (event == "-generate-body-"):
+            if event and (event == "-generate-body-" or event == "-entry-name-CTRL-g"):
                 self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
 
             if event and (event == "-generate-title-"):
@@ -325,8 +326,8 @@ class GuiEntryData:
 
 
 def main():
-    fire.Fire(EntryCaptureGUI().launch_prompt)
+    fire.Fire(NewEntryGUI().launch_prompt)
 
 
 if __name__ == "__main__":
-    fire.Fire(EntryCaptureGUI().launch)
+    fire.Fire(NewEntryGUI().launch)
