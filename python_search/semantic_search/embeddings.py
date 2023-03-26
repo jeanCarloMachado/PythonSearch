@@ -1,6 +1,21 @@
 #!/usr/bin/env python3
 
+import time
+from functools import wraps
+
+def timeit(method):
+    @wraps(method)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = method(*args, **kwargs)
+        end_time = time.time()
+        print(f"{method.__name__} => {(end_time-start_time)*1000} ms")
+
+        return result
+
+    return wrapper
 class Embeddings():
+    @timeit
     def transform(self, text: str):
         import torch
         from transformers import DistilBertModel, DistilBertTokenizer
