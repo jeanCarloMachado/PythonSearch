@@ -42,7 +42,7 @@ class Preview:
         print("")
         print(f"{data['key']}")
 
-        if data["value"]:
+        if 'value' in data:
             print("")
             print(
                 f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}'
