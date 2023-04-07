@@ -29,7 +29,6 @@ class FzfOptimizedSearchResultsBuilder:
         if self.degraded_message:
             result = f"Degraded: {self.degraded_message}\n"
         for name, content in entries:
-            print("")
             try:
                 if "snippet" in content:
                     content["snippet"] = sanitize(content["snippet"])
@@ -65,7 +64,7 @@ class FzfOptimizedSearchResultsBuilder:
                 # do not print if enable timeit is on
                 continue
             if inline_print:
-                print(content_str, end='')
+                print(content_str)
             else:
                 result += content_str + "\n"
 

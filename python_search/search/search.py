@@ -12,7 +12,7 @@ from python_search.events.ranking_generated import (
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
-from python_search.search.results import FzfOptimizedSearchResultsBuilder
+from python_search.search.fzf_results_formatter import FzfOptimizedSearchResultsBuilder
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
