@@ -25,7 +25,6 @@ class Fzf:
         --tiebreak={Fzf.RANK_TIE_BREAK} \
         --extended \
         --reverse \
-        --no-separator \
         --info=inline \
         --cycle \
         --no-hscroll \
@@ -113,7 +112,7 @@ class Fzf:
             return f"curl -s http://localhost:8000/ranking/generate{extra_params}"
 
         else:
-            return f"python_search _ranking search"
+            return f"ps_search --inline_print=True"
 
 
 def hide_current_focused_window():

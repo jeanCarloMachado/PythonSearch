@@ -7,12 +7,12 @@ from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.ranking_generated import (
     RankingGenerated,
-    RankingGeneratedWriter,
+    RankingGeneratedEventWriter,
 )
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
-from python_search.search.results import FzfOptimizedSearchResults
+from python_search.search.results import FzfOptimizedSearchResultsBuilder
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
@@ -28,18 +28,24 @@ class Search:
     _inference = None
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
+        self.logger = setup_inference_logger()
+        if configuration is None:
+            self.logger.debug('Configuration not initialized, loading from file')
+            from python_search.configuration.loader import ConfigurationLoader
+            configuration = ConfigurationLoader().get_config_instance()
+            self.logger.debug('Configuration loaded')
+
         self._configuration = configuration
         self._model = None
-        self._entries_result = FzfOptimizedSearchResults()
+        self._entries_result = FzfOptimizedSearchResultsBuilder()
         self._entries: Optional[dict] = None
-        self._ranking_generator_writer = RankingGeneratedWriter()
-        self.logger = setup_inference_logger()
+        self._ranking_generator_writer = RankingGeneratedEventWriter()
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
 
         if configuration.rerank_via_model:
-            self.logger.debug("Reaching ranking next component")
+            self.logger.debug("Reranker enabled in configuration")
             from python_search.next_item_predictor.inference.inference import Inference
 
             try:
@@ -52,18 +58,20 @@ class Search:
         self._recent_keys = RecentKeys()
 
     @timeit
-    def search(self, skip_model=False, base_rank=False, stop_on_failure=False) -> str:
+    def search(self, skip_model=False, base_rank=False, stop_on_failure=False, inline_print=False) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
 
         base_rank: if we want to skip the model and any reranking that also happens on top
         """
 
+        self.logger.debug("Starting search function")
         self._entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
         if not skip_model and not base_rank and self._configuration.rerank_via_model:
+            self.logger.debug("Trying to rerank")
             self._try_torerank_via_model(stop_on_failure=stop_on_failure)
 
         """
@@ -77,7 +85,7 @@ class Search:
         )
         self._ranking_generator_writer.write(ranknig_generated_event)
         result_str = self._entries_result.build_entries_result(
-            result, ranknig_generated_event.uuid
+            entries=result, ranking_uuid=ranknig_generated_event.uuid, inline_print=inline_print
         )
 
         return result_str
@@ -150,7 +158,11 @@ class Search:
         return entries[: self.NUMBER_OF_LATEST_ENTRIES]
 
 
-if __name__ == "__main__":
+def main():
     import fire
+    fire.Fire(Search().search)
 
-    fire.Fire()
+
+
+if __name__ == "__main__":
+    main()

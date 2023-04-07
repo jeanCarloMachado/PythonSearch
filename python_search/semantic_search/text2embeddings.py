@@ -14,7 +14,7 @@ def timeit(method):
         return result
 
     return wrapper
-class Embeddings():
+class Text2Embeddings():
     @timeit
     def transform(self, text: str):
         import torch
@@ -29,9 +29,6 @@ class Embeddings():
         with torch.no_grad():
             outputs = model(**tokens)
             embeddings = outputs[0][:, 0, :]
-
-        print(embeddings)
-        print(type(embeddings))
 
         return embeddings.numpy()
 

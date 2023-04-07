@@ -29,7 +29,7 @@ class RankingGenerated(BaseModel):
         self.timestamp = str(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
 
-class RankingGeneratedWriter:
+class RankingGeneratedEventWriter:
     def write(self, event: RankingGenerated):
         return GenericDataCollector().write(
             data=event.__dict__, table_name=EVENT_FOLDER
