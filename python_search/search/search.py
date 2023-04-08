@@ -86,8 +86,8 @@ class Search:
 
         if query:
             self.logger.debug("Filtering results based on query")
-            from python_search.semantic_search.text2embeddings import BertEntryEmbeddings
-            bert = BertEntryEmbeddings()
+            from python_search.semantic_search.text2embeddings import SemanticSearch
+            bert = SemanticSearch()
             self._ranked_keys = bert.rank_entries_by_query_similarity(query)
 
         """
