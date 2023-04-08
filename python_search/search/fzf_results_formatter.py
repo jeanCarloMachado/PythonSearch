@@ -21,9 +21,9 @@ class FzfOptimizedSearchResultsBuilder:
 
     @timeit
     def build_entries_result(
-        self,*, entries: RankedEntries.type, ranking_uuid: str, inline_print=False
+        self, *, entries: RankedEntries.type, ranking_uuid: str, inline_print=False
     ) -> str:
-        """ Build the string to be printed in fzf """
+        """Build the string to be printed in fzf"""
         position = 1
         result = ""
         if self.degraded_message:

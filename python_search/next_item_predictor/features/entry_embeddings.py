@@ -4,12 +4,15 @@ import numpy as np
 
 import os
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.next_item_predictor.features.inference_embeddings.inference_embeddings import \
-    create_embeddings_from_strings
-
+from python_search.next_item_predictor.features.inference_embeddings.inference_embeddings import (
+    create_embeddings_from_strings,
+)
 
 
 class EntryEmbeddings:
+    """
+    Build entry embeddings and save them
+    """
 
     _embeddings = None
     pickled_location = "/tmp/entry_embeddings.pkl"
@@ -39,12 +42,12 @@ class EntryEmbeddings:
                 unique_bodies.append(key)
 
         only_embeddings = create_embeddings_from_strings(unique_bodies)
-        return EntryEmbeddings(EntryEmbeddings.to_pd(unique_keys, only_embeddings))
-
+        return EntryEmbeddings(EntryEmbeddings.to_pandas(unique_keys, only_embeddings))
 
     @staticmethod
-    def to_pd(keys, embeddings):
+    def to_pandas(keys, embeddings):
         import pandas as pd
+
         df = pd.DataFrame(zip(keys, embeddings), columns=["key", "embedding"])
         df.set_index("key", inplace=True)
 
@@ -56,6 +59,7 @@ class EntryEmbeddings:
     @staticmethod
     def load_cached_or_build():
         import pandas as pd
+
         if os.path.exists(EntryEmbeddings.pickled_location):
             return EntryEmbeddings(pd.read_pickle(EntryEmbeddings.pickled_location))
 
@@ -69,15 +73,15 @@ class EntryEmbeddings:
 
         return None
 
-
     def all_keys(self) -> List[str]:
         return self._df.index.values
 
 
 def main():
     import fire
+
     fire.Fire(EntryEmbeddings)
+
 
 if __name__ == "__main__":
     main()
-

@@ -16,8 +16,7 @@ class FzfInKitty:
 
     _configuration = None
 
-    def __init__(self, configuration = None):
-
+    def __init__(self, configuration=None):
         logger = logging.getLogger(name="search_ui")
         logger.addHandler(logging.StreamHandler(sys.stdout))
         logger.setLevel(logging.DEBUG)
@@ -25,6 +24,7 @@ class FzfInKitty:
 
         if not configuration:
             from python_search.configuration.loader import ConfigurationLoader
+
             configuration = ConfigurationLoader().load_config()
         self._configuration = configuration
         custom_window_size = configuration.get_window_size()
@@ -43,13 +43,13 @@ class FzfInKitty:
 
         self._FONT = "FontAwesome" if not is_mac() else "Menlo"
         from python_search.search_ui.fzf import Fzf
+
         self._fzf = Fzf(configuration)
 
     @staticmethod
     def run() -> None:
         if not FzfInKitty.try_to_focus():
             FzfInKitty().launch()
-
 
     @staticmethod
     def try_to_focus():
@@ -72,9 +72,9 @@ class FzfInKitty:
     def focus_kitty_command():
         return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
 
-
     def launch(self) -> None:
         from python_search.apps.terminal import Terminal
+
         terminal = Terminal()
 
         fzf_cmd = self._fzf.get_cmd()
@@ -109,9 +109,12 @@ def get_kitty_cmd() -> str:
         return "/Applications/kitty.app/Contents/MacOS/kitty"
     return "kitty"
 
+
 def main():
     import fire
+
     fire.Fire(FzfInKitty)
+
 
 if __name__ == "__main__":
     main()

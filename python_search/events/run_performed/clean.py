@@ -7,7 +7,6 @@ class RunPerformedCleaning:
         print("Performing the cleaning of the new events")
         from python_search.events.run_performed.dataset import EntryExecutedDataset
 
-
         max_timestamp = None
 
         if os.path.exists(EntryExecutedDataset().CLEAN_PATH):
@@ -19,8 +18,6 @@ class RunPerformedCleaning:
 
             # get latest timestamp imported
             max_timestamp = df_clean.agg({"timestamp": "max"}).collect()[0][0]
-
-
 
         df_new = EntryExecutedDataset().load_new().sort("timestamp", ascending=False)
         df_new = df_new.withColumn(

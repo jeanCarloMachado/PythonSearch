@@ -28,20 +28,23 @@ class Mac:
 
         shortcut_found = False
 
-        BASE_CONFIG_LOCATION = os.environ.get("BASE_CONFIG_LOCATION", self.config_folder)
+        BASE_CONFIG_LOCATION = os.environ.get(
+            "BASE_CONFIG_LOCATION", self.config_folder
+        )
         print("Base config location: ", BASE_CONFIG_LOCATION)
 
         shutil.copyfile(
-            f"{BASE_CONFIG_LOCATION}/config.ini.part1", f"{self.config_folder}/config.ini"
+            f"{BASE_CONFIG_LOCATION}/config.ini.part1",
+            f"{self.config_folder}/config.ini",
         )
 
         content_to_write = ""
 
         content_to_write += self._add_shortcut(
-            '⌃Space',
-            'Launch python search',
+            "⌃Space",
+            "Launch python search",
             Mac.START_SHORTCUT_NUMBER,
-            FzfInKitty.focus_kitty_command() + ' || python_search_search launch'
+            FzfInKitty.focus_kitty_command() + " || python_search_search launch",
         )
         Mac.START_SHORTCUT_NUMBER += 1
 
@@ -88,12 +91,12 @@ class Mac:
         )
         print(f"In the file we found {number_of_items} items")
 
-    def _add_shortcut(self, shortcut: str, key: str, shortcut_number, custom_cmd: Optional[str] = None) -> str:
+    def _add_shortcut(
+        self, shortcut: str, key: str, shortcut_number, custom_cmd: Optional[str] = None
+    ) -> str:
         print(f"Generating shortcut for {key}")
         if custom_cmd is None:
             custom_cmd = f'run_key "{key}"'
-
-
 
         return f"""
 
@@ -121,4 +124,3 @@ enabled = yes
 
         os.system("kill -9 " + output)
         time.sleep(3)
-

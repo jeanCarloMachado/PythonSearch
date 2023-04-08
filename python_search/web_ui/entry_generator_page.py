@@ -1,4 +1,3 @@
-
 import streamlit as st
 
 from python_search.configuration.loader import ConfigurationLoader
@@ -16,13 +15,15 @@ def render():
     pandas_df = pd.DataFrame()
 
     pandas_df["prompt"] = entries.keys()
-    completion = [ f"{Entry(key, value).get_only_content()} | {Entry(key, value).get_only_type()}" for key, value in entries.items()]
+    completion = [
+        f"{Entry(key, value).get_only_content()} | {Entry(key, value).get_only_type()}"
+        for key, value in entries.items()
+    ]
     pandas_df["completion"] = completion
 
     st.write(pandas_df)
 
     if st.button("Write"):
-        with open('/tmp/records.jsonl', 'w') as f:
-            f.write(pandas_df.to_json(orient='records', lines=True))
+        with open("/tmp/records.jsonl", "w") as f:
+            f.write(pandas_df.to_json(orient="records", lines=True))
         st.success("Done")
-

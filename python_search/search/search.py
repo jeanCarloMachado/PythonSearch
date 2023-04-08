@@ -30,10 +30,11 @@ class Search:
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self.logger = setup_inference_logger()
         if configuration is None:
-            self.logger.debug('Configuration not initialized, loading from file')
+            self.logger.debug("Configuration not initialized, loading from file")
             from python_search.configuration.loader import ConfigurationLoader
+
             configuration = ConfigurationLoader().get_config_instance()
-            self.logger.debug('Configuration loaded')
+            self.logger.debug("Configuration loaded")
 
         self._configuration = configuration
         self._model = None
@@ -58,7 +59,15 @@ class Search:
         self._recent_keys = RecentKeys()
 
     @timeit
-    def search(self, skip_model=False, base_rank=False, stop_on_failure=False, inline_print=False) -> str:
+    def search(
+        self,
+        skip_model=False,
+        base_rank=False,
+        stop_on_failure=False,
+        inline_print=False,
+        ignore_recent=False,
+        query="",
+    ) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
 
@@ -74,18 +83,27 @@ class Search:
             self.logger.debug("Trying to rerank")
             self._try_torerank_via_model(stop_on_failure=stop_on_failure)
 
+
+        if query:
+            self.logger.debug("Filtering results based on query")
+            from python_search.semantic_search.text2embeddings import BertEntryEmbeddings
+            bert = BertEntryEmbeddings()
+            self._ranked_keys = bert.rank_entries_by_query_similarity(query)
+
         """
         Populate the variable used_entries  with the results from redis
         """
         # skip latest entries if we want to use only the base rank
-        result = self._build_result()
+        result = self._build_result(ignore_recent)
 
-        ranknig_generated_event = RankingGenerated(
+        ranking_generated = RankingGenerated(
             ranking=[i[0] for i in result[0:100]]
         )
-        self._ranking_generator_writer.write(ranknig_generated_event)
+        self._ranking_generator_writer.write(ranking_generated)
         result_str = self._entries_result.build_entries_result(
-            entries=result, ranking_uuid=ranknig_generated_event.uuid, inline_print=inline_print
+            entries=result,
+            ranking_uuid=ranking_generated.uuid,
+            inline_print=inline_print,
         )
 
         return result_str
@@ -101,12 +119,15 @@ class Search:
             if stop_on_failure:
                 raise e
 
-    def _build_result(self) -> RankedEntries.type:
+    def _build_result(self, ignore_recent) -> RankedEntries.type:
         """
         Merge the search with the latest entries
         """
 
-        result = self._latest_keys()
+        if ignore_recent:
+            result = []
+        else:
+            result = self._latest_keys()
 
         for key in self._ranked_keys:
             if key not in self._entries:
@@ -160,8 +181,8 @@ class Search:
 
 def main():
     import fire
-    fire.Fire(Search().search)
 
+    fire.Fire(Search().search)
 
 
 if __name__ == "__main__":

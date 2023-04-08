@@ -3,9 +3,12 @@ import os
 
 from python_search.error.exception import notify_exception
 
-SUPPORTED_MODELS = ['gpt-3.5-turbo','text-davinci-003','curie:ft-jean-personal-2023-03-20-21-40-47']
-
-
+SUPPORTED_MODELS = [
+    "gpt-3.5-turbo",
+    "gpt-4",
+    "text-davinci-003",
+    "curie:ft-jean-personal-2023-03-20-21-40-47",
+]
 
 
 class LLMPrompt:
@@ -69,9 +72,9 @@ Prompt:
         """
         if len(prompt) > 4097:
             prompt = prompt[:4097]
-        self.max_tokens= int(max_tokens)
+        self.max_tokens = int(max_tokens)
 
-        if model == 'gpt-3.5-turbo':
+        if model == "gpt-3.5-turbo":
             return ChatAPI().prompt(prompt)
 
         import openai
@@ -85,7 +88,6 @@ Prompt:
         engine = self.MODEL_ENGINE
         if model is not None:
             engine = None
-
 
         try:
             print("Open AI Key used: ", openai.api_key)
@@ -104,9 +106,10 @@ Prompt:
         except openai.error.RateLimitError as e:
             print(str(e))
             from python_search.apps.notification_ui import send_notification
+
             send_notification(str(e))
-            return ''
-        return ''
+            return ""
+        return ""
 
         # Print the response
 
@@ -115,18 +118,18 @@ Prompt:
 
 
 class ChatAPI:
-    def prompt(self, text)-> str:
+    def prompt(self, text) -> str:
         import openai
+
         openai.api_key = os.environ["OPENAI_KEY"]
         print("Open AI Key used: ", openai.api_key)
 
         try:
-
             result = openai.ChatCompletion.create(
-                model='gpt-3.5-turbo',
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant"},
-                    {"role": "user", "content": text}
+                    {"role": "user", "content": text},
                 ],
             )
             return result.choices[0].message.content
@@ -134,9 +137,9 @@ class ChatAPI:
         except openai.error.RateLimitError as e:
             print(str(e))
             from python_search.apps.notification_ui import send_notification
-            send_notification(str(e))
-            return ''
 
+            send_notification(str(e))
+            return ""
 
         return ""
 

@@ -29,8 +29,9 @@ class Preview:
         key = self._extract_key(entry_text)
         if not self._key_exists(key):
             key_lenght = len(entry_text.split(":")[0])
-            content = entry_text[key_lenght + 1:]
+            content = entry_text[key_lenght + 1 :]
             import json
+
             entry_data = json.loads(content.strip())
             print("\nNew key")
         else:
@@ -42,7 +43,7 @@ class Preview:
         print("")
         print(f"{data['key']}")
 
-        if 'value' in data:
+        if "value" in data:
             print("")
             print(
                 f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}'

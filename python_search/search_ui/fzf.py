@@ -16,7 +16,6 @@ class Fzf:
     def run(self):
         cmd = self.get_cmd()
 
-
         os.system(cmd)
 
     def get_cmd(self):
@@ -53,9 +52,8 @@ class Fzf:
         --bind "ctrl-p:execute-silent:(nohup prompt_editor --prompt_text={{q}})" \
         --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
-        --bind "ctrl-r:reload-sync:({self._get_rankging_generate_cmd(reload=True)})" \
-        --bind "ctrl-b:reload-sync:({self._get_rankging_generate_cmd(base_rank=True)})" \
-        --bind "change:reload-sync:(entry_generator fzf_formatted {{q}}  & {self._get_rankging_generate_cmd(reload=True)} )" \
+        --bind "ctrl-s:reload-sync:(ps_search --inline_print=True --query {{q}})" \
+        --bind "change:reload-sync:(entry_generator fzf_formatted {{q}}  & {self._get_rankging_generate_cmd()} )" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
@@ -64,10 +62,9 @@ class Fzf:
         {self._get_fzf_theme()} ; exit 0
         '
         """
-        if 'ONLY_PRINT' in os.environ:
+        if "ONLY_PRINT" in os.environ:
             print(cmd)
             sys.exit(0)
-
 
         return cmd
 
@@ -83,7 +80,7 @@ class Fzf:
             wrap_in_terminal_expr = " --wrap_in_terminal=True "
 
         return f"""--bind "{shortcut}:execute-silent:(nohup run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
-        --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd(reload=True)})" \
+        --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd()})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
 
@@ -99,20 +96,9 @@ class Fzf:
 
         return " "
 
-    def _get_rankging_generate_cmd(self, reload=False, base_rank=False):
+    def _get_rankging_generate_cmd(self):
         # in mac we need tensorflow to be installed via conda
-        if self.configuration.use_webservice:
-            if reload:
-                return "curl -s localhost:8000/ranking/reload_and_generate || python_search _ranking search"
-
-            extra_params = ""
-            if base_rank:
-                extra_params = "?base_rank=True"
-
-            return f"curl -s http://localhost:8000/ranking/generate{extra_params}"
-
-        else:
-            return f"ps_search --inline_print=True"
+        return f"ps_search --inline_print=True"
 
 
 def hide_current_focused_window():
@@ -120,7 +106,6 @@ def hide_current_focused_window():
     os.system(
         """osascript -e 'tell application "System Events" to keystroke "h" using {command down}'"""
     )
-
 
 
 def main():

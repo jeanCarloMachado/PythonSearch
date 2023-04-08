@@ -8,8 +8,9 @@ import pyspark.sql.functions as F
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.next_item_predictor.features.entry_embeddings import EntryEmbeddings
-from python_search.next_item_predictor.features.inference_embeddings.inference_embeddings import \
-    create_key_indexed_embedding
+from python_search.next_item_predictor.features.inference_embeddings.inference_embeddings import (
+    create_key_indexed_embedding,
+)
 from python_search.next_item_predictor.inference.input import ModelInput
 from python_search.next_item_predictor.v2.previous_key_feature import PreviousKey
 from python_search.search.models import PythonSearchMLFlow
@@ -249,13 +250,15 @@ class NextItemBaseModelV2(BaseModel):
         previous_key_embedding = self.entry_embedding.get_key_embedding(
             inference_input_obj.previous_key
         )
-        print(f"Embedding for prvious key: '{inference_input_obj.previous_key}' shape: {previous_key_embedding.shape}")
-        previous_previous_key_embedding = (
-            self.entry_embedding.get_key_embedding(
-                inference_input_obj.previous_previous_key
-            )
+        print(
+            f"Embedding for prvious key: '{inference_input_obj.previous_key}' shape: {previous_key_embedding.shape}"
         )
-        print(f"Embedding for previous previous key: '{inference_input_obj.previous_previous_key}' shape: {previous_previous_key_embedding.shape}")
+        previous_previous_key_embedding = self.entry_embedding.get_key_embedding(
+            inference_input_obj.previous_previous_key
+        )
+        print(
+            f"Embedding for previous previous key: '{inference_input_obj.previous_previous_key}' shape: {previous_previous_key_embedding.shape}"
+        )
 
         X = np.zeros([len(all_keys), self.DIMENSIONS])
         for i, key in enumerate(all_keys):

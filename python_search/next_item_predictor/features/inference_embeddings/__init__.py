@@ -12,7 +12,6 @@ from python_search.next_item_predictor.features.inference_embeddings.inference_e
 
 
 class EntriesEmbeddings:
-
     def __init__(self, all_keys):
         self.all_keys = copy.copy(list(all_keys))
         self.latest_used_entries = RecentKeys()

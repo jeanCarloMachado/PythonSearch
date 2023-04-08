@@ -29,10 +29,11 @@ class DataExporter:
 
     def __init__(self):
         import os
-        extra_excluded_terms = os.environ.get('PYTHON_SEARCH_EXCLUDE_EXPORT', '')
+
+        extra_excluded_terms = os.environ.get("PYTHON_SEARCH_EXCLUDE_EXPORT", "")
         if extra_excluded_terms:
             print("Adding extra excluded terms: ", extra_excluded_terms)
-            self.blacklisted_terms.extend(extra_excluded_terms.split(' '))
+            self.blacklisted_terms.extend(extra_excluded_terms.split(" "))
 
     def filter_out_blacklisted(self, entries):
         result = {}
@@ -48,19 +49,19 @@ class DataExporter:
                 continue
 
             if any(
-                    [
-                        blackelisted_entry in key.lower()
-                        for blackelisted_entry in self.blacklisted_terms
-                    ]
+                [
+                    blackelisted_entry in key.lower()
+                    for blackelisted_entry in self.blacklisted_terms
+                ]
             ):
                 print("Skipping blacklisted key: ", key)
                 continue
 
             if any(
-                    [
-                        blackelisted_entry in serializeable_value.lower()
-                        for blackelisted_entry in self.blacklisted_terms
-                    ]
+                [
+                    blackelisted_entry in serializeable_value.lower()
+                    for blackelisted_entry in self.blacklisted_terms
+                ]
             ):
                 print("Skipping blacklisted value: ", serializeable_value)
                 continue
