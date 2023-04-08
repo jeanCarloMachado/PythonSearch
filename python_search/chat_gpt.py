@@ -122,7 +122,7 @@ class ChatAPI:
         import openai
 
         openai.api_key = os.environ["OPENAI_KEY"]
-        print("Open AI Key used: ", openai.api_key)
+        #print("Open AI Key used: ", openai.api_key)
 
         try:
             result = openai.ChatCompletion.create(

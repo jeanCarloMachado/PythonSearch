@@ -86,6 +86,7 @@ python_search_search = 'python_search.search_ui.kitty:main'
 entry_generator = 'python_search.entry_generator:main'
 ps_search = 'python_search.search.search:main'
 ps_semantic_search = 'python_search.semantic_search.text2embeddings:main'
+ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 
 [tool.poetry.extras]
 model = [

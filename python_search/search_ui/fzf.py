@@ -49,9 +49,9 @@ class Fzf:
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}})" \
         --bind "ctrl-n:execute-silent:(nohup register_new launch_from_fzf {{}} & )" \
         --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
-        --bind "ctrl-p:execute-silent:(nohup prompt_editor --prompt_text={{q}})" \
         --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
+        --bind "ctrl-p:reload-sync:(ps_search --inline_print=True --predict_next_text=True)" \
         --bind "ctrl-r:reload-sync:(ps_search --inline_print=True)" \
         --bind "ctrl-s:reload-sync:(ps_search --inline_print=True --query {{q}})" \
         --bind "change:reload-sync:(entry_generator fzf_formatted {{q}}  & {self._get_rankging_generate_cmd()} )" \

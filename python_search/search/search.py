@@ -13,6 +13,7 @@ from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
 from python_search.search.fzf_results_formatter import FzfOptimizedSearchResultsBuilder
+from python_search.textual_next_predictor.predictor import TextualPredictor
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
@@ -67,6 +68,7 @@ class Search:
         inline_print=False,
         ignore_recent=False,
         query="",
+        predict_next_text=False,
     ) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
@@ -90,6 +92,12 @@ class Search:
             bert = SemanticSearch()
             self._ranked_keys = bert.rank_entries_by_query_similarity(query)
 
+        if predict_next_text:
+            self.logger.debug("Filtering results based on query")
+            from python_search.semantic_search.text2embeddings import SemanticSearch
+            bert = SemanticSearch()
+            predicted_next = TextualPredictor().predict()
+            self._ranked_keys = bert.rank_entries_by_query_similarity(predicted_next)
         """
         Populate the variable used_entries  with the results from redis
         """
