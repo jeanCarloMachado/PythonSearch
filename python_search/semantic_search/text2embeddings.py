@@ -88,8 +88,10 @@ class SemanticSearch:
     def _read_dataframe(self):
         return pd.read_pickle(self.pickled_location)
 
-    def rank_entries_by_query_similarity(self, query)->List[str]:
+    def rank_entries_by_query_similarity(self, query) -> List[str]:
 
+        from python_search.apps.notification_ui import send_notification
+        send_notification(f"Starting semantic search")
         embedding_query = to_embedding([query])[0].numpy()
 
         df = self._read_dataframe()
