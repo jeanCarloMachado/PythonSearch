@@ -10,6 +10,8 @@ from python_search.error.exception import notify_exception
 class EntryGenerator:
     def __init__(self):
         self._chat_gpt = LLMPrompt()
+        from python_search.configuration.loader import ConfigurationLoader
+        self.configuration = ConfigurationLoader().load_config()
 
     def generate_body(
         self, *, prompt, max_tokens=500, fine_tuned=False, few_shot=False, model=None
@@ -33,7 +35,12 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
         return self._chat_gpt.answer(prompt, max_tokens=max_tokens, model=model)
 
     @notify_exception()
-    def fzf_formatted(self, query):
+    def generate_for_fzf(self, query):
+
+        if not self.configuration.entry_geneartion:
+            #entry generation is disabled
+            return
+
         os.system(f"echo '{query}'>> /tmp/query_log")
         SECONDS_TO_WAIT = 1.3
         time.sleep(SECONDS_TO_WAIT)

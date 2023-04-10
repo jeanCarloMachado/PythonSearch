@@ -54,7 +54,7 @@ class Fzf:
         --bind "ctrl-p:reload-sync:(ps_search --inline_print=True --predict_next_text=True)" \
         --bind "ctrl-r:reload-sync:(ps_search --inline_print=True)" \
         --bind "ctrl-s:reload-sync:(ps_search --inline_print=True --ignore_recent=True --query {{q}})" \
-        --bind "change:reload-sync:(entry_generator fzf_formatted {{q}}  & {self._get_rankging_generate_cmd()} )" \
+        --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_rankging_generate_cmd()} )" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
