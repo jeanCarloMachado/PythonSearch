@@ -7,12 +7,13 @@ from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.events.ranking_generated import (
     RankingGenerated,
-    RankingGeneratedWriter,
+    RankingGeneratedEventWriter,
 )
 from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
-from python_search.search.results import FzfOptimizedSearchResults
+from python_search.search.fzf_results_formatter import FzfOptimizedSearchResultsBuilder
+from python_search.textual_next_predictor.predictor import TextualPredictor
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
@@ -28,18 +29,25 @@ class Search:
     _inference = None
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
+        self.logger = setup_inference_logger()
+        if configuration is None:
+            self.logger.debug("Configuration not initialized, loading from file")
+            from python_search.configuration.loader import ConfigurationLoader
+
+            configuration = ConfigurationLoader().get_config_instance()
+            self.logger.debug("Configuration loaded")
+
         self._configuration = configuration
         self._model = None
-        self._entries_result = FzfOptimizedSearchResults()
+        self._entries_result = FzfOptimizedSearchResultsBuilder()
         self._entries: Optional[dict] = None
-        self._ranking_generator_writer = RankingGeneratedWriter()
-        self.logger = setup_inference_logger()
+        self._ranking_generator_writer = RankingGeneratedEventWriter()
         self._ranking_method_used: Literal[
             "RankingNextModel", "BaselineRank"
         ] = "BaselineRank"
 
         if configuration.rerank_via_model:
-            self.logger.debug("Reaching ranking next component")
+            self.logger.debug("Reranker enabled in configuration")
             from python_search.next_item_predictor.inference.inference import Inference
 
             try:
@@ -52,32 +60,58 @@ class Search:
         self._recent_keys = RecentKeys()
 
     @timeit
-    def search(self, skip_model=False, base_rank=False, stop_on_failure=False) -> str:
+    def search(
+        self,
+        skip_model=False,
+        base_rank=False,
+        stop_on_failure=False,
+        inline_print=False,
+        ignore_recent=False,
+        query="",
+        predict_next_text=False,
+    ) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
 
         base_rank: if we want to skip the model and any reranking that also happens on top
         """
 
+        self.logger.debug("Starting search function")
         self._entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
         if not skip_model and not base_rank and self._configuration.rerank_via_model:
+            self.logger.debug("Trying to rerank")
             self._try_torerank_via_model(stop_on_failure=stop_on_failure)
 
+
+        if query:
+            self.logger.debug("Filtering results based on query")
+            from python_search.semantic_search.text2embeddings import SemanticSearch
+            bert = SemanticSearch()
+            self._ranked_keys = bert.rank_entries_by_query_similarity(query)
+
+        if predict_next_text:
+            self.logger.debug("Filtering results based on query")
+            from python_search.semantic_search.text2embeddings import SemanticSearch
+            bert = SemanticSearch()
+            predicted_next = TextualPredictor().predict()
+            self._ranked_keys = bert.rank_entries_by_query_similarity(predicted_next)
         """
         Populate the variable used_entries  with the results from redis
         """
         # skip latest entries if we want to use only the base rank
-        result = self._build_result()
+        result = self._build_result(ignore_recent)
 
-        ranknig_generated_event = RankingGenerated(
+        ranking_generated = RankingGenerated(
             ranking=[i[0] for i in result[0:100]]
         )
-        self._ranking_generator_writer.write(ranknig_generated_event)
+        self._ranking_generator_writer.write(ranking_generated)
         result_str = self._entries_result.build_entries_result(
-            result, ranknig_generated_event.uuid
+            entries=result,
+            ranking_uuid=ranking_generated.uuid,
+            inline_print=inline_print,
         )
 
         return result_str
@@ -93,12 +127,15 @@ class Search:
             if stop_on_failure:
                 raise e
 
-    def _build_result(self) -> RankedEntries.type:
+    def _build_result(self, ignore_recent) -> RankedEntries.type:
         """
         Merge the search with the latest entries
         """
 
-        result = self._latest_keys()
+        if ignore_recent:
+            result = []
+        else:
+            result = self._latest_keys()
 
         for key in self._ranked_keys:
             if key not in self._entries:
@@ -150,7 +187,11 @@ class Search:
         return entries[: self.NUMBER_OF_LATEST_ENTRIES]
 
 
-if __name__ == "__main__":
+def main():
     import fire
 
-    fire.Fire()
+    fire.Fire(Search().search)
+
+
+if __name__ == "__main__":
+    main()

@@ -69,6 +69,7 @@ class EntryRunner:
             key_part = entry_text.split(":")[0]
             content = entry_text[len(key_part) + 1 :]
             import json
+
             content = content.strip()
             input_str = json.loads(content)
             skip_key_matching = True
@@ -90,7 +91,9 @@ class EntryRunner:
                 f"Multiple matches for this key {matches} using the smaller"
             )
 
-        result = InterpreterMatcher.build_instance(self._configuration).default(input_str, skip_key_matching)
+        result = InterpreterMatcher.build_instance(self._configuration).default(
+            input_str, skip_key_matching
+        )
 
         self._logger.info("Passed interpreter")
         from python_search.events.run_performed import EntryExecuted

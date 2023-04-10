@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.12.0"
+version = "0.14.0"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -84,6 +84,9 @@ google_it = 'python_search.apps.google_it:main'
 recent_keys = 'python_search.events.latest_used_entries:main'
 python_search_search = 'python_search.search_ui.kitty:main'
 entry_generator = 'python_search.entry_generator:main'
+ps_search = 'python_search.search.search:main'
+ps_semantic_search = 'python_search.semantic_search.text2embeddings:main'
+ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 
 [tool.poetry.extras]
 model = [

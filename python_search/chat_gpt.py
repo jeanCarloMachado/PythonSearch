@@ -1,8 +1,17 @@
 import os
+
+
 from python_search.error.exception import notify_exception
 
+SUPPORTED_MODELS = [
+    "gpt-3.5-turbo",
+    "gpt-4",
+    "text-davinci-003",
+    "curie:ft-jean-personal-2023-03-20-21-40-47",
+]
 
-class ChatGPT:
+
+class LLMPrompt:
     """
     Uses OpenAI to answer a given prompt.
     """
@@ -57,13 +66,16 @@ Prompt:
         print(result)
 
     @notify_exception()
-    def answer(self, prompt: str, debug=False, max_tokens=500, model=None):
+    def answer(self, prompt: str, debug=False, max_tokens=500, model=None) -> str:
         """
         Answer a prompt with openAI results
         """
         if len(prompt) > 4097:
             prompt = prompt[:4097]
-        self.max_tokens= int(max_tokens)
+        self.max_tokens = int(max_tokens)
+
+        if model == "gpt-3.5-turbo":
+            return ChatAPI().prompt(prompt)
 
         import openai
 
@@ -77,29 +89,65 @@ Prompt:
         if model is not None:
             engine = None
 
-        # Generate a response
-        completion = openai.Completion.create(
-            model=model,
-            engine=engine,
-            prompt=prompt,
-            max_tokens=self.max_tokens,
-            temperature=0.5,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-        )
+        try:
+            print("Open AI Key used: ", openai.api_key)
+            # Generate a response
+            completion = openai.Completion.create(
+                model=model,
+                engine=engine,
+                prompt=prompt,
+                max_tokens=self.max_tokens,
+                temperature=0.5,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+            )
+            return completion.choices[0].text.strip()
+        except openai.error.RateLimitError as e:
+            print(str(e))
+            from python_search.apps.notification_ui import send_notification
+
+            send_notification(str(e))
+            return ""
+        return ""
 
         # Print the response
-        return completion.choices[0].text.strip()
 
     def print_answer(self, prompt):
         print(self.answer(prompt))
 
 
+class ChatAPI:
+    def prompt(self, text) -> str:
+        import openai
+
+        openai.api_key = os.environ["OPENAI_KEY"]
+        #print("Open AI Key used: ", openai.api_key)
+
+        try:
+            result = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant"},
+                    {"role": "user", "content": text},
+                ],
+            )
+            return result.choices[0].message.content
+
+        except openai.error.RateLimitError as e:
+            print(str(e))
+            from python_search.apps.notification_ui import send_notification
+
+            send_notification(str(e))
+            return ""
+
+        return ""
+
+
 def main():
     import fire
 
-    fire.Fire(ChatGPT)
+    fire.Fire()
 
 
 if __name__ == "__main__":

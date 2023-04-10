@@ -13,9 +13,12 @@ class GoogleIt:
 
         os.system(f'browser open "{url}"')
 
+
 def main():
     import fire
+
     fire.Fire(GoogleIt())
+
 
 if __name__ == "__main__":
     main()

@@ -56,6 +56,7 @@ def render_page():
 
     if open_page == "entrygenerator":
         from entry_generator_page import render
+
         render()
 
     if open_page == "performance":

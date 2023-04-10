@@ -3,6 +3,7 @@ from __future__ import annotations
 from python_search.configuration.data_config import DataConfig
 from python_search.data_collector import GenericDataCollector
 
+
 class EntryExecutedDataset:
     """
     Poit of access for the searches performed
@@ -64,4 +65,3 @@ class EntryExecutedDataset:
     @staticmethod
     def load_new_path():
         return GenericDataCollector().data_location(EntryExecutedDataset.NEW_FILE_NAME)
-

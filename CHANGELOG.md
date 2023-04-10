@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.14
+
+- Add semantic search
+
+
 ## 0.11
 
 - Add google it script (ctrl-g)

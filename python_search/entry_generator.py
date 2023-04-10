@@ -3,16 +3,17 @@ import sys
 import os
 import time
 
-from python_search.chat_gpt import ChatGPT
+from python_search.chat_gpt import LLMPrompt
 from python_search.error.exception import notify_exception
 
 
 class EntryGenerator:
-
     def __init__(self):
-        self._chat_gpt = ChatGPT()
+        self._chat_gpt = LLMPrompt()
 
-    def generate_body(self, *, prompt, max_tokens=500, fine_tuned=False, few_shot=False, model=None):
+    def generate_body(
+        self, *, prompt, max_tokens=500, fine_tuned=False, few_shot=False, model=None
+    ):
         if few_shot:
             prompt = f"""generate a command body following the pattern: name: content | Type (one of the following snippet, cli_cmd, url, file)
 write python executable in screen to debug: import sys ; st.write(sys.executable) | snippet
@@ -41,18 +42,17 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
         with open("/tmp/query_log", "r") as f:
             last_query = f.readlines()[-1].strip()
             if last_query.strip() != query.strip():
-                print("Wont continue due ot last query not being the same as the current one")
+                print(
+                    "Wont continue due ot last query not being the same as the current one"
+                )
                 sys.exit(1)
-
 
         result = self.generate_body(prompt=query, few_shot=True)
 
-
-        type = result.split('|')[-1]
-        content = result[0:-len(type) - 1]
+        type = result.split("|")[-1]
+        content = result[0 : -len(type) - 1]
         content = content.strip()
         type = type.strip()
-
 
         dict = {
             type: content,
@@ -63,7 +63,9 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
 
 def main():
     import fire
+
     fire.Fire(EntryGenerator())
+
 
 if __name__ == "__main__":
     main()

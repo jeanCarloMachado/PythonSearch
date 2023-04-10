@@ -45,11 +45,10 @@ class Entry:
 
     def get_only_content(self, return_str: bool = False):
         if not self.value:
-            return ''
+            return ""
         if type(self.value) == str:
             result = self.value
             return result
-
 
         if "url" in self.value:
             result = self.value.get("url")
@@ -73,23 +72,24 @@ class Entry:
             return str(result)
 
         return result
+
     def get_only_type(self):
         if not self.value:
-            return 'snippet'
+            return "snippet"
 
         if "url" in self.value:
-            return 'url'
+            return "url"
 
         if "file" in self.value:
-            return 'file'
+            return "file"
 
         if "snippet" in self.value:
-            return 'snippet'
+            return "snippet"
 
         if "cli_cmd" in self.value or "cmd" in self.value:
-            return 'cli_cmd'
+            return "cli_cmd"
 
         if "callable" in self.value:
-            return 'callable'
+            return "callable"
 
-        return 'snippet'
+        return "snippet"

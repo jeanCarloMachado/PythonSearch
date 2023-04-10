@@ -24,8 +24,8 @@ class RecentKeys:
         path = ds.load_new_path()
 
         import glob
-        list_of_files = sorted(filter(os.path.isfile,
-                                      glob.glob(path + '/*')))
+
+        list_of_files = sorted(filter(os.path.isfile, glob.glob(path + "/*")))
 
         result = []
 
@@ -33,11 +33,11 @@ class RecentKeys:
         list_of_files.reverse()
         for file in list_of_files:
             try:
-                data = json.load(open(file, 'r'))
+                data = json.load(open(file, "r"))
             except:
                 continue
 
-            key = data['key']
+            key = data["key"]
             if not key:
                 continue
             result.append(key)
@@ -59,9 +59,12 @@ class RecentKeys:
 
         RecentKeys._used_keys = [key] + RecentKeys._used_keys
 
+
 def main():
     import fire
+
     fire.Fire(RecentKeys)
+
 
 if __name__ == "__main__":
     main()

@@ -58,7 +58,9 @@ class PythonSearchConfiguration(EntriesGroup):
         if entries_groups:
             self.aggregate_commands(entries_groups)
 
-        self.supported_features: PythonSearchFeaturesSupport = PythonSearchFeaturesSupport.default()
+        self.supported_features: PythonSearchFeaturesSupport = (
+            PythonSearchFeaturesSupport.default()
+        )
 
         if default_tags:
             self._default_tags = default_tags

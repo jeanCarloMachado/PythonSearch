@@ -7,8 +7,8 @@ from typing import List
 
 import fire
 
-from python_search.error.exception import notify_exception;
-from python_search.chat_gpt import ChatGPT
+from python_search.error.exception import notify_exception
+from python_search.chat_gpt import LLMPrompt, SUPPORTED_MODELS
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_generator import EntryGenerator
 from python_search.environment import is_mac
@@ -28,7 +28,7 @@ class NewEntryGUI:
         self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
-        self._chat_gpt = ChatGPT()
+        self._chat_gpt = LLMPrompt()
         self._entry_generator = EntryGenerator()
         self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
         import PySimpleGUI as sg
@@ -55,7 +55,7 @@ class NewEntryGUI:
         print("Default key: ", default_key)
 
         config = ConfigurationLoader().load_config()
-        self.sg.theme('Dark')
+        self.sg.theme("Dark")
         self.sg.theme_slider_color("#000000")
         font_size = config.simple_gui_font_size
 
@@ -103,16 +103,31 @@ class NewEntryGUI:
             [self.sg.Text("Body")],
             [content_input],
             [
-                self.sg.Text("Type"), entry_type, self.sg.Button("Try Entry", key="-try-entry-", button_color=colors, border_width=0), self.sg.Push(),
+                self.sg.Text("Type"),
+                entry_type,
+                self.sg.Button(
+                    "Try Entry", key="-try-entry-", button_color=colors, border_width=0
+                ),
+                self.sg.Push(),
             ],
             [
-                self.sg.Button("Generate Body", key="-generate-body-", button_color=colors, border_width=0),
-                self.sg.Button("Generate Key", key="-generate-title-", button_color=colors, border_width=0),
+                self.sg.Button(
+                    "Generate Body",
+                    key="-generate-body-",
+                    button_color=colors,
+                    border_width=0,
+                ),
+                self.sg.Button(
+                    "Generate Key",
+                    key="-generate-title-",
+                    button_color=colors,
+                    border_width=0,
+                ),
                 self.sg.Combo(
-                    ['text-davinci-003', 'curie:ft-jean-personal-2023-03-20-21-40-47'],
+                    SUPPORTED_MODELS,
                     size=(13, 1),
-                    key='-model-',
-                    default_value='text-davinci-003',
+                    key="-model-",
+                    default_value=SUPPORTED_MODELS[0],
                     button_background_color=self.sg.theme_background_color(),
                     button_arrow_color=self.sg.theme_background_color(),
                 ),
@@ -120,7 +135,11 @@ class NewEntryGUI:
             ],
             [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
-            [self.sg.Button("Write entry", key="write", button_color=colors, border_width=0)],
+            [
+                self.sg.Button(
+                    "Write entry", key="write", button_color=colors, border_width=0
+                )
+            ],
         ]
 
         window = self.sg.Window(
@@ -153,6 +172,7 @@ class NewEntryGUI:
 
             if "Escape" in event:
                 import sys
+
                 sys.exit(1)
 
             if event and (event == "write" or event == "-entry-name-CTRL-s"):
@@ -208,14 +228,15 @@ class NewEntryGUI:
 
         def _describe_body(title: str, window):
             body_size = window["generation-size"].get()
-            description = self._entry_generator.generate_body(prompt=title, max_tokens=body_size, model=model)
+            description = self._entry_generator.generate_body(
+                prompt=title, max_tokens=body_size, model=model
+            )
 
             window[self._ENTRY_BODY_INPUT].update(description)
 
         threading.Thread(
             target=_describe_body, args=(title, window), daemon=True
         ).start()
-
 
     def _get_page_title(self, url):
         import subprocess
@@ -231,7 +252,7 @@ class NewEntryGUI:
 
     def _update_title_with_url_title_thread(self, content: str, window):
         send_notification(f"Starting to get url title")
-        self._chat_gpt = ChatGPT(window["generation-size"].get())
+        self._chat_gpt = LLMPrompt(window["generation-size"].get())
         import PySimpleGUI as sg
 
         window: sg.Window = window
@@ -250,7 +271,7 @@ class NewEntryGUI:
 
     def _generate_title_thread(self, content: str, window):
         send_notification(f"Starting to generate title")
-        self._chat_gpt = ChatGPT(window["generation-size"].get())
+        self._chat_gpt = LLMPrompt(window["generation-size"].get())
         import PySimpleGUI as sg
 
         window: sg.Window = window
@@ -280,8 +301,7 @@ class NewEntryGUI:
         ).start()
 
     def _predict_entry_type(self, window, content):
-
-        new_type = TypeDetector().detect('', content)
+        new_type = TypeDetector().detect("", content)
 
         if not new_type:
             return

@@ -12,7 +12,6 @@ class DataConfig:
         project_root = ConfigurationLoader().get_entries_project_root()
         self.MLFLOW_MODELS_PATH = f"{project_root}/mlflow"
 
-
     # output of the _model
     BASE_DATA_FOLDER = f"{os.environ['HOME']}/.python_search/data"
     BASE_DATA_COLLECTOR_FOLDER = f"{os.environ['HOME']}/.python_search/data"
@@ -26,5 +25,5 @@ class DataConfig:
     NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v1"
     ENTRY_TYPE_CLASSIFIER_EXPERIMENT_NAME = f"entry_type_classifier_v2"
     OLD_SEARCH_RUNS_PERFORMED_FOLDER = (
-            BASE_DATA_FOLDER + "/data_warehouse/dataframes/SearchRunPerformed"
+        BASE_DATA_FOLDER + "/data_warehouse/dataframes/SearchRunPerformed"
     )

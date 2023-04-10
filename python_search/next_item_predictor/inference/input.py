@@ -5,7 +5,6 @@ import os
 from typing import Optional
 
 
-
 class ModelInput:
     hour: int
     month: int
@@ -37,7 +36,6 @@ class ModelInput:
         self.times_used_previous = times_used_previous
         self.times_used_previous_previous = times_used_previous_previous
 
-
     @staticmethod
     def with_given_keys(previous_key: str, previous_previous_key: str) -> "ModelInput":
         """
@@ -56,6 +54,6 @@ class ModelInput:
             previous_previous_key=previous_previous_key,
         )
 
-        #logging.("Inference input: ", instance.__dict__)
+        # logging.("Inference input: ", instance.__dict__)
 
         return instance
