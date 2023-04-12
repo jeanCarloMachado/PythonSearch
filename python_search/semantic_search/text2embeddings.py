@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import Optional, List
+from typing import List
 
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity

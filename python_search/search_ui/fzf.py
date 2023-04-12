@@ -48,13 +48,13 @@ class Fzf:
         --bind "ctrl-k:up" \
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}})" \
         --bind "ctrl-n:execute-silent:(nohup register_new launch_from_fzf {{}} & )" \
-        --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
         --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
         --bind "ctrl-p:reload-sync:(ps_search --inline_print=True --predict_next_text=True)" \
         --bind "ctrl-r:reload-sync:(ps_search --inline_print=True)" \
-        --bind "ctrl-s:reload-sync:(ps_search --inline_print=True --ignore_recent=True --query {{q}})" \
-        --bind "change:reload-sync:(entry_generator fzf_formatted {{q}}  & {self._get_rankging_generate_cmd()} )" \
+        --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
+        --bind "ctrl-v:reload-sync:(ps_search --inline_print=True --ignore_recent=True --query {{q}})" \
+        --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_rankging_generate_cmd()} )" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \

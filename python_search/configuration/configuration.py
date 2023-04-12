@@ -23,6 +23,7 @@ class PythonSearchConfiguration(EntriesGroup):
     _fzf_theme = None
     use_webservice = False
     rerank_via_model = False
+    entry_geneartion = False
 
     def __init__(
         self,
@@ -39,6 +40,7 @@ class PythonSearchConfiguration(EntriesGroup):
         use_webservice=False,
         rerank_via_model=False,
         collect_data: bool = False,
+        entry_generation=False,
     ):
         """
 
@@ -80,6 +82,7 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.use_webservice = use_webservice
         self.collect_data = collect_data
+        self.entry_geneartion = entry_generation
 
     def get_next_item_predictor_model(self):
         """
