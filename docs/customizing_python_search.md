@@ -22,8 +22,6 @@ If you need to change the code of python search to add a new customization you d
 
 2. In the code where you need the new option, get the configuration as showned below and use it.
 
-```py
-## Getting a configuration
 
 ```py
 from python_search.configuration.loader import ConfigurationLoader
