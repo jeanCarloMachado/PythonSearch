@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.15
+
+- Disable entry generation by default
+
 ## 0.14
 
 - Add semantic search
