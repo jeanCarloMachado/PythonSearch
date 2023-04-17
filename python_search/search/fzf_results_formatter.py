@@ -54,7 +54,7 @@ class FzfOptimizedSearchResultsBuilder:
             position = position + 1
 
             content_str = (
-                f"{name}                                                      :"
+                f"{name}                                                                                                      :"
                 + content_str
             )
             #  replaces all single quotes for double ones

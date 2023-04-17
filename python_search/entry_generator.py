@@ -47,7 +47,11 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
 
         # if after 3 seconds teh last query is the same we then can continue to query it
         with open("/tmp/query_log", "r") as f:
-            last_query = f.readlines()[-1].strip()
+
+            last_query = f.readlines()[-1]
+            if not last_query:
+                sys.exit(0)
+            last_query = last_query.strip()
             if last_query.strip() != query.strip():
                 print(
                     "Wont continue due ot last query not being the same as the current one"

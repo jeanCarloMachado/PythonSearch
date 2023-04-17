@@ -7,7 +7,7 @@ from python_search.environment import is_mac
 
 class Fzf:
     PREVIEW_PERCENTAGE_SIZE = 50
-    RANK_TIE_BREAK: str = "begin,index"
+    RANK_TIE_BREAK: str = "index"
 
     def __init__(self, configuration: PythonSearchConfiguration):
         self.configuration = configuration
