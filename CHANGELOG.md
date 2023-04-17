@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.16
+
+- Fix rank
+- Improve image
+
 ## 0.15
 
 - Disable entry generation by default
