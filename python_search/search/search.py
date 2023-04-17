@@ -85,16 +85,17 @@ class Search:
             self.logger.debug("Trying to rerank")
             self._try_torerank_via_model(stop_on_failure=stop_on_failure)
 
-
         if query:
             self.logger.debug("Filtering results based on query")
             from python_search.semantic_search.text2embeddings import SemanticSearch
+
             bert = SemanticSearch()
             self._ranked_keys = bert.rank_entries_by_query_similarity(query)
 
         if predict_next_text:
             self.logger.debug("Filtering results based on query")
             from python_search.semantic_search.text2embeddings import SemanticSearch
+
             bert = SemanticSearch()
             predicted_next = TextualPredictor().predict()
             self._ranked_keys = bert.rank_entries_by_query_similarity(predicted_next)
@@ -104,9 +105,7 @@ class Search:
         # skip latest entries if we want to use only the base rank
         result = self._build_result(ignore_recent)
 
-        ranking_generated = RankingGenerated(
-            ranking=[i[0] for i in result[0:100]]
-        )
+        ranking_generated = RankingGenerated(ranking=[i[0] for i in result[0:100]])
         self._ranking_generator_writer.write(ranking_generated)
         result_str = self._entries_result.build_entries_result(
             entries=result,
