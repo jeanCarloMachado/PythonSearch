@@ -68,6 +68,13 @@ Create a github issue to report it or send a patch.
 
 Feature contributions are also welcomed! If you want to be part of the roadmap discussions reach out.
 
+## Contributors
+ 
+- Aeneas Christodoulou
+- Thallys Costa
+- Jean Machado
+
+
 ## Supported Systems
 
 PythonSearch officially supports MacOS and Linux. 
