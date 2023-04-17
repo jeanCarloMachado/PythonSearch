@@ -73,7 +73,6 @@ Feature contributions are also welcomed! If you want to be part of the roadmap d
 - Aeneas Christodoulou
 - Thallys Costa
 - Jean Machado
-- Add yourself
 
 
 ## Supported Systems
