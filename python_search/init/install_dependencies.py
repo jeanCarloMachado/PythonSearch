@@ -78,8 +78,9 @@ Installation successful!
         os.system(f"curl {url} --output {destination}")
 
     def _install_fzf(self):
+        print("Checking fzf")
         HOME = os.environ["HOME"]
-        if self._exists("fzf"):
+        if os.path.exists(f"{HOME}/.fzf/"):
             print("Fzf already installed!, will reinstall..")
             os.system(f"rm -rf {HOME}/.fzf/")
 
