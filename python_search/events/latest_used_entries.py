@@ -14,7 +14,8 @@ class RecentKeys:
     _blacklisted_items = ["python search main entry"]
     _used_keys = []
 
-    def get_latest_used_keys(self, history_size=6) -> List[str]:
+
+    def get_latest_used_keys(self, history_size=30) -> List[str]:
         """
         return a list of unike used keys ordered by the last time they were used
         the most recent in the top.

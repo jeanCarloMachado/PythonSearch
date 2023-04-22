@@ -78,13 +78,14 @@ Installation successful!
         os.system(f"curl {url} --output {destination}")
 
     def _install_fzf(self):
-        print("Installing FZF")
+        print("Checking fzf")
+        HOME = os.environ["HOME"]
+        if os.path.exists(f"{HOME}/.fzf/"):
+            print("Fzf already installed!, will reinstall..")
+            os.system(f"rm -rf {HOME}/.fzf/")
 
-        if self._exists("fzf"):
-            return
 
         print("Looks like kitty is not installed in your platform. ")
-        HOME = os.environ["HOME"]
         os.system(
             f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; {HOME}/.fzf/install """
         )

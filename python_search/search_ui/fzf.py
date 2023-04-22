@@ -6,7 +6,7 @@ from python_search.environment import is_mac
 
 
 class Fzf:
-    PREVIEW_PERCENTAGE_SIZE = 50
+    PREVIEW_PERCENTAGE_SIZE = 45
     RANK_TIE_BREAK: str = "index"
 
     def __init__(self, configuration: PythonSearchConfiguration):
@@ -21,9 +21,10 @@ class Fzf:
     def get_cmd(self):
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
         {self.get_fzf_cmd()} \
+        --scheme=default \
         --tiebreak={Fzf.RANK_TIE_BREAK} \
         --extended \
-        --reverse \
+        --layout=reverse \
         --info=inline \
         --cycle \
         --no-hscroll \
@@ -70,8 +71,10 @@ class Fzf:
         return cmd
 
     def get_fzf_cmd(self):
+
         if is_mac():
-            return "/usr/local/bin/fzf"
+            HOME = os.environ["HOME"]
+            return f"{HOME}/.fzf/bin/fzf"
 
         return "fzf"
 
