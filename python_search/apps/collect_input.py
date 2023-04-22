@@ -14,6 +14,7 @@ class CollectInput:
         name="Enter Data",
         default_content="",
         prefill_with_clipboard: bool = False,
+        set_as_clipboard: bool = False,
     ):
         """
         Launch the _entries capture GUI.
@@ -67,7 +68,10 @@ class CollectInput:
                     sys.exit(1)
 
             window.close()
-        return values["content"]
+        result = values["content"]
+        if set_as_clipboard:
+            Clipboard().set_content(result)
+        return result
 
 
 def main():

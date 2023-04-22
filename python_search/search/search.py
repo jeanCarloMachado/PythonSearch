@@ -23,7 +23,7 @@ class Search:
     Generates the search for python search
     """
 
-    NUMBER_OF_LATEST_ENTRIES = 7
+    NUMBER_OF_LATEST_ENTRIES = 30
 
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
     _inference = None
