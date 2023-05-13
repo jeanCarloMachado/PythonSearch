@@ -93,9 +93,9 @@ class PythonSearchCli:
         key = str(Key.from_fzf(entry_str))
 
         InterpreterMatcher.build_instance(self.configuration).clipboard(key)
-        LogRunPerformedClient().send(
-            EntryExecuted(key=key, query_input="", shortcut=False)
-        )
+        #LogRunPerformedClient().send(
+        #    EntryExecuted(key=key, query_input="", shortcut=False)
+        #)
 
     def _copy_key_only(self, entry_str: str):
         """

@@ -16,6 +16,7 @@ from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 from python_search.apps.notification_ui import send_notification
 from python_search.type_detector import TypeDetector
+from python_search.configuration.loader import ConfigurationLoader
 
 
 class NewEntryGUI:
@@ -54,10 +55,14 @@ class NewEntryGUI:
 
         print("Default key: ", default_key)
 
-        config = ConfigurationLoader().load_config()
-        self.sg.theme("Dark")
+        if self._configuration.custom_simple_gui_theme:
+            self.sg.theme(self._configuration.custom_simple_gui_theme)
+        else:
+            self.sg.theme("Dark")
+
         self.sg.theme_slider_color("#000000")
-        font_size = config.simple_gui_font_size
+
+        font_size = self._configuration.custom_simple_gui_font_size if self._configuration.custom_simple_gui_font_size else 14
 
         entry_type = self.sg.Combo(
             [

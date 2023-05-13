@@ -88,7 +88,7 @@ class EntriesEditor:
             return f"{self.configuration.get_text_editor()} {file} --line={line}'"
         else:
             # if is not a known editor just open the file
-            return f"{self.configuration.get_text_editor()} {file}"
+            return f"{self.configuration.get_text_editor()} {file}'"
 
 
 def main():

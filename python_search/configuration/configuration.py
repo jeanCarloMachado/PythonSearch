@@ -1,6 +1,5 @@
 import datetime
 from typing import Optional, List, Tuple, Literal
-
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
 from python_search.theme import TimeBasedThemeSelector
@@ -14,8 +13,8 @@ class PythonSearchConfiguration(EntriesGroup):
 
     APPLICATION_TITLE = "PythonSearchWindow"
     commands: dict
-    simple_gui_theme = "SystemDefault1"
-    simple_gui_font_size = 14
+    custom_simple_gui_theme: Optional[str] = None
+    custom_simple_gui_font_size: Optional[int] = None
     _default_tags = None
     tags_dependent_inserter_marks = None
     _initialization_time = None
@@ -39,6 +38,8 @@ class PythonSearchConfiguration(EntriesGroup):
         use_webservice=False,
         rerank_via_model=False,
         collect_data: bool = False,
+        custom_simple_gui_theme: Optional[str] = None,
+        custom_simple_gui_font_size: Optional[int] = None,
     ):
         """
 
@@ -80,6 +81,8 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.use_webservice = use_webservice
         self.collect_data = collect_data
+        self.custom_simple_gui_theme = custom_simple_gui_theme
+        self.custom_simple_gui_font_size = custom_simple_gui_font_size
 
     def get_next_item_predictor_model(self):
         """
