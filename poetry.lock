@@ -5469,4 +5469,4 @@ model = ["arize", "fastapi", "jupyterlab", "kafka-python", "keras", "matplotlib"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<=3.11"
-content-hash = "ad57589263f4f72a3b6afe7041cce03c738faac2b6550a0ff78b74c8dc2a3d6a"
+content-hash = "f2ea9cc48fb060ab4e2568d936b2340a03373ddd023b4b60e732cb8a5c2d8e89"

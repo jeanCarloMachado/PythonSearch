@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17
+
+- Improve install script
+
 ## 0.16
 
 - Fix rank
