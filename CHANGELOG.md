@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.1
+- fixing Browser Issues on Linux
+- making Browser/URL-Code more resiliant 
+- Implementing Browser Tests
 ## 0.17
 
 - Improve install script
