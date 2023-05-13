@@ -49,9 +49,8 @@ class Browser:
         if browser == "firefox":
             return self._firefox(url_expr)
 
-        return self._chrome(url_expr)
-
-    def _firefox(self, url):
+        return self.fail_safe(url_expr)
+    def _firefox(self, url: str):
         if is_mac():
             return f"open -a Firefox {url}"
 
@@ -61,9 +60,15 @@ class Browser:
         if is_mac():
             return f" open -a 'Google Chrome' {url}"
 
+        return f"google-chrome {url}"
+
+    def fail_safe(self, url: str):
+        if is_mac():
+            return self._chrome(url)
+
         if is_linux():
-            local_browser = os.environ["BROWSER"]
-            return f"{local_browser} {url}"
+            return self._firefox(url)
+        raise Exception("No supported browser found. Please install chrome/firefox or customize your browser in python_search/apps/browser.py")
 
 
 def main():

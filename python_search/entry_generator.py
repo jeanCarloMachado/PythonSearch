@@ -37,7 +37,7 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
     @notify_exception()
     def generate_for_fzf(self, query):
 
-        if not self.configuration.entry_geneartion:
+        if not self.configuration.entry_generation:
             #entry generation is disabled
             return
 
