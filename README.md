@@ -29,15 +29,17 @@ Write a python script like this, and call it.
 pip install python-search && python_search install_missing_dependencies
 ```
 
-We support **Mac and Linux**.
-If you want to develop python-search install it via [the instructions in the contributing doc](CONTRIBUTING.md)
-
-Everything in python search you do through the cli tool.
 To understand the options run:
 
 ```sh
-python_search --help
+python_search
 ```
+
+Everything in python search you do through the cli tool.
+
+We support **Mac and Linux**.
+
+If you want to develop python-search install it via [the instructions in the contributing doc](CONTRIBUTING.md)
 
 
 ### 2. Initialize your entries project
