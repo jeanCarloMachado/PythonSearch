@@ -13,7 +13,7 @@ class SemanticSearch:
     Build entry embeddings and save them
     """
 
-    pickled_location = "/tmp/bert_entry_embeddings.pkl"
+    pickled_location = "~/.python_search/bert_entry_embeddings.pkl"
 
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
