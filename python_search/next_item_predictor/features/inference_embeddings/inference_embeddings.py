@@ -6,7 +6,6 @@ import numpy as np
 from numpy import ndarray
 
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.infrastructure.performance import timeit
 from python_search.infrastructure.redis import PythonSearchRedis
 from python_search.search.entries_loader import EntriesLoader
 
@@ -19,7 +18,6 @@ class RedisEmbeddingsReader:
     def __init__(self):
         self.client = PythonSearchRedis.get_client()
 
-    @timeit
     def load(self, keys) -> dict[str, bytes]:
         """
         Returns a dictionary with the key being the embedding key and the value being the bytes of the value

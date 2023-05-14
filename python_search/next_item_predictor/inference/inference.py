@@ -6,7 +6,6 @@ from typing import Any, List, Optional
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.events.latest_used_entries import RecentKeys
-from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.next_item_predictor.inference.input import ModelInput
 
@@ -50,7 +49,6 @@ class Inference:
 
         self._recent_keys = RecentKeys().get_latest_used_keys(history_size=2)
 
-    @timeit
     def get_ranking(self, predefined_input: Optional[ModelInput] = None) -> List[str]:
         """
         Gets the search from the next item _model
@@ -79,6 +77,5 @@ class Inference:
 
         return only_keys
 
-    @timeit
     def _predict(self, X):
         return self._mlflow_model.predict(X)

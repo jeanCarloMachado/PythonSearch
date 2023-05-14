@@ -9,7 +9,6 @@ from python_search.events.ranking_generated import (
     RankingGenerated,
     RankingGeneratedEventWriter,
 )
-from python_search.infrastructure.performance import timeit
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
 from python_search.search.fzf_results_formatter import FzfOptimizedSearchResultsBuilder
@@ -59,7 +58,6 @@ class Search:
                 self._entries_result.degraded_message = f"{e}"
         self._recent_keys = RecentKeys()
 
-    @timeit
     def search(
         self,
         skip_model=False,

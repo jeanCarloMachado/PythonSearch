@@ -3,9 +3,7 @@ from __future__ import annotations
 import datetime
 import json
 import logging
-import os
 
-from python_search.infrastructure.performance import timeit
 from python_search.search.ranked_entries import RankedEntries
 
 
@@ -19,7 +17,6 @@ class FzfOptimizedSearchResultsBuilder:
     def __init__(self):
         self._today = datetime.datetime.now()
 
-    @timeit
     def build_entries_result(
         self, *, entries: RankedEntries.type, ranking_uuid: str, inline_print=False
     ) -> str:
@@ -59,9 +56,6 @@ class FzfOptimizedSearchResultsBuilder:
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')
-            if os.getenv("ENABLE_TIME_IT"):
-                # do not print if enable timeit is on
-                continue
             if inline_print:
                 print(content_str)
             else:

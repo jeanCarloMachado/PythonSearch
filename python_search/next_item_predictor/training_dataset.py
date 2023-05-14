@@ -10,7 +10,6 @@ from pyspark.sql.types import FloatType
 from pyspark.sql.window import Window
 
 from python_search.events.run_performed.dataset import EntryExecutedDataset
-from python_search.infrastructure.performance import timeit
 from python_search.next_item_predictor.features.times_used import TimesUsed
 from python_search.next_item_predictor.inference.label import label_formula
 
@@ -41,7 +40,6 @@ class TrainingDataset:
         ),
         self._dataframe = None
 
-    @timeit
     def build(self, use_cache=False, only_show=False) -> DataFrame:
         """
         When cache is enabled, writes a parquet in a temporary file
@@ -262,7 +260,6 @@ class TrainingDataset:
         ]
         return df.filter(~F.col("key").isin(EXCLUDED_ENTRIES))
 
-    @timeit
     def _join_with_previous(self, df):
         """
         Adds the previou_key as an entry
