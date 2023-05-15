@@ -1,8 +1,11 @@
+from typing import List
+
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from torch.utils.data import Dataset, DataLoader
 import torch
 
 from python_search.llm_next_item_predictor.llmdataset import LLMDataset
+from python_search.search.entries_loader import EntriesLoader
 
 
 # Define the dataset class
@@ -102,7 +105,6 @@ class T5Train:
         with torch.no_grad():
             inputs = LLMDataset.PROMPT_START + recent_history
             print("Input:", inputs)
-            #inputs = "translate English to French: The cat sat on the mat."
 
             inputs_tokenized = tokenizer.encode_plus(inputs, return_tensors='pt')
             input_ids = inputs_tokenized['input_ids'].to('cpu')
@@ -114,39 +116,61 @@ class T5Train:
             # Decode the prediction
             predicted_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
             print('Output: ', predicted_text)
+        return predicted_text
 
-class Rank:
-    def get_embeddings(self):
+
+    def get_embeddings_efficient(self, sentences: List[str]):
         import torch
-        from transformers import T5Tokenizer, T5Model
 
-        # Load the fine-tuned T5 model and the tokenizer
+        model, tokenizer = self.load_model()
 
-        model, tokenizer = T5Train().load_model()
-
-        # Two example sentences
-        sentence1 = "king"
-        sentence2 = "queen"
-
-        # Tokenize the sentences and convert to tensor format
-        input1 = tokenizer(sentence1, return_tensors='pt')
-        input2 = tokenizer(sentence2, return_tensors='pt')
-
+        # Tokenize all sentences and convert to tensor format
+        inputs = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
 
         with torch.no_grad():
-            output1 = model.encoder(input1['input_ids']).last_hidden_state
-            output2 = model.encoder(input2['input_ids']).last_hidden_state
+            # Generate the outputs from the model
+            outputs = model.encoder(inputs['input_ids']).last_hidden_state
 
         # Average the embeddings to get sentence-level embeddings
-        sentence_embedding1 = torch.mean(output1, dim=1)
-        sentence_embedding2 = torch.mean(output2, dim=1)
+        sentence_embeddings = torch.mean(outputs, dim=1)
 
-        print(sentence_embedding1)
-        print(sentence_embedding2)
+        return sentence_embeddings
+
+class Rank:
+
+    def __init__(self):
+        self.trainer = T5Train()
+        self.model, self.tokenizer = self.trainer.load_model()
+
+    def rank(self):
+
+        history = ['gmail', 'gmail', 'gmail']
+
+        prompt = LLMDataset.PROMPT_START + ",".join(history)
+        print("Prompt:", prompt)
+        inference_result = self.trainer.inference(",".join(history))
+        #inference_result = 'news'
+
+        entries_keys = EntriesLoader().load_all_keys()[0:100]
+        embeddings = self.trainer.get_embeddings_efficient([inference_result])
+        embeddings_entries = [ self.trainer.get_embeddings_efficient(entry)[0] for entry in entries_keys]
+
+        result = []
+        for i, entry in enumerate(entries_keys):
+            similarity = torch.nn.functional.cosine_similarity(embeddings_entries[i], embeddings[0], dim=0)
+            result.append((entry, similarity.item()))
+            #print("Similarity:", similarity.item())
+
+        result.sort(key=lambda x: x[1], reverse=True)
+        return result
+
+
+
+    def similarity(self, sentence1, sentence2):
         from torch.nn.functional import cosine_similarity
-
         # Compute cosine similarity
-        similarity = cosine_similarity(sentence_embedding1, sentence_embedding2)
+        embeddings = self.trainer.get_embeddings_efficient([sentence1, sentence2])
+        similarity = cosine_similarity(embeddings[0], embeddings[1], dim=0)
         print("Cosine similarity:", similarity.item())
 
 
