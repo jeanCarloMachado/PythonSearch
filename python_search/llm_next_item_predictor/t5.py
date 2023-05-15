@@ -37,6 +37,7 @@ class T5Train:
 
         self.tokenizer = T5Tokenizer.from_pretrained('t5-small')
         self.device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+        self.MODEL_DIRECTORY = 'my_model_directory'
 
     def train(self, epochs=1):
         # Initialize the tokenizer and model
@@ -81,24 +82,29 @@ class T5Train:
 
             print(f"Epoch {epoch + 1} Loss: {loss.item()}")
 
-        model.save_pretrained('my_model_directory')
+        model.save_pretrained(self.modle_directory)
 
-    def test(self, recent_history):
+    def load_model(self):
         # Load the model
-        model_directory = 'my_model_directory'
-        print("Loading model from:", model_directory)
-        model = T5ForConditionalGeneration.from_pretrained(model_directory)
+        print("Loading model from:", self.MODEL_DIRECTORY)
+        model = T5ForConditionalGeneration.from_pretrained(self.MODEL_DIRECTORY)
 
         # Ensure the model is in evaluation mode
         model.eval()
+        return model, self.tokenizer
 
+
+    def inference(self, recent_history):
+        # Load the model
+
+        model, tokenizer = self.load_model()
         # Now you can use the model for prediction
         with torch.no_grad():
-            inputs = LLMDataset.PROMPT_START + ",".join(recent_history)
+            inputs = LLMDataset.PROMPT_START + recent_history
             print("Input:", inputs)
             #inputs = "translate English to French: The cat sat on the mat."
 
-            inputs_tokenized = self.tokenizer.encode_plus(inputs, return_tensors='pt')
+            inputs_tokenized = tokenizer.encode_plus(inputs, return_tensors='pt')
             input_ids = inputs_tokenized['input_ids'].to('cpu')
             attention_mask = inputs_tokenized['attention_mask'].to('cpu')
 
@@ -106,8 +112,43 @@ class T5Train:
             outputs = model.generate(input_ids=input_ids, attention_mask=attention_mask)
 
             # Decode the prediction
-            predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+            predicted_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
             print('Output: ', predicted_text)
+
+class Rank:
+    def get_embeddings(self):
+        import torch
+        from transformers import T5Tokenizer, T5Model
+
+        # Load the fine-tuned T5 model and the tokenizer
+
+        model, tokenizer = T5Train().load_model()
+
+        # Two example sentences
+        sentence1 = "king"
+        sentence2 = "queen"
+
+        # Tokenize the sentences and convert to tensor format
+        input1 = tokenizer(sentence1, return_tensors='pt')
+        input2 = tokenizer(sentence2, return_tensors='pt')
+
+
+        with torch.no_grad():
+            output1 = model.encoder(input1['input_ids']).last_hidden_state
+            output2 = model.encoder(input2['input_ids']).last_hidden_state
+
+        # Average the embeddings to get sentence-level embeddings
+        sentence_embedding1 = torch.mean(output1, dim=1)
+        sentence_embedding2 = torch.mean(output2, dim=1)
+
+        print(sentence_embedding1)
+        print(sentence_embedding2)
+        from torch.nn.functional import cosine_similarity
+
+        # Compute cosine similarity
+        similarity = cosine_similarity(sentence_embedding1, sentence_embedding2)
+        print("Cosine similarity:", similarity.item())
+
 
 
 if __name__ == "__main__":

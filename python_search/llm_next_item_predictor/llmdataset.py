@@ -47,6 +47,9 @@ class LLMDataset():
         df = pd.read_pickle(home+"/.python_search/dataset.pkl")
         return df
 
+    def inspect(self):
+        return self.load().to_string()
+
 if __name__ == "__main__":
     import fire
     fire.Fire()
