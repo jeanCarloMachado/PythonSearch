@@ -24,12 +24,14 @@ class Search:
     NUMBER_OF_LATEST_ENTRIES = 30
 
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
+    _next_item_reranker = None
 
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self.logger = setup_inference_logger()
         if configuration is None:
             configuration = self._load_configuration()
+
         self._configuration = configuration
         self._ranked_keys: List[str]
 
@@ -42,7 +44,7 @@ class Search:
 
         self._recent_keys = RecentKeys()
 
-        if self._configuration.rerank_via_model:
+        if self._configuration.is_rerank_via_model_enabled():
             try:
                 from python_search.llm_next_item_predictor.t5.inference import NextItemReranker
                 self._next_item_reranker = NextItemReranker()
@@ -113,7 +115,7 @@ class Search:
             return
 
         try:
-            self._ranked_keys = self._next_item_reranker.get_ranking()
+            self._ranked_keys = self._next_item_reranker.rank(self._ranked_keys)
             self._ranking_method_used = "LLMRankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")

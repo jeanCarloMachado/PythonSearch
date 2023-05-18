@@ -68,6 +68,7 @@ class PythonSearchConfiguration(EntriesGroup):
             self._default_tags = default_tags
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
+
         self.rerank_via_model = rerank_via_model
 
         self._initialization_time = datetime.datetime.now()
@@ -107,6 +108,9 @@ class PythonSearchConfiguration(EntriesGroup):
 
     def get_text_editor(self):
         return self._default_text_editor
+
+    def is_rerank_via_model_enabled(self):
+        return self.rerank_via_model
 
     def get_default_tags(self):
         return self._default_tags

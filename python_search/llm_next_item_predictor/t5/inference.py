@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import torch
 
@@ -13,17 +13,22 @@ class NextItemReranker:
     def __init__(self):
         self.model, self.tokenizer = T5Model().load_trained_model()
 
-    def rank(self, predicted_action: str = None, limit=None, prepend_order=False):
+    def rank(self, *, keys: Optional[List[str]] = None, predicted_action: str = None, limit: int=None, prepend_order=False):
         if not predicted_action:
             predicted_action = self.get_next_predicted_actions()
-        entries_keys = EntriesLoader().load_all_keys()
+
+        keys: List[str] = keys
+        if not keys:
+            keys = EntriesLoader().load_all_keys()
+
         if limit:
-            entries_keys = entries_keys[:limit]
+            keys = keys[:limit]
+
         embeddings = self.get_embeddings_efficient([predicted_action])
-        embeddings_entries = [ self.get_embeddings_efficient(entry)[0] for entry in entries_keys]
+        embeddings_entries = [self.get_embeddings_efficient(entry)[0] for entry in keys]
 
         result = []
-        for i, entry in enumerate(entries_keys):
+        for i, entry in enumerate(keys):
             similarity = torch.nn.functional.cosine_similarity(embeddings_entries[i], embeddings[0], dim=0)
             result.append((entry, similarity.item()))
 
