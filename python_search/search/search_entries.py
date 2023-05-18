@@ -9,7 +9,6 @@ from python_search.events.ranking_generated import (
     RankingGenerated,
     RankingGeneratedEventWriter,
 )
-from python_search.llm_next_item_predictor.t5.inference import NextItemReranker
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
 from python_search.search.fzf_results_formatter import FzfOptimizedSearchResultsBuilder
@@ -25,13 +24,14 @@ class Search:
     NUMBER_OF_LATEST_ENTRIES = 30
 
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
-    _inference = None
+
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self.logger = setup_inference_logger()
         if configuration is None:
             configuration = self._load_configuration()
         self._configuration = configuration
+        self._ranked_keys: List[str]
 
         self._entries_result = FzfOptimizedSearchResultsBuilder()
         self._entries: Optional[dict] = None
@@ -42,19 +42,22 @@ class Search:
 
         self._recent_keys = RecentKeys()
 
-        try:
-            self._next_item_reranker = NextItemReranker(configuration=self._configuration)
-        except Exception as e:
-            print("Failed to load next item reranker" + str(e))
-            self.logger.error("Failed to load next item reranker")
-            self.logger.error(e)
-            self._next_item_reranker = None
+        if self._configuration.rerank_via_model:
+            try:
+                from python_search.llm_next_item_predictor.t5.inference import NextItemReranker
+                self._next_item_reranker = NextItemReranker()
+            except Exception as e:
+                print("Failed to load next item reranker" + str(e))
+                self.logger.error("Failed to load next item reranker")
+                self.logger.error(e)
+                self._next_item_reranker = None
 
 
     def search(
         self,
         skip_model=False,
         base_rank=False,
+        use_next_item_model=False,
         stop_on_failure=False,
         inline_print=False,
         ignore_recent=False,
@@ -64,6 +67,7 @@ class Search:
         Recomputes the rank and saves the results on the file to be read
 
         base_rank: if we want to skip the model and any reranking that also happens on top
+        skip_model: if you want to use the base rank and the recent features but not the next item model
         """
 
         self.logger.debug("Starting search function")
@@ -71,10 +75,9 @@ class Search:
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
 
-        if not skip_model and not base_rank and self._configuration.rerank_via_model:
+        if not skip_model and not base_rank and (self._configuration.rerank_via_model or use_next_item_model):
             self.logger.debug("Trying to rerank")
             self._try_torerank_via_model(stop_on_failure=stop_on_failure)
-
 
         if query:
             self.logger.debug("Filtering results based on query")
@@ -105,15 +108,18 @@ class Search:
         return ranking_generated
 
     def _try_torerank_via_model(self, stop_on_failure=False):
-        if not self._inference:
+        if not self._next_item_reranker:
+            """Reranker not active skipping"""
             return
+
         try:
-            self._ranked_keys = self._inference.get_ranking()
-            self._ranking_method_used = "RankingNextModel"
+            self._ranked_keys = self._next_item_reranker.get_ranking()
+            self._ranking_method_used = "LLMRankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
             if stop_on_failure:
                 raise e
+
 
     def _build_result(self, ignore_recent) -> RankedEntries.type:
         """

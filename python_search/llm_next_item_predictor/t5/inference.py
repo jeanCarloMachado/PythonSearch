@@ -5,6 +5,7 @@ import torch
 from python_search.llm_next_item_predictor.llmdataset import LLMDataset
 from python_search.llm_next_item_predictor.t5.config import T5Model
 from python_search.search.entries_loader import EntriesLoader
+from python_search.search.rank_utils import prepend_order_in_entries
 
 
 class NextItemReranker:
@@ -12,10 +13,13 @@ class NextItemReranker:
     def __init__(self):
         self.model, self.tokenizer = T5Model().load_trained_model()
 
-    def rank(self):
-        inference_result = self.get_next_predicted_actions()
-        entries_keys = EntriesLoader().load_all_keys()[0:100]
-        embeddings = self.get_embeddings_efficient([inference_result])
+    def rank(self, predicted_action: str = None, limit=None, prepend_order=False):
+        if not predicted_action:
+            predicted_action = self.get_next_predicted_actions()
+        entries_keys = EntriesLoader().load_all_keys()
+        if limit:
+            entries_keys = entries_keys[:limit]
+        embeddings = self.get_embeddings_efficient([predicted_action])
         embeddings_entries = [ self.get_embeddings_efficient(entry)[0] for entry in entries_keys]
 
         result = []
@@ -24,6 +28,11 @@ class NextItemReranker:
             result.append((entry, similarity.item()))
 
         result.sort(key=lambda x: x[1], reverse=True)
+        result = [entry[0] for entry in result]
+
+        if prepend_order:
+            return prepend_order_in_entries(result)
+
         return result
 
     def get_prompt(self, recent_history):
