@@ -29,14 +29,9 @@ class Search:
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self.logger = setup_inference_logger()
         if configuration is None:
-            self.logger.debug("Configuration not initialized, loading from file")
-            from python_search.configuration.loader import ConfigurationLoader
-
-            configuration = ConfigurationLoader().get_config_instance()
-            self.logger.debug("Configuration loaded")
-
+            configuration = self._load_configuration()
         self._configuration = configuration
-        self._model = None
+
         self._entries_result = FzfOptimizedSearchResultsBuilder()
         self._entries: Optional[dict] = None
         self._ranking_generator_writer = RankingGeneratedEventWriter()
@@ -45,6 +40,7 @@ class Search:
         ] = "BaselineRank"
 
         self._recent_keys = RecentKeys()
+
 
     def search(
         self,
@@ -80,13 +76,9 @@ class Search:
         """
         Populate the variable used_entries  with the results from redis
         """
-        # skip poetry config --local virtualenvs.create falselatest entries if we want to use only the base rank
         result = self._build_result(ignore_recent)
 
-        ranking_generated = RankingGenerated(
-            ranking=[i[0] for i in result[0:100]]
-        )
-        self._ranking_generator_writer.write(ranking_generated)
+        ranking_generated = self.send_ranking_generated_event(result)
         result_str = self._entries_result.build_entries_result(
             entries=result,
             ranking_uuid=ranking_generated.uuid,
@@ -94,6 +86,14 @@ class Search:
         )
 
         return result_str
+
+    def send_ranking_generated_event(self, result):
+        ranking_generated = RankingGenerated(
+            ranking=[i[0] for i in result[0:100]]
+        )
+        self._ranking_generator_writer.write(ranking_generated)
+
+        return ranking_generated
 
     def _try_torerank_via_model(self, stop_on_failure=False):
         if not self._inference:
@@ -165,6 +165,11 @@ class Search:
         # only use the latest 7 entries for the top of the search
         return entries[: self.NUMBER_OF_LATEST_ENTRIES]
 
+    def _load_configuration(self):
+        self.logger.debug("Configuration not initialized, loading from file")
+        from python_search.configuration.loader import ConfigurationLoader
+        configuration = ConfigurationLoader().get_config_instance()
+        self.logger.debug("Configuration loaded")
 
 def main():
     import fire
