@@ -62,7 +62,7 @@ class NextItemReranker:
             attention_mask = inputs_tokenized['attention_mask'].to('cpu')
 
             # Generate prediction
-            outputs = self.model.generate(input_ids=input_ids, attention_mask=attention_mask)
+            outputs = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=20)
 
             # Decode the prediction
             predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)

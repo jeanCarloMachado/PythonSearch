@@ -46,7 +46,7 @@ class Search:
 
         if self._configuration.is_rerank_via_model_enabled():
             try:
-                from python_search.llm_next_item_predictor.t5.inference import NextItemReranker
+                from python_search.llm_next_item_predictor.t5.t5_ranker import NextItemReranker
                 self._next_item_reranker = NextItemReranker()
             except Exception as e:
                 print("Failed to load next item reranker" + str(e))
@@ -115,7 +115,7 @@ class Search:
             return
 
         try:
-            self._ranked_keys = self._next_item_reranker.rank(self._ranked_keys)
+            self._ranked_keys = self._next_item_reranker.rank(keys=self._ranked_keys, limit=10)
             self._ranking_method_used = "LLMRankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
