@@ -9,6 +9,7 @@ from python_search.events.ranking_generated import (
     RankingGenerated,
     RankingGeneratedEventWriter,
 )
+from python_search.llm_next_item_predictor.t5.inference import NextItemReranker
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
 from python_search.search.fzf_results_formatter import FzfOptimizedSearchResultsBuilder
@@ -40,6 +41,14 @@ class Search:
         ] = "BaselineRank"
 
         self._recent_keys = RecentKeys()
+
+        try:
+            self._next_item_reranker = NextItemReranker(configuration=self._configuration)
+        except Exception as e:
+            print("Failed to load next item reranker" + str(e))
+            self.logger.error("Failed to load next item reranker")
+            self.logger.error(e)
+            self._next_item_reranker = None
 
 
     def search(
