@@ -170,6 +170,7 @@ class Search:
         from python_search.configuration.loader import ConfigurationLoader
         configuration = ConfigurationLoader().get_config_instance()
         self.logger.debug("Configuration loaded")
+        return configuration
 
 def main():
     import fire

@@ -115,13 +115,7 @@ class RankInference:
 
     def rank(self):
 
-        history = ['gmail', 'gmail', 'gmail']
-
-        prompt = LLMDataset.PROMPT_START + ",".join(history)
-        print("Prompt:", prompt)
-        inference_result = self.inference(",".join(history))
-        #inference_result = 'news'
-
+        inference_result = self.get_next_predicted_actions()
         entries_keys = EntriesLoader().load_all_keys()[0:100]
         embeddings = self.get_embeddings_efficient([inference_result])
         embeddings_entries = [ self.get_embeddings_efficient(entry)[0] for entry in entries_keys]
@@ -130,16 +124,23 @@ class RankInference:
         for i, entry in enumerate(entries_keys):
             similarity = torch.nn.functional.cosine_similarity(embeddings_entries[i], embeddings[0], dim=0)
             result.append((entry, similarity.item()))
-            #print("Similarity:", similarity.item())
 
         result.sort(key=lambda x: x[1], reverse=True)
         return result
 
-    def inference(self, recent_history):
+    def get_prompt(self, recent_history):
+
+        if not recent_history:
+            recent_history = ['gmail', 'gmail', 'gmail']
+
+        return LLMDataset.PROMPT_START + ",".join(recent_history)
+
+    def get_next_predicted_actions(self, recent_history = None):
+
         # Load the model
         # Now you can use the model for prediction
         with torch.no_grad():
-            inputs = LLMDataset.PROMPT_START + recent_history
+            inputs = self.get_prompt(recent_history)
             print("Input:", inputs)
 
             inputs_tokenized = self.tokenizer.encode_plus(inputs, return_tensors='pt')
@@ -151,7 +152,6 @@ class RankInference:
 
             # Decode the prediction
             predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            print('Output: ', predicted_text)
         return predicted_text
 
 
