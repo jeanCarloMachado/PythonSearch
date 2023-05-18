@@ -13,9 +13,9 @@ class NextItemReranker:
     def __init__(self):
         self.model, self.tokenizer = T5Model().load_trained_model()
 
-    def rank(self, *, keys: Optional[List[str]] = None, predicted_action: str = None, limit: int=None, prepend_order=False):
+    def rank_entries(self, *, keys: Optional[List[str]] = None, recent_history=None, predicted_action: str = None, limit: int=None, prepend_order=False):
         if not predicted_action:
-            predicted_action = self.get_next_predicted_actions()
+            predicted_action = self.get_next_predicted_actions(recent_history=recent_history)
 
         keys: List[str] = keys
         if not keys:
@@ -66,7 +66,9 @@ class NextItemReranker:
 
             # Decode the prediction
             predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        print("Output:", predicted_text)
         return predicted_text
+
 
 
     def get_embeddings_efficient(self, sentences: List[str]):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import namedtuple
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Tuple
 
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.events.latest_used_entries import RecentKeys
@@ -25,6 +25,7 @@ class Search:
 
     _model_info = ModelInfo(["position", "key_lenght"], "input_lenght")
     _next_item_reranker = None
+    _latest_entries = None
 
 
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
@@ -76,6 +77,7 @@ class Search:
         self._entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
+        self._fetch_latest_entries()
 
         if not skip_model and not base_rank and (self._configuration.rerank_via_model or use_next_item_model):
             self.logger.debug("Trying to rerank")
@@ -115,7 +117,7 @@ class Search:
             return
 
         try:
-            self._ranked_keys = self._next_item_reranker.rank(keys=self._ranked_keys, limit=10)
+            self._ranked_keys = self._next_item_reranker.rank_entries(keys=self._ranked_keys, recent_history=self.latest_entries, limit=10)
             self._ranking_method_used = "LLMRankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
@@ -150,12 +152,17 @@ class Search:
         # the result is the one to be returned, final_key_list is to be used in the cache
         return result
 
-    def _latest_keys(self):
+    def _latest_keys(self) -> List[Tuple[str, dict]]:
+        """
+        This method retrieves and updates the latest entries in '_entries'.
+        Each updated entry gets a "RecentlyUsed" tag. Non-dictionary entries are skipped with a warning.
+        The key is removed from '_ranked_keys' if present.
+        The function returns a list of tuples, each containing an updated entry's key and content.
+        """
         result = []
 
-        latest_entries = self._fetch_latest_entries()
-        if latest_entries:
-            for key in latest_entries:
+        if self.latest_entries:
+            for key in self.latest_entries:
                 if key not in self._entries:
                     # key not found in _entries
                     continue
@@ -176,11 +183,9 @@ class Search:
 
     def _fetch_latest_entries(self):
         """Populate the variable used_entries  with the results from redis"""
+        self.latest_entries = self._recent_keys.get_latest_used_keys(self.NUMBER_OF_LATEST_ENTRIES)
+        return self.latest_entries
 
-        entries = self._recent_keys.get_latest_used_keys()
-
-        # only use the latest 7 entries for the top of the search
-        return entries[: self.NUMBER_OF_LATEST_ENTRIES]
 
     def _load_configuration(self):
         self.logger.debug("Configuration not initialized, loading from file")
