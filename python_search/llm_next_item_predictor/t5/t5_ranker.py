@@ -11,6 +11,7 @@ from python_search.search.rank_utils import prepend_order_in_entries
 class NextItemReranker:
     def __init__(self):
         self.model, self.tokenizer = T5Model().load_trained_model()
+        self.MAX_NEW_TOKENS = 30
 
     def rank_entries(self, *, keys: Optional[List[str]] = None, recent_history=None, predicted_action: str = None, limit: int=None, prepend_order=False):
         if not predicted_action:
@@ -63,7 +64,7 @@ class NextItemReranker:
             attention_mask = inputs_tokenized['attention_mask'].to('cpu')
 
             # Generate prediction
-            outputs = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=20)
+            outputs = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=self.MAX_NEW_TOKENS)
 
             # Decode the prediction
             predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)

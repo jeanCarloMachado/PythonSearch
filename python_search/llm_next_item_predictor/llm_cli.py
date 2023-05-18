@@ -1,4 +1,5 @@
 from python_search.llm_next_item_predictor.next_item_llm_dataset import LLMDataset
+from python_search.llm_next_item_predictor.t5.t5_ranker import NextItemReranker
 from python_search.llm_next_item_predictor.t5.trainer import T5Train
 
 
@@ -6,6 +7,7 @@ class LLMCli:
     def __init__(self):
         self.t5_trainer = T5Train()
         self.dataset = LLMDataset()
+        self.t5_ranker = NextItemReranker()
 
 
 def main():
