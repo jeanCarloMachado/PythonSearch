@@ -4,6 +4,7 @@ import torch
 
 from python_search.llm_next_item_predictor.next_item_llm_dataset import LLMDataset
 from python_search.llm_next_item_predictor.t5.config import T5Model
+from python_search.llm_next_item_predictor.t5.t5_embeddings import T5Embeddings
 from python_search.search.entries_loader import EntriesLoader
 from python_search.search.rank_utils import prepend_order_in_entries
 
@@ -12,6 +13,7 @@ class NextItemReranker:
     def __init__(self):
         self.model, self.tokenizer = T5Model().load_trained_model()
         self.MAX_NEW_TOKENS = 30
+        self.embeddings = T5Embeddings()
 
     def rank_entries(self, *, keys: Optional[List[str]] = None, recent_history=None, predicted_action: str = None, limit: int=None, prepend_order=False):
         if not predicted_action:
@@ -24,8 +26,8 @@ class NextItemReranker:
         if limit:
             keys = keys[:limit]
 
-        embeddings = self.get_embeddings([predicted_action])
-        embeddings_entries = [self.get_embeddings(entry)[0] for entry in keys]
+        embeddings = self.embeddings.get_embeddings([predicted_action])
+        embeddings_entries = [self.embeddings.get_embeddings(entry)[0] for entry in keys]
 
         result = []
         for i, entry in enumerate(keys):
@@ -71,20 +73,6 @@ class NextItemReranker:
         print("Output:", predicted_text)
         return predicted_text
 
-    def get_embeddings(self, sentences: List[str]):
-        import torch
-
-        # Tokenize all sentences and convert to tensor format
-        inputs = self.tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
-
-        with torch.no_grad():
-            # Generate the outputs from the model
-            outputs = self.model.encoder(inputs['input_ids']).last_hidden_state
-
-        # Average the embeddings to get sentence-level embeddings
-        sentence_embeddings = torch.mean(outputs, dim=1)
-
-        return sentence_embeddings
 
 def main():
     import fire
