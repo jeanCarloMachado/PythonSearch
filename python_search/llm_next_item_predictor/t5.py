@@ -165,7 +165,6 @@ class Rank:
         return result
 
 
-
     def similarity(self, sentence1, sentence2):
         from torch.nn.functional import cosine_similarity
         # Compute cosine similarity

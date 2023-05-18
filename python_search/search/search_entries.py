@@ -12,7 +12,6 @@ from python_search.events.ranking_generated import (
 from python_search.logger import setup_inference_logger
 from python_search.search.ranked_entries import RankedEntries
 from python_search.search.fzf_results_formatter import FzfOptimizedSearchResultsBuilder
-from python_search.textual_next_predictor.predictor import TextualPredictor
 
 ModelInfo = namedtuple("ModelInfo", "features label")
 
@@ -42,20 +41,9 @@ class Search:
         self._entries: Optional[dict] = None
         self._ranking_generator_writer = RankingGeneratedEventWriter()
         self._ranking_method_used: Literal[
-            "RankingNextModel", "BaselineRank"
+             "BaselineRank"
         ] = "BaselineRank"
 
-        if configuration.rerank_via_model:
-            self.logger.debug("Reranker enabled in configuration")
-            from python_search.next_item_predictor.inference.inference import Inference
-
-            try:
-                self._inference = Inference(self._configuration)
-            except BaseException as e:
-                self.logger.error(
-                    f"Could not initialize the inference component. Proceeding without inference, details: {e}"
-                )
-                self._entries_result.degraded_message = f"{e}"
         self._recent_keys = RecentKeys()
 
     def search(
@@ -66,7 +54,6 @@ class Search:
         inline_print=False,
         ignore_recent=False,
         query="",
-        predict_next_text=False,
     ) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
@@ -90,16 +77,10 @@ class Search:
             bert = SemanticSearch()
             self._ranked_keys = bert.rank_entries_by_query_similarity(query)
 
-        if predict_next_text:
-            self.logger.debug("Filtering results based on query")
-            from python_search.semantic_search.text2embeddings import SemanticSearch
-            bert = SemanticSearch()
-            predicted_next = TextualPredictor().predict()
-            self._ranked_keys = bert.rank_entries_by_query_similarity(predicted_next)
         """
         Populate the variable used_entries  with the results from redis
         """
-        # skip latest entries if we want to use only the base rank
+        # skip poetry config --local virtualenvs.create falselatest entries if we want to use only the base rank
         result = self._build_result(ignore_recent)
 
         ranking_generated = RankingGenerated(

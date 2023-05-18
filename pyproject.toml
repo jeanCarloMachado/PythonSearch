@@ -38,6 +38,8 @@ tensorflow-macos = {version = "^2.11.0", optional = true, platform = "mac"}
 openai = ">=0.27.0"
 scikit-learn = {version = "^1.2.2", optional = true}
 python-dateutil = "^2.8.2"
+chardet = "^5.1.0"
+jupyter = {version = "^1.0.0", optional = true}
 
 
 [tool.poetry.dev-dependencies]
@@ -85,7 +87,7 @@ google_it = 'python_search.apps.google_it:main'
 recent_keys = 'python_search.events.latest_used_entries:main'
 python_search_search = 'python_search.search_ui.kitty:main'
 entry_generator = 'python_search.entry_generator:main'
-ps_search = 'python_search.search.search:main'
+ps_search = 'python_search.search.search_entries:main'
 ps_semantic_search = 'python_search.semantic_search.text2embeddings:main'
 ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 start_streamlit_app = 'start_streamlit_app:main'

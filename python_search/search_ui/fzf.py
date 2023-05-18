@@ -19,7 +19,7 @@ class Fzf:
         os.system(cmd)
 
     def get_cmd(self):
-        cmd = f"""bash -c 'export SHELL=bash ; {self._get_rankging_generate_cmd()} | \
+        cmd = f"""bash -c 'export SHELL=bash ; {self._get_ranked_entries_cmd()} | \
         {self.get_fzf_cmd()} \
         --scheme=default \
         --tiebreak={Fzf.RANK_TIE_BREAK} \
@@ -51,11 +51,10 @@ class Fzf:
         --bind "ctrl-n:execute-silent:(nohup register_new launch_from_fzf {{}} & )" \
         --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
-        --bind "ctrl-p:reload-sync:(ps_search --inline_print=True --predict_next_text=True)" \
         --bind "ctrl-r:reload-sync:(ps_search --inline_print=True)" \
         --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
         --bind "ctrl-v:reload-sync:(ps_search --inline_print=True --ignore_recent=True --query {{q}})" \
-        --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_rankging_generate_cmd()} )" \
+        --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_ranked_entries_cmd()} )" \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
@@ -84,7 +83,7 @@ class Fzf:
             wrap_in_terminal_expr = " --wrap_in_terminal=True "
 
         return f"""--bind "{shortcut}:execute-silent:(nohup run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
-        --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_rankging_generate_cmd()})" \
+        --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_ranked_entries_cmd()})" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
 
@@ -100,7 +99,7 @@ class Fzf:
 
         return " "
 
-    def _get_rankging_generate_cmd(self):
+    def _get_ranked_entries_cmd(self):
         # in mac we need tensorflow to be installed via conda
         return f"ps_search --inline_print=True"
 
