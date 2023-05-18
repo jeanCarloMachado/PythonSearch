@@ -24,8 +24,8 @@ class NextItemReranker:
         if limit:
             keys = keys[:limit]
 
-        embeddings = self.get_embeddings_efficient([predicted_action])
-        embeddings_entries = [self.get_embeddings_efficient(entry)[0] for entry in keys]
+        embeddings = self.get_embeddings([predicted_action])
+        embeddings_entries = [self.get_embeddings(entry)[0] for entry in keys]
 
         result = []
         for i, entry in enumerate(keys):
@@ -71,9 +71,7 @@ class NextItemReranker:
         print("Output:", predicted_text)
         return predicted_text
 
-
-
-    def get_embeddings_efficient(self, sentences: List[str]):
+    def get_embeddings(self, sentences: List[str]):
         import torch
 
         # Tokenize all sentences and convert to tensor format
@@ -87,13 +85,6 @@ class NextItemReranker:
         sentence_embeddings = torch.mean(outputs, dim=1)
 
         return sentence_embeddings
-
-    def similarity(self, sentence1, sentence2):
-        from torch.nn.functional import cosine_similarity
-        # Compute cosine similarity
-        embeddings = self.get_embeddings_efficient([sentence1, sentence2])
-        similarity = cosine_similarity(embeddings[0], embeddings[1], dim=0)
-        print("Cosine similarity:", similarity.item())
 
 def main():
     import fire
