@@ -2,7 +2,7 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 from torch.utils.data import Dataset, DataLoader
 import torch
 
-from python_search.llm_next_item_predictor.llmdataset import LLMDataset
+from python_search.llm_next_item_predictor.next_item_llm_dataset import LLMDataset
 from python_search.llm_next_item_predictor.t5.config import T5ModelConfig
 
 # Define the dataset class
@@ -40,9 +40,11 @@ class T5Train:
 
     def train(self, epochs=1):
         # Initialize the tokenizer and model
+        print(f"Training for {epochs} epochs")
         model = T5ForConditionalGeneration.from_pretrained('t5-small')
 
         df = LLMDataset().load()
+
 
         # Let's assume you have a DataFrame `df` with 'input_text' and 'target_text' columns
         inputs = df['prompt'].tolist()

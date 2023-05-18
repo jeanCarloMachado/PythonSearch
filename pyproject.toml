@@ -92,15 +92,15 @@ ps_semantic_search = 'python_search.semantic_search.text2embeddings:main'
 ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 start_streamlit_app = 'start_streamlit_app:main'
 llm_rank = 'python_search.llm_next_item_predictor.t5.inference:main'
+llm_cli = 'python_search.llm_next_item_predictor.llm_cli:main'
+llm_dataset = 'python_search.llm_next_item_predictor.next_item_llm_dataset:main'
 
 [tool.poetry.extras]
 model = [
     "pyspark",
     "mlflow",
-    "keras",
     "tensorflow",
     "uvicorn",
-    "fastapi",
     "kafka-python",
     "redis",
     "pandas",
@@ -109,7 +109,6 @@ model = [
     "xgboost",
     "matplotlib",
     "msgpack-numpy",
-    "arize",
     "jupyterlab",
     "scikit-learn",
     'sentence_transformers',

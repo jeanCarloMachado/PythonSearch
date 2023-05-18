@@ -90,7 +90,7 @@ Prompt:
             engine = None
 
         try:
-            print("Open AI Key used: ", openai.api_key)
+            #print("Open AI Key used: ", openai.api_key)
             # Generate a response
             completion = openai.Completion.create(
                 model=model,
