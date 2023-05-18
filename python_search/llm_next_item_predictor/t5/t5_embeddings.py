@@ -1,9 +1,5 @@
 from typing import List
 
-import os
-os.environ["NUMEXPR_MAX_THREADS"] = '10'
-import numpy as np
-np.set_printoptions(suppress=True)
 import pandas as pd
 from tqdm import tqdm
 
