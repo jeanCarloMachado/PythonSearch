@@ -1,10 +1,14 @@
 from typing import List
 
+import os
+os.environ["NUMEXPR_MAX_THREADS"] = '10'
+import numpy as np
+np.set_printoptions(suppress=True)
 import pandas as pd
+from tqdm import tqdm
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.llm_next_item_predictor.t5.config import T5Model
-from python_search.semantic_search.distilbert import to_embedding2, to_embedding
 
 class T5Embeddings:
     """
@@ -18,7 +22,7 @@ class T5Embeddings:
         self.model, self.tokenizer = T5Model().load_trained_model()
 
 
-    def get_embeddings(self, sentences: List[str]):
+    def compute_embeddings(self, sentences: List[str]):
         import torch
 
         # Tokenize all sentences and convert to tensor format
@@ -45,12 +49,12 @@ class T5Embeddings:
         for key in unique_keys:
                 unique_bodies.append(key)
 
-        embeddings = self.get_embeddings(unique_bodies)
+        embeddings = [self.compute_embeddings([body]) for body in tqdm(unique_bodies)]
 
         df_missing = pd.DataFrame()
         df_missing["key"] = unique_keys
         df_missing['body'] = unique_bodies
-        df_missing["embedding"] = embeddings_np
+        df_missing["embedding"] = embeddings
 
         df = self._read_dataframe()
         df_result = pd.concat([df, df_missing])
@@ -60,22 +64,17 @@ class T5Embeddings:
         """
         Create an embedding dict
         """
+        print("Saving all keys as pandas dataframe")
         entries = self._configuration.commands
         keys = list(entries.keys())
         unique_keys = list(set(keys))
-        unique_bodies = []
 
+        unique_bodies = []
         for key in unique_keys:
             if key in entries:
-                body = str(entries[key])
-                print(f"For key '{key}', found body to encode: {body}")
-                unique_bodies.append(key + " " + body)
-            else:
-                print(f"Could not find body for key: {key}")
                 unique_bodies.append(key)
 
-
-        embeddings = [self.get_embeddings([body]) for body in unique_bodies]
+        embeddings = [self.compute_embeddings([body]) for body in tqdm(unique_bodies)]
 
         df = pd.DataFrame()
         df["key"] = unique_keys
@@ -84,6 +83,21 @@ class T5Embeddings:
 
         print("Pickled embeddings to: " + self.pickled_location)
         df.to_pickle(self.pickled_location)
+
+    def rank_entries_by_query_similarity(self, query) -> List[str]:
+        import torch
+        embedding_query = self.compute_embeddings([query])[0]
+
+        df = self._read_dataframe()
+        result = []
+        for i, key in enumerate(df['key'].tolist()):
+            similarity = torch.nn.functional.cosine_similarity(embedding_query, df.iloc[i]['embedding'][0], dim=0)
+            result.append((key, float(similarity)))
+
+        result = sorted(result, key=lambda x: x[1], reverse=True)
+
+        return result
+
 
     def _read_dataframe(self):
         return pd.read_pickle(self.pickled_location)

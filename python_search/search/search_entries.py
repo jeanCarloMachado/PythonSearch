@@ -117,7 +117,7 @@ class Search:
             return
 
         try:
-            self._ranked_keys = self._next_item_reranker.rank_entries(keys=self._ranked_keys, recent_history=self.latest_entries, limit=10)
+            self._ranked_keys = self._next_item_reranker.rank_entries(keys=self._ranked_keys, recent_history=self.latest_entries)
             self._ranking_method_used = "LLMRankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")

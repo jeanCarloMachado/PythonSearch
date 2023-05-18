@@ -9,8 +9,10 @@ from python_search.search.entries_loader import EntriesLoader
 from python_search.search.rank_utils import prepend_order_in_entries
 
 
+
 class NextItemReranker:
     def __init__(self):
+
         self.model, self.tokenizer = T5Model().load_trained_model()
         self.MAX_NEW_TOKENS = 30
         self.embeddings = T5Embeddings()
@@ -26,16 +28,8 @@ class NextItemReranker:
         if limit:
             keys = keys[:limit]
 
-        embeddings = self.embeddings.get_embeddings([predicted_action])
-        embeddings_entries = [self.embeddings.get_embeddings(entry)[0] for entry in keys]
-
-        result = []
-        for i, entry in enumerate(keys):
-            similarity = torch.nn.functional.cosine_similarity(embeddings_entries[i], embeddings[0], dim=0)
-            result.append((entry, similarity.item()))
-
-        result.sort(key=lambda x: x[1], reverse=True)
-        result = [entry[0] for entry in result]
+        result = self.embeddings.rank_entries_by_query_similarity(predicted_action)
+        result = [x[0] for x in result]
 
         if prepend_order:
             return prepend_order_in_entries(result)
@@ -59,7 +53,6 @@ class NextItemReranker:
         # Now you can use the model for prediction
         with torch.no_grad():
             inputs = self.get_prompt(recent_history)
-            print("Input:", inputs)
 
             inputs_tokenized = self.tokenizer.encode_plus(inputs, return_tensors='pt')
             input_ids = inputs_tokenized['input_ids'].to('cpu')
@@ -70,7 +63,7 @@ class NextItemReranker:
 
             # Decode the prediction
             predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        print("Output:", predicted_text)
+        print("NextItem: ", predicted_text, " From input:", inputs)
         return predicted_text
 
 
