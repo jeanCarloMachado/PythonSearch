@@ -33,9 +33,9 @@ class T5Dataset(Dataset):
 class T5Train:
 
     def __init__(self):
-
         self.tokenizer = T5Tokenizer.from_pretrained('t5-small')
         self.device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+        print("Device to train on:", self.device)
         self.MODEL_DIRECTORY = T5ModelConfig.MODEL_DIRECTORY
 
     def train(self, epochs=1):
@@ -83,7 +83,7 @@ class T5Train:
 
             print(f"Epoch {epoch + 1} Loss: {loss.item()}")
 
-        model.save_pretrained(self.modle_directory)
+        model.save_pretrained(self.MODEL_DIRECTORY)
 
 
 def main():

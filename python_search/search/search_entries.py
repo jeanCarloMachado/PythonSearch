@@ -79,7 +79,7 @@ class Search:
         self._ranked_keys: List[str] = list(self._entries.keys())
         self._fetch_latest_entries()
 
-        if not skip_model and not base_rank and (self._configuration.rerank_via_model or use_next_item_model):
+        if not skip_model and not base_rank and (self._configuration.is_rerank_via_model_enabled() or use_next_item_model):
             self.logger.debug("Trying to rerank")
             self._try_torerank_via_model(stop_on_failure=stop_on_failure)
 

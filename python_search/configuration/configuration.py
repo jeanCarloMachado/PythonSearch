@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
@@ -110,6 +111,11 @@ class PythonSearchConfiguration(EntriesGroup):
         return self._default_text_editor
 
     def is_rerank_via_model_enabled(self):
+        home = os.path.expanduser("~")
+        if os.path.exists(f"{home}/.python_search/feature_enable_next_item_predictor"):
+            #print("rerank_via_model is enabled")
+            return True
+
         return self.rerank_via_model
 
     def get_default_tags(self):
