@@ -97,20 +97,9 @@ class NewEntryGUI:
         colors = ("#FFFFFF", self.sg.theme_input_background_color())
         print(colors)
 
-        layout = [
-            [self.sg.Text("Key")],
-            [key_name_input],
-            [self.sg.Text("Body")],
-            [content_input],
-            [
-                self.sg.Text("Type"),
-                entry_type,
-                self.sg.Button(
-                    "Try Entry", key="-try-entry-", button_color=colors, border_width=0
-                ),
-                self.sg.Push(),
-            ],
-            [
+        llm_component = []
+        if self._configuration.is_chat_gpt_ui_enable_in_data_capture():
+            llm_component = [
                 self.sg.Button(
                     "Generate Body",
                     key="-generate-body-",
@@ -133,6 +122,21 @@ class NewEntryGUI:
                 ),
                 self.sg.Input(500, key="generation-size", size=(4, 1)),
             ],
+
+        layout = [
+            [self.sg.Text("Key")],
+            [key_name_input],
+            [self.sg.Text("Body")],
+            [content_input],
+            [
+                self.sg.Text("Type"),
+                entry_type,
+                self.sg.Button(
+                    "Try Entry", key="-try-entry-", button_color=colors, border_width=0
+                ),
+                self.sg.Push(),
+            ],
+            llm_component,
             [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
             [
