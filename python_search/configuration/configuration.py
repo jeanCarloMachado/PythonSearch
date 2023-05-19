@@ -116,9 +116,6 @@ class PythonSearchConfiguration(EntriesGroup):
     def get_text_editor(self):
         return self._default_text_editor
 
-    def is_chat_gpt_ui_enable_in_data_capture(self):
-        return False
-
     def is_rerank_via_model_enabled(self):
         home = os.path.expanduser("~")
         if os.path.exists(f"{home}/.python_search/feature_enable_next_item_predictor"):
