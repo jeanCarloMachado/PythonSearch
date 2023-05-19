@@ -7,5 +7,3 @@ def prepend_order_in_entries(entries: List[str]) -> List[str]:
         entry = f"{order}. {entry}"
         order += 1
         yield entry
-
-

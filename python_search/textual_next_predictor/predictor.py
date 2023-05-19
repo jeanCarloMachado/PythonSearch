@@ -2,8 +2,8 @@ from python_search.chat_gpt import ChatAPI
 from python_search.events.latest_used_entries import RecentKeys
 from python_search.logger import setup_inference_logger
 
-class TextualPredictor:
 
+class TextualPredictor:
     def __init__(self):
         self._logger = setup_inference_logger()
 
@@ -18,11 +18,11 @@ class TextualPredictor:
         return ChatAPI().prompt(prompt)
 
 
-
 def main():
     import fire
 
     fire.Fire(TextualPredictor)
+
 
 if __name__ == "__main__":
     main()

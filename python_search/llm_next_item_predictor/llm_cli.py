@@ -14,8 +14,9 @@ class LLMCli:
 
 def main():
     import fire
+
     fire.Fire(LLMCli)
+
 
 if __name__ == "__main__":
     main()
-

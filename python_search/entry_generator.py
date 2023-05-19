@@ -11,6 +11,7 @@ class EntryGenerator:
     def __init__(self):
         self._chat_gpt = LLMPrompt()
         from python_search.configuration.loader import ConfigurationLoader
+
         self.configuration = ConfigurationLoader().load_config()
 
     def generate_body(
@@ -36,9 +37,8 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
 
     @notify_exception()
     def generate_for_fzf(self, query):
-
         if not self.configuration.entry_generation:
-            #entry generation is disabled
+            # entry generation is disabled
             return
 
         os.system(f"echo '{query}'>> /tmp/query_log")
@@ -47,7 +47,6 @@ open ai documentation: https://platform.openai.com/docs/introduction | url
 
         # if after 3 seconds teh last query is the same we then can continue to query it
         with open("/tmp/query_log", "r") as f:
-
             last_query = f.readlines()[-1]
             if not last_query:
                 sys.exit(0)

@@ -27,7 +27,6 @@ class Search:
     _next_item_reranker = None
     _latest_entries = None
 
-
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         self.logger = setup_inference_logger()
         if configuration is None:
@@ -39,22 +38,22 @@ class Search:
         self._entries_result = FzfOptimizedSearchResultsBuilder()
         self._entries: Optional[dict] = None
         self._ranking_generator_writer = RankingGeneratedEventWriter()
-        self._ranking_method_used: Literal[
-             "BaselineRank"
-        ] = "BaselineRank"
+        self._ranking_method_used: Literal["BaselineRank"] = "BaselineRank"
 
         self._recent_keys = RecentKeys()
 
         if self._configuration.is_rerank_via_model_enabled():
             try:
-                from python_search.llm_next_item_predictor.t5.t5_ranker import NextItemReranker
+                from python_search.llm_next_item_predictor.t5.t5_ranker import (
+                    NextItemReranker,
+                )
+
                 self._next_item_reranker = NextItemReranker()
             except Exception as e:
                 print("Failed to load next item reranker" + str(e))
                 self.logger.error("Failed to load next item reranker")
                 self.logger.error(e)
                 self._next_item_reranker = None
-
 
     def search(
         self,
@@ -79,13 +78,20 @@ class Search:
         self._ranked_keys: List[str] = list(self._entries.keys())
         self._fetch_latest_entries()
 
-        if not skip_model and not base_rank and (self._configuration.is_rerank_via_model_enabled() or use_next_item_model):
+        if (
+            not skip_model
+            and not base_rank
+            and (
+                self._configuration.is_rerank_via_model_enabled() or use_next_item_model
+            )
+        ):
             self.logger.debug("Trying to rerank")
             self._try_torerank_via_model(stop_on_failure=stop_on_failure)
 
         if query:
             self.logger.debug("Filtering results based on query")
             from python_search.semantic_search.text2embeddings import SemanticSearch
+
             bert = SemanticSearch()
             self._ranked_keys = bert.rank_entries_by_query_similarity(query)
 
@@ -104,9 +110,7 @@ class Search:
         return result_str
 
     def send_ranking_generated_event(self, result):
-        ranking_generated = RankingGenerated(
-            ranking=[i[0] for i in result[0:100]]
-        )
+        ranking_generated = RankingGenerated(ranking=[i[0] for i in result[0:100]])
         self._ranking_generator_writer.write(ranking_generated)
 
         return ranking_generated
@@ -117,13 +121,14 @@ class Search:
             return
 
         try:
-            self._ranked_keys = self._next_item_reranker.rank_entries(keys=self._ranked_keys, recent_history=self.latest_entries)
+            self._ranked_keys = self._next_item_reranker.rank_entries(
+                keys=self._ranked_keys, recent_history=self.latest_entries
+            )
             self._ranking_method_used = "LLMRankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
             if stop_on_failure:
                 raise e
-
 
     def _build_result(self, ignore_recent) -> RankedEntries.type:
         """
@@ -183,16 +188,19 @@ class Search:
 
     def _fetch_latest_entries(self):
         """Populate the variable used_entries  with the results from redis"""
-        self.latest_entries = self._recent_keys.get_latest_used_keys(self.NUMBER_OF_LATEST_ENTRIES)
+        self.latest_entries = self._recent_keys.get_latest_used_keys(
+            self.NUMBER_OF_LATEST_ENTRIES
+        )
         return self.latest_entries
-
 
     def _load_configuration(self):
         self.logger.debug("Configuration not initialized, loading from file")
         from python_search.configuration.loader import ConfigurationLoader
+
         configuration = ConfigurationLoader().get_config_instance()
         self.logger.debug("Configuration loaded")
         return configuration
+
 
 def main():
     import fire

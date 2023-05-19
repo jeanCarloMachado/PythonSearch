@@ -6,6 +6,7 @@ from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
 from python_search.theme import TimeBasedThemeSelector
 
+
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search
@@ -121,7 +122,7 @@ class PythonSearchConfiguration(EntriesGroup):
     def is_rerank_via_model_enabled(self):
         home = os.path.expanduser("~")
         if os.path.exists(f"{home}/.python_search/feature_enable_next_item_predictor"):
-            #print("rerank_via_model is enabled")
+            # print("rerank_via_model is enabled")
             return True
 
         return self.rerank_via_model

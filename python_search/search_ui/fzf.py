@@ -19,11 +19,9 @@ class Fzf:
         os.system(cmd)
 
     def get_cmd(self):
-
-
         on_change = " "
         if self.configuration.is_on_change_rank_enabled():
-            on_change =  '  --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_ranked_entries_cmd()} )" '
+            on_change = '  --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_ranked_entries_cmd()} )" '
 
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_ranked_entries_cmd()} | \
         {self.get_fzf_cmd()} \
@@ -76,7 +74,6 @@ class Fzf:
         return cmd
 
     def get_fzf_cmd(self):
-
         if is_mac():
             HOME = os.environ["HOME"]
             return f"{HOME}/.fzf/bin/fzf"

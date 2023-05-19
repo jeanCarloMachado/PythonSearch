@@ -52,4 +52,5 @@ entries = {
 }
 
 from python_search.configuration.configuration import PythonSearchConfiguration
+
 config = PythonSearchConfiguration(entries=entries, entries_groups=OfficialEntries)

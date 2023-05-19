@@ -48,8 +48,9 @@ def setup_run_key_logger():
     return logger
 
 
-def setup_generic_stdout_logger():
-    logger = logging.getLogger("stdoutlogger")
+def setup_generic_stdout_logger(logger_name = None):
+    name = logger_name if logger_name else "generic_stdout"
+    logger = logging.getLogger(name)
 
     ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.INFO)

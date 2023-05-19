@@ -99,29 +99,31 @@ class NewEntryGUI:
 
         llm_component = []
         if self._configuration.is_chat_gpt_ui_enable_in_data_capture():
-            llm_component = [
-                self.sg.Button(
-                    "Generate Body",
-                    key="-generate-body-",
-                    button_color=colors,
-                    border_width=0,
-                ),
-                self.sg.Button(
-                    "Generate Key",
-                    key="-generate-title-",
-                    button_color=colors,
-                    border_width=0,
-                ),
-                self.sg.Combo(
-                    SUPPORTED_MODELS,
-                    size=(13, 1),
-                    key="-model-",
-                    default_value=SUPPORTED_MODELS[0],
-                    button_background_color=self.sg.theme_background_color(),
-                    button_arrow_color=self.sg.theme_background_color(),
-                ),
-                self.sg.Input(500, key="generation-size", size=(4, 1)),
-            ],
+            llm_component = (
+                [
+                    self.sg.Button(
+                        "Generate Body",
+                        key="-generate-body-",
+                        button_color=colors,
+                        border_width=0,
+                    ),
+                    self.sg.Button(
+                        "Generate Key",
+                        key="-generate-title-",
+                        button_color=colors,
+                        border_width=0,
+                    ),
+                    self.sg.Combo(
+                        SUPPORTED_MODELS,
+                        size=(13, 1),
+                        key="-model-",
+                        default_value=SUPPORTED_MODELS[0],
+                        button_background_color=self.sg.theme_background_color(),
+                        button_arrow_color=self.sg.theme_background_color(),
+                    ),
+                    self.sg.Input(500, key="generation-size", size=(4, 1)),
+                ],
+            )
 
         layout = [
             [self.sg.Text("Key")],
