@@ -36,7 +36,7 @@ class T5Train:
         self.tokenizer = T5Tokenizer.from_pretrained('t5-small')
         self.device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
         print("Device to train on:", self.device)
-        self.MODEL_DIRECTORY = T5ModelConfig.MODEL_DIRECTORY
+        self.MODEL_DIRECTORY = T5ModelConfig.NEW_MODEL_TARGET_DIRECTORY
         print("Model directory to save on:", self.MODEL_DIRECTORY)
 
     def train(self, epochs=1):
