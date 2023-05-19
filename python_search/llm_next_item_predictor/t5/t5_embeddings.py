@@ -1,5 +1,6 @@
 from typing import List
 
+import os
 import pandas as pd
 from tqdm import tqdm
 
@@ -11,7 +12,8 @@ class T5Embeddings:
     Build entry embeddings and save them
     """
 
-    pickled_location = "~/.python_search/t5_embeddings.pkl"
+    HOME = os.environ['HOME']
+    pickled_location = HOME + "/.python_search/t5_embeddings.pkl"
 
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
@@ -32,7 +34,29 @@ class T5Embeddings:
         sentence_embeddings = torch.mean(outputs, dim=1)
 
         return sentence_embeddings
+    def save_all_keys(self):
+        """
+        Create an
+        """
+        print("Saving all keys as pandas dataframe")
+        entries = self._configuration.commands
+        keys = list(entries.keys())
+        unique_keys = list(set(keys))
 
+        unique_bodies = []
+        for key in unique_keys:
+            if key in entries:
+                unique_bodies.append(key)
+
+        embeddings = [self.compute_embeddings([body]) for body in tqdm(unique_bodies)]
+
+        df = pd.DataFrame()
+        df["key"] = unique_keys
+        df['body'] = unique_bodies
+        df["embedding"] = embeddings
+
+        print("Pickled embeddings to: " + self.pickled_location)
+        df.to_pickle(self.pickled_location)
 
     def save_missing_keys(self):
         """
@@ -56,29 +80,6 @@ class T5Embeddings:
         df_result = pd.concat([df, df_missing])
         df_result.to_pickle(self.pickled_location)
 
-    def save_all_keys(self):
-        """
-        Create an embedding dict
-        """
-        print("Saving all keys as pandas dataframe")
-        entries = self._configuration.commands
-        keys = list(entries.keys())
-        unique_keys = list(set(keys))
-
-        unique_bodies = []
-        for key in unique_keys:
-            if key in entries:
-                unique_bodies.append(key)
-
-        embeddings = [self.compute_embeddings([body]) for body in tqdm(unique_bodies)]
-
-        df = pd.DataFrame()
-        df["key"] = unique_keys
-        df['body'] = unique_bodies
-        df["embedding"] = embeddings
-
-        print("Pickled embeddings to: " + self.pickled_location)
-        df.to_pickle(self.pickled_location)
 
     def rank_entries_by_query_similarity(self, query) -> List[str]:
         import torch
@@ -96,6 +97,8 @@ class T5Embeddings:
 
 
     def _read_dataframe(self):
+        if not os.path.exists(self.pickled_location):
+            raise Exception("No t5 pickled embeddings found at: " + self.pickled_location)
         return pd.read_pickle(self.pickled_location)
 
     def _get_missing_keys(self) -> List[str]:
@@ -106,7 +109,6 @@ class T5Embeddings:
         data_frame_keys = df['key'].tolist()
         missing_values = [x for x in keys if x not in data_frame_keys]
         return missing_values
-
 
 def main():
     import fire

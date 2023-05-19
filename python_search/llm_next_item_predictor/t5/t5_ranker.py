@@ -11,6 +11,9 @@ from python_search.search.rank_utils import prepend_order_in_entries
 
 
 class NextItemReranker:
+    """
+    Rerank entries based on the predicted next item
+    """
     def __init__(self):
 
         self.model, self.tokenizer = T5Model().load_trained_model()
