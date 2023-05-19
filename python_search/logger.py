@@ -75,6 +75,16 @@ def interpreter_logger():
 
     return logger
 
+def next_item_predictor_logger():
+    logger = logging.getLogger("next_item_predictor_logger")
+    logger.propagate = False
+
+    fh = logging.FileHandler(f"/tmp/log_next_item_predictor")
+    fh.setLevel(logging.DEBUG)
+    logger.addHandler(fh)
+    logger.setLevel(logging.DEBUG)
+    return logger
+
 
 def setup_data_writter_logger(event_name):
     logger = logging.getLogger(f"data-writer_{event_name}")

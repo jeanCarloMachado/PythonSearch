@@ -7,7 +7,7 @@ from python_search.llm_next_item_predictor.t5.config import T5Model
 from python_search.llm_next_item_predictor.t5.t5_embeddings import T5Embeddings
 from python_search.search.entries_loader import EntriesLoader
 from python_search.search.rank_utils import prepend_order_in_entries
-from python_search.logger import setup_generic_stdout_logger
+from python_search.logger import next_item_predictor_logger
 
 
 class NextItemReranker:
@@ -19,7 +19,7 @@ class NextItemReranker:
         self.model, self.tokenizer = T5Model().load_trained_model()
         self.MAX_NEW_TOKENS = 30
         self.embeddings = T5Embeddings()
-        self.logger = setup_generic_stdout_logger(NextItemReranker.__name__)
+        self.logger = next_item_predictor_logger()
 
     def rank_entries(
         self,
@@ -83,7 +83,8 @@ class NextItemReranker:
 
             # Decode the prediction
             predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        self.logger.debug("NextItem: " + predicted_text + " From input:" +inputs)
+        self.logger.debug(inputs)
+        self.logger.debug("NextItem: " + predicted_text)
         return predicted_text
 
 
