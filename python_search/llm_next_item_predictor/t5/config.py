@@ -3,10 +3,10 @@ import os
 HOME = os.environ['HOME']
 class T5ModelConfig:
     VERSION = 'v2'
-    NEW_MODEL_TARGET_DIRECTORY = 'p5_llm_models/' + VERSION
-    BASE_MODEL_PATH = HOME + '/.python_search/p5_llm_models'
+    NEW_MODEL_TARGET_DIRECTORY = 't5_llm_models/' + VERSION
+    BASE_MODEL_PATH = HOME + '/.python_search/t5_llm_models'
     FULL_MODEL_PATH = BASE_MODEL_PATH + NEW_MODEL_TARGET_DIRECTORY
-    PRODUCTIONALIZED_MODEL = BASE_MODEL_PATH + '/v2_epoch_16'
+    PRODUCTIONALIZED_MODEL = BASE_MODEL_PATH + '/production_model'
 
 
 class T5Model:
