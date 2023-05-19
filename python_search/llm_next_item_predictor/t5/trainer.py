@@ -37,6 +37,7 @@ class T5Train:
         self.device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
         print("Device to train on:", self.device)
         self.MODEL_DIRECTORY = T5ModelConfig.MODEL_DIRECTORY
+        print("Model directory to save on:", self.MODEL_DIRECTORY)
 
     def train(self, epochs=1):
         # Initialize the tokenizer and model
@@ -81,7 +82,8 @@ class T5Train:
                 # update parameters
                 optimizer.step()
 
-            print(f"Epoch {epoch + 1} Loss: {loss.item()}")
+            print(f"Epoch finished {epoch + 1} Loss: {loss.item()}")
+            model.save_pretrained(self.MODEL_DIRECTORY + "_epoch_" + str(epoch + 1))
 
         model.save_pretrained(self.MODEL_DIRECTORY)
 

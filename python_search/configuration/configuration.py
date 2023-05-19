@@ -107,6 +107,12 @@ class PythonSearchConfiguration(EntriesGroup):
 
             return NextItemBaseModelV2()
 
+    def is_on_change_rank_enabled(self):
+        """
+        Enables the behaviour of ranking fzf on any type and given chat-gpt completions around it
+        """
+        return False
+
     def get_text_editor(self):
         return self._default_text_editor
 

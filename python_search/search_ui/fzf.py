@@ -19,6 +19,12 @@ class Fzf:
         os.system(cmd)
 
     def get_cmd(self):
+
+
+        on_change = " "
+        if self.configuration.is_on_change_rank_enabled():
+            on_change =  '  --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_ranked_entries_cmd()} )" '
+
         cmd = f"""bash -c 'export SHELL=bash ; {self._get_ranked_entries_cmd()} | \
         {self.get_fzf_cmd()} \
         --scheme=default \
@@ -54,7 +60,7 @@ class Fzf:
         --bind "ctrl-r:reload-sync:(ps_search --inline_print=True)" \
         --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
         --bind "ctrl-v:reload-sync:(ps_search --inline_print=True --ignore_recent=True --query {{q}})" \
-        --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_ranked_entries_cmd()} )" \
+        {on_change} \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
