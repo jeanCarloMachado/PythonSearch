@@ -49,6 +49,9 @@ def setup_run_key_logger():
 
 
 def setup_generic_stdout_logger(logger_name = None):
+    """
+    Stdout logger without sending debug to stdout
+    """
     name = logger_name if logger_name else "generic_stdout"
     logger = logging.getLogger(name)
 

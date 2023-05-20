@@ -69,7 +69,7 @@ class LLMDataset:
 
         path = home + "/.python_search/datasets/dataset_v1_train.plk"
         df = pd.read_pickle(path)
-        print("Loading dataset with size", len(df.index))
+        print(f"Loading dataset from path {path} with {len(df.index)} rows")
 
         return df
 

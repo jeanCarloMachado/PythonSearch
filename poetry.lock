@@ -6138,9 +6138,9 @@ docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker
 testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [extras]
-model = ["jupyterlab", "kafka-python", "matplotlib", "mlflow", "msgpack-numpy", "numpy", "pandas", "pyspark", "redis", "scikit-learn", "scipy", "tensorflow", "uvicorn", "xgboost"]
+model = ["jupyterlab", "kafka-python", "matplotlib", "mlflow", "msgpack-numpy", "numpy", "pandas", "pyspark", "redis", "scikit-learn", "scipy", "sentence-transformers", "tensorflow", "uvicorn", "xgboost"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<=3.11"
-content-hash = "d8ab787ef0d88519c624243489675eee9573b3a3b01ffcf6d82356d04aa823c7"
+content-hash = "4ee66f22fe2ad0cc9d06658b44f9e67a111dcdd9b3c9da57d80c8a487525aa70"

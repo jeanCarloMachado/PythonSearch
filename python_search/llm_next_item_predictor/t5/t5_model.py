@@ -1,3 +1,5 @@
+from typing import Optional
+
 from python_search.llm_next_item_predictor.t5.config import T5ModelConfig
 from python_search.llm_next_item_predictor.llm_model import LLMModel
 import torch
@@ -5,34 +7,38 @@ import torch
 
 class T5Model(LLMModel):
     model = None
-    def __init__(self, model=None):
+    def __init__(self, *, logger=None):
+        from python_search.logger import setup_generic_stdout_logger
         from transformers import T5Tokenizer
 
         self.tokenizer = T5Tokenizer.from_pretrained("t5-small")
         self.config = T5ModelConfig()
-        self.model = model
+        if not logger:
+            logger = setup_generic_stdout_logger()
+        self.logger = logger
 
 
     @staticmethod
-    def load_trained_model():
+    def load_trained_model(model_path: Optional[str] = None):
         llm_model = T5Model()
 
         from transformers import T5ForConditionalGeneration, logging
         logging.set_verbosity_error()
         # Load the model
-        from python_search.logger import setup_generic_stdout_logger
 
-        logger = setup_generic_stdout_logger()
 
-        logger.debug("Loading model from:" + llm_model.config.FULL_MODEL_PATH)
+        if not model_path:
+            model_path = llm_model.config.PRODUCTIONALIZED_MODEL
+
+        llm_model.logger.debug("Loading model from:" + model_path)
         model = T5ForConditionalGeneration.from_pretrained(
-            llm_model.config.PRODUCTIONALIZED_MODEL
+            model_path
         )
 
         # Ensure the model is in evaluation mode
         model.eval()
         llm_model.model = model
-        return  llm_model
+        return llm_model
 
     def predict(self, prompt, max_tokens=30) -> str:
         with torch.no_grad():

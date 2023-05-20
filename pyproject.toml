@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.17.1"
+version = "0.18.0"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -106,6 +106,7 @@ model = [
     "redis",
     "pandas",
     "numpy",
+    "pytorch",
     "scipy",
     "xgboost",
     "matplotlib",
