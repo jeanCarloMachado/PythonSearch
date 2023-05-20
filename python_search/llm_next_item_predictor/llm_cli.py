@@ -1,7 +1,7 @@
 from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
 from python_search.llm_next_item_predictor.t5.t5_embeddings import T5Embeddings
 from python_search.llm_next_item_predictor.t5.t5_ranker import NextItemReranker
-from python_search.llm_next_item_predictor.t5.trainer import T5Train
+from python_search.llm_next_item_predictor.t5.t5_trainer import T5Train
 from python_search.llm_next_item_predictor.evaluation import Evaluate
 
 
