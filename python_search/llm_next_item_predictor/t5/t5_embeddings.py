@@ -5,7 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.llm_next_item_predictor.t5.config import T5Model
+from python_search.llm_next_item_predictor.t5.t5_model import T5Model
 
 
 class T5Embeddings:
@@ -18,7 +18,8 @@ class T5Embeddings:
 
     def __init__(self):
         self._configuration = ConfigurationLoader().load_config()
-        self.model, self.tokenizer = T5Model().load_trained_model()
+        llm_model = T5Model.load_trained_model()
+        self.model, self.tokenizer = llm_model.model, llm_model.tokenizer
 
     def compute_embeddings(self, sentences: List[str]):
         import torch

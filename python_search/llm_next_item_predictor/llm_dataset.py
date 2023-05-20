@@ -59,12 +59,15 @@ class LLMDataset:
         print(self._check_size())
 
     def load(self):
+        """
+        Loads the dataset from disk
+        """
         import os
 
         home = os.path.expanduser("~")
         import pandas as pd
 
-        path = home + "/.python_search/dataset.pkl"
+        path = home + "/.python_search/datasets/dataset_v1_train.plk"
         df = pd.read_pickle(path)
         print("Loading dataset with size", len(df.index))
 

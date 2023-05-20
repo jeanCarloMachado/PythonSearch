@@ -2,7 +2,7 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 from torch.utils.data import Dataset, DataLoader
 import torch
 
-from python_search.llm_next_item_predictor.next_item_llm_dataset import LLMDataset
+from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
 from python_search.llm_next_item_predictor.t5.config import T5ModelConfig
 
 

@@ -2,8 +2,8 @@ from typing import List, Optional
 
 import torch
 
-from python_search.llm_next_item_predictor.next_item_llm_dataset import LLMDataset
-from python_search.llm_next_item_predictor.t5.config import T5Model
+from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
+from python_search.llm_next_item_predictor.t5.t5_model import T5Model
 from python_search.llm_next_item_predictor.t5.t5_embeddings import T5Embeddings
 from python_search.search.entries_loader import EntriesLoader
 from python_search.search.rank_utils import prepend_order_in_entries
@@ -16,9 +16,9 @@ class NextItemReranker:
     """
 
     def __init__(self):
-        self.model, self.tokenizer = T5Model().load_trained_model()
         self.MAX_NEW_TOKENS = 30
         self.embeddings = T5Embeddings()
+        self.model = T5Model.load_trained_model()
         self.logger = next_item_predictor_logger()
 
     def rank_entries(
@@ -64,28 +64,12 @@ class NextItemReranker:
     ):
         if recent_history_str:
             recent_history = list(recent_history_str)
+        prompt = self.get_prompt(recent_history)
 
-        # Load the model
-        # Now you can use the model for prediction
-        with torch.no_grad():
-            inputs = self.get_prompt(recent_history)
-
-            inputs_tokenized = self.tokenizer.encode_plus(inputs, return_tensors="pt")
-            input_ids = inputs_tokenized["input_ids"].to("cpu")
-            attention_mask = inputs_tokenized["attention_mask"].to("cpu")
-
-            # Generate prediction
-            outputs = self.model.generate(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                max_new_tokens=self.MAX_NEW_TOKENS,
-            )
-
-            # Decode the prediction
-            predicted_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        self.logger.debug(inputs)
-        self.logger.debug("NextItem: " + predicted_text)
-        return predicted_text
+        self.logger.debug(prompt)
+        result = self.model.predict(prompt)
+        self.logger.debug("NextItem: " + result)
+        return result
 
 
 def main():
