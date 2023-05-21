@@ -48,8 +48,12 @@ def setup_run_key_logger():
     return logger
 
 
-def setup_generic_stdout_logger():
-    logger = logging.getLogger("stdoutlogger")
+def setup_generic_stdout_logger(logger_name = None):
+    """
+    Stdout logger without sending debug to stdout
+    """
+    name = logger_name if logger_name else "generic_stdout"
+    logger = logging.getLogger(name)
 
     ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.INFO)
@@ -72,6 +76,16 @@ def interpreter_logger():
     fh.setLevel(logging.INFO)
     logger.addHandler(fh)
 
+    return logger
+
+def next_item_predictor_logger():
+    logger = logging.getLogger("next_item_predictor_logger")
+    logger.propagate = False
+
+    fh = logging.FileHandler(f"/tmp/log_next_item_predictor")
+    fh.setLevel(logging.DEBUG)
+    logger.addHandler(fh)
+    logger.setLevel(logging.DEBUG)
     return logger
 
 

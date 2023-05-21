@@ -2,6 +2,9 @@
 
 ![UIS](uis.png)
 
+Join us in the [discord server](https://discord.gg/vFExqz7yGt) to discuss the project and get help.
+
+
 With python search you collect and retrieve and refactor information efficiently.
 
 - collect commands, scripts, prompts, snippets, urls, files, efficiently as python dictionaries
@@ -16,7 +19,6 @@ Check out [these slides](https://docs.google.com/presentation/d/10J0n0wdXYKCtB-t
 
 For an example of how an entries could look like see [here](https://github.com/jeanCarloMachado/PythonSearch/blob/e424868662bda4d9daa314e6e77d4cc79a511a95/python_search/init/entries_main.py).
 
-Imagine having a program that can anticipate your next needs in the computer based on your current context and, on your request, suggest an automated way to do what you need to do next. PythonSearch tries to accomplishing "just" that by analyzing your user history and having a efficient way of cataloging  the things one can do in the computer.
 
 ## Minimal installation
 
@@ -57,10 +59,6 @@ Done! You can run the search UI by running.
 ```shell
 python_search search
 ```
-
-## LLM/ChatGPT integration is now available!
-
-You can customize templated prompts, use them for different content and save them in python search see our [integration docs for details](https://github.com/jeanCarloMachado/PythonSearch/blob/main/docs/intergrate_chatgpt.md)
 
 ## Got an issue?
 

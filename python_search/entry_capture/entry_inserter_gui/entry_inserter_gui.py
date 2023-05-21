@@ -97,6 +97,9 @@ class NewEntryGUI:
         colors = ("#FFFFFF", self.sg.theme_input_background_color())
         print(colors)
 
+        llm_component = []
+
+
         layout = [
             [self.sg.Text("Key")],
             [key_name_input],
@@ -110,29 +113,7 @@ class NewEntryGUI:
                 ),
                 self.sg.Push(),
             ],
-            [
-                self.sg.Button(
-                    "Generate Body",
-                    key="-generate-body-",
-                    button_color=colors,
-                    border_width=0,
-                ),
-                self.sg.Button(
-                    "Generate Key",
-                    key="-generate-title-",
-                    button_color=colors,
-                    border_width=0,
-                ),
-                self.sg.Combo(
-                    SUPPORTED_MODELS,
-                    size=(13, 1),
-                    key="-model-",
-                    default_value=SUPPORTED_MODELS[0],
-                    button_background_color=self.sg.theme_background_color(),
-                    button_arrow_color=self.sg.theme_background_color(),
-                ),
-                self.sg.Input(500, key="generation-size", size=(4, 1)),
-            ],
+            llm_component,
             [self.sg.Text("Tags")],
             [self._checkbox_list(i) for i in tags_chucks],
             [
@@ -227,9 +208,8 @@ class NewEntryGUI:
         print("Selected model: ", model)
 
         def _describe_body(title: str, window):
-            body_size = window["generation-size"].get()
             description = self._entry_generator.generate_body(
-                prompt=title, max_tokens=body_size, model=model
+                prompt=title, max_tokens=200, model=model
             )
 
             window[self._ENTRY_BODY_INPUT].update(description)
@@ -252,7 +232,7 @@ class NewEntryGUI:
 
     def _update_title_with_url_title_thread(self, content: str, window):
         send_notification(f"Starting to get url title")
-        self._chat_gpt = LLMPrompt(window["generation-size"].get())
+        self._chat_gpt = LLMPrompt(150)
         import PySimpleGUI as sg
 
         window: sg.Window = window
@@ -271,7 +251,7 @@ class NewEntryGUI:
 
     def _generate_title_thread(self, content: str, window):
         send_notification(f"Starting to generate title")
-        self._chat_gpt = LLMPrompt(window["generation-size"].get())
+        self._chat_gpt = LLMPrompt(150)
         import PySimpleGUI as sg
 
         window: sg.Window = window
@@ -288,6 +268,7 @@ class NewEntryGUI:
         threading.Thread(
             target=_describe_body, args=(content, window), daemon=True
         ).start()
+
 
     def genearte_key_from_content(self, content: str) -> str:
         return self._chat_gpt.answer(

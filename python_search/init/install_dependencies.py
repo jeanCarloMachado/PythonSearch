@@ -84,7 +84,6 @@ Installation successful!
             print("Fzf already installed!, will reinstall..")
             os.system(f"rm -rf {HOME}/.fzf/")
 
-
         print("Looks like kitty is not installed in your platform. ")
         os.system(
             f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; {HOME}/.fzf/install """

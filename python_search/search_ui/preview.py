@@ -15,6 +15,8 @@ class Preview:
     Preview the entry in the search ui
     """
 
+    entries = None
+
     def __init__(self):
         self.configuration = ConfigurationLoader()
         self.logger = setup_preview_logger()
@@ -26,16 +28,14 @@ class Preview:
         Prints the entry in the preview window
 
         """
+        entry_data = None
         key = self._extract_key(entry_text)
         if not self._key_exists(key):
-            key_lenght = len(entry_text.split(":")[0])
-            content = entry_text[key_lenght + 1 :]
-            import json
+            print("Key not found")
+            print(entry_text)
+            return
 
-            entry_data = json.loads(content.strip())
-            print("\nNew key")
-        else:
-            entry_data = self._load_key_data(key)
+        entry_data = self._load_key_data(key)
         data = self._build_values_to_print(entry_text, key, entry_data)
         self._print_values(data)
 

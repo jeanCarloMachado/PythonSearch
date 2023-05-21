@@ -52,6 +52,9 @@ class EntryExecutedDataset:
         )
 
     def load_new(self):
+        """ "
+        Return entries executed data as pyspark
+        """
         from pyspark.sql.session import SparkSession
 
         spark = SparkSession.builder.getOrCreate()

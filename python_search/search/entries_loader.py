@@ -8,6 +8,9 @@ class EntriesLoader:
 
     @staticmethod
     def load_all_keys() -> List[str]:
+        """
+        Return just the key names strings
+        """
         keys = list(ConfigurationLoader().load_entries().keys())
 
         print("Loaded in total " + str(len(keys)) + " keys")

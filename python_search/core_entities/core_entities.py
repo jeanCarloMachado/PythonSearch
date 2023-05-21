@@ -6,9 +6,7 @@ They should be side-effect free
 """
 from __future__ import annotations
 
-from typing import List, Optional
-
-from numpy import ndarray
+from typing import Optional
 
 
 class Key:
