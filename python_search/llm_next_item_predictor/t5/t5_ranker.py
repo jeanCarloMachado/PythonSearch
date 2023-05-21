@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import torch
 
-from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
+from python_search.llm_next_item_predictor.llm_dataset import PromptBuilder
 from python_search.llm_next_item_predictor.t5.t5_model import T5Model
 from python_search.llm_next_item_predictor.t5.t5_embeddings import T5Embeddings
 from python_search.search.entries_loader import EntriesLoader
@@ -52,12 +52,12 @@ class NextItemReranker:
         return result
 
     def get_prompt(self, recent_history):
-        LIMIT = 3
         if not recent_history:
             recent_history = ["gmail", "gmail", "gmail"]
-        recent_history = recent_history[:LIMIT]
+        return PromptBuilder().build_prompt_inference(history=recent_history)
 
-        return LLMDataset.PROMPT_START + ",".join(recent_history)
+
+
 
     def get_next_predicted_actions(
         self, *, recent_history=None, recent_history_str=None

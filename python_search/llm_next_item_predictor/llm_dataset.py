@@ -69,23 +69,8 @@ class LLMDataset:
 
         from pyspark.sql.functions import udf, struct
 
-        def build_prompt(row):
-            prompt = f"{self.PROMPT_START} "
 
-            if row['previous_1'] is not None:
-                prompt += f" 1. {row['previous_1']}"
-            if row['previous_2'] is not None:
-                prompt += f" 2. {row['previous_2']}"
-            if row['previous_3'] is not None:
-                prompt += f" 3. {row['previous_3']}"
-            if row['previous_4'] is not None:
-                prompt += f" 4. {row['previous_4']}"
-            if row['previous_5'] is not None:
-                prompt += f" 5. {row['previous_5']}"
-
-            return prompt
-
-        udf_f = udf(build_prompt)
+        udf_f = udf(PromptBuilder().build_prompt_for_spark)
         df = df.withColumn('prompt', udf_f(struct([df[x] for x in df.columns])))
         df = df.withColumn("label", F.col("key"))
 
@@ -112,6 +97,9 @@ class LLMDataset:
 
 
     def load(self):
+        return self.load_training()
+
+    def load_training(self):
         """
         Loads the dataset from disk
         """
@@ -152,6 +140,35 @@ class LLMDataset:
 
     def inspect_generated(self):
         return self.load().to_string()
+
+class PromptBuilder:
+    PROMPT_START = "predict the next key given this history: "
+
+    def build_prompt_inference(self, history):
+        prompt = f"{self.PROMPT_START} "
+
+        for i in range(1, len(history)):
+            prompt += f" {i}. {history[i]}"
+            if i > 5:
+                break
+
+        return prompt
+
+    def build_prompt_for_spark(self, row):
+        prompt = f"{self.PROMPT_START} "
+
+        if row['previous_1'] is not None:
+            prompt += f" 1. {row['previous_1']}"
+        if row['previous_2'] is not None:
+            prompt += f" 2. {row['previous_2']}"
+        if row['previous_3'] is not None:
+            prompt += f" 3. {row['previous_3']}"
+        if row['previous_4'] is not None:
+            prompt += f" 4. {row['previous_4']}"
+        if row['previous_5'] is not None:
+            prompt += f" 5. {row['previous_5']}"
+
+        return prompt
 
 
 def main():
