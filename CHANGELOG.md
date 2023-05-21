@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.18
+- Next item predictor functional
+
 ## 0.17.1
 - fixing Browser Issues on Linux
 - making Browser/URL-Code more resiliant 
