@@ -7,17 +7,24 @@ class LLMDataset:
     PROMPT_START = "predict the next key given this history: "
     DEFAULT_DATASET_SIZE = 3000
     DATASET_VERSION = 'v2'
+    VALIDATION_SIZE = 500
+
 
     def __init__(self, *, limit=DEFAULT_DATASET_SIZE):
         home = os.path.expanduser("~")
-        self.DESTINATION = home + f"/.python_search/datasets/{self.DATASET_VERSION}_train.pkl"
-        print("Dataset destination:", self.DESTINATION)
+        self.BASE_FOLDER = home + f"/.python_search/datasets"
+        self.DESTINATION_TRAIN = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_train.pkl"
+        self.DESTINATION_VALIDATION = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
+        print("Train Dataset will be saved to: ", self.DESTINATION_TRAIN)
+        print("Validation Dataset will be saved to: ", self.DESTINATION_VALIDATION)
         self.limit = limit
 
     def generate(self, save_to_disk=True, skip_clean=False):
         """
         Generates the dataset and writes it to disk
         """
+        import pyspark.sql.functions as F
+        from pyspark.sql import Window
 
         if not skip_clean:
             RunPerformedCleaning().clean()
@@ -26,13 +33,18 @@ class LLMDataset:
 
 
         df = self.transform()
-        print(f"Limiting to {df.limit} entries...")
-        df = df.select("prompt", "label")
-        df.show()
-        df = df.toPandas()
+
+        df = df.orderBy(F.rand())
+
+        df = df.withColumn("order", F.lit("1"))
+        w = Window().partitionBy(F.lit("order")).orderBy(F.lit("order"))
+        df = df.withColumn("row_num", F.row_number().over(w))
+
+        validation_set = df.filter(df.row_num <= self.VALIDATION_SIZE).select("prompt", "label")
+        train_set = df.filter(df.row_num > self.VALIDATION_SIZE).select("prompt", "label")
 
         if save_to_disk:
-            self.write(df)
+            self.write(validation_set, train_set)
         else:
             print("Not saving to disk")
 
@@ -79,18 +91,25 @@ class LLMDataset:
 
         df = df.limit(self.limit)
         print('After transform: ')
+        df = df.select("prompt", "label")
         df.show(n=3, truncate=False)
 
-        breakpoint()
         return df
 
-    def write(self, df):
-        print("Saving to:", self.DESTINATION)
-        print("Dataset rows:", len(df.index))
-        df.to_pickle(self.DESTINATION)
-        # print(self.inspect_generated())
-        print("Dataset diesk size:")
-        print(self._check_size())
+    def write(self, validation, train):
+        print("Saving validation dataset")
+        validation_df = validation.toPandas()
+        print("Saving to:", self.DESTINATION_VALIDATION)
+        print("Dataset rows:", len(validation_df.index))
+        validation_df.to_pickle(self.DESTINATION_VALIDATION)
+
+
+        print("Saving train dataset")
+        train_df = train.toPandas()
+        print("Saving to:", self.DESTINATION_TRAIN)
+        print("Dataset rows:", len(train_df.index))
+        train_df.to_pickle(self.DESTINATION_TRAIN)
+
 
     def load(self):
         """
@@ -101,18 +120,25 @@ class LLMDataset:
         home = os.path.expanduser("~")
         import pandas as pd
 
-        path = home + "/.python_search/datasets/dataset_v1_train.plk"
+        path = home + f"/.python_search/datasets/{self.DATASET_VERSION}_train.pkl"
         df = pd.read_pickle(path)
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
-
         return df
 
-    def _check_size(self):
-        import subprocess
 
-        return subprocess.check_output(
-            "du -sh " + self.DESTINATION, shell=True, text=True
-        )
+    def load_validation(self):
+        """
+        Loads the dataset from disk
+        """
+        import os
+
+        home = os.path.expanduser("~")
+        import pandas as pd
+
+        path = home + f"/.python_search/datasets/{self.DATASET_VERSION}_validation.pkl"
+        df = pd.read_pickle(path)
+        print(f"Loading dataset from path {path} with {len(df.index)} rows")
+        return df
 
     def base_data(self):
         from python_search.events.run_performed.dataset import EntryExecutedDataset

@@ -9,7 +9,7 @@ class Evaluate():
         """
         Performs the evaluation of a model given its path and the latest dataset
         """
-        data = LLMDataset().load()
+        data = LLMDataset().load_validation()
         model = T5Model.load_trained_model(model_path)
         return self.perform(model, data)
 
