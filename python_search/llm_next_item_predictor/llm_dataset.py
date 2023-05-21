@@ -1,31 +1,46 @@
 import os
 
+from python_search.events.run_performed.clean import RunPerformedCleaning
+
 
 class LLMDataset:
     PROMPT_START = "predict the next key given this history: "
     DEFAULT_DATASET_SIZE = 3000
+    DATASET_VERSION = 'v2'
 
     def __init__(self, *, limit=DEFAULT_DATASET_SIZE):
         home = os.path.expanduser("~")
-        self.DESTINATION = home + "/.python_search/dataset.pkl"
+        self.DESTINATION = home + f"/.python_search/datasets/{self.DATASET_VERSION}_train.pkl"
+        print("Dataset destination:", self.DESTINATION)
         self.limit = limit
 
-    def generate(self):
+    def generate(self, save_to_disk=True, skip_clean=False):
         """
         Generates the dataset and writes it to disk
         """
+
+        if not skip_clean:
+            RunPerformedCleaning().clean()
+        else:
+            print("Skipping cleaning")
+
+
         df = self.transform()
         print(f"Limiting to {df.limit} entries...")
         df = df.select("prompt", "label")
         df.show()
         df = df.toPandas()
 
-        self.write(df)
+        if save_to_disk:
+            self.write(df)
+        else:
+            print("Not saving to disk")
 
     def transform(self):
         import pyspark.sql.functions as F
 
-        df = self.base_data().filter("shortcut is NULL or shortcut != True")
+        df = self.base_data().filter('shortcut != "True"')
+        print(f"Dataset rows after filtering: {df.count()}")
 
         from pyspark.sql.functions import lag, concat_ws, lit, concat
         from pyspark.sql.window import Window
@@ -37,17 +52,36 @@ class LLMDataset:
         df = df.withColumn("previous_1", lag(df["key"]).over(windowSpec))
         df = df.withColumn("previous_2", lag(df["key"], 2).over(windowSpec))
         df = df.withColumn("previous_3", lag(df["key"], 3).over(windowSpec))
+        df = df.withColumn("previous_4", lag(df["key"], 4).over(windowSpec))
+        df = df.withColumn("previous_5", lag(df["key"], 5).over(windowSpec))
 
+        from pyspark.sql.functions import udf, struct
+
+        def build_prompt(row):
+            prompt = f"{self.PROMPT_START} "
+
+            if row['previous_1'] is not None:
+                prompt += f" 1. {row['previous_1']}"
+            if row['previous_2'] is not None:
+                prompt += f" 2. {row['previous_2']}"
+            if row['previous_3'] is not None:
+                prompt += f" 3. {row['previous_3']}"
+            if row['previous_4'] is not None:
+                prompt += f" 4. {row['previous_4']}"
+            if row['previous_5'] is not None:
+                prompt += f" 5. {row['previous_5']}"
+
+            return prompt
+
+        udf_f = udf(build_prompt)
+        df = df.withColumn('prompt', udf_f(struct([df[x] for x in df.columns])))
         df = df.withColumn("label", F.col("key"))
-        df = df.withColumn(
-            "prompt",
-            concat(
-                lit(self.PROMPT_START),
-                concat_ws(",", "previous_1", "previous_2", "previous_3"),
-            ),
-        )
 
         df = df.limit(self.limit)
+        print('After transform: ')
+        df.show(n=3, truncate=False)
+
+        breakpoint()
         return df
 
     def write(self, df):
@@ -84,7 +118,11 @@ class LLMDataset:
         from python_search.events.run_performed.dataset import EntryExecutedDataset
 
         data = EntryExecutedDataset().load_new()
-        return data.sort("timestamp", ascending=False)
+        result = data.sort("timestamp", ascending=False)
+        print(f"Sample of dataset rows: {result.count()}")
+        result.show(n=3)
+
+        return result
 
     def inspect_generated(self):
         return self.load().to_string()
