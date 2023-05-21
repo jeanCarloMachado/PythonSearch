@@ -147,8 +147,9 @@ class PromptBuilder:
     def build_prompt_inference(self, history):
         prompt = f"{self.PROMPT_START} "
 
-        for i in range(1, len(history)):
-            prompt += f" {i}. {history[i]}"
+        for i in range(0, len(history)):
+
+            prompt += f" {i+1}. {history[i]}"
             if i > 5:
                 break
 
