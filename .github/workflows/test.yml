@@ -28,9 +28,9 @@ jobs:
         run: |
           sudo apt update -y
           sudo apt install gnome-keyring curl
-          pip install --upgrade --user setuptools==58.3.0
           curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.4.2 python3 -
           poetry --version
+          poetry config --local virtualenvs.create true
           poetry install
 
 
