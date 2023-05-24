@@ -1,8 +1,6 @@
 from typing import List, Optional
 
-import torch
-
-from python_search.llm_next_item_predictor.llm_dataset import PromptBuilder
+from python_search.llm_next_item_predictor.t5.next_item_prompt import PromptBuilder
 from python_search.llm_next_item_predictor.t5.t5_model import T5Model
 from python_search.llm_next_item_predictor.t5.t5_embeddings import T5Embeddings
 from python_search.search.entries_loader import EntriesLoader

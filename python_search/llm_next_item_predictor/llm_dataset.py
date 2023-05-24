@@ -1,12 +1,13 @@
 import os
 
 from python_search.events.run_performed.clean import RunPerformedCleaning
+from python_search.llm_next_item_predictor.t5.next_item_prompt import PromptBuilder
 
 
 class LLMDataset:
     PROMPT_START = "predict the next key given this history: "
     DEFAULT_DATASET_SIZE = 3000
-    DATASET_VERSION = 'v2'
+    DATASET_VERSION = 'v3'
     VALIDATION_SIZE = 500
 
 
@@ -15,6 +16,7 @@ class LLMDataset:
         self.BASE_FOLDER = home + f"/.python_search/datasets"
         self.DESTINATION_TRAIN = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_train.pkl"
         self.DESTINATION_VALIDATION = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
+        print('Version: ', self.DATASET_VERSION)
         print("Train Dataset will be saved to: ", self.DESTINATION_TRAIN)
         print("Validation Dataset will be saved to: ", self.DESTINATION_VALIDATION)
         self.limit = limit
@@ -27,6 +29,7 @@ class LLMDataset:
         from pyspark.sql import Window
 
         if not skip_clean:
+            print("Performing clean")
             RunPerformedCleaning().clean()
         else:
             print("Skipping cleaning")
@@ -51,10 +54,10 @@ class LLMDataset:
     def transform(self):
         import pyspark.sql.functions as F
 
-        df = self.base_data().filter('shortcut != "True"')
+        df = self._base_data().filter('shortcut != "True"')
         print(f"Dataset rows after filtering: {df.count()}")
 
-        from pyspark.sql.functions import lag, concat_ws, lit, concat
+        from pyspark.sql.functions import lag, lead
         from pyspark.sql.window import Window
 
         windowSpec = Window.orderBy(
@@ -67,19 +70,35 @@ class LLMDataset:
         df = df.withColumn("previous_4", lag(df["key"], 4).over(windowSpec))
         df = df.withColumn("previous_5", lag(df["key"], 5).over(windowSpec))
 
+        df = df.withColumn("next_2", lag(df["key"], 1).over(windowSpec))
+        df = df.withColumn("next_3", lag(df["key"], 2).over(windowSpec))
+
+
         from pyspark.sql.functions import udf, struct
 
+        udf_prompt = udf(PromptBuilder().build_prompt_for_spark)
+        udf_label = udf(self._label)
 
-        udf_f = udf(PromptBuilder().build_prompt_for_spark)
-        df = df.withColumn('prompt', udf_f(struct([df[x] for x in df.columns])))
-        df = df.withColumn("label", F.col("key"))
+        df = df.withColumn('prompt', udf_prompt(struct([df[x] for x in df.columns])))
+        df = df.withColumn("label", udf_label(struct([df[x] for x in df.columns])))
 
         df = df.limit(self.limit)
         print('After transform: ')
         df = df.select("prompt", "label")
-        df.show(n=3, truncate=False)
+        df.show(n=10, truncate=False)
 
         return df
+
+    def _label(selfs, row):
+        result = f"1. {row['key']}"
+
+        if row['next_2'] is not None:
+            result += f" 2. {row['next_2']}"
+        if row['next_3'] is not None:
+            result += f" 3. {row['next_3']}"
+
+
+        return result
 
     def write(self, validation, train):
         print("Saving validation dataset")
@@ -128,7 +147,7 @@ class LLMDataset:
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
         return df
 
-    def base_data(self):
+    def _base_data(self):
         from python_search.events.run_performed.dataset import EntryExecutedDataset
 
         data = EntryExecutedDataset().load_new()
@@ -140,36 +159,6 @@ class LLMDataset:
 
     def inspect_generated(self):
         return self.load().to_string()
-
-class PromptBuilder:
-    PROMPT_START = "predict the next key given this history: "
-
-    def build_prompt_inference(self, history):
-        prompt = f"{self.PROMPT_START} "
-
-        for i in range(0, len(history)):
-
-            prompt += f" {i+1}. {history[i]}"
-            if i > 5:
-                break
-
-        return prompt
-
-    def build_prompt_for_spark(self, row):
-        prompt = f"{self.PROMPT_START} "
-
-        if row['previous_1'] is not None:
-            prompt += f" 1. {row['previous_1']}"
-        if row['previous_2'] is not None:
-            prompt += f" 2. {row['previous_2']}"
-        if row['previous_3'] is not None:
-            prompt += f" 3. {row['previous_3']}"
-        if row['previous_4'] is not None:
-            prompt += f" 4. {row['previous_4']}"
-        if row['previous_5'] is not None:
-            prompt += f" 5. {row['previous_5']}"
-
-        return prompt
 
 
 def main():

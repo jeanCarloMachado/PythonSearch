@@ -26,7 +26,7 @@ class T5Train:
         print(f"Training for {epochs} epochs")
 
         if not base_model_path:
-            base_model_path = "t5-small"
+            base_model_path = T5ModelConfig.BASE_MODEL_TO_TRAIN_OVER
         print("Using Base model path:", base_model_path)
 
 
