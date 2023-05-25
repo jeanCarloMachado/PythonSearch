@@ -28,7 +28,7 @@ class T5Model(LLMModel):
 
 
         if not model_path:
-            model_path = llm_model.config.PRODUCTIONALIZED_MODEL
+            model_path = llm_model.config.NEXT_ITEM_PRODUCTIONALIZED_MODEL
 
         llm_model.logger.debug("Loading model from:" + model_path)
         model = T5ForConditionalGeneration.from_pretrained(
