@@ -6,6 +6,9 @@ from python_search.ps_llm.tasks.base_task import BaseDataTask
 
 
 class NextItemPredictor(BaseDataTask):
+
+    def prompt(self, history):
+        return PromptBuilder().build_prompt_inference(history)
     def build_dataset(self, skip_clean=False):
         """
         Generates the dataset and writes it to disk
@@ -78,3 +81,6 @@ class NextItemPredictor(BaseDataTask):
 
         return result
 
+if __name__ == "__main__":
+    import fire
+    fire.Fire(NextItemPredictor)
