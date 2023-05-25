@@ -1,6 +1,6 @@
 
-from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
-from python_search.llm_next_item_predictor.t5.t5_model import T5Model
+from python_search.ps_llm.llm_dataset import LLMDataset
+from python_search.ps_llm.t5.t5_model import T5Model
 from tqdm import tqdm
 
 class Evaluate():

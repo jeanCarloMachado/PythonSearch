@@ -5,7 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.llm_next_item_predictor.t5.t5_model import T5Model
+from python_search.ps_llm.t5.t5_model import T5Model
 
 
 class T5Embeddings:

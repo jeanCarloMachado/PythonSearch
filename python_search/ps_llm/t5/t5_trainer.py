@@ -3,8 +3,8 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 from tqdm import tqdm
 
-from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
-from python_search.llm_next_item_predictor.t5.config import T5ModelConfig
+from python_search.ps_llm.llm_dataset import LLMDataset
+from python_search.ps_llm.t5.config import T5ModelConfig
 
 
 # Define the dataset class

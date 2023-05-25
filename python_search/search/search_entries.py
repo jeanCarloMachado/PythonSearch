@@ -44,7 +44,7 @@ class Search:
 
         if self._configuration.is_rerank_via_model_enabled():
             try:
-                from python_search.llm_next_item_predictor.t5.t5_ranker import (
+                from python_search.ps_llm.t5.t5_ranker import (
                     NextItemReranker,
                 )
 

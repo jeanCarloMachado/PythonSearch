@@ -1,7 +1,7 @@
 from typing import Optional
 
-from python_search.llm_next_item_predictor.t5.config import T5ModelConfig
-from python_search.llm_next_item_predictor.llm_model import LLMModel
+from python_search.ps_llm.t5.config import T5ModelConfig
+from python_search.ps_llm.llm_model import LLMModel
 import torch
 
 
