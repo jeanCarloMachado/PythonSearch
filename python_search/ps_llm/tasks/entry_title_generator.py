@@ -36,7 +36,7 @@ class EntryTitleGenerator(BaseDataTask):
 
 if __name__ == "__main__":
     import fire
-    fire.Fire()
+    fire.Fire(EntryTitleGenerator)
 
 
 
