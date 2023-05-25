@@ -6,7 +6,7 @@ from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v4'
+    DATASET_VERSION = 'v5'
     PROMPT_START = "predict the next key given this history: "
     VALIDATION_SIZE = 500
 
@@ -46,6 +46,7 @@ class LLMDataset:
 
         import pyspark.sql.functions as F
         from pyspark.sql import Window
+
         df = df.orderBy(F.rand())
         df = df.withColumn("order", F.lit("1"))
         w = Window().partitionBy(F.lit("order")).orderBy(F.lit("order"))

@@ -68,6 +68,7 @@ class NextItemPredictor(BaseDataTask):
             result += f" 2. {row['next_2']}"
         if row['next_3'] is not None:
             result += f" 3. {row['next_3']}"
+        return result
 
 
 
