@@ -73,7 +73,9 @@ class T5Train:
                 optimizer.step()
 
             print(f"Epoch finished {epoch + 1} Loss: {loss.item()}")
-            model.save_pretrained(self.TARGET_MODEL_DIRECTORY + "_epoch_" + str(epoch + 1))
+            epoch_folder = self.TARGET_MODEL_DIRECTORY + "_epoch_" + str(epoch + 1)
+            print("Saving model to:", epoch_folder)
+            model.save_pretrained(epoch_folder)
 
         model.save_pretrained(self.TARGET_MODEL_DIRECTORY)
 
