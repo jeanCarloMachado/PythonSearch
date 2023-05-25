@@ -8,10 +8,9 @@ from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
 class LLMDataset:
     DATASET_VERSION = 'v4'
     PROMPT_START = "predict the next key given this history: "
-    DEFAULT_DATASET_SIZE = 3000
     VALIDATION_SIZE = 500
 
-    def __init__(self, *, limit=DEFAULT_DATASET_SIZE):
+    def __init__(self):
         home = os.path.expanduser("~")
         self.BASE_FOLDER = home + f"/.python_search/datasets"
         self.DESTINATION_TRAIN = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_train.pkl"
@@ -19,22 +18,27 @@ class LLMDataset:
         print('Version: ', self.DATASET_VERSION)
         print("Train Dataset will be saved to: ", self.DESTINATION_TRAIN)
         print("Validation Dataset will be saved to: ", self.DESTINATION_VALIDATION)
-        self.limit = limit
 
     def generate(self, save_to_disk=True):
         """
         Generates the dataset and writes it to disk
         """
 
+        if not save_to_disk:
+            print("Save to disk disabled")
+
         entry_title = EntryTitleGenerator()
         df1 = entry_title.build_dataset()
+        print("Count for task " + EntryTitleGenerator.__name__ + ": " + str(df1.count()))
 
 
         next_item = NextItemPredictor()
         df2 = next_item.build_dataset()
+        print("Count for task " + NextItemPredictor.__name__ + ": " + str(df2.count()))
 
 
-        df = df1.union(df2)
+        df = df2.union(df1)
+
 
         print("Size before filtering for null", df.count())
         df = df.filter("prompt is not NULL and label is not NULL")
@@ -107,9 +111,16 @@ class LLMDataset:
 
     def sample(self, dataset: Literal['train', 'validation'] = 'validation'):
         if dataset == 'validation':
-            return self.load_validation().to_string()
+            df = self.load_validation()
+        else:
+            df = self.load_training()
 
-        return not self.load_training().to_string()
+        import pandas as pd
+
+        def show_rows(df, nrows=20000):
+            with pd.option_context("display.max_rows", nrows): print(df)
+
+        return show_rows(df)
 
     def inspect(self):
         return len(self.load_training().index)

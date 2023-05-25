@@ -30,7 +30,7 @@ class EntryTitleGenerator(BaseDataTask):
 
         df = get_spark().createDataFrame(result, ["prompt", "label"])
 
-        return df
+        return df.limit(4000)
 
 
 

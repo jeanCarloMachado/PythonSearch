@@ -21,8 +21,7 @@ class NextItemPredictor(BaseDataTask):
             RunPerformedCleaning().clean()
 
 
-        df = self._transform()
-        return df
+        return self._transform()
 
     def _transform(self):
 
@@ -54,7 +53,6 @@ class NextItemPredictor(BaseDataTask):
         df = df.withColumn('prompt', udf_prompt(struct([df[x] for x in df.columns])))
         df = df.withColumn("label", udf_label(struct([df[x] for x in df.columns])))
 
-        print('After transform: ')
         df = df.select("prompt", "label")
         df.show(n=10, truncate=False)
 
