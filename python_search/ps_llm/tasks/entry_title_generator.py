@@ -14,9 +14,10 @@ def get_spark():
 
 
 class EntryTitleGenerator(BaseDataTask):
+    PROMPT_START = 'Predict the title given for an entry with the following content'
 
     def prompt(self, content):
-        return f"Predict the title given for an entry with the following content: {content}"
+        return f"{self.PROMPT_START}: {content}"
 
     def build_dataset(self):
 

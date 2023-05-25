@@ -3,7 +3,16 @@ from python_search.ps_llm.llm_dataset import LLMDataset
 from python_search.ps_llm.t5.t5_model import T5Model
 from tqdm import tqdm
 
+
+
 class Evaluate():
+
+    def from_pretrained_next_item(self, model_path=None):
+        from python_search.ps_llm.t5.next_item_prompt import PromptBuilder
+        return self.from_pretrained(model_path=model_path, starts_with=PromptBuilder.PROMPT_START)
+    def from_pretrained_title_generator(self, model_path=None):
+        from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
+        return self.from_pretrained(model_path=model_path, starts_with=EntryTitleGenerator.PROMPT_START)
 
     def from_pretrained(self, model_path=None, starts_with=None):
         """
