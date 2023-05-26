@@ -177,8 +177,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = "*", markers = "python_version < \"3.9\""}
-importlib-resources = {version = "*", markers = "python_version < \"3.9\""}
 Mako = "*"
 SQLAlchemy = ">=1.3.0"
 typing-extensions = ">=4"
@@ -191,7 +189,7 @@ name = "altair"
 version = "4.2.2"
 description = "Altair: A declarative statistical visualization library for Python."
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "altair-4.2.2-py3-none-any.whl", hash = "sha256:8b45ebeaf8557f2d760c5c77b79f02ae12aee7c46c27c06014febab6f849bc87"},
@@ -414,9 +412,6 @@ files = [
     {file = "Babel-2.12.1.tar.gz", hash = "sha256:cc2d99999cd01d44420ae725a21c9e3711b3aadc7976d6147f622d8581963455"},
 ]
 
-[package.dependencies]
-pytz = {version = ">=2015.7", markers = "python_version < \"3.9\""}
-
 [[package]]
 name = "backcall"
 version = "0.2.0"
@@ -472,7 +467,7 @@ name = "blinker"
 version = "1.6.2"
 description = "Fast, simple object-to-object and broadcast signaling"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "blinker-1.6.2-py3-none-any.whl", hash = "sha256:c3d739772abb7bc2860abf5f2ec284223d9ad5c76da018234f6f50d6f31ab1f0"},
@@ -484,7 +479,7 @@ name = "cachetools"
 version = "5.3.0"
 description = "Extensible memoizing collections and decorators"
 category = "main"
-optional = true
+optional = false
 python-versions = "~=3.7"
 files = [
     {file = "cachetools-5.3.0-py3-none-any.whl", hash = "sha256:429e1a1e845c008ea6c85aa35d4b98b65d6a9763eeef3e37e92728a12d1de9d4"},
@@ -888,7 +883,7 @@ name = "decorator"
 version = "5.1.1"
 description = "Decorators for Humans"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.5"
 files = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
@@ -1097,7 +1092,6 @@ files = [
 
 [package.dependencies]
 click = ">=8.0"
-importlib-metadata = {version = ">=3.6.0", markers = "python_version < \"3.10\""}
 itsdangerous = ">=2.0"
 Jinja2 = ">=3.0"
 Werkzeug = ">=2.2.2"
@@ -1245,7 +1239,7 @@ name = "fsspec"
 version = "2023.5.0"
 description = "File-system specification"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "fsspec-2023.5.0-py3-none-any.whl", hash = "sha256:51a4ad01a5bb66fcc58036e288c0d53d3975a0df2a5dc59a93b59bade0391f2a"},
@@ -1604,7 +1598,7 @@ name = "huggingface-hub"
 version = "0.14.1"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7.0"
 files = [
     {file = "huggingface_hub-0.14.1-py3-none-any.whl", hash = "sha256:9fc619170d800ff3793ad37c9757c255c8783051e1b5b00501205eb43ccc4f27"},
@@ -1679,25 +1673,6 @@ perf = ["ipython"]
 testing = ["flake8 (<5)", "flufl.flake8", "importlib-resources (>=1.3)", "packaging", "pyfakefs", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)", "pytest-perf (>=0.9.2)"]
 
 [[package]]
-name = "importlib-resources"
-version = "5.12.0"
-description = "Read resources from Python packages"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "importlib_resources-5.12.0-py3-none-any.whl", hash = "sha256:7b1deeebbf351c7578e09bf2f63fa2ce8b5ffec296e0d349139d43cca061a81a"},
-    {file = "importlib_resources-5.12.0.tar.gz", hash = "sha256:4be82589bf5c1d7999aedf2a45159d10cb3ca4f19b2271f8792bc8e6da7b22f6"},
-]
-
-[package.dependencies]
-zipp = {version = ">=3.1.0", markers = "python_version < \"3.10\""}
-
-[package.extras]
-docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
-testing = ["flake8 (<5)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
-
-[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -1768,7 +1743,6 @@ prompt-toolkit = ">=3.0.30,<3.0.37 || >3.0.37,<3.1.0"
 pygments = ">=2.4.0"
 stack-data = "*"
 traitlets = ">=5"
-typing-extensions = {version = "*", markers = "python_version < \"3.10\""}
 
 [package.extras]
 all = ["black", "curio", "docrepr", "ipykernel", "ipyparallel", "ipywidgets", "matplotlib", "matplotlib (!=3.2.0)", "nbconvert", "nbformat", "notebook", "numpy (>=1.21)", "pandas", "pytest (<7)", "pytest (<7.1)", "pytest-asyncio", "qtconsole", "setuptools (>=18.5)", "sphinx (>=1.3)", "sphinx-rtd-theme", "stack-data", "testpath", "trio", "typing-extensions"]
@@ -1957,7 +1931,7 @@ name = "jsonschema"
 version = "4.17.3"
 description = "An implementation of JSON Schema validation for Python"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "jsonschema-4.17.3-py3-none-any.whl", hash = "sha256:a870ad254da1a8ca84b6a2905cac29d265f805acc57af304784962a2aa6508f6"},
@@ -1968,10 +1942,8 @@ files = [
 attrs = ">=17.4.0"
 fqdn = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
 idna = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
-importlib-resources = {version = ">=1.4.0", markers = "python_version < \"3.9\""}
 isoduration = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
 jsonpointer = {version = ">1.13", optional = true, markers = "extra == \"format-nongpl\""}
-pkgutil-resolve-name = {version = ">=1.3.10", markers = "python_version < \"3.9\""}
 pyrsistent = ">=0.14.0,<0.17.0 || >0.17.0,<0.17.1 || >0.17.1,<0.17.2 || >0.17.2"
 rfc3339-validator = {version = "*", optional = true, markers = "extra == \"format-nongpl\""}
 rfc3986-validator = {version = ">0.1.0", optional = true, markers = "extra == \"format-nongpl\""}
@@ -2016,7 +1988,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = ">=4.8.3", markers = "python_version < \"3.10\""}
 jupyter-core = ">=4.12,<5.0.0 || >=5.1.0"
 python-dateutil = ">=2.8.2"
 pyzmq = ">=23.0"
@@ -2207,7 +2178,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
 y-py = ">=0.5.3,<0.6.0"
 
 [package.extras]
@@ -2269,7 +2239,6 @@ files = [
 
 [package.dependencies]
 babel = ">=2.10"
-importlib-metadata = {version = ">=4.8.3", markers = "python_version < \"3.10\""}
 jinja2 = ">=3.0.3"
 json5 = ">=0.9.0"
 jsonschema = ">=4.17.3"
@@ -2448,9 +2417,6 @@ files = [
     {file = "Markdown-3.4.3.tar.gz", hash = "sha256:8bf101198e004dc93e84a12a7395e31aac6a9c9942848ae1d99b9d72cf9b3520"},
 ]
 
-[package.dependencies]
-importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
-
 [package.extras]
 testing = ["coverage", "pyyaml"]
 
@@ -2459,7 +2425,7 @@ name = "markdown-it-py"
 version = "2.2.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "markdown-it-py-2.2.0.tar.gz", hash = "sha256:7c9a5e412688bc771c67432cbfebcdd686c93ce6484913dccf06cb5a0bea35a1"},
@@ -2594,7 +2560,6 @@ files = [
 contourpy = ">=1.0.1"
 cycler = ">=0.10"
 fonttools = ">=4.22.0"
-importlib-resources = {version = ">=3.2.0", markers = "python_version < \"3.10\""}
 kiwisolver = ">=1.0.1"
 numpy = ">=1.20"
 packaging = ">=20.0"
@@ -2634,7 +2599,7 @@ name = "mdurl"
 version = "0.1.2"
 description = "Markdown URL utilities"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
@@ -2682,7 +2647,6 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">1.20", markers = "python_version <= \"3.9\""},
     {version = ">=1.21.2", markers = "python_version > \"3.9\""},
     {version = ">=1.23.3", markers = "python_version > \"3.10\""},
 ]
@@ -2738,7 +2702,7 @@ name = "mpmath"
 version = "1.3.0"
 description = "Python library for arbitrary-precision floating-point arithmetic"
 category = "main"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "mpmath-1.3.0-py3-none-any.whl", hash = "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c"},
@@ -2999,7 +2963,6 @@ files = [
 beautifulsoup4 = "*"
 bleach = "*"
 defusedxml = "*"
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
 jinja2 = ">=3.0"
 jupyter-core = ">=4.7"
 jupyterlab-pygments = "*"
@@ -3061,7 +3024,7 @@ name = "networkx"
 version = "3.1"
 description = "Python package for creating and manipulating graphs and networks"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "networkx-3.1-py3-none-any.whl", hash = "sha256:4f33f68cb2afcf86f28a45f43efc27a9386b535d567d2127f8f61d51dec58d36"},
@@ -3320,7 +3283,6 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.20.3", markers = "python_version < \"3.10\""},
     {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
     {version = ">=1.23.2", markers = "python_version >= \"3.11\""},
 ]
@@ -3406,7 +3368,7 @@ name = "pillow"
 version = "9.5.0"
 description = "Python Imaging Library (Fork)"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "Pillow-9.5.0-cp310-cp310-macosx_10_10_x86_64.whl", hash = "sha256:ace6ca218308447b9077c14ea4ef381ba0b67ee78d64046b3f19cf4e1139ad16"},
@@ -3482,18 +3444,6 @@ docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
-name = "pkgutil-resolve-name"
-version = "1.3.10"
-description = "Resolve a name to an object."
-category = "main"
-optional = true
-python-versions = ">=3.6"
-files = [
-    {file = "pkgutil_resolve_name-1.3.10-py3-none-any.whl", hash = "sha256:ca27cc078d25c5ad71a9de0a7a330146c4e014c2462d9af19c6b828280649c5e"},
-    {file = "pkgutil_resolve_name-1.3.10.tar.gz", hash = "sha256:357d6c9e6a755653cfd78893817c0853af365dd51ec97f3d358a819373bbd174"},
-]
-
-[[package]]
 name = "platformdirs"
 version = "3.2.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -3508,6 +3458,22 @@ files = [
 [package.extras]
 docs = ["furo (>=2022.12.7)", "proselint (>=0.13)", "sphinx (>=6.1.3)", "sphinx-autodoc-typehints (>=1.22,!=1.23.4)"]
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.2.2)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
+
+[[package]]
+name = "plotly"
+version = "5.14.1"
+description = "An open-source, interactive data visualization library for Python"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "plotly-5.14.1-py2.py3-none-any.whl", hash = "sha256:a63f3ad9e4cc2e02902a738e5e3e7f3d1307f2732ac71a6c28f1238ed3052826"},
+    {file = "plotly-5.14.1.tar.gz", hash = "sha256:bcac86d7fcba3eff7260c1eddc36ca34dae2aded10a0709808446565e0e53b93"},
+]
+
+[package.dependencies]
+packaging = "*"
+tenacity = ">=6.2.0"
 
 [[package]]
 name = "pluggy"
@@ -3681,7 +3647,7 @@ name = "py4j"
 version = "0.10.9.7"
 description = "Enables Python programs to dynamically access arbitrary Java objects"
 category = "main"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "py4j-0.10.9.7-py2.py3-none-any.whl", hash = "sha256:85defdfd2b2376eb3abf5ca6474b51ab7e0de341c75a02f46dc9b5976f5a5c1b"},
@@ -3693,7 +3659,7 @@ name = "pyarrow"
 version = "11.0.0"
 description = "Python library for Apache Arrow"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "pyarrow-11.0.0-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:40bb42afa1053c35c749befbe72f6429b7b5f45710e85059cdd534553ebcf4f2"},
@@ -3835,7 +3801,7 @@ name = "pydeck"
 version = "0.8.0"
 description = "Widget for deck.gl maps"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "pydeck-0.8.0-py2.py3-none-any.whl", hash = "sha256:a8fa7757c6f24bba033af39db3147cb020eef44012ba7e60d954de187f9ed4d5"},
@@ -3867,7 +3833,7 @@ name = "pygments"
 version = "2.15.0"
 description = "Pygments is a syntax highlighting package written in Python."
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "Pygments-2.15.0-py3-none-any.whl", hash = "sha256:77a3299119af881904cd5ecd1ac6a66214b6e9bed1f2db16993b54adede64094"},
@@ -3900,7 +3866,7 @@ name = "pympler"
 version = "1.0.1"
 description = "A development tool to measure, monitor and analyze the memory behavior of Python objects."
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "Pympler-1.0.1-py3-none-any.whl", hash = "sha256:d260dda9ae781e1eab6ea15bacb84015849833ba5555f141d2d9b7b7473b307d"},
@@ -3945,7 +3911,7 @@ name = "pyrsistent"
 version = "0.19.3"
 description = "Persistent/Functional/Immutable data structures"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "pyrsistent-0.19.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:20460ac0ea439a3e79caa1dbd560344b64ed75e85d8703943e0b66c2a6150e4a"},
@@ -3994,7 +3960,7 @@ name = "pyspark"
 version = "3.4.0"
 description = "Apache Spark Python API"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "pyspark-3.4.0.tar.gz", hash = "sha256:167a23e11854adb37f8602de6fcc3a4f96fd5f1e323b9bb83325f38408c5aafd"},
@@ -4077,7 +4043,7 @@ name = "pytz-deprecation-shim"
 version = "0.1.0.post0"
 description = "Shims to make deprecation of pytz easier"
 category = "main"
-optional = true
+optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
 files = [
     {file = "pytz_deprecation_shim-0.1.0.post0-py2.py3-none-any.whl", hash = "sha256:8314c9692a636c8eb3bda879b9f119e350e93223ae83e70e80c31675a0fdc1a6"},
@@ -4351,7 +4317,7 @@ name = "regex"
 version = "2023.5.5"
 description = "Alternative regular expression module, to replace re."
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "regex-2023.5.5-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:48c9ec56579d4ba1c88f42302194b8ae2350265cb60c64b7b9a88dcb7fbde309"},
@@ -4532,7 +4498,7 @@ name = "rich"
 version = "13.3.4"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7.0"
 files = [
     {file = "rich-13.3.4-py3-none-any.whl", hash = "sha256:22b74cae0278fd5086ff44144d3813be1cedc9115bdfabbfefd86400cb88b20a"},
@@ -4688,7 +4654,7 @@ name = "sentencepiece"
 version = "0.1.99"
 description = "SentencePiece python wrapper"
 category = "main"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "sentencepiece-0.1.99-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:0eb528e70571b7c02723e5804322469b82fe7ea418c96051d0286c0fa028db73"},
@@ -4924,21 +4890,20 @@ files = [
 
 [package.dependencies]
 anyio = ">=3.4.0,<5"
-typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""}
 
 [package.extras]
 full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests"]
 
 [[package]]
 name = "streamlit"
-version = "1.21.0"
-description = "The fastest way to build data apps in Python"
+version = "1.22.0"
+description = "A faster way to build and share data apps"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7, !=3.9.7"
 files = [
-    {file = "streamlit-1.21.0-py2.py3-none-any.whl", hash = "sha256:05862598952a9126e16652caa5bc88eeeea7b2773af252e2daccf1c84ceaaef4"},
-    {file = "streamlit-1.21.0.tar.gz", hash = "sha256:c72d9639508679c5e411d1f886d213777759501d01975285c049dc30db463c1a"},
+    {file = "streamlit-1.22.0-py2.py3-none-any.whl", hash = "sha256:520dd9b9e6efb559b5a9a22feadb48b1e6f0340ec83da3514810059fdecd4167"},
+    {file = "streamlit-1.22.0.tar.gz", hash = "sha256:5bef9bf8deef32814d9565c9df48331e6357eb0b90dabc3ec4f53c44fb34fc73"},
 ]
 
 [package.dependencies]
@@ -4950,7 +4915,7 @@ gitpython = "!=3.1.19"
 importlib-metadata = ">=1.4"
 numpy = "*"
 packaging = ">=14.1"
-pandas = ">=0.25,<2"
+pandas = ">=0.25,<3"
 pillow = ">=6.2.0"
 protobuf = ">=3.12,<4"
 pyarrow = ">=4.0"
@@ -4959,6 +4924,7 @@ pympler = ">=0.9"
 python-dateutil = "*"
 requests = ">=2.4"
 rich = ">=10.11.0"
+tenacity = ">=8.0.0,<9"
 toml = "*"
 tornado = ">=6.0.3"
 typing-extensions = ">=3.10.0.0"
@@ -4974,7 +4940,7 @@ name = "sympy"
 version = "1.12"
 description = "Computer algebra system (CAS) in Python"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "sympy-1.12-py3-none-any.whl", hash = "sha256:c3588cd4295d0c0f603d0f2ae780587e64e2efeedb3521e46b9bb1d08d184fa5"},
@@ -4998,6 +4964,21 @@ files = [
 
 [package.extras]
 widechars = ["wcwidth"]
+
+[[package]]
+name = "tenacity"
+version = "8.2.2"
+description = "Retry code until it succeeds"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "tenacity-8.2.2-py3-none-any.whl", hash = "sha256:2f277afb21b851637e8f52e6a613ff08734c347dc19ade928e519d7d2d8569b0"},
+    {file = "tenacity-8.2.2.tar.gz", hash = "sha256:43af037822bd0029025877f3b2d97cc4d7bb0c2991000a3d59d71517c5c969e0"},
+]
+
+[package.extras]
+doc = ["reno", "sphinx", "tornado (>=4.5)"]
 
 [[package]]
 name = "tensorboard"
@@ -5253,7 +5234,7 @@ name = "tokenizers"
 version = "0.13.3"
 description = "Fast and Customizable Tokenizers"
 category = "main"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "tokenizers-0.13.3-cp310-cp310-macosx_10_11_x86_64.whl", hash = "sha256:f3835c5be51de8c0a092058a4d4380cb9244fb34681fd0a295fbf0a52a5fdf33"},
@@ -5308,7 +5289,7 @@ name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 files = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
@@ -5332,7 +5313,7 @@ name = "toolz"
 version = "0.12.0"
 description = "List processing tools and functional utilities"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.5"
 files = [
     {file = "toolz-0.12.0-py3-none-any.whl", hash = "sha256:2059bd4148deb1884bb0eb770a3cde70e7f954cfbbdc2285f1f2de01fd21eb6f"},
@@ -5344,7 +5325,7 @@ name = "torch"
 version = "2.0.1"
 description = "Tensors and Dynamic neural networks in Python with strong GPU acceleration"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.8.0"
 files = [
     {file = "torch-2.0.1-cp310-cp310-manylinux1_x86_64.whl", hash = "sha256:8ced00b3ba471856b993822508f77c98f48a458623596a4c43136158781e306a"},
@@ -5423,7 +5404,7 @@ name = "tornado"
 version = "6.2"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
 category = "main"
-optional = true
+optional = false
 python-versions = ">= 3.7"
 files = [
     {file = "tornado-6.2-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:20f638fd8cc85f3cbae3c732326e96addff0a15e22d80f049e00121651e82e72"},
@@ -5481,7 +5462,7 @@ name = "transformers"
 version = "4.29.2"
 description = "State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7.0"
 files = [
     {file = "transformers-4.29.2-py3-none-any.whl", hash = "sha256:0ef158b99bad6f4e6652a0d8655fbbe58b4cb788ce7040f320b5d29c7c810a75"},
@@ -5562,7 +5543,7 @@ name = "tzdata"
 version = "2023.3"
 description = "Provider of IANA time zone data"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=2"
 files = [
     {file = "tzdata-2023.3-py2.py3-none-any.whl", hash = "sha256:7e65763eef3120314099b6939b5546db7adce1e7d6f2e179e3df563c70511eda"},
@@ -5574,7 +5555,7 @@ name = "tzlocal"
 version = "4.3"
 description = "tzinfo object for the local timezone"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "tzlocal-4.3-py3-none-any.whl", hash = "sha256:b44c4388f3d34f25862cfbb387578a4d70fec417649da694a132f628a23367e2"},
@@ -5644,7 +5625,7 @@ name = "validators"
 version = "0.20.0"
 description = "Python Data Validation for Humans™."
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.4"
 files = [
     {file = "validators-0.20.0.tar.gz", hash = "sha256:24148ce4e64100a2d5e267233e23e7afeb55316b47d30faae7eb6e7292bc226a"},
@@ -5698,7 +5679,7 @@ name = "watchdog"
 version = "3.0.0"
 description = "Filesystem events monitoring"
 category = "main"
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "watchdog-3.0.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:336adfc6f5cc4e037d52db31194f7581ff744b67382eb6021c868322e32eef41"},
@@ -6142,5 +6123,5 @@ model = ["jupyterlab", "kafka-python", "matplotlib", "mlflow", "msgpack-numpy", 
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.8,<=3.11"
-content-hash = "4ee66f22fe2ad0cc9d06658b44f9e67a111dcdd9b3c9da57d80c8a487525aa70"
+python-versions = ">=3.10,<=3.11"
+content-hash = "f7f3854b9b1e38d8f03dbd5697ed6ac604b07be3687e84ebbd2970bc5f619a6a"
