@@ -19,7 +19,12 @@ class T5Model(LLMModel):
 
 
     @staticmethod
-    def load_trained_model(model_path: Optional[str] = None):
+    def load_productionalized_model() -> LLMModel:
+        from python_search.ps_llm.t5.config import T5ModelConfig
+        return T5Model.load_trained_model(T5ModelConfig.SUMMARIZATION_PRODUCTIONALIZED_MODEL)
+
+    @staticmethod
+    def load_trained_model(model_path: Optional[str] = None) -> LLMModel:
         llm_model = T5Model()
 
         from transformers import T5ForConditionalGeneration, logging

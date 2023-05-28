@@ -4,17 +4,30 @@ from python_search.ps_llm.t5.t5_model import T5Model
 from tqdm import tqdm
 
 
+class Evaluate:
+    """
+    Evaluate performance of the model on a validation set giving a global score and one per task
+    """
 
-class Evaluate():
+    def all_for_model(self, model_path=None) -> None:
+        print("Classify type score: ", self.from_pretrained_classify_type(model_path))
+        print("Generate title score: ", self.from_pretrained_title_generator(model_path))
+        print("Next item predictor score: ", self.from_pretrained_next_item(model_path))
+        print("Global score: ", self.from_pretrained(model_path))
 
-    def from_pretrained_next_item(self, model_path=None):
+
+    def from_pretrained_classify_type(self, model_path=None) -> float:
+        from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
+        return self.from_pretrained(model_path=model_path, starts_with=ClassifyEntryType.PROMPT_START)
+
+    def from_pretrained_next_item(self, model_path=None)->float:
         from python_search.ps_llm.t5.next_item_prompt import PromptBuilder
         return self.from_pretrained(model_path=model_path, starts_with=PromptBuilder.PROMPT_START)
-    def from_pretrained_title_generator(self, model_path=None):
+    def from_pretrained_title_generator(self, model_path=None) -> float:
         from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
         return self.from_pretrained(model_path=model_path, starts_with=EntryTitleGenerator.PROMPT_START)
 
-    def from_pretrained(self, model_path=None, starts_with=None):
+    def from_pretrained(self, model_path=None, starts_with=None) -> float:
         """
         Performs the evaluation of a model given its path and the latest dataset
         """
