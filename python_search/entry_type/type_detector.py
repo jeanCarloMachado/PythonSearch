@@ -1,11 +1,18 @@
+from typing import Literal
+
 from python_search.chat_gpt import LLMPrompt
 
 
 class TypeDetector:
-    def detect(self, key, content):
+    def detect(self, key, content) -> Literal["Url", "Snippet", "File", "Cmd"]:
         if content.startswith("https://") or content.startswith("http://"):
             return "Url"
 
+        result = self._chat_gpt(key, content)
+
+        return result
+
+    def _chat_gpt(self, key, content):
         prompt = f""" return one of the following types (Snippet, File, Cmd)
         example of mac short: "mac_shortcuts": ["⇧⌘K", "⌥W"],=Snippet
         update poetry inside python search: ps_container run --cmd 'poetry update'=Cmd

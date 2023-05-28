@@ -39,7 +39,7 @@ class DataExporter:
         result = {}
         for key, value in entries.items():
             entry = Entry(key, value)
-            content = entry.get_only_content(return_str=True)
+            content = entry.get_content_str()
             serializeable_value = content.replace("\n", " ")
 
             if serializeable_value.strip() == "":
@@ -80,7 +80,7 @@ class DataExporter:
         entries = self.filter_out_blacklisted(entries)
         for key, value in entries.items():
             entry = Entry(key, value)
-            content = entry.get_only_content(return_str=True)
+            content = entry.get_content_str()
             data = data + f"{key}={content}\n"
 
         with open("exported_entries.txt", "w") as f:

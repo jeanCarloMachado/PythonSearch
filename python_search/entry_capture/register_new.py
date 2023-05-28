@@ -67,7 +67,7 @@ class RegisterNew:
         key_len = len(key_expression.split(":")[0])
         body = key_expression[key_len + 1 :]
         body = json.loads(body.strip())
-        content = Entry(key, body).get_only_content()
+        content = Entry(key, body).get_content_str()
 
         self.launch_ui(default_key=key, default_content=content)
 

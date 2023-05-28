@@ -6,7 +6,7 @@ They should be side-effect free
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Literal
 
 
 class Key:
@@ -41,7 +41,7 @@ class Entry:
         self.key = key
         self.value = value
 
-    def get_only_content(self, return_str: bool = False):
+    def get_content_str(self)->str:
         if not self.value:
             return ""
         if type(self.value) == str:
@@ -66,12 +66,10 @@ class Entry:
 
             result = dill.source.getsource(value)
 
-        if return_str:
-            return str(result)
+        return str(result)
 
-        return result
 
-    def get_only_type(self):
+    def get_type_str(self) -> Literal['url', 'file', 'snippet', 'cli_cmd', 'callable']:
         if not self.value:
             return "snippet"
 

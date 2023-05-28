@@ -1,14 +1,15 @@
 import os
 from typing import Literal
 
+from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
 from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v5'
+    DATASET_VERSION = 'v6'
     PROMPT_START = "predict the next key given this history: "
-    VALIDATION_SIZE = 500
+    VALIDATION_SIZE = 600
 
     def __init__(self):
         home = os.path.expanduser("~")
@@ -27,18 +28,22 @@ class LLMDataset:
         if not save_to_disk:
             print("Save to disk disabled")
 
+        entry_classifier = ClassifyEntryType()
+        df1 = entry_classifier.build_dataset()
+        print("Count for task " + ClassifyEntryType.__name__ + ": " + str(df1.count()))
+
+
         entry_title = EntryTitleGenerator()
-        df1 = entry_title.build_dataset()
-        print("Count for task " + EntryTitleGenerator.__name__ + ": " + str(df1.count()))
+        df2 = entry_title.build_dataset()
+        print("Count for task " + EntryTitleGenerator.__name__ + ": " + str(df2.count()))
 
 
         next_item = NextItemPredictor()
-        df2 = next_item.build_dataset()
-        print("Count for task " + NextItemPredictor.__name__ + ": " + str(df2.count()))
+        df3 = next_item.build_dataset()
+        print("Count for task " + NextItemPredictor.__name__ + ": " + str(df3.count()))
 
 
-        df = df2.union(df1)
-
+        df = df1.union(df2).union(df3)
 
         print("Size before filtering for null", df.count())
         df = df.filter("prompt is not NULL and label is not NULL")
