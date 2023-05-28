@@ -314,18 +314,6 @@ class NewEntryGUI:
         ).start()
 
 
-    def _generate_description(self, window, content):
-        result = PythonSearchWebAPISDK().generate_description(
-            {"content": content, "temperature": 0.2}
-        )
-
-        if not result:
-            return
-
-        description = result["generated_description"]
-        print(f"New description: {description}")
-        window.write_event_value("-generated-key-ready-", description)
-
     def _checkbox_list(self, tags):
         return ([self.sg.Checkbox(tag, key=tag, default=False) for tag in tags],)
 
