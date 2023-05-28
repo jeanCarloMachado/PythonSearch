@@ -28,7 +28,7 @@ class ClassifyEntryType(BaseDataTask):
         df = get_spark().createDataFrame(result, ["prompt", "label"])
         print("Entry classifier base dataset size: " + str(df.count()))
 
-        return df.limit(4000)
+        return df.limit(5000)
 
 
 
