@@ -10,10 +10,17 @@ class Evaluate:
     """
 
     def all_for_model(self, model_path=None) -> None:
-        print("Classify type score: ", self.from_pretrained_classify_type(model_path))
-        print("Generate title score: ", self.from_pretrained_title_generator(model_path))
-        print("Next item predictor score: ", self.from_pretrained_next_item(model_path))
-        print("Global score: ", self.from_pretrained(model_path))
+        classify_type = self.from_pretrained_classify_type(model_path)
+        title_generator = self.from_pretrained_title_generator(model_path)
+        next_item =  self.from_pretrained_next_item(model_path)
+        global_score =  self.from_pretrained(model_path)
+
+        return {
+            "global_score": global_score,
+            "next_item": next_item,
+            "classify_type": classify_type,
+            "title_generator": title_generator,
+        }
 
 
     def from_pretrained_classify_type(self, model_path=None) -> float:

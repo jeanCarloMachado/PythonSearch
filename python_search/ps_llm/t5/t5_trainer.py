@@ -77,7 +77,6 @@ class T5Train:
             print("Saving model to:", epoch_folder)
             model.save_pretrained(epoch_folder)
 
-        model.save_pretrained(self.TARGET_MODEL_DIRECTORY)
 
 class T5Dataset(Dataset):
     def __init__(self, inputs, targets, tokenizer, max_length):
