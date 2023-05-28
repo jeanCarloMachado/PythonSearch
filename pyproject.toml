@@ -61,6 +61,7 @@ torch = "^2.0.1"
 transformers = "^4.29.2"
 sentencepiece = "^0.1.99"
 pyspark = "^3.4.0"
+sentence-transformers = "^2.2.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

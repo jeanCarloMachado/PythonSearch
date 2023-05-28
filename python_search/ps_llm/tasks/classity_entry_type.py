@@ -31,6 +31,25 @@ class ClassifyEntryType(BaseDataTask):
         return df.limit(5000)
 
 
+    @staticmethod
+    def start_with_model():
+        from python_search.ps_llm.t5.t5_model import T5Model
+        instance = ClassifyEntryType()
+        model = T5Model.load_productionalized_model()
+        instance.model = model
+
+        return instance
+
+    def classify(self, key, value):
+        prompt = self.prompt(key, value)
+        print("Prompt: " + prompt)
+        result = self.model.predict(prompt)
+
+        print("Classify entry type result: ")
+        return result
+
+
+
 
 if __name__ == "__main__":
     import fire
