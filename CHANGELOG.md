@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20
+- Dependencies groups
+- LLM setup
+
 ## 0.18
 - Next item predictor functional
 

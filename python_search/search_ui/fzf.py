@@ -91,8 +91,8 @@ class Fzf:
         --bind "{shortcut}:+clear-screen" """
 
     def _edit_key(self, shortcut) -> str:
-        return f' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" '
-
+        return f''' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" \
+                    --bind "{shortcut}:+reload-sync:(sleep 7 && {self._get_ranked_entries_cmd()})" '''
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
             return "--color=bg+:#ffffff,bg:#ffffff,hl:#719872,fg:#616161,header:#719872,info:#727100,pointer:#E12672,marker:#E17899,fg+:#616161,preview-bg:#ffffff,prompt:#0099BD,hl+:#719899"

@@ -10,7 +10,7 @@ from python_search.search_ui.kitty import get_kitty_cmd
 
 class EntriesEditor:
     """
-    Set of commands to edit the _entries
+    Open an ide to edit the entries
     """
 
     def __init__(self, configuration=None):
@@ -49,7 +49,7 @@ class EntriesEditor:
         file, line, *_ = result_shell.split(":")
         print(f"Editing file and line {file}, {line}")
 
-        self._edit_config(file, line)
+        self._edit_file(file, line)
 
     def edit_default(self):
         import os
@@ -58,7 +58,7 @@ class EntriesEditor:
             f"open -a pycharm '{self.configuration.get_project_root() + '/entries_main.py'}'"
         )
 
-    def _edit_config(self, file_name: str, line: Optional[int] = 30, dry_run=False):
+    def _edit_file(self, file_name: str, line: Optional[int] = 30, dry_run=False):
         """
         edit a configuration file given the name and line
         """
@@ -69,7 +69,7 @@ class EntriesEditor:
         cmd: str = (
             f" {get_kitty_cmd()} {terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
-            f"; {self._get_open_text_editor_command(file_name, line)} "
+            f"; {self._get_open_text_editor_command(file_name, line)} && llm_cli t5_embeddings save_missing_keys "
         )
         print(cmd)
 

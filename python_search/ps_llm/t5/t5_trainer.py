@@ -3,8 +3,8 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 from tqdm import tqdm
 
-from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
-from python_search.llm_next_item_predictor.t5.config import T5ModelConfig
+from python_search.ps_llm.llm_dataset import LLMDataset
+from python_search.ps_llm.t5.config import T5ModelConfig
 
 
 # Define the dataset class
@@ -26,7 +26,7 @@ class T5Train:
         print(f"Training for {epochs} epochs")
 
         if not base_model_path:
-            base_model_path = "t5-small"
+            base_model_path = T5ModelConfig.BASE_MODEL_TO_TRAIN_OVER
         print("Using Base model path:", base_model_path)
 
 
@@ -73,7 +73,9 @@ class T5Train:
                 optimizer.step()
 
             print(f"Epoch finished {epoch + 1} Loss: {loss.item()}")
-            model.save_pretrained(self.TARGET_MODEL_DIRECTORY + "_epoch_" + str(epoch + 1))
+            epoch_folder = self.TARGET_MODEL_DIRECTORY + "_epoch_" + str(epoch + 1)
+            print("Saving model to:", epoch_folder)
+            model.save_pretrained(epoch_folder)
 
         model.save_pretrained(self.TARGET_MODEL_DIRECTORY)
 

@@ -5,7 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.llm_next_item_predictor.t5.t5_model import T5Model
+from python_search.ps_llm.t5.t5_model import T5Model
 
 
 class T5Embeddings:
@@ -63,7 +63,13 @@ class T5Embeddings:
         df.to_pickle(self.pickled_location)
 
     def save_missing_keys(self):
-        """ """
+        """
+        Create all missing entries in the embedding of p5
+
+        """
+        from python_search.apps.notification_ui import send_notification
+        send_notification(f"Saving missing keys as pandas dataframe")
+
         entries = self._configuration.commands
         missing_keys = list(set(self._get_missing_keys()))
         unique_keys = missing_keys

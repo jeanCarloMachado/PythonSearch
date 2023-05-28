@@ -63,13 +63,7 @@ class Preview:
             print("Position: " + data["position"])
 
     def _get_color_for_type(self, type):
-        if type == "Cmd":
-            return Fore.RED
-
-        if type in ["Url", "File"]:
-            return Fore.GREEN
-
-        return Fore.BLUE
+        return Fore.GREEN
 
     def _extract_key(self, entry_text):
         key = entry_text.split(":")[0]
@@ -136,7 +130,13 @@ class Preview:
         return f"{a_color}{a_string}{Fore.RESET}"
 
     def _key_exists(self, key):
-        return key in self.entries
+        if key in self.entries:
+            return True
+
+        for entry in self.entries:
+            if entry.startswith(key):
+                return True
+        return False
 
     def _load_key_data(self, key):
         if not self._key_exists(key):

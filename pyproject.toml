@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "python-search"
-version = "0.18.0"
+version = "0.20.0"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<=3.11"
+python = ">=3.10,<=3.11"
 fire = "^0.4.0"
 pydantic = "^1.9.1"
 PyYAML = "^6.0"
@@ -50,6 +50,18 @@ pytest = "^7.1.2"
 pre-commit = "^2.20.0"
 flake8 = "^5.0.4"
 
+[tool.poetry.group.streamlitapps.dependencies]
+plotly = "^5.14.1"
+streamlit = "^1.22.0"
+matplotlib = "^3.7.1"
+
+
+[tool.poetry.group.ml.dependencies]
+torch = "^2.0.1"
+transformers = "^4.29.2"
+sentencepiece = "^0.1.99"
+pyspark = "^3.4.0"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -92,9 +104,9 @@ ps_search = 'python_search.search.search_entries:main'
 ps_semantic_search = 'python_search.semantic_search.text2embeddings:main'
 ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 start_streamlit_app = 'start_streamlit_app:main'
-llm_rank = 'python_search.llm_next_item_predictor.t5.inference:main'
-llm_cli = 'python_search.llm_next_item_predictor.llm_cli:main'
-llm_dataset = 'python_search.llm_next_item_predictor.next_item_llm_dataset:main'
+llm_rank = 'python_search.ps_llm.t5.inference:main'
+llm_cli = 'python_search.ps_llm.llm_cli:main'
+llm_dataset = 'python_search.ps_llm.next_item_llm_dataset:main'
 
 [tool.poetry.extras]
 model = [

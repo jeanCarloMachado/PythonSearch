@@ -1,21 +1,39 @@
 
-from python_search.llm_next_item_predictor.llm_dataset import LLMDataset
-from python_search.llm_next_item_predictor.t5.t5_model import T5Model
+from python_search.ps_llm.llm_dataset import LLMDataset
+from python_search.ps_llm.t5.t5_model import T5Model
 from tqdm import tqdm
+
+
 
 class Evaluate():
 
-    def from_pretrained(self, model_path=None):
+    def from_pretrained_next_item(self, model_path=None):
+        from python_search.ps_llm.t5.next_item_prompt import PromptBuilder
+        return self.from_pretrained(model_path=model_path, starts_with=PromptBuilder.PROMPT_START)
+    def from_pretrained_title_generator(self, model_path=None):
+        from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
+        return self.from_pretrained(model_path=model_path, starts_with=EntryTitleGenerator.PROMPT_START)
+
+    def from_pretrained(self, model_path=None, starts_with=None):
         """
         Performs the evaluation of a model given its path and the latest dataset
         """
         data = LLMDataset().load_validation()
+        if starts_with:
+            print("Starts with set, so will filter by it")
+            data = data[data["prompt"].str.startswith(starts_with)]
+            print("Lenght after filtering by starts_with: " + str(len(data)))
+        else:
+            print("No starts with set, so will use all data")
+
+
+
         model = T5Model.load_trained_model(model_path)
         return self.perform(model, data)
 
     def perform(self, model, data):
         similarity = Similarity()
-        print("Starting to predict all rows")
+        print("Performing inference in all validation rows")
         data["predicted"] = [model.predict(row["prompt"]) for index, row in tqdm(data.iterrows())]
         print("Compute similarity between predicted and label")
         data["similarity"] = [

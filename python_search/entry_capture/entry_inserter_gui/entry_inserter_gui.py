@@ -8,7 +8,7 @@ from typing import List
 import fire
 
 from python_search.error.exception import notify_exception
-from python_search.chat_gpt import LLMPrompt, SUPPORTED_MODELS
+from python_search.chat_gpt import LLMPrompt
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_generator import EntryGenerator
 from python_search.environment import is_mac
@@ -21,6 +21,8 @@ from python_search.type_detector import TypeDetector
 class NewEntryGUI:
     _ENTRY_NAME_INPUT = "-entry-name-"
     _ENTRY_BODY_INPUT = "-entry-body-"
+    _PREDICT_ENTRY_TITLE_READY = "-predict-entry-title-ready-"
+    _PREDICT_ENTRY_TYPE_READY = "-predict-entry-type-ready-"
     _ENTRY_NAME_INPUT_SIZE = (17, 7)
     _ENTRY_BODY_INPUT_SIZE = (17, 10)
 
@@ -140,8 +142,12 @@ class NewEntryGUI:
         if (default_key and not default_content) or generate_body:
             self._generate_body_thread(default_key, window)
 
-        if not default_key and default_content.startswith("http"):
-            self._update_title_with_url_title_thread(default_content, window)
+        if not default_key:
+            if default_content.startswith("http"):
+                self._update_title_with_url_title_thread(default_content, window)
+            else:
+                self._predict_key_tread(default_content, window)
+
 
         while True:
             event, values = window.read()
@@ -165,8 +171,12 @@ class NewEntryGUI:
             if event and (event == "-generate-title-"):
                 self._generate_title_thread(default_content, window)
 
-            if event == "-type-inference-ready-":
+            if event == self._PREDICT_ENTRY_TYPE_READY:
                 window["type"].update(values[event])
+                continue
+
+            if event == self._PREDICT_ENTRY_TITLE_READY:
+                window[self._ENTRY_NAME_INPUT].update(values[event])
                 continue
 
             if event == "-try-entry-":
@@ -276,19 +286,33 @@ class NewEntryGUI:
             + content
         )
 
-    def _predict_entry_type_thread(self, content, window):
+
+    def _predict_key_tread(self, content, window):
+        from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
+
+        def _predict_key(window, content):
+            result = EntryTitleGenerator().predict(content)
+            if not result:
+                return
+            window.write_event_value(self._PREDICT_ENTRY_TITLE_READY, result)
+
         threading.Thread(
-            target=self._predict_entry_type, args=(window, content), daemon=True
+            target=_predict_key, args=(window, content), daemon=True
         ).start()
 
-    def _predict_entry_type(self, window, content):
-        new_type = TypeDetector().detect("", content)
+    def _predict_entry_type_thread(self, content, window):
+        def _predict_entry_type(window, content):
+            new_type = TypeDetector().detect("", content)
 
-        if not new_type:
-            return
+            if not new_type:
+                return
+            window.write_event_value(self._PREDICT_ENTRY_TYPE_READY, new_type)
 
-        print(f"New type: {new_type}, uuid: {self._prediction_uuid}")
-        window.write_event_value("-type-inference-ready-", new_type)
+
+        threading.Thread(
+            target=_predict_entry_type, args=(window, content), daemon=True
+        ).start()
+
 
     def _generate_description(self, window, content):
         result = PythonSearchWebAPISDK().generate_description(
