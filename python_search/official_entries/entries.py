@@ -11,6 +11,6 @@ class OfficialEntries(EntriesGroup):
     commands = {
         "install missing dependencies of PythonSearch": {
             "new-window-non-cli": True,
-            "cmd": " python_search  install_missing_dependencies",
+            "cmd": "python_search  install_missing_dependencies",
         },
     }

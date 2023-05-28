@@ -13,9 +13,8 @@ from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_generator import EntryGenerator
 from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 from python_search.apps.notification_ui import send_notification
-from python_search.type_detector import TypeDetector
+from python_search.entry_type.type_detector import TypeDetector
 
 
 class NewEntryGUI:
@@ -229,7 +228,6 @@ class NewEntryGUI:
         ).start()
 
     def _get_page_title(self, url):
-        import subprocess
 
         cmd = f"""curl -f -L {url} | python -c 'import sys, re; result = re.findall("<title>(.*?)</title>", str(sys.stdin.read()));  print(result[0])'"""
         from subprocess import PIPE, Popen
