@@ -63,7 +63,13 @@ class T5Embeddings:
         df.to_pickle(self.pickled_location)
 
     def save_missing_keys(self):
-        """ """
+        """
+        Create all missing entries in the embedding of p5
+
+        """
+        from python_search.apps.notification_ui import send_notification
+        send_notification(f"Saving missing keys as pandas dataframe")
+
         entries = self._configuration.commands
         missing_keys = list(set(self._get_missing_keys()))
         unique_keys = missing_keys
