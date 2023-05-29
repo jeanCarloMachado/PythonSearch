@@ -58,8 +58,9 @@ class LLMDataset:
 
 
             if validation_set is not None:
-                validation_set  = validation_set.join(validation_instance)
-                train_set = train_set.join(train_instance)
+                print("Joining validation set")
+                validation_set  = validation_set.union(validation_instance)
+                train_set = train_set.union(train_instance)
             else:
                 validation_set = validation_instance
                 train_set = train_instance

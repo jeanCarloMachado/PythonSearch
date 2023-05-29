@@ -78,8 +78,8 @@ class T5Train:
 
             epoch_folder = self.TARGET_MODEL_DIRECTORY + "_epoch_" + str(epoch + 1)
             print(f"Epoch finished {epoch + 1} Loss: {loss.item()} Saving model to: {epoch_folder}")
-            timer.report()
             model.save_pretrained(epoch_folder)
+            timer.report("Finished epoch")
 
 
 class T5Dataset(Dataset):
