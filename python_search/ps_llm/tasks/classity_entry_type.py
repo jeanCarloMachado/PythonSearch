@@ -28,7 +28,9 @@ class ClassifyEntryType(BaseDataTask):
         df = get_spark().createDataFrame(result, ["prompt", "label"])
         print("Entry classifier base dataset size: " + str(df.count()))
 
-        return df.limit(5000)
+
+        from python_search.ps_llm.llm_dataset import LLMDataset
+        return df.limit(LLMDataset.MAX_DATASET_SIZE)
 
 
     @staticmethod

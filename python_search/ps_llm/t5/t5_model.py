@@ -1,6 +1,6 @@
 from typing import Optional
 
-from python_search.ps_llm.config import ModelConfig
+from python_search.ps_llm.model_config import ModelConfig
 from python_search.ps_llm.llm_model import LLMModel
 import torch
 
@@ -20,7 +20,7 @@ class T5Model(LLMModel):
 
     @staticmethod
     def load_productionalized_model() -> LLMModel:
-        from python_search.ps_llm.t5.config import ModelConfig
+        from python_search.ps_llm.model_config import ModelConfig
         return T5Model.load_trained_model(ModelConfig.SUMMARIZATION_PRODUCTIONALIZED_MODEL)
 
     @staticmethod
