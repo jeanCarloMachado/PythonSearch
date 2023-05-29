@@ -67,7 +67,6 @@ class NewEntryGUI:
                 "Cmd",
                 "Url",
                 "File",
-                "Anonymous",
             ],
             key="type",
             default_value=default_type,

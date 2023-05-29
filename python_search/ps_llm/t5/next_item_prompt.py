@@ -3,6 +3,7 @@ class PromptBuilder:
     Builds the prompt for train or inference
     """
     PROMPT_START = "Predict the next key given this history: "
+
     def build_prompt_inference(self, history):
         prompt = f"{self.PROMPT_START} "
 

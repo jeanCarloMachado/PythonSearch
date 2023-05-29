@@ -4,7 +4,7 @@ import torch
 from tqdm import tqdm
 
 from python_search.ps_llm.llm_dataset import LLMDataset
-from python_search.ps_llm.t5.config import T5ModelConfig
+from python_search.ps_llm.config import ModelConfig
 
 
 # Define the dataset class
@@ -18,7 +18,7 @@ class T5Train:
             else "cpu"
         )
         print("Device to train on:", self.device)
-        self.TARGET_MODEL_DIRECTORY = T5ModelConfig.FULL_MODEL_PATH
+        self.TARGET_MODEL_DIRECTORY = ModelConfig.FULL_MODEL_PATH
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
     def train(self,*, epochs=1, base_model_path=None):
@@ -26,7 +26,7 @@ class T5Train:
         print(f"Training for {epochs} epochs")
 
         if not base_model_path:
-            base_model_path = T5ModelConfig.BASE_MODEL_TO_TRAIN_OVER
+            base_model_path = ModelConfig.BASE_MODEL_TO_TRAIN_OVER
         print("Using Base model path:", base_model_path)
 
 

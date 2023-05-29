@@ -7,7 +7,7 @@ class ClassifyEntryType(BaseDataTask):
     PROMPT_START = 'Classify the entry type as one of (Snippet, Url, Cmd, File) in the following content: '
 
     def prompt(self, key, content):
-        return f"{self.PROMPT_START}: {key}, {content}"
+        return f"{self.PROMPT_START} key={key} content={content}"
 
     def build_dataset(self):
         entries = EntriesLoader.load_entry_list()

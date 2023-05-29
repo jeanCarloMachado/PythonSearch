@@ -4,10 +4,10 @@ from python_search.search.entries_loader import EntriesLoader
 
 
 class EntryTitleGenerator(BaseDataTask):
-    PROMPT_START = 'Generate the title for an entry with the following content'
+    PROMPT_START = 'Generate the title for an entry with the following content: '
 
     def prompt(self, content):
-        return f"{self.PROMPT_START}: {content}"
+        return f"{self.PROMPT_START} {content}"
 
     def build_dataset(self):
 
