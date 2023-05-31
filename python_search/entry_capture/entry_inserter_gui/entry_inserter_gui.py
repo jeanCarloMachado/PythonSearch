@@ -8,9 +8,7 @@ from typing import List
 import fire
 
 from python_search.error.exception import notify_exception
-from python_search.chat_gpt import LLMPrompt
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.entry_generator import EntryGenerator
 from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.apps.notification_ui import send_notification
@@ -25,14 +23,15 @@ class NewEntryGUI:
     _ENTRY_NAME_INPUT_SIZE = (17, 7)
     _ENTRY_BODY_INPUT_SIZE = (17, 10)
 
-    def __init__(self):
-        self._configuration = ConfigurationLoader().load_config()
+    def __init__(self, configuration=None):
+        if configuration:
+            self._configuration = configuration
+        else:
+            self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
-        self._chat_gpt = LLMPrompt()
-        self._entry_generator = EntryGenerator()
         self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
-        self._type_dector = TypeDetector()
+        self._type_detector = TypeDetector()
         import PySimpleGUI as sg
 
         self.sg = sg
@@ -45,7 +44,6 @@ class NewEntryGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
-        generate_body=False,
     ) -> GuiEntryData:
         """
         Launch the entries capture GUI.
@@ -56,10 +54,9 @@ class NewEntryGUI:
 
         print("Default key: ", default_key)
 
-        config = ConfigurationLoader().load_config()
         self.sg.theme("Dark")
         self.sg.theme_slider_color("#000000")
-        font_size = config.simple_gui_font_size
+        font_size = self._configuration.simple_gui_font_size
 
         entry_type = self.sg.Combo(
             [
@@ -217,7 +214,6 @@ class NewEntryGUI:
 
     def _update_title_with_url_title_thread(self, content: str, window):
         send_notification(f"Starting to get url title")
-        self._chat_gpt = LLMPrompt(150)
         import PySimpleGUI as sg
 
         window: sg.Window = window
@@ -253,7 +249,7 @@ class NewEntryGUI:
             key_content = ""
 
         def predict_entry_type(window, content):
-            new_type = self._type_dector.detect(key_content, content)
+            new_type = self._type_detector.detect(key_content, content)
             print("new_type", new_type)
 
             if not new_type:

@@ -23,7 +23,7 @@ class Timer:
     def report(self, identifier: str) -> None:
         end_time = time.perf_counter()
         run_time = end_time - self.start_time
-        print(identifier + "took secs".format( round(run_time, 3)))
+        print(identifier + " took {} secs".format( round(run_time, 3)))
 
 
 def timer(func):

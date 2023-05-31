@@ -8,9 +8,9 @@ from python_search.ps_llm.utils import timer
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v7'
+    DATASET_VERSION = 'v8'
     VALIDATION_SIZE_TASK = 200
-    MAX_DATASET_SIZE = 10000
+    MAX_DATASET_SIZE = 13000
 
     TASKS = [
         ClassifyEntryType,
