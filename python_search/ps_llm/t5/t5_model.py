@@ -1,6 +1,6 @@
 from typing import Optional
 
-from python_search.ps_llm.t5.config import T5ModelConfig
+from python_search.ps_llm.model_config import ModelConfig
 from python_search.ps_llm.llm_model import LLMModel
 import torch
 
@@ -12,14 +12,19 @@ class T5Model(LLMModel):
         from transformers import T5Tokenizer
 
         self.tokenizer = T5Tokenizer.from_pretrained("t5-small")
-        self.config = T5ModelConfig()
+        self.config = ModelConfig()
         if not logger:
             logger = setup_generic_stdout_logger()
         self.logger = logger
 
 
     @staticmethod
-    def load_trained_model(model_path: Optional[str] = None):
+    def load_productionalized_model() -> LLMModel:
+        from python_search.ps_llm.model_config import ModelConfig
+        return T5Model.load_trained_model(ModelConfig.SUMMARIZATION_PRODUCTIONALIZED_MODEL)
+
+    @staticmethod
+    def load_trained_model(model_path: Optional[str] = None) -> LLMModel:
         llm_model = T5Model()
 
         from transformers import T5ForConditionalGeneration, logging

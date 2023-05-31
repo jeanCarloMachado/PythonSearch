@@ -1,14 +1,22 @@
 import os
 from typing import Literal
 
+from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
 from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
+from python_search.ps_llm.utils import timer
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v5'
-    PROMPT_START = "predict the next key given this history: "
-    VALIDATION_SIZE = 500
+    DATASET_VERSION = 'v8'
+    VALIDATION_SIZE_TASK = 200
+    MAX_DATASET_SIZE = 13000
+
+    TASKS = [
+        ClassifyEntryType,
+        EntryTitleGenerator,
+        NextItemPredictor
+    ]
 
     def __init__(self):
         home = os.path.expanduser("~")
@@ -16,44 +24,51 @@ class LLMDataset:
         self.DESTINATION_TRAIN = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_train.pkl"
         self.DESTINATION_VALIDATION = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
         print('Version: ', self.DATASET_VERSION)
-        print("Train Dataset will be saved to: ", self.DESTINATION_TRAIN)
-        print("Validation Dataset will be saved to: ", self.DESTINATION_VALIDATION)
 
+    @timer
     def generate(self, save_to_disk=True):
         """
         Generates the dataset and writes it to disk
         """
+        print("Train Dataset will be saved to: ", self.DESTINATION_TRAIN)
+        print("Validation Dataset will be saved to: ", self.DESTINATION_VALIDATION)
+        import pyspark.sql.functions as F
+        from pyspark.sql import Window
 
         if not save_to_disk:
             print("Save to disk disabled")
 
-        entry_title = EntryTitleGenerator()
-        df1 = entry_title.build_dataset()
-        print("Count for task " + EntryTitleGenerator.__name__ + ": " + str(df1.count()))
+
+        validation_set = None
+        train_set = None
+        for task in self.TASKS:
+
+            task_instance = task()
+            df_instance = task_instance.build_dataset()
+
+            df_instance = df_instance.orderBy(F.rand())
+            df_instance = df_instance.withColumn("order", F.lit("1"))
+            w = Window().partitionBy(F.lit("order")).orderBy(F.lit("order"))
+            df_instance = df_instance.withColumn("row_num", F.row_number().over(w))
+            print("Rows for " + task.__name__ + ": " + str(df_instance.count()))
 
 
-        next_item = NextItemPredictor()
-        df2 = next_item.build_dataset()
-        print("Count for task " + NextItemPredictor.__name__ + ": " + str(df2.count()))
+            validation_instance = df_instance.filter(df_instance.row_num <= self.VALIDATION_SIZE_TASK).select("prompt", "label")
+            train_instance = df_instance.filter(df_instance.row_num > self.VALIDATION_SIZE_TASK).select("prompt", "label")
 
 
-        df = df2.union(df1)
+            if validation_set is not None:
+                print("Joining validation set")
+                validation_set  = validation_set.union(validation_instance)
+                train_set = train_set.union(train_instance)
+            else:
+                validation_set = validation_instance
+                train_set = train_instance
 
 
-        print("Size before filtering for null", df.count())
-        df = df.filter("prompt is not NULL and label is not NULL")
-        print("Size after filtering for null", df.count())
+        print("Joined train set size: ", train_set.count())
+        print("Joined validation set size: ", validation_set.count())
 
-        import pyspark.sql.functions as F
-        from pyspark.sql import Window
-
-        df = df.orderBy(F.rand())
-        df = df.withColumn("order", F.lit("1"))
-        w = Window().partitionBy(F.lit("order")).orderBy(F.lit("order"))
-        df = df.withColumn("row_num", F.row_number().over(w))
-
-        validation_set = df.filter(df.row_num <= self.VALIDATION_SIZE).select("prompt", "label")
-        train_set = df.filter(df.row_num > self.VALIDATION_SIZE).select("prompt", "label")
 
         if not save_to_disk:
             print("Not saving to disk")
@@ -63,16 +78,15 @@ class LLMDataset:
         print("Generated dataset worked successfully")
 
     def write(self, validation, train):
-        print("Saving validation dataset")
         validation_df = validation.toPandas()
-        print("Saving to:", self.DESTINATION_VALIDATION)
+        print("Saving Validation set to:", self.DESTINATION_VALIDATION)
         print("Dataset rows:", len(validation_df.index))
         validation_df.to_pickle(self.DESTINATION_VALIDATION)
 
 
         print("Saving train dataset")
         train_df = train.toPandas()
-        print("Saving to:", self.DESTINATION_TRAIN)
+        print("Saving Training set to:", self.DESTINATION_TRAIN)
         print("Dataset rows:", len(train_df.index))
         train_df.to_pickle(self.DESTINATION_TRAIN)
 

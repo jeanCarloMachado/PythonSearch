@@ -2,16 +2,10 @@ from __future__ import annotations
 
 from typing import Optional
 
-from python_search.apps.browser import Browser
-from python_search.apps.clipboard import Clipboard
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities.core_entities import Key, Entry
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
-)
-from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
-    NewEntryGUI,
-    GuiEntryData,
 )
 
 from python_search.entry_type.entity import infer_default_type
@@ -67,21 +61,26 @@ class RegisterNew:
         key_len = len(key_expression.split(":")[0])
         body = key_expression[key_len + 1 :]
         body = json.loads(body.strip())
-        content = Entry(key, body).get_only_content()
+        content = Entry(key, body).get_content_str()
 
         self.launch_ui(default_key=key, default_content=content)
 
     @notify_exception()
-    def launch_ui(self, default_type=None, default_key=None, default_content=None):
+    def launch_ui(self, default_type=None, default_key="", default_content=""):
         """
         Create a new inferred entry based on the clipboard content
         """
-        if default_content is None:
+        if not default_content:
+            from python_search.apps.clipboard import Clipboard
             default_content = Clipboard().get_content()
 
         if not default_type:
             default_type = infer_default_type(default_content)
 
+        from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
+            NewEntryGUI,
+            GuiEntryData,
+        )
         entry_data: GuiEntryData = NewEntryGUI().launch(
             "New Entry",
             default_content=default_content,
@@ -90,7 +89,7 @@ class RegisterNew:
         )
         self.save_entry_data(entry_data)
 
-    def save_entry_data(self, entry_data: GuiEntryData):
+    def save_entry_data(self, entry_data):
         key = self._sanitize_key(entry_data.key)
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self.configuration
@@ -107,6 +106,7 @@ class RegisterNew:
         @todo move this out of here to a plugin system
         Register german workds you dont know by saving them to the clipboard and storing in python search
         """
+        from python_search.apps.browser import Browser
 
         if len(german_term) == 0:
             raise RegisterNewException.empty_content()
@@ -135,3 +135,9 @@ def main():
     import fire
 
     fire.Fire(RegisterNew)
+
+
+def launch_ui():
+
+    RegisterNew().launch_ui()
+

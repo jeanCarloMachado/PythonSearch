@@ -4,7 +4,9 @@ import torch
 from tqdm import tqdm
 
 from python_search.ps_llm.llm_dataset import LLMDataset
-from python_search.ps_llm.t5.config import T5ModelConfig
+from python_search.ps_llm.model_config import ModelConfig
+
+from python_search.ps_llm.utils import timer, Timer
 
 
 # Define the dataset class
@@ -18,15 +20,16 @@ class T5Train:
             else "cpu"
         )
         print("Device to train on:", self.device)
-        self.TARGET_MODEL_DIRECTORY = T5ModelConfig.FULL_MODEL_PATH
+        self.TARGET_MODEL_DIRECTORY = ModelConfig.FULL_MODEL_PATH
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
+    @timer
     def train(self,*, epochs=1, base_model_path=None):
         # Initialize the tokenizer and model
         print(f"Training for {epochs} epochs")
 
         if not base_model_path:
-            base_model_path = T5ModelConfig.BASE_MODEL_TO_TRAIN_OVER
+            base_model_path = ModelConfig.BASE_MODEL_TO_TRAIN_OVER
         print("Using Base model path:", base_model_path)
 
 
@@ -54,6 +57,7 @@ class T5Train:
         model.train()
         for epoch in range(0, epochs):  # number of epochs
             print(f"Epoch {epoch + 1}")
+            timer = Timer()
             for batch in tqdm(dataloader):
                 optimizer.zero_grad()
                 input_ids = batch["input_ids"].to(self.device)
@@ -72,12 +76,11 @@ class T5Train:
                 # update parameters
                 optimizer.step()
 
-            print(f"Epoch finished {epoch + 1} Loss: {loss.item()}")
             epoch_folder = self.TARGET_MODEL_DIRECTORY + "_epoch_" + str(epoch + 1)
-            print("Saving model to:", epoch_folder)
+            print(f"Epoch finished {epoch + 1} Loss: {loss.item()} Saving model to: {epoch_folder}")
             model.save_pretrained(epoch_folder)
+            timer.report("Finished epoch")
 
-        model.save_pretrained(self.TARGET_MODEL_DIRECTORY)
 
 class T5Dataset(Dataset):
     def __init__(self, inputs, targets, tokenizer, max_length):

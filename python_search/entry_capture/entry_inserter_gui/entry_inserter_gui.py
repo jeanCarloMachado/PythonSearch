@@ -8,31 +8,30 @@ from typing import List
 import fire
 
 from python_search.error.exception import notify_exception
-from python_search.chat_gpt import LLMPrompt
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.entry_generator import EntryGenerator
 from python_search.environment import is_mac
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.sdk.web_api_sdk import PythonSearchWebAPISDK
 from python_search.apps.notification_ui import send_notification
-from python_search.type_detector import TypeDetector
+from python_search.entry_type.type_detector import TypeDetector
 
 
 class NewEntryGUI:
-    _ENTRY_NAME_INPUT = "-entry-name-"
-    _ENTRY_BODY_INPUT = "-entry-body-"
+    _TITLE_INPUT = "-entry-name-"
+    _BODY_INPUT = "-entry-body-"
     _PREDICT_ENTRY_TITLE_READY = "-predict-entry-title-ready-"
     _PREDICT_ENTRY_TYPE_READY = "-predict-entry-type-ready-"
     _ENTRY_NAME_INPUT_SIZE = (17, 7)
     _ENTRY_BODY_INPUT_SIZE = (17, 10)
 
-    def __init__(self):
-        self._configuration = ConfigurationLoader().load_config()
+    def __init__(self, configuration=None):
+        if configuration:
+            self._configuration = configuration
+        else:
+            self._configuration = ConfigurationLoader().load_config()
         self._tags = self._configuration._default_tags
         self._prediction_uuid = None
-        self._chat_gpt = LLMPrompt()
-        self._entry_generator = EntryGenerator()
         self._FONT = "FontAwesome" if not is_mac() else "Pragmata Pro"
+        self._type_detector = TypeDetector()
         import PySimpleGUI as sg
 
         self.sg = sg
@@ -45,7 +44,6 @@ class NewEntryGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
-        generate_body=False,
     ) -> GuiEntryData:
         """
         Launch the entries capture GUI.
@@ -56,10 +54,9 @@ class NewEntryGUI:
 
         print("Default key: ", default_key)
 
-        config = ConfigurationLoader().load_config()
         self.sg.theme("Dark")
         self.sg.theme_slider_color("#000000")
-        font_size = config.simple_gui_font_size
+        font_size = self._configuration.simple_gui_font_size
 
         entry_type = self.sg.Combo(
             [
@@ -67,7 +64,6 @@ class NewEntryGUI:
                 "Cmd",
                 "Url",
                 "File",
-                "Anonymous",
             ],
             key="type",
             default_value=default_type,
@@ -79,7 +75,7 @@ class NewEntryGUI:
         tags_chucks = self._chunks_of_tags(self._tags, TAGS_PER_ROW)
 
         key_name_input = self.sg.Multiline(
-            key=self._ENTRY_NAME_INPUT,
+            key=self._TITLE_INPUT,
             default_text=default_key,
             expand_x=True,
             expand_y=True,
@@ -88,7 +84,7 @@ class NewEntryGUI:
         )
 
         content_input = self.sg.Multiline(
-            key=self._ENTRY_BODY_INPUT,
+            key=self._BODY_INPUT,
             default_text=default_content,
             expand_x=True,
             expand_y=True,
@@ -100,6 +96,10 @@ class NewEntryGUI:
         print(colors)
 
         llm_component = []
+
+        tags_block = []
+        if self._tags:
+            tags_block = [[self.sg.Text("Tags")], [self._checkbox_list(i) for i in tags_chucks]]
 
 
         layout = [
@@ -116,8 +116,7 @@ class NewEntryGUI:
                 self.sg.Push(),
             ],
             llm_component,
-            [self.sg.Text("Tags")],
-            [self._checkbox_list(i) for i in tags_chucks],
+            tags_block,
             [
                 self.sg.Button(
                     "Write entry", key="write", button_color=colors, border_width=0
@@ -132,21 +131,19 @@ class NewEntryGUI:
             finalize=True,
         )
 
-        window[self._ENTRY_NAME_INPUT].bind("<Escape>", "Escape")
-        window[self._ENTRY_NAME_INPUT].bind("<Control_L><s>", "CTRL-s")
-        window[self._ENTRY_NAME_INPUT].bind("<Control_L><g>", "CTRL-g")
-        window[self._ENTRY_BODY_INPUT].bind("<Escape>", "Escape"),
+        window[self._TITLE_INPUT].bind("<Escape>", "Escape")
+        window[self._TITLE_INPUT].bind("<Control_L><s>", "CTRL-s")
+        window[self._TITLE_INPUT].bind("<Control_L><g>", "CTRL-g")
+        window[self._BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "Escape")
 
-        self._predict_entry_type_thread(default_content, window)
-        if (default_key and not default_content) or generate_body:
-            self._generate_body_thread(default_key, window)
+        self._classify_entry_type(default_key, default_content, window)
 
         if not default_key:
             if default_content.startswith("http"):
                 self._update_title_with_url_title_thread(default_content, window)
             else:
-                self._predict_key_tread(default_content, window)
+                self._generate_title(default_content, window)
 
 
         while True:
@@ -165,25 +162,21 @@ class NewEntryGUI:
             if event and (event == "write" or event == "-entry-name-CTRL-s"):
                 break
 
-            if event and (event == "-generate-body-" or event == "-entry-name-CTRL-g"):
-                self._generate_body_thread(values[self._ENTRY_NAME_INPUT], window)
-
-            if event and (event == "-generate-title-"):
-                self._generate_title_thread(default_content, window)
-
             if event == self._PREDICT_ENTRY_TYPE_READY:
                 window["type"].update(values[event])
                 continue
 
             if event == self._PREDICT_ENTRY_TITLE_READY:
-                window[self._ENTRY_NAME_INPUT].update(values[event])
+                window[self._TITLE_INPUT].update(values[event])
+
+                self._classify_entry_type(values[self._TITLE_INPUT], values[self._BODY_INPUT], window)
                 continue
 
             if event == "-try-entry-":
                 InterpreterMatcher.build_instance(
                     self._configuration
                 ).get_interpreter_from_type(values["type"])(
-                    values[self._ENTRY_BODY_INPUT]
+                    values[self._BODY_INPUT]
                 ).default()
 
         window.hide()
@@ -197,8 +190,8 @@ class NewEntryGUI:
                     selected_tags.append(key)
 
         result = GuiEntryData(
-            values[self._ENTRY_NAME_INPUT],
-            values[self._ENTRY_BODY_INPUT],
+            values[self._TITLE_INPUT],
+            values[self._BODY_INPUT],
             values["type"],
             selected_tags,
         )
@@ -208,28 +201,7 @@ class NewEntryGUI:
 
         return result
 
-    def _generate_body_thread(self, title: str, window):
-        send_notification(f"Starting to generate body")
-
-        import PySimpleGUI as sg
-
-        window: sg.Window = window
-        model = window["-model-"].get()
-        print("Selected model: ", model)
-
-        def _describe_body(title: str, window):
-            description = self._entry_generator.generate_body(
-                prompt=title, max_tokens=200, model=model
-            )
-
-            window[self._ENTRY_BODY_INPUT].update(description)
-
-        threading.Thread(
-            target=_describe_body, args=(title, window), daemon=True
-        ).start()
-
     def _get_page_title(self, url):
-        import subprocess
 
         cmd = f"""curl -f -L {url} | python -c 'import sys, re; result = re.findall("<title>(.*?)</title>", str(sys.stdin.read()));  print(result[0])'"""
         from subprocess import PIPE, Popen
@@ -242,52 +214,24 @@ class NewEntryGUI:
 
     def _update_title_with_url_title_thread(self, content: str, window):
         send_notification(f"Starting to get url title")
-        self._chat_gpt = LLMPrompt(150)
         import PySimpleGUI as sg
 
         window: sg.Window = window
 
         def _update_title(content: str, window):
             new_title = self._get_page_title(content)
-            old_title = window[self._ENTRY_NAME_INPUT]
+            old_title = window[self._TITLE_INPUT]
             if old_title == new_title:
                 print("Will not upgrade the title as it was already changed")
                 return
-            window[self._ENTRY_NAME_INPUT].update(new_title)
+            window[self._TITLE_INPUT].update(new_title)
 
         threading.Thread(
             target=_update_title, args=(content, window), daemon=True
         ).start()
 
-    def _generate_title_thread(self, content: str, window):
-        send_notification(f"Starting to generate title")
-        self._chat_gpt = LLMPrompt(150)
-        import PySimpleGUI as sg
 
-        window: sg.Window = window
-        old_title = window[self._ENTRY_NAME_INPUT]
-
-        def _describe_body(content: str, window):
-            description = self.genearte_key_from_content(content)
-            new_title = window[self._ENTRY_NAME_INPUT]
-            if old_title != new_title:
-                print("Will not upgrade the title as it was already changed")
-                return
-            window[self._ENTRY_NAME_INPUT].update(description)
-
-        threading.Thread(
-            target=_describe_body, args=(content, window), daemon=True
-        ).start()
-
-
-    def genearte_key_from_content(self, content: str) -> str:
-        return self._chat_gpt.answer(
-            "generate a description in the imperative form with most 5 words of the follwing text: "
-            + content
-        )
-
-
-    def _predict_key_tread(self, content, window):
+    def _generate_title(self, content, window):
         from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 
         def _predict_key(window, content):
@@ -300,9 +244,13 @@ class NewEntryGUI:
             target=_predict_key, args=(window, content), daemon=True
         ).start()
 
-    def _predict_entry_type_thread(self, content, window):
-        def _predict_entry_type(window, content):
-            new_type = TypeDetector().detect("", content)
+    def _classify_entry_type(self, key_content, content, window):
+        if not key_content:
+            key_content = ""
+
+        def predict_entry_type(window, content):
+            new_type = self._type_detector.detect(key_content, content)
+            print("new_type", new_type)
 
             if not new_type:
                 return
@@ -310,21 +258,8 @@ class NewEntryGUI:
 
 
         threading.Thread(
-            target=_predict_entry_type, args=(window, content), daemon=True
+            target=predict_entry_type, args=(window, content), daemon=True
         ).start()
-
-
-    def _generate_description(self, window, content):
-        result = PythonSearchWebAPISDK().generate_description(
-            {"content": content, "temperature": 0.2}
-        )
-
-        if not result:
-            return
-
-        description = result["generated_description"]
-        print(f"New description: {description}")
-        window.write_event_value("-generated-key-ready-", description)
 
     def _checkbox_list(self, tags):
         return ([self.sg.Checkbox(tag, key=tag, default=False) for tag in tags],)

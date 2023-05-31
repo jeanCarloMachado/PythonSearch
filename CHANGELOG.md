@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.21
+
+- Add entry type classifier
+- Improve register new speed
+- Expriment with more data
+
 ## 0.20
 - Dependencies groups
 - LLM setup

@@ -1,10 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
-from python_search.entry_description_generator.description_geneartor import (
-    DescriptionGenerator,
-    EntryKeyGeneratorCmd,
-)
 from python_search.entry_type.classifier_inference import (
     EntryData,
     PredictEntryTypeInference,
@@ -29,7 +25,6 @@ app = FastAPI()
 search = Search(ConfigurationLoader().load_config())
 results = search.search()
 entry_type_inference = PredictEntryTypeInference()
-description_generator = DescriptionGenerator()
 
 
 def reload_ranking():
@@ -89,12 +84,6 @@ def predict_entry_type_endpoint(entry: EntryData):
     type, uuid = entry_type_inference.predict_entry_type(entry)
     return {"predicted_type": type, "prediction_uuid": uuid}
 
-
-@app.post("/entry/generate_description")
-def generate_description(entry: EntryKeyGeneratorCmd):
-    with pyroscope.tag_wrapper({"endpoint": "generate_description"}):
-        result = description_generator.generate(entry)
-        return {"generated_description": result}
 
 
 @app.get("/recent_history")

@@ -16,7 +16,7 @@ def render():
 
     pandas_df["prompt"] = entries.keys()
     completion = [
-        f"{Entry(key, value).get_only_content()} | {Entry(key, value).get_only_type()}"
+        f"{Entry(key, value).get_content_str()} | {Entry(key, value).get_type_str()}"
         for key, value in entries.items()
     ]
     pandas_df["completion"] = completion

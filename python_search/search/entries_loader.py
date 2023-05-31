@@ -18,6 +18,19 @@ class EntriesLoader:
 
         return keys
 
+
+    @staticmethod
+    def load_entry_list() -> List[Entry]:
+        """
+        Return just the key names strings
+        """
+
+        entries = ConfigurationLoader().load_entries()
+
+        for key, value in entries.items():
+            yield Entry(key, value)
+
+
     @staticmethod
     def load_key_values_str():
         """
@@ -30,7 +43,7 @@ class EntriesLoader:
         values = []
         for key, value in entries.items():
             entry = Entry(key, value)
-            value_str = entry.get_only_content(return_str=True)
+            value_str = entry.get_content_str()
 
             if not key or not value_str:
                 continue
