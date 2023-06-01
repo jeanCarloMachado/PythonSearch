@@ -63,7 +63,6 @@ class PythonSearchCli:
                 return
 
         self.configuration = configuration
-        # @todo remove this use the binary instead
         self.run_key = EntryRunner(self.configuration).run
 
     def search(self, only_fzf=False):
