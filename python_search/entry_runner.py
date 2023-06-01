@@ -53,7 +53,6 @@ class EntryRunner:
         # usually the key from fzf, and our keys do not accept :
 
         metadata = decode_serialized_data_from_entry_text(entry_text, self._logger)
-        rank_position = metadata.get("position")
 
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
