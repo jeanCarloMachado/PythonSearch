@@ -117,11 +117,6 @@ class PythonSearchCli:
 
         return ShortcutGenerator(self.configuration).configure
 
-    def _ranking(self):
-        from python_search.search.search import Search
-
-        return Search(self.configuration)
-
     def _features(self):
         """Feature toggle system"""
         from python_search.feature_toggle import FeatureToggle
