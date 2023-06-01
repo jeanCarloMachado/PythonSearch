@@ -1,8 +1,9 @@
+
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import transformers
 import torch
 
-model = "tiiuae/falcon-7b"
+model = "tiiuae/falcon-rw-1b"
 
 tokenizer = AutoTokenizer.from_pretrained(model)
 pipeline = transformers.pipeline(
@@ -11,7 +12,7 @@ pipeline = transformers.pipeline(
     tokenizer=tokenizer,
     torch_dtype=torch.float16,
     trust_remote_code=True,
-    device="mps"
+    device="mps",
 )
 sequences = pipeline(
    "Girafatron is obsessed with giraffes, the most glorious animal on the face of this Earth. Giraftron believes all other animals are irrelevant when compared to the glorious majesty of the giraffe.\nDaniel: Hello, Girafatron!\nGirafatron:",

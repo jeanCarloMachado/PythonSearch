@@ -86,12 +86,12 @@ class InterpreterMatcher:
 
         raise Exception(f"Could not find a matching interpreter for string {type}")
 
-    def default(self, input_str: str, skip_key_matching=False):
+    def default(self, input_str: str):
         """
         Applies the default behaviour to an interpreter
         """
 
-        specific_interpreter = self.get_interpreter(input_str, skip_key_matching)
+        specific_interpreter = self.get_interpreter(input_str)
 
         return specific_interpreter.default()
 
