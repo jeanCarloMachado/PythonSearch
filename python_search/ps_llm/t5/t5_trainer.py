@@ -24,7 +24,7 @@ class T5Train:
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
     @timer
-    def train(self,*, epochs=1, base_model_path=None):
+    def train(self,*, epochs=10, base_model_path=None):
         # Initialize the tokenizer and model
         print(f"Training for {epochs} epochs")
 
@@ -33,7 +33,7 @@ class T5Train:
         print("Using Base model path:", base_model_path)
 
 
-        self.tokenizer = T5Tokenizer.from_pretrained('t5-small')
+        self.tokenizer = T5Tokenizer.from_pretrained(ModelConfig.BASE_ORIGINAL_MODEL)
         model = T5ForConditionalGeneration.from_pretrained(base_model_path)
 
         df = LLMDataset().load()

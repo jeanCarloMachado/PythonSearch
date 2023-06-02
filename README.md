@@ -71,8 +71,8 @@ Feature contributions are also welcomed! If you want to be part of the roadmap d
 ## Contributors
  
 - Aeneas Christodoulou
-- Thallys Costa
 - Jean Machado
+- Thallys Costa
 
 
 ## Supported Systems
