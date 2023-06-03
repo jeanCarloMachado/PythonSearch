@@ -5481,6 +5481,18 @@ typing-extensions = "*"
 opt-einsum = ["opt-einsum (>=3.3)"]
 
 [[package]]
+name = "torch-xla"
+version = "1.0"
+description = ""
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "torch_xla-1.0-py3-none-any.whl", hash = "sha256:c2c31bc6ec36f822ba9ebc0ce57ad96b43b7c109f81cec16fcaa04c04e05f2ee"},
+    {file = "torch_xla-1.0.tar.gz", hash = "sha256:7b624574e5d56d9032945d8a5c69feedfb3901175616c830708307af84602db0"},
+]
+
+[[package]]
 name = "torchvision"
 version = "0.15.2"
 description = "image and video datasets and models for torch deep learning"
@@ -6256,4 +6268,4 @@ model = ["jupyterlab", "kafka-python", "matplotlib", "mlflow", "msgpack-numpy", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<=3.11"
-content-hash = "81a03f6e45e053ed643ef93139c443ea6f1ee89ef9c199497825a6482b9281b3"
+content-hash = "6c71bec2c9bf93a61e8ca63151fade3f59dddd1d58facf88cc8aaab69b1e7ca9"
