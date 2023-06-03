@@ -6135,4 +6135,4 @@ model = ["jupyterlab", "kafka-python", "matplotlib", "mlflow", "msgpack-numpy", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<=3.11"
-content-hash = "f70e93e8c9754ca1a4da28a1483e59e627f0119cec73cbf49fee0380660dc4a7"
+content-hash = "d3f794cf1c6caed57726f7ee4c9e3c10a226dc0f502df334402fd85d4b3ee93c"
