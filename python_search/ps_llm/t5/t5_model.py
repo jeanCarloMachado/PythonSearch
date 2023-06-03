@@ -20,7 +20,6 @@ class T5Model(LLMModel):
 
     @staticmethod
     def load_productionalized_model() -> LLMModel:
-        from python_search.ps_llm.model_config import LLMConfig
         return T5Model.load_trained_model(LLMConfig.SUMMARIZATION_PRODUCTIONALIZED_MODEL)
 
     @staticmethod
