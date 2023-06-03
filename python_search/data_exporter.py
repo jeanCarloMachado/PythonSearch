@@ -3,27 +3,6 @@ from python_search.core_entities.core_entities import Entry
 
 
 class DataExporter:
-    blacklisted_terms = [
-        "email",
-        "google.com",
-        # databricks
-        "//dbc-",
-        "gyg",
-        "no key ",
-        "insurance",
-        "token",
-        "private",
-        "endereco",
-        "password",
-        "secret",
-        "passport",
-        "passaporte",
-        "telefone",
-        "phone",
-        "celular",
-        "cellphone",
-        "cpf",
-    ]
 
     MAX_LENGTH = 100
 
