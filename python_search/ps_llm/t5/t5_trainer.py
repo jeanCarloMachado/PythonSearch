@@ -33,7 +33,7 @@ class T5Train:
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
     @timer
-    def train(self,*, epochs=10, base_model_path=None, use_xla=False, force_cuda=False):
+    def train(self,*, epochs=10, base_model_path=None, use_xla=False, force_cuda=False, batch_size=8):
         self.device = get_device(use_xla, force_cuda)
         print("Device to train on:", self.device)
 
@@ -56,7 +56,7 @@ class T5Train:
 
         # Prepare the DataLoader
         dataset = T5Dataset(inputs, targets, self.tokenizer, max_length=512)
-        dataloader = DataLoader(dataset, batch_size=16)
+        dataloader = DataLoader(dataset, batch_size=batch_size)
 
         # Define the device
         print("Device:", self.device)
