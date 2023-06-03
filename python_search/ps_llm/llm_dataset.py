@@ -1,7 +1,6 @@
 import os
 from typing import Literal
 
-from python_search.privacy.detector import Detector
 from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
 from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
@@ -9,7 +8,7 @@ from python_search.ps_llm.utils import timer
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v9'
+    DATASET_VERSION = 'v10'
     VALIDATION_SIZE_TASK = 200
     MAX_DATASET_SIZE = 5000
 
@@ -27,7 +26,7 @@ class LLMDataset:
         print('Version: ', self.DATASET_VERSION)
 
     @timer
-    def generate(self, save_to_disk=True):
+    def build(self, save_to_disk=True):
         """
         Generates the dataset and writes it to disk
         """
@@ -138,13 +137,17 @@ class LLMDataset:
 
         return show_rows(df)
 
-    def check_privacy(self):
+    def check_privacy(self, check_training=True):
+        from python_search.privacy.privacy_detector import PrivacyDetector
         df = self.load_validation()
         print("Checking privacy of validation set")
-        Detector().detect_in_list(df['label'].tolist()+ df['prompt'].tolist())
+        PrivacyDetector().detect_in_list(df['label'].tolist() + df['prompt'].tolist())
+
+        if not check_training:
+            return
         print("Checking privacy of training set")
         df = self.load_training()
-        Detector().detect_in_list(df['label'].tolist()+ df['prompt'].tolist())
+        PrivacyDetector().detect_in_list(df['label'].tolist() + df['prompt'].tolist())
 
 
     def inspect(self):

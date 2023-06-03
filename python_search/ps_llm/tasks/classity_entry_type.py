@@ -10,7 +10,7 @@ class ClassifyEntryType(BaseDataTask):
         return f"{self.PROMPT_START} key={key} content={content}"
 
     def build_dataset(self):
-        entries = EntriesLoader.load_entry_list()
+        entries = EntriesLoader.load_privacy_neutral_only()
 
         result = []
         for entry in entries:
