@@ -56,6 +56,7 @@ class T5Train:
 
         # Prepare the DataLoader
         dataset = T5Dataset(inputs, targets, self.tokenizer, max_length=512)
+        print("Batch size is:", batch_size)
         dataloader = DataLoader(dataset, batch_size=batch_size)
 
         # Define the device
