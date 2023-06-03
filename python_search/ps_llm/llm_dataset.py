@@ -1,4 +1,3 @@
-import os
 from typing import Literal
 
 from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
@@ -22,6 +21,7 @@ class LLMDataset:
 
         from python_search.ps_llm.llm_config import LLMConfig
         llm_config = LLMConfig()
+        self.BASE_DATASET_FOLDER  = llm_config.BASE_DATASET_FOLDER
         self.DESTINATION_TRAIN = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_train.pkl"
         self.DESTINATION_VALIDATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
         print('Version: ', self.DATASET_VERSION)
@@ -99,12 +99,9 @@ class LLMDataset:
         """
         Loads the dataset from disk
         """
-        import os
 
-        home = os.path.expanduser("~")
+        path = self.BASE_DATASET_FOLDER+f"/{self.DATASET_VERSION}_train.pkl"
         import pandas as pd
-
-        path = home + f"/.python_search/datasets/{self.DATASET_VERSION}_train.pkl"
         df = pd.read_pickle(path)
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
         return df
@@ -114,12 +111,9 @@ class LLMDataset:
         """
         Loads the dataset from disk
         """
-        import os
-
-        home = os.path.expanduser("~")
         import pandas as pd
 
-        path = home + f"/.python_search/datasets/{self.DATASET_VERSION}_validation.pkl"
+        path = self.BASE_DATASET_FOLDER+f"/{self.DATASET_VERSION}_validation.pkl"
         df = pd.read_pickle(path)
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
         return df

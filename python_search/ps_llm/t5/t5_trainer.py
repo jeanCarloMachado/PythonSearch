@@ -8,17 +8,28 @@ from python_search.ps_llm.llm_config import LLMConfig
 
 from python_search.ps_llm.utils import timer, Timer
 
+def get_device() -> str:
+
+    if torch.backends.mps.is_available():
+        print("Foudn apple metal device")
+        return "mps"
+
+
+    print("Assuming XLA device")
+    import torch_xla.core.xla_model as xm
+    return xm.xla_device()
+
+    if torch.cuda.is_available():
+        print("Foudn cuda device")
+        return "cuda"
+
+
+    return "cpu"
 
 # Define the dataset class
 class T5Train:
     def __init__(self):
-        self.device = (
-            "cuda"
-            if torch.cuda.is_available()
-            else "mps"
-            if torch.backends.mps.is_available()
-            else "cpu"
-        )
+        self.device = get_device()
         print("Device to train on:", self.device)
         self.TARGET_MODEL_DIRECTORY = LLMConfig.FULL_MODEL_PATH
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
