@@ -8,7 +8,7 @@ from python_search.ps_llm.llm_config import LLMConfig
 
 from python_search.ps_llm.utils import timer, Timer
 
-def get_device(use_xla=False) -> str:
+def get_device(use_xla=False, force_cuda=False) -> str:
     if torch.backends.mps.is_available():
         print("Foudn apple metal device")
         return "mps"
@@ -19,8 +19,8 @@ def get_device(use_xla=False) -> str:
         import torch_xla.core.xla_model as xm
         return xm.xla_device()
 
-    if torch.cuda.is_available():
-        print("Found cuda device")
+    if torch.cuda.is_available() or force_cuda:
+        print("Cuda device enabled")
         return "cuda"
 
 
@@ -33,8 +33,8 @@ class T5Train:
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
     @timer
-    def train(self,*, epochs=10, base_model_path=None, use_xla=False):
-        self.device = get_device(use_xla)
+    def train(self,*, epochs=10, base_model_path=None, use_xla=False, force_cuda=False):
+        self.device = get_device(use_xla, force_cuda)
         print("Device to train on:", self.device)
 
         # Initialize the tokenizer and model
