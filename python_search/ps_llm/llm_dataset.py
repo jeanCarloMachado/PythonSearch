@@ -19,10 +19,11 @@ class LLMDataset:
     ]
 
     def __init__(self):
-        home = os.path.expanduser("~")
-        self.BASE_FOLDER = home + f"/.python_search/datasets"
-        self.DESTINATION_TRAIN = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_train.pkl"
-        self.DESTINATION_VALIDATION = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
+
+        from python_search.ps_llm.llm_config import LLMConfig
+        llm_config = LLMConfig()
+        self.DESTINATION_TRAIN = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_train.pkl"
+        self.DESTINATION_VALIDATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
         print('Version: ', self.DATASET_VERSION)
 
     @timer
@@ -148,7 +149,6 @@ class LLMDataset:
         print("Checking privacy of training set")
         df = self.load_training()
         PrivacyDetector().detect_in_list(df['label'].tolist() + df['prompt'].tolist())
-
 
     def inspect(self):
         return len(self.load_training().index)

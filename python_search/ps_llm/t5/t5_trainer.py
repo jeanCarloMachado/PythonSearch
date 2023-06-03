@@ -4,7 +4,7 @@ import torch
 from tqdm import tqdm
 
 from python_search.ps_llm.llm_dataset import LLMDataset
-from python_search.ps_llm.model_config import ModelConfig
+from python_search.ps_llm.llm_config import LLMConfig
 
 from python_search.ps_llm.utils import timer, Timer
 
@@ -20,7 +20,7 @@ class T5Train:
             else "cpu"
         )
         print("Device to train on:", self.device)
-        self.TARGET_MODEL_DIRECTORY = ModelConfig.FULL_MODEL_PATH
+        self.TARGET_MODEL_DIRECTORY = LLMConfig.FULL_MODEL_PATH
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
     @timer
@@ -29,11 +29,11 @@ class T5Train:
         print(f"Training for {epochs} epochs")
 
         if not base_model_path:
-            base_model_path = ModelConfig.BASE_MODEL_TO_TRAIN_OVER
+            base_model_path = LLMConfig.BASE_MODEL_TO_TRAIN_OVER
         print("Using Base model path:", base_model_path)
 
 
-        self.tokenizer = T5Tokenizer.from_pretrained(ModelConfig.BASE_ORIGINAL_MODEL)
+        self.tokenizer = T5Tokenizer.from_pretrained(LLMConfig.BASE_ORIGINAL_MODEL)
         model = T5ForConditionalGeneration.from_pretrained(base_model_path)
 
         df = LLMDataset().load()
