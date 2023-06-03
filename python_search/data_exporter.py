@@ -1,7 +1,6 @@
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities.core_entities import Entry
 
-
 class DataExporter:
 
     MAX_LENGTH = 100

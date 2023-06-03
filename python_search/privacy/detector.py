@@ -15,13 +15,22 @@ class Detector:
 
         entries = EntriesLoader.load_entry_list()
 
-        sensitive_entries = 0
+        the_list = []
         for entry in entries:
+            the_list.append(entry.key)
+            the_list.append(entry.get_content_str())
+        self.detect_in_list(the_list)
+
+    def detect_in_list(self, data):
+        sensitive_entries = 0
+        total_entries = 0
+        for entry in data:
             for term in self.configuration.privacy_sensitive_terms:
-                if term in entry.key or term in entry.get_content_str():
-                    print("Found sensitive term: ", term, " in entry: ", entry.key)
+                if term in entry:
+                    print("Found sensitive term: ", term, " in entry: ", entry)
                     sensitive_entries += 1
-        print("Found ", sensitive_entries, " sensitive entries")
+            total_entries += 1
+        print("Found ", sensitive_entries, " sensitive entries in a total of ", total_entries, " entries")
 
 
 

@@ -1,6 +1,7 @@
 import os
 from typing import Literal
 
+from python_search.privacy.detector import Detector
 from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
 from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
@@ -136,6 +137,15 @@ class LLMDataset:
             with pd.option_context("display.max_rows", nrows): print(df)
 
         return show_rows(df)
+
+    def check_privacy(self):
+        df = self.load_validation()
+        print("Checking privacy of validation set")
+        Detector().detect_in_list(df['label'].tolist()+ df['prompt'].tolist())
+        print("Checking privacy of training set")
+        df = self.load_training()
+        Detector().detect_in_list(df['label'].tolist()+ df['prompt'].tolist())
+
 
     def inspect(self):
         return len(self.load_training().index)
