@@ -19,7 +19,7 @@ class Evaluate:
         next_item =  self.from_pretrained_next_item(model_path)
         print("Next item: ", next_item)
 
-        global_score =  self.from_pretrained(model_path)
+        global_score = self.from_pretrained(model_path)
         print("Global score: ", global_score)
 
         return {
@@ -52,7 +52,6 @@ class Evaluate:
             print("Lenght after filtering by starts_with: " + str(len(data)))
         else:
             print("No starts with set, so will use all data")
-
 
 
         model = T5Model.load_trained_model(model_path)
