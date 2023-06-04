@@ -11,9 +11,16 @@ class Evaluate:
 
     def all_for_model(self, model_path=None) -> None:
         classify_type = self.from_pretrained_classify_type(model_path)
+        print("Classify type: ", classify_type)
+
         title_generator = self.from_pretrained_title_generator(model_path)
+        print("Title generator: ", title_generator)
+
         next_item =  self.from_pretrained_next_item(model_path)
+        print("Next item: ", next_item)
+
         global_score =  self.from_pretrained(model_path)
+        print("Global score: ", global_score)
 
         return {
             "global_score": global_score,
