@@ -73,7 +73,7 @@ class NextItemReranker:
 def main():
     import fire
 
-    fire.Fire()
+    fire.Fire(NextItemReranker)
 
 
 if __name__ == "__main__":
