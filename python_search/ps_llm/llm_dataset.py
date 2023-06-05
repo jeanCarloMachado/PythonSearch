@@ -1,4 +1,3 @@
-import os
 from typing import Literal
 
 from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
@@ -8,9 +7,9 @@ from python_search.ps_llm.utils import timer
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v8'
+    DATASET_VERSION = 'v10'
     VALIDATION_SIZE_TASK = 200
-    MAX_DATASET_SIZE = 13000
+    MAX_DATASET_SIZE = 5000
 
     TASKS = [
         ClassifyEntryType,
@@ -19,14 +18,16 @@ class LLMDataset:
     ]
 
     def __init__(self):
-        home = os.path.expanduser("~")
-        self.BASE_FOLDER = home + f"/.python_search/datasets"
-        self.DESTINATION_TRAIN = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_train.pkl"
-        self.DESTINATION_VALIDATION = f"{self.BASE_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
+
+        from python_search.ps_llm.llm_config import LLMConfig
+        llm_config = LLMConfig()
+        self.BASE_DATASET_FOLDER  = llm_config.BASE_DATASET_FOLDER
+        self.DESTINATION_TRAIN = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_train.pkl"
+        self.DESTINATION_VALIDATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
         print('Version: ', self.DATASET_VERSION)
 
     @timer
-    def generate(self, save_to_disk=True):
+    def build(self, save_to_disk=True):
         """
         Generates the dataset and writes it to disk
         """
@@ -59,7 +60,7 @@ class LLMDataset:
 
             if validation_set is not None:
                 print("Joining validation set")
-                validation_set  = validation_set.union(validation_instance)
+                validation_set = validation_set.union(validation_instance)
                 train_set = train_set.union(train_instance)
             else:
                 validation_set = validation_instance
@@ -98,12 +99,9 @@ class LLMDataset:
         """
         Loads the dataset from disk
         """
-        import os
 
-        home = os.path.expanduser("~")
+        path = self.BASE_DATASET_FOLDER+f"/{self.DATASET_VERSION}_train.pkl"
         import pandas as pd
-
-        path = home + f"/.python_search/datasets/{self.DATASET_VERSION}_train.pkl"
         df = pd.read_pickle(path)
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
         return df
@@ -113,12 +111,9 @@ class LLMDataset:
         """
         Loads the dataset from disk
         """
-        import os
-
-        home = os.path.expanduser("~")
         import pandas as pd
 
-        path = home + f"/.python_search/datasets/{self.DATASET_VERSION}_validation.pkl"
+        path = self.BASE_DATASET_FOLDER+f"/{self.DATASET_VERSION}_validation.pkl"
         df = pd.read_pickle(path)
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
         return df
@@ -136,6 +131,18 @@ class LLMDataset:
             with pd.option_context("display.max_rows", nrows): print(df)
 
         return show_rows(df)
+
+    def check_privacy(self, check_training=True):
+        from python_search.privacy.privacy_detector import PrivacyDetector
+        df = self.load_validation()
+        print("Checking privacy of validation set")
+        PrivacyDetector().detect_in_list(df['label'].tolist() + df['prompt'].tolist())
+
+        if not check_training:
+            return
+        print("Checking privacy of training set")
+        df = self.load_training()
+        PrivacyDetector().detect_in_list(df['label'].tolist() + df['prompt'].tolist())
 
     def inspect(self):
         return len(self.load_training().index)

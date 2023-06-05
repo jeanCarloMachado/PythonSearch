@@ -7,14 +7,12 @@ from datetime import datetime
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities.core_entities import Key
-from python_search.interpreter.cmd import CmdInterpreter, WRAP_IN_TERMINAL
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
 from python_search.error.exception import notify_exception
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
-
 
 class EntryRunner:
     """
@@ -46,53 +44,28 @@ class EntryRunner:
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
 
+        #if from_shortcut:
+        #    from python_search.apps.notification_ui import send_notification
+        #    send_notification(f"Arrived at shortcut")
+
         key = str(Key.from_fzf(entry_text))
         input_str = key
         if wrap_in_terminal:
-            os.environ[WRAP_IN_TERMINAL] = "1"
+            os.environ["new-window-non-cli"] = "1"
 
         # if there are : in the line just take all before it as it is
         # usually the key from fzf, and our keys do not accept :
 
         metadata = decode_serialized_data_from_entry_text(entry_text, self._logger)
-        rank_position = metadata.get("position")
 
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
+            from python_search.interpreter.cmd import CmdInterpreter
             CmdInterpreter({"cli_cmd": query_used}).interpret_default()
             return
 
-        matches = self._matching_keys(key)
-
-        skip_key_matching = False
-        if not matches:
-            key_part = entry_text.split(":")[0]
-            content = entry_text[len(key_part) + 1 :]
-            import json
-
-            content = content.strip()
-            input_str = json.loads(content)
-            skip_key_matching = True
-
-        self._logger.info(
-            f"""
-            Matches of key: {key}
-            matches: {matches}
-            Query used: {query_used}
-            Rank Position: {rank_position}
-        """
-        )
-
-        if len(matches) > 1:
-            key = min(matches, key=len)
-            from python_search.apps.notification_ui import send_notification
-
-            send_notification(
-                f"Multiple matches for this key {matches} using the smaller"
-            )
-
         result = InterpreterMatcher.build_instance(self._configuration).default(
-            input_str, skip_key_matching
+            input_str
         )
 
         self._logger.info("Passed interpreter")
@@ -125,8 +98,7 @@ class EntryRunner:
             encoded_registered_key = generate_identifier(registered_key)
             matches_kv_encoded = key_regex.search(encoded_registered_key)
             if matches_kv_encoded:
-                self._logger.info(f"{key} matches {encoded_registered_key}")
-                matching_keys.append(registered_key)
+                return registered_key
 
         return matching_keys
 

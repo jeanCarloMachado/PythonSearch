@@ -4,36 +4,48 @@ import torch
 from tqdm import tqdm
 
 from python_search.ps_llm.llm_dataset import LLMDataset
-from python_search.ps_llm.model_config import ModelConfig
+from python_search.ps_llm.llm_config import LLMConfig
 
 from python_search.ps_llm.utils import timer, Timer
 
+def get_device(use_xla=False, force_cuda=False) -> str:
+    if torch.backends.mps.is_available():
+        print("Foudn apple metal device")
+        return "mps"
+
+
+    if use_xla:
+        print("Assuming XLA device")
+        import torch_xla.core.xla_model as xm
+        return xm.xla_device()
+
+    if torch.cuda.is_available() or force_cuda:
+        print("Cuda device enabled")
+        return "cuda"
+
+
+    return "cpu"
 
 # Define the dataset class
 class T5Train:
     def __init__(self):
-        self.device = (
-            "cuda"
-            if torch.cuda.is_available()
-            else "mps"
-            if torch.backends.mps.is_available()
-            else "cpu"
-        )
-        print("Device to train on:", self.device)
-        self.TARGET_MODEL_DIRECTORY = ModelConfig.FULL_MODEL_PATH
+        self.TARGET_MODEL_DIRECTORY = LLMConfig.FULL_MODEL_PATH
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
     @timer
-    def train(self,*, epochs=1, base_model_path=None):
+    def train(self,*, epochs=10, base_model_path=None, use_xla=False, force_cuda=False, batch_size=8):
+        self.device = get_device(use_xla, force_cuda)
+        print("Device to train on:", self.device)
+
         # Initialize the tokenizer and model
         print(f"Training for {epochs} epochs")
 
         if not base_model_path:
-            base_model_path = ModelConfig.BASE_MODEL_TO_TRAIN_OVER
+            base_model_path = LLMConfig.BASE_MODEL_TO_TRAIN_OVER
         print("Using Base model path:", base_model_path)
 
 
-        self.tokenizer = T5Tokenizer.from_pretrained('t5-small')
+        self.tokenizer = T5Tokenizer.from_pretrained(LLMConfig.BASE_ORIGINAL_MODEL)
         model = T5ForConditionalGeneration.from_pretrained(base_model_path)
 
         df = LLMDataset().load()
@@ -44,7 +56,8 @@ class T5Train:
 
         # Prepare the DataLoader
         dataset = T5Dataset(inputs, targets, self.tokenizer, max_length=512)
-        dataloader = DataLoader(dataset, batch_size=16)
+        print("Batch size is:", batch_size)
+        dataloader = DataLoader(dataset, batch_size=batch_size)
 
         # Define the device
         print("Device:", self.device)

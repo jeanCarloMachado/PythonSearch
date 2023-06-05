@@ -35,7 +35,7 @@ class NextItemReranker:
 
         keys: List[str] = keys
         if not keys:
-            keys = EntriesLoader().load_all_keys()
+            keys = EntriesLoader().load_only_keys()
 
         if limit:
             keys = keys[:limit]
@@ -73,7 +73,7 @@ class NextItemReranker:
 def main():
     import fire
 
-    fire.Fire()
+    fire.Fire(NextItemReranker)
 
 
 if __name__ == "__main__":

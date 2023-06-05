@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22
+
+- Add new models exploration
+- Train extensivly on base t5
+- delete old next item predictor code base
+
 ## 0.21
 
 - Add entry type classifier

@@ -25,6 +25,7 @@ class PythonSearchConfiguration(EntriesGroup):
     use_webservice = False
     rerank_via_model = False
     entry_generation = False
+    privacy_sensitive_terms = None
 
     def __init__(
         self,
@@ -42,6 +43,7 @@ class PythonSearchConfiguration(EntriesGroup):
         rerank_via_model=False,
         collect_data: bool = False,
         entry_generation=False,
+        privacy_sensitive_terms: Optional[List[str]] = None,
     ):
         """
 
@@ -85,6 +87,7 @@ class PythonSearchConfiguration(EntriesGroup):
         self.use_webservice = use_webservice
         self.collect_data = collect_data
         self.entry_generation = entry_generation
+        self.privacy_sensitive_terms = privacy_sensitive_terms
 
     def get_next_item_predictor_model(self):
         """

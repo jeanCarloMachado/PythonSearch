@@ -7,6 +7,7 @@ from typing import List
 
 import fire
 
+from python_search.entry_capture.utils import get_page_title
 from python_search.error.exception import notify_exception
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.environment import is_mac
@@ -201,25 +202,12 @@ class NewEntryGUI:
 
         return result
 
-    def _get_page_title(self, url):
-
-        cmd = f"""curl -f -L {url} | python -c 'import sys, re; result = re.findall("<title>(.*?)</title>", str(sys.stdin.read()));  print(result[0])'"""
-        from subprocess import PIPE, Popen
-
-        with Popen(cmd, stdout=PIPE, stderr=None, shell=True) as process:
-            output = process.communicate()[0].decode("utf-8")
-        if not process.returncode == 0:
-            return ""
-        return output
-
     def _update_title_with_url_title_thread(self, content: str, window):
-        send_notification(f"Starting to get url title")
         import PySimpleGUI as sg
-
         window: sg.Window = window
 
         def _update_title(content: str, window):
-            new_title = self._get_page_title(content)
+            new_title = get_page_title(content)
             old_title = window[self._TITLE_INPUT]
             if old_title == new_title:
                 print("Will not upgrade the title as it was already changed")

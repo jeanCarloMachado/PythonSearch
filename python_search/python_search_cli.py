@@ -63,7 +63,6 @@ class PythonSearchCli:
                 return
 
         self.configuration = configuration
-        # @todo remove this use the binary instead
         self.run_key = EntryRunner(self.configuration).run
 
     def search(self, only_fzf=False):
@@ -116,11 +115,6 @@ class PythonSearchCli:
         from python_search.shortcut.generator import ShortcutGenerator
 
         return ShortcutGenerator(self.configuration).configure
-
-    def _ranking(self):
-        from python_search.search.search import Search
-
-        return Search(self.configuration)
 
     def _features(self):
         """Feature toggle system"""

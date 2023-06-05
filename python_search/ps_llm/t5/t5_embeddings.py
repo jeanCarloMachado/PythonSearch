@@ -40,7 +40,7 @@ class T5Embeddings:
 
     def save_all_keys(self):
         """
-        Create an
+        Create all keys
         """
         print("Saving all keys as pandas dataframe")
         entries = self._configuration.commands

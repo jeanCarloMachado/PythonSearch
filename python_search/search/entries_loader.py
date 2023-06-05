@@ -2,13 +2,14 @@ from typing import List
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities.core_entities import Entry
+from python_search.privacy.privacy_detector import PrivacyDetector
 
 
 class EntriesLoader:
     """Class to access the current existing key"""
 
     @staticmethod
-    def load_all_keys() -> List[str]:
+    def load_only_keys() -> List[str]:
         """
         Return just the key names strings
         """
@@ -18,9 +19,17 @@ class EntriesLoader:
 
         return keys
 
+    @staticmethod
+    def load_privacy_neutral_only() -> List[Entry]:
+        detector = PrivacyDetector()
+
+        for i in EntriesLoader.load_all_entries():
+            if not detector.has_sentitive_content(i.get_content_str()) and not detector.has_sentitive_content(i.key):
+                yield i
+
 
     @staticmethod
-    def load_entry_list() -> List[Entry]:
+    def load_all_entries() -> List[Entry]:
         """
         Return just the key names strings
         """
@@ -29,26 +38,3 @@ class EntriesLoader:
 
         for key, value in entries.items():
             yield Entry(key, value)
-
-
-    @staticmethod
-    def load_key_values_str():
-        """
-        Return just the key names strings
-        """
-
-        entries = ConfigurationLoader().load_entries()
-
-        keys = []
-        values = []
-        for key, value in entries.items():
-            entry = Entry(key, value)
-            value_str = entry.get_content_str()
-
-            if not key or not value_str:
-                continue
-
-            keys.append(key)
-            values.append(value_str)
-
-        return keys, values

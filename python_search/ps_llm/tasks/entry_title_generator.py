@@ -11,12 +11,12 @@ class EntryTitleGenerator(BaseDataTask):
 
     def build_dataset(self):
 
-        keys, values = EntriesLoader.load_key_values_str()
+        entries = EntriesLoader.load_privacy_neutral_only()
 
         result = []
 
-        for i, key in enumerate(keys):
-            row = (self.prompt(values[i]), key)
+        for entry in entries:
+            row = (self.prompt(entry.get_content_str()), entry.key)
             result.append(row)
 
         df = get_spark().createDataFrame(result, ["prompt", "label"])
