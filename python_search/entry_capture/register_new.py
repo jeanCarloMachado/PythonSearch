@@ -111,14 +111,13 @@ class RegisterNew:
         if len(german_term) == 0:
             raise RegisterNewException.empty_content()
 
-        print(f"german term: {german_term}")
-        Browser().open(
-            f"https://translate.google.com/?sl=de&tl=en&text={german_term}&op=translate"
-        )
+        import subprocess;
+        traslation = subprocess.getoutput(f'prompt_cli translate_de_en  "{german_term}"')
 
         from python_search.apps.collect_input import CollectInput
 
-        meaning = CollectInput().launch(f"Please type the meaning of ({german_term})")
+        meaning = CollectInput().launch(default_content=traslation)
+
 
         if not meaning:
             raise RegisterNewException.empty_content()
