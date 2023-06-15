@@ -3,18 +3,20 @@ from typing import Literal
 from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
 from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
+from python_search.ps_llm.tasks.synthetic_next_item import SyntheticNextItemPredictor
 from python_search.ps_llm.utils import timer
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v10'
+    DATASET_VERSION = 'v11'
     VALIDATION_SIZE_TASK = 200
     MAX_DATASET_SIZE = 5000
 
     TASKS = [
         ClassifyEntryType,
         EntryTitleGenerator,
-        NextItemPredictor
+        NextItemPredictor,
+        SyntheticNextItemPredictor,
     ]
 
     def __init__(self):
