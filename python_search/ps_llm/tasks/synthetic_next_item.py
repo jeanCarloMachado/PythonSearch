@@ -12,6 +12,7 @@ class SyntheticNextItemPredictor(BaseDataTask):
             {'history': ['news'], 'next': ['news']},
             {'history': ['linkedin'], 'next': ['arxiv']},
             {'history': ['facebook'], 'next': ['arxiv']},
+            {'history': ['edit'], 'next': ['commit', 'github']},
     ]
 
     def prompt(self, row):

@@ -56,6 +56,7 @@ class LLMDataset:
             print("Rows for " + task.__name__ + ": " + str(df_instance.count()))
 
 
+            # @todo change this logic for datasets with very few rows
             validation_instance = df_instance.filter(df_instance.row_num <= self.VALIDATION_SIZE_TASK).select("prompt", "label")
             train_instance = df_instance.filter(df_instance.row_num > self.VALIDATION_SIZE_TASK).select("prompt", "label")
 

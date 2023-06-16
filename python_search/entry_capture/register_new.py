@@ -101,33 +101,6 @@ class RegisterNew:
 
         self.entry_inserter.insert(key, dict_entry)
 
-    def german_from_text(self, german_term: str):
-        """
-        @todo move this out of here to a plugin system
-        Register german workds you dont know by saving them to the clipboard and storing in python search
-        """
-        from python_search.apps.browser import Browser
-
-        if len(german_term) == 0:
-            raise RegisterNewException.empty_content()
-
-        import subprocess;
-        traslation = subprocess.getoutput(f'prompt_cli translate_de_en  "{german_term}"')
-
-        from python_search.apps.collect_input import CollectInput
-
-        meaning = CollectInput().launch(default_content=traslation)
-
-
-        if not meaning:
-            raise RegisterNewException.empty_content()
-
-        as_dict = {
-            "snippet": meaning,
-            "language": "German",
-        }
-
-        self.entry_inserter.insert(german_term, as_dict)
 
 
 def main():
