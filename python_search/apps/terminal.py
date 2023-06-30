@@ -33,7 +33,8 @@ class Terminal:
             else "bash"
         )
         shell = "/bin/bash"
-        cmd = f'{shell} -c "{cmd}"'
+        # quoting here makes a big difference
+        cmd = f"{shell} -c '{cmd}'"
 
         hold = ""
         if hold_terminal_open_on_end:
