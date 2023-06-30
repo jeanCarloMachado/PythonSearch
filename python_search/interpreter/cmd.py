@@ -49,12 +49,6 @@ class CmdInterpreter(BaseInterpreter):
 
         cmd = self.apply_directory(self.cmd["cmd"])
 
-        if "high_priority" in self.cmd:
-            cmd = f"nice -19 {cmd}"
-
-        if "directory" in self.cmd:
-            cmd = f'cd {self.cmd["directory"]} && {cmd}'
-
         cmd = self._try_to_wrap_in_terminal(cmd)
 
         logger.info(f"Command to run: {cmd}")
