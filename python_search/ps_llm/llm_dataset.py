@@ -3,18 +3,20 @@ from typing import Literal
 from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
 from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 from python_search.ps_llm.tasks.next_item_predictor import NextItemPredictor
+from python_search.ps_llm.tasks.synthetic_next_item import SyntheticNextItemPredictor
 from python_search.ps_llm.utils import timer
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v10'
+    DATASET_VERSION = 'v11'
     VALIDATION_SIZE_TASK = 200
     MAX_DATASET_SIZE = 5000
 
     TASKS = [
         ClassifyEntryType,
         EntryTitleGenerator,
-        NextItemPredictor
+        NextItemPredictor,
+        SyntheticNextItemPredictor,
     ]
 
     def __init__(self):
@@ -54,6 +56,7 @@ class LLMDataset:
             print("Rows for " + task.__name__ + ": " + str(df_instance.count()))
 
 
+            # @todo change this logic for datasets with very few rows
             validation_instance = df_instance.filter(df_instance.row_num <= self.VALIDATION_SIZE_TASK).select("prompt", "label")
             train_instance = df_instance.filter(df_instance.row_num > self.VALIDATION_SIZE_TASK).select("prompt", "label")
 

@@ -13,9 +13,10 @@ class Terminal:
     # including the generic params and the python search main window
     GLOBAL_TERMINAL_PARAMS = " -o remember_window_size=yes -o confirm_os_window_close=0  -o remember_window_size=n -o macos_quit_when_last_window_closed=yes "
 
-    DEFAULT_HEIGHT = 500
-    DEFAULT_WIDTH = 900
-    GENERIC_TERMINAL_PARAMS = f" {GLOBAL_TERMINAL_PARAMS} -o initial_window_width={DEFAULT_WIDTH} -o initial_window_height={DEFAULT_HEIGHT} -o font_size=13 "
+    DEFAULT_HEIGHT = 900
+    DEFAULT_WIDTH = 1200
+    FONT_SIZE = 15
+    GENERIC_TERMINAL_PARAMS = f" {GLOBAL_TERMINAL_PARAMS} -o initial_window_width={DEFAULT_WIDTH} -o initial_window_height={DEFAULT_HEIGHT} -o font_size={FONT_SIZE} "
 
     def __init__(self):
         self.configuration = ConfigurationLoader().get_config_instance()
@@ -32,7 +33,8 @@ class Terminal:
             else "bash"
         )
         shell = "/bin/bash"
-        cmd = f'{shell} -c "{cmd}"'
+        # quoting here makes a big difference
+        cmd = f"{shell} -c '{cmd}'"
 
         hold = ""
         if hold_terminal_open_on_end:

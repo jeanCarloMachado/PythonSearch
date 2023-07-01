@@ -44,7 +44,7 @@ class Clipboard:
             import sys
 
             data = sys.stdin.readlines()
-            content = "\n".join(data)
+            content = "".join(data)
 
         if not content:
             raise Exception("Tryring to set empty to clipboard")

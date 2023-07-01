@@ -75,13 +75,12 @@ class NewEntryGUI:
         TAGS_PER_ROW = 6
         tags_chucks = self._chunks_of_tags(self._tags, TAGS_PER_ROW)
 
-        key_name_input = self.sg.Multiline(
+        key_name_input = self.sg.Input(
             key=self._TITLE_INPUT,
             default_text=default_key,
-            expand_x=True,
             expand_y=True,
+            expand_x=True,
             size=self._ENTRY_NAME_INPUT_SIZE,
-            no_scrollbar=True,
         )
 
         content_input = self.sg.Multiline(
@@ -133,8 +132,8 @@ class NewEntryGUI:
         )
 
         window[self._TITLE_INPUT].bind("<Escape>", "Escape")
-        window[self._TITLE_INPUT].bind("<Control_L><s>", "CTRL-s")
-        window[self._TITLE_INPUT].bind("<Control_L><g>", "CTRL-g")
+        window[self._TITLE_INPUT].bind("<Return>", "write")
+        window[self._TITLE_INPUT].bind("<Control_L><s>", "write")
         window[self._BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "Escape")
 
@@ -160,7 +159,7 @@ class NewEntryGUI:
 
                 sys.exit(1)
 
-            if event and (event == "write" or event == "-entry-name-CTRL-s"):
+            if event and (event == "write" or event == "-entry-name-write"):
                 break
 
             if event == self._PREDICT_ENTRY_TYPE_READY:

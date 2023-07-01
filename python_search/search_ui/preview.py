@@ -66,10 +66,7 @@ class Preview:
         return Fore.GREEN
 
     def _extract_key(self, entry_text):
-        key = entry_text.split(":")[0]
-        # remove the last 2 spaces from the key as they are used for formatting the string in fzf
-        key = key.strip()
-        return key
+        return entry_text.split(":")[0].strip()
 
     def _build_values_to_print(self, entry_text, key, entry_data) -> dict:
         # the entry content is after the key + a ":" character
@@ -129,13 +126,10 @@ class Preview:
     def _color_str(self, a_string, a_color) -> str:
         return f"{a_color}{a_string}{Fore.RESET}"
 
-    def _key_exists(self, key):
-        if key in self.entries:
+    def _key_exists(self, key_proposed):
+        if key_proposed in self.entries:
             return True
 
-        for entry in self.entries:
-            if entry.startswith(key):
-                return True
         return False
 
     def _load_key_data(self, key):
