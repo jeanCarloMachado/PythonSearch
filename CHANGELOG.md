@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.23
+ - explore llms
+ - entries loader
+ - privancy component
+
 ## 0.22
 
 - Add new models exploration
