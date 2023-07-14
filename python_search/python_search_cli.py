@@ -59,7 +59,11 @@ class PythonSearchCli:
             try:
                 configuration = ConfigurationLoader().load_config()
             except BaseException as e:
+                import traceback
                 print(str(e))
+                traceback.print_exc()
+
+
                 return
 
         self.configuration = configuration
