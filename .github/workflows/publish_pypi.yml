@@ -14,7 +14,7 @@ jobs:
       - name: Build and publish to pypi
         shell: bash
         env:
-          PYPI_TOKEN: ${{ secrets.$PYPI_TOKEN_NEW }}
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN_NEW }}
         run: |
           pip install poetry
           poetry config virtualenvs.create false
