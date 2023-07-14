@@ -9,6 +9,10 @@ class Project:
         Initialize a new project to use Python search and make sure all remaining dependencies exist
         """
 
+        is_relative_path = new_project_location[0] != "/"
+        if is_relative_path:
+            new_project_location = os.getcwd() + "/" + new_project_location
+
         if os.path.exists(new_project_location):
             raise Exception(f"{new_project_location} already exists")
 
