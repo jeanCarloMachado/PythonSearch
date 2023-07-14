@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 0.24
+
+- Drop scikit
 
 ## 0.23
  - explore llms
