@@ -47,7 +47,7 @@ If you want to develop python-search install it via [the instructions in the con
 ### 2. Initialize your entries project
 
 ```sh
-python_search new_project "$HOME/projects/MyEntries"
+python_search new_project "$HOME/MyEntries"
 ```
 
 It will create a new git project for you for your entries.
