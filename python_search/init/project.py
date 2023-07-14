@@ -1,8 +1,5 @@
 import os
 
-from python_search.environment import is_mac
-
-
 class Project:
     def new_project(self, new_project_location):
         """

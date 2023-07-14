@@ -81,6 +81,13 @@ Installation successful!
 
     def _install_fzf(self):
         print("Checking fzf")
+
+        if is_debian_based():
+            os.system("sudo apt-get install fzf")
+            return
+
+        print("Installing fzf manually")
+
         HOME = os.environ["HOME"]
         if os.path.exists(f"{HOME}/.fzf/"):
             print("Fzf already installed!, will reinstall..")
@@ -116,6 +123,12 @@ Installation successful!
         print(
             "Looks like kitty is not installed in your platform. Installing it for you..."
         )
+
+        if is_debian_based():
+            os.system("sudo apt-get install kitty")
+            return
+
+        print("Installing kitty manually via curl")
         os.system(
             "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
         )
@@ -127,6 +140,11 @@ Installation successful!
         if is_archlinux():
             os.system("sudo pacman -S wmctrl")
 
+        if is_debian_based():
+            os.system("sudo apt-get install wmctrl")
+
     def _install_xsel(self):
+        if is_debian_based():
+            os.system("sudo apt-get install xsel")
         if is_archlinux():
             os.system("sudo pacman -S xsel")
