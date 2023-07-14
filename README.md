@@ -30,6 +30,7 @@ Write a python script like this, and call it.
 ```sh
 pip install python-search && python_search install_missing_dependencies
 ```
+Note that you might need to upgrade your pip first: `pip install --upgrade pip`
 
 To understand the options run:
 
