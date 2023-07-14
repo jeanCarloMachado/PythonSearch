@@ -11,9 +11,16 @@ from python_search.official_entries.entries import OfficialEntries
 
 entries = {
     # NEW_ENTRIES_HERE
-    "register new entry": {
+    "python search open search ui": {
+        "cmd": "python_search_search run",
+        "xfce_shortcut": "<Control>space",
+        "mac_shortcuts": ["⌥Space"],
+    },
+    "register new entry ui": {
         # cmd scripts will be executed in a terminal in the background
         "cmd": "python_search register_new from_clipboard",
+        "xfce_shortcut": "<Control>r",
+        "mac_shortcuts": ["⌥R"],
     },
     # cli cmds will additional open a new terminal window and execute the  command
     "edit current project _entries source code": {
@@ -29,7 +36,6 @@ entries = {
     # snippets copy  the content of the snippet to the clipboard when executed
     "date current today now copy": {
         "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "i3_shortcut": "Control+Shift+0",
     },
     # file will open the file with the standard file handler for the file type in the system
     "edit current selected project _configuration of python search": {
@@ -39,7 +45,13 @@ entries = {
     "get python help function on object": {
         # pythons search is shipped with a multiplataform UI
         # that collects_input to questions and returns the string answered
-        "cli_cmd": """python3 -c 'help($(collect_input giveTheObjectName))' """
+        "cli_cmd": 'python3 -c "help($(collect_input giveTheObjectName))" '
+    },
+    # example with shortcuts
+    "gmail application": {
+        "url": f"https://mail.google.com/",
+        "mac_shortcuts": ["⌥M"],
+        "xfce_shortcut": "<Super>m",
     },
     # _entries are python code, you can import them from other python scripts
     # or you can generate them dynamically like in the example below
