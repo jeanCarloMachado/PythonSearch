@@ -2,9 +2,6 @@ import os
 
 HOME = os.environ["HOME"]
 BASE_PROJECT_FOLDER = HOME + "/.python_search"
-if 'CUSTOM_BASE_FOLDER' in os.environ:
-    print("Using custom base folder: ", os.environ['CUSTOM_BASE_FOLDER'])
-    BASE_PROJECT_FOLDER = os.environ['CUSTOM_BASE_FOLDER']
 
 class LLMConfig:
     """
