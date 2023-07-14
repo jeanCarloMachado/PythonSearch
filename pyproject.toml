@@ -25,7 +25,7 @@ uvicorn = { version = "^0.18.2", optional = true }
 numpy = { version = ">=1.23.4", optional = true }
 msgpack-numpy = { version = ">=0.4.8", optional = true }
 pyspark = { version = ">=3.0", optional = true}
-mlflow = { verson=">=1.29.0,<1.30.0", optional = true }
+mlflow = { version=">=1.29.0,<1.30.0", optional = true }
 pdoc3 = {version = "^0.10.0", optional = true}
 keras = {version = ">=2.10", optional = true}
 # tensorflow cannot be installed in mac m1 chips
