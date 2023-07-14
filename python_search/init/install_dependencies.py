@@ -1,6 +1,6 @@
 import os
 
-from python_search.environment import is_mac, is_archlinux
+from python_search.environment import is_mac, is_archlinux, is_debian_based
 
 
 class InstallDependencies:
@@ -33,6 +33,8 @@ Installation successful!
         if is_mac():
             self._install_brew_if_not_present()
             os.system("brew install ack")
+        if is_debian_based():
+            os.system("sudo apt-get install ack")
         else:
             print(
                 "Dont know how to install ack for your platform, please do so manually"
