@@ -5,7 +5,7 @@ BASE_PROJECT_FOLDER = HOME + "/.python_search"
 
 class LLMConfig:
     """
-    Configuration for the T5 model
+    Configuration for your Large Language Model, customizable in entries_main.py
     """
     def __init__(self):
         from python_search.configuration.loader import ConfigurationLoader
@@ -27,7 +27,7 @@ class LLMConfig:
 
 class CustomLLMConfig:
     """
-    Custom LLM Config changes
+    Customize the Path and name of your Custom LLM Model in your entries_main.py
     """
 
     def __init__(
