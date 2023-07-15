@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import logging
 import threading
-from dataclasses import dataclass
 from typing import List
 
 import fire
@@ -17,6 +15,7 @@ from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.entry_type.type_detector import TypeDetector
 from python_search.entry_type.entity import infer_default_type
 from python_search.interpreter.base import BaseInterpreter
+from python_search.apps.clipboard import Clipboard
 
 
 class NewEntryGUI:
@@ -48,7 +47,6 @@ class NewEntryGUI:
         """
 
         if not default_content:
-            from python_search.apps.clipboard import Clipboard
             default_content = Clipboard().get_content()
 
         if not default_type:
@@ -135,7 +133,6 @@ class NewEntryGUI:
         colors = ("#FFFFFF", self.sg.theme_input_background_color())
         print(colors)
 
-        llm_component = []
 
         tags_block = []
         if self._tags:
@@ -155,11 +152,13 @@ class NewEntryGUI:
                 ),
                 self.sg.Push(),
             ],
-            llm_component,
             tags_block,
             [
                 self.sg.Button(
                     "Write entry", key="write", button_color=colors, border_width=0
+                ),
+                self.sg.Button(
+                    "Refresh", key="refresh", button_color=colors, border_width=0
                 )
             ],
         ]
@@ -212,8 +211,17 @@ class NewEntryGUI:
                     values["type"],
                     selected_tags,
                 )
+
+                window[self._BODY_INPUT].update("")
+                window[self._TITLE_INPUT].update("")
                 self._save_entry_data(entry_data)
                 continue
+
+            if event and event == "refresh":
+                default_content = Clipboard().get_content()
+                window[self._BODY_INPUT].update(default_content)
+                self._generate_title(default_content, window)
+
 
             if event == self._PREDICT_ENTRY_TYPE_READY:
                 window["type"].update(values[event])
