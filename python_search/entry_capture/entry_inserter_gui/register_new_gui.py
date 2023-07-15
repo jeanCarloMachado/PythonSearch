@@ -54,15 +54,14 @@ class NewEntryGUI:
         if not default_type:
             default_type = infer_default_type(default_content)
 
-        entry_data: GuiEntryData = self.launch(
+        self.launch(
             "New Entry",
             default_content=default_content,
             default_key=default_key,
             default_type=default_type,
         )
-        self._save_entry_data(entry_data)
 
-    def _save_entry_data(self, entry_data):
+    def _save_entry_data(self, entry_data: GuiEntryData):
         key = self._sanitize_key(entry_data.key)
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self._configuration
@@ -75,6 +74,8 @@ class NewEntryGUI:
         entry_inserter = FilesystemEntryInserter(self._configuration)
         entry_inserter.insert(key, dict_entry)
 
+        from python_search.apps.notification_ui import send_notification
+        send_notification(f"Entry created succcesfully")
 
     @notify_exception()
     def launch(
@@ -192,7 +193,6 @@ class NewEntryGUI:
             print("Event: ", event)
             if event == self.sg.WINDOW_CLOSED:
                 import sys
-
                 sys.exit(1)
 
             if "Escape" in event:
@@ -200,7 +200,20 @@ class NewEntryGUI:
                 HideWindow().hide()
 
             if event and (event == "write" or event == "-entry-name-write"):
-                break
+                selected_tags = []
+                if self._tags:
+                    for key, value in values.items():
+                        if key in self._tags and value is True:
+                            selected_tags.append(key)
+
+                entry_data = GuiEntryData(
+                    values[self._TITLE_INPUT],
+                    values[self._BODY_INPUT],
+                    values["type"],
+                    selected_tags,
+                )
+                self._save_entry_data(entry_data)
+                continue
 
             if event == self._PREDICT_ENTRY_TYPE_READY:
                 window["type"].update(values[event])
@@ -219,27 +232,7 @@ class NewEntryGUI:
                     values[self._BODY_INPUT]
                 ).default()
 
-        window.hide()
-        window.close()
-        logging.info("values", values)
 
-        selected_tags = []
-        if self._tags:
-            for key, value in values.items():
-                if key in self._tags and value is True:
-                    selected_tags.append(key)
-
-        result = GuiEntryData(
-            values[self._TITLE_INPUT],
-            values[self._BODY_INPUT],
-            values["type"],
-            selected_tags,
-        )
-
-        if serialize_output:
-            result = result.__dict__
-
-        return result
 
     def _update_title_with_url_title_thread(self, content: str, window):
         import PySimpleGUI as sg
