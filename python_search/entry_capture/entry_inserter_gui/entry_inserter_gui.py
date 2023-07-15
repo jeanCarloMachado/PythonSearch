@@ -11,6 +11,7 @@ from python_search.entry_capture.utils import get_page_title
 from python_search.error.exception import notify_exception
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.environment import is_mac
+from python_search.host_system.windows_focus import Focus
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.entry_type.type_detector import TypeDetector
 from python_search.entry_type.entity import infer_default_type
@@ -44,6 +45,7 @@ class NewEntryGUI:
         """
         Create a new inferred entry based on the clipboard content
         """
+
         if not default_content:
             from python_search.apps.clipboard import Clipboard
             default_content = Clipboard().get_content()
@@ -319,4 +321,8 @@ def main():
 if __name__ == "__main__":
     fire.Fire(NewEntryGUI().launch)
 def launch_ui():
+    if Focus().focus_register_new():
+        print("Focusing on already open window")
+        return
+
     fire.Fire(NewEntryGUI().launch_loop)
