@@ -7,6 +7,7 @@ from typing import List
 
 import fire
 
+from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
 from python_search.entry_capture.utils import get_page_title
 from python_search.error.exception import notify_exception
 from python_search.configuration.loader import ConfigurationLoader
@@ -53,9 +54,6 @@ class NewEntryGUI:
         if not default_type:
             default_type = infer_default_type(default_content)
 
-        from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
-            GuiEntryData,
-        )
         entry_data: GuiEntryData = self.launch(
             "New Entry",
             default_content=default_content,
@@ -67,14 +65,15 @@ class NewEntryGUI:
     def _save_entry_data(self, entry_data):
         key = self._sanitize_key(entry_data.key)
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
-            self.configuration
+            self._configuration
         ).get_interpreter_from_type(entry_data.type)
 
         dict_entry = interpreter(entry_data.value).to_dict()
         if entry_data.tags:
             dict_entry["tags"] = entry_data.tags
 
-        self.entry_inserter.insert(key, dict_entry)
+        entry_inserter = FilesystemEntryInserter(self._configuration)
+        entry_inserter.insert(key, dict_entry)
 
 
     @notify_exception()
@@ -197,9 +196,8 @@ class NewEntryGUI:
                 sys.exit(1)
 
             if "Escape" in event:
-                import sys
-
-                sys.exit(1)
+                from python_search.host_system.window_hide import HideWindow
+                HideWindow().hide()
 
             if event and (event == "write" or event == "-entry-name-write"):
                 break
@@ -259,6 +257,8 @@ class NewEntryGUI:
             target=_update_title, args=(content, window), daemon=True
         ).start()
 
+    def _sanitize_key(self, key):
+        return key.replace("\n", " ").replace(":", " ").strip()
 
     def _generate_title(self, content, window):
         from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
@@ -320,6 +320,7 @@ def main():
 
 if __name__ == "__main__":
     fire.Fire(NewEntryGUI().launch)
+
 def launch_ui():
     if Focus().focus_register_new():
         print("Focusing on already open window")
