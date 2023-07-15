@@ -8,8 +8,6 @@ from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,
 )
 
-from python_search.entry_type.entity import infer_default_type
-from python_search.exceptions import RegisterNewException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.error.exception import notify_exception
@@ -65,42 +63,6 @@ class RegisterNew:
 
         self.launch_ui(default_key=key, default_content=content)
 
-    @notify_exception()
-    def launch_ui(self, default_type=None, default_key="", default_content=""):
-        """
-        Create a new inferred entry based on the clipboard content
-        """
-        if not default_content:
-            from python_search.apps.clipboard import Clipboard
-            default_content = Clipboard().get_content()
-
-        if not default_type:
-            default_type = infer_default_type(default_content)
-
-        from python_search.entry_capture.entry_inserter_gui.entry_inserter_gui import (
-            NewEntryGUI,
-            GuiEntryData,
-        )
-        entry_data: GuiEntryData = NewEntryGUI().launch(
-            "New Entry",
-            default_content=default_content,
-            default_key=default_key,
-            default_type=default_type,
-        )
-        self.save_entry_data(entry_data)
-
-    def save_entry_data(self, entry_data):
-        key = self._sanitize_key(entry_data.key)
-        interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
-            self.configuration
-        ).get_interpreter_from_type(entry_data.type)
-
-        dict_entry = interpreter(entry_data.value).to_dict()
-        if entry_data.tags:
-            dict_entry["tags"] = entry_data.tags
-
-        self.entry_inserter.insert(key, dict_entry)
-
 
 
 def main():
@@ -109,7 +71,4 @@ def main():
     fire.Fire(RegisterNew)
 
 
-def launch_ui():
-
-    RegisterNew().launch_ui()
 

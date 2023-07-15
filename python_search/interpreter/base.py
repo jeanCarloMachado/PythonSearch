@@ -5,9 +5,7 @@ import logging
 from typing import Optional
 
 from python_search.apps.clipboard import Clipboard
-from python_search.apps.window_manager import I3
 from python_search.context import Context
-from python_search.environment import is_mac
 
 
 class BaseInterpreter:
@@ -90,17 +88,3 @@ class BaseInterpreter:
             cmd = f'cd {self.cmd["directory"]} ; {cmd}'
         return cmd
 
-    def try_to_focus(self) -> bool:
-        """
-        Focus on the window if it is already running and return True.
-        If it is not running, return False.
-        """
-
-        if "focus_match" not in self.cmd:
-            return False
-
-        if is_mac():
-            print("Will not try to focus as this is not supported yet")
-            return False
-
-        return I3().focus_on_window_with_title(self.cmd["focus_match"])

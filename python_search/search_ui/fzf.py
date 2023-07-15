@@ -55,7 +55,7 @@ class Fzf:
         --bind "ctrl-n:execute-silent:(nohup register_new launch_from_fzf {{}} & )" \
         --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
-        --bind "ctrl-r:reload-sync:(ps_search --inline_print=True)" \
+        --bind "ctrl-r:reload-sync:(llm_cli t5_embeddings save_missing_keys 2>/dev/null && ps_search --inline_print=True)" \
         --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
         --bind "ctrl-v:reload-sync:(ps_search --inline_print=True --ignore_recent=True --query {{q}})" \
         {on_change} \

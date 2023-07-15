@@ -44,9 +44,6 @@ class CmdInterpreter(BaseInterpreter):
         raise CommandDoNotMatchException.not_valid_command(self, cmd)
 
     def interpret_default(self):
-        if self.try_to_focus():
-            return
-
         cmd = self.apply_directory(self.cmd["cmd"])
 
         cmd = self._try_to_wrap_in_terminal(cmd)
