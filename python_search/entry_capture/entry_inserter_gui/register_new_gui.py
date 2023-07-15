@@ -62,6 +62,8 @@ class NewEntryGUI:
         )
 
     def _save_entry_data(self, entry_data: GuiEntryData):
+        from python_search.apps.notification_ui import send_notification
+        send_notification(f"Creating new entry")
         key = self._sanitize_key(entry_data.key)
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
             self._configuration
@@ -74,8 +76,6 @@ class NewEntryGUI:
         entry_inserter = FilesystemEntryInserter(self._configuration)
         entry_inserter.insert(key, dict_entry)
 
-        from python_search.apps.notification_ui import send_notification
-        send_notification(f"Entry created succcesfully")
 
     @notify_exception()
     def launch(
@@ -294,7 +294,6 @@ class NewEntryGUI:
             yield lst[i : i + n]
 
 
-@dataclass
 class GuiEntryData:
     """
     Entry _entries schema
@@ -306,6 +305,17 @@ class GuiEntryData:
     type: str
     tags: List[str]
 
+    def __init__(self, key, value, type, tags):
+        if not key:
+            raise Exception("Key is required")
+
+        if not value:
+            raise Exception("Value is required")
+
+        self.key = key
+        self.value = value
+        self.type = type
+        self.tags = tags
 
 def main():
     fire.Fire(NewEntryGUI().launch_prompt)
