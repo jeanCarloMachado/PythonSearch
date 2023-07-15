@@ -5,6 +5,7 @@ from typing import Optional, List, Tuple, Literal
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
 from python_search.theme import TimeBasedThemeSelector
+from python_search.ps_llm.llm_config import CustomLLMConfig
 
 
 
@@ -45,6 +46,7 @@ class PythonSearchConfiguration(EntriesGroup):
         collect_data: bool = False,
         entry_generation=False,
         privacy_sensitive_terms: Optional[List[str]] = None,
+        custom_llm_config: Optional[CustomLLMConfig] = None,
     ):
         """
 
@@ -89,6 +91,7 @@ class PythonSearchConfiguration(EntriesGroup):
         self.collect_data = collect_data
         self.entry_generation = entry_generation
         self.privacy_sensitive_terms = privacy_sensitive_terms
+        self.custom_llm_config = custom_llm_config
 
     def get_next_item_predictor_model(self):
         """
