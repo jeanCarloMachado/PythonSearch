@@ -8,7 +8,7 @@ Join us in the [discord server](https://discord.gg/vFExqz7yGt) to discuss the pr
 With python search you collect and retrieve and refactor information efficiently.
 
 - collect commands, scripts, prompts, snippets, urls, files, efficiently as python dictionaries
-- search them using a smart (ML based) ranking or add shortcuts to them
+- search them using a smart (ML-based) ranking or add shortcuts to them
 - refactor, reuse, generate and further automate entries as they are code
 - execute the registered entries possibly customizing the execution behaviour
  
@@ -32,7 +32,7 @@ pip install python-search && python_search install_missing_dependencies
 ```
 Note that you might need to upgrade your pip first: `pip install --upgrade pip`
 
-To understand the options run:
+To access the CLI manual and understand the options run:
 
 ```sh
 python_search

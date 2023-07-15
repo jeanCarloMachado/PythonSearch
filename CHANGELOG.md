@@ -1,5 +1,9 @@
 # Changelog
-
+## 0.24.9
+- Fix Issues with Debian Installation
+- Update Installation Instructions
+- Reworked LLM Config to be customizable
+- Fixed CI-Related issues with pypi
 
 ## 0.24
 
