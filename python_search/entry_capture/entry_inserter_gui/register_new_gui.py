@@ -39,9 +39,18 @@ class NewEntryGUI:
 
         self.sg = sg
 
+    @staticmethod
+    def focus_or_launch():
+        future = Focus().async_focus_register_new()
+
+        obj = NewEntryGUI()
+        obj.launch_loop(focus_future=future)
+
+
+
 
     @notify_exception()
-    def launch_loop(self, default_type=None, default_key="", default_content=""):
+    def launch_loop(self, default_type=None, default_key="", default_content="", focus_future=None):
         """
         Create a new inferred entry based on the clipboard content
         """
@@ -57,6 +66,7 @@ class NewEntryGUI:
             default_content=default_content,
             default_key=default_key,
             default_type=default_type,
+            focus_future=focus_future,
         )
 
     def _save_entry_data(self, entry_data: GuiEntryData):
@@ -83,6 +93,7 @@ class NewEntryGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
+        focus_future=None,
     ) -> GuiEntryData:
         """
         Launch the entries capture GUI.
@@ -163,12 +174,20 @@ class NewEntryGUI:
             ],
         ]
 
+        if focus_future:
+            print("Waiting for focus")
+            result = focus_future.result()
+            if result:
+                print("Focus succeeded, not starting new window")
+                return
+
         window = self.sg.Window(
             window_title,
             layout,
             font=(self._FONT, font_size),
             finalize=True,
         )
+
 
         window.set_title("Register New")
 
@@ -187,60 +206,63 @@ class NewEntryGUI:
                 self._generate_title(default_content, window)
 
 
-        while True:
-            event, values = window.read()
-            print("Event: ", event)
-            if event == self.sg.WINDOW_CLOSED:
-                import sys
-                sys.exit(1)
 
-            if "Escape" in event:
-                from python_search.host_system.window_hide import HideWindow
-                HideWindow().hide()
+        try:
+            while True:
+                event, values = window.read()
+                print("Event: ", event)
+                if event == self.sg.WINDOW_CLOSED:
+                    import sys
+                    sys.exit(1)
 
-            if event and (event == "write" or event == "-entry-name-write"):
-                selected_tags = []
-                if self._tags:
-                    for key, value in values.items():
-                        if key in self._tags and value is True:
-                            selected_tags.append(key)
+                if "Escape" in event:
+                    from python_search.host_system.window_hide import HideWindow
+                    HideWindow().hide()
 
-                entry_data = GuiEntryData(
-                    values[self._TITLE_INPUT],
-                    values[self._BODY_INPUT],
-                    values["type"],
-                    selected_tags,
-                )
+                if event and (event == "write" or event == "-entry-name-write"):
+                    selected_tags = []
+                    if self._tags:
+                        for key, value in values.items():
+                            if key in self._tags and value is True:
+                                selected_tags.append(key)
 
-                window[self._BODY_INPUT].update("")
-                window[self._TITLE_INPUT].update("")
-                self._save_entry_data(entry_data)
-                continue
+                        entry_data = GuiEntryData(
+                            values[self._TITLE_INPUT],
+                            values[self._BODY_INPUT],
+                            values["type"],
+                            selected_tags,
+                        )
 
-            if event and event == "refresh":
-                default_content = Clipboard().get_content()
-                window[self._BODY_INPUT].update(default_content)
-                self._generate_title(default_content, window)
+                    window[self._BODY_INPUT].update("")
+                    window[self._TITLE_INPUT].update("")
+                    self._save_entry_data(entry_data)
+                    continue
 
-
-            if event == self._PREDICT_ENTRY_TYPE_READY:
-                window["type"].update(values[event])
-                continue
-
-            if event == self._PREDICT_ENTRY_TITLE_READY:
-                window[self._TITLE_INPUT].update(values[event])
-
-                self._classify_entry_type(values[self._TITLE_INPUT], values[self._BODY_INPUT], window)
-                continue
-
-            if event == "-try-entry-":
-                InterpreterMatcher.build_instance(
-                    self._configuration
-                ).get_interpreter_from_type(values["type"])(
-                    values[self._BODY_INPUT]
-                ).default()
+                if event and event == "refresh":
+                    default_content = Clipboard().get_content()
+                    window[self._BODY_INPUT].update(default_content)
+                    self._generate_title(default_content, window)
 
 
+                if event == self._PREDICT_ENTRY_TYPE_READY:
+                    window["type"].update(values[event])
+                    continue
+
+                if event == self._PREDICT_ENTRY_TITLE_READY:
+                    window[self._TITLE_INPUT].update(values[event])
+
+                    self._classify_entry_type(values[self._TITLE_INPUT], values[self._BODY_INPUT], window)
+                    continue
+
+                if event == "-try-entry-":
+                    InterpreterMatcher.build_instance(
+                        self._configuration
+                    ).get_interpreter_from_type(values["type"])(
+                        values[self._BODY_INPUT]
+                    ).default()
+
+        except Exception as e:
+            notify_exception(str(e))
 
     def _update_title_with_url_title_thread(self, content: str, window):
         import PySimpleGUI as sg
@@ -333,8 +355,5 @@ if __name__ == "__main__":
     fire.Fire(NewEntryGUI().launch)
 
 def launch_ui():
-    if Focus().focus_register_new():
-        print("Focusing on already open window")
-        return
 
-    fire.Fire(NewEntryGUI().launch_loop)
+    fire.Fire(NewEntryGUI.focus_or_launch())

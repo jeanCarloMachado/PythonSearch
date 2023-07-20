@@ -1,4 +1,5 @@
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 
 class Focus:
@@ -12,6 +13,11 @@ end tell'
         """)
 
         return True if result == 0 else False
+
+    def async_focus_register_new(self):
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(self.focus_register_new)
+        return future
 
 
 
