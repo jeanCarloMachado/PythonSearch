@@ -5,6 +5,7 @@ from typing import List
 
 import fire
 
+from python_search.apps.notification_ui import send_notification
 from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
 from python_search.entry_capture.utils import get_page_title
 from python_search.error.exception import notify_exception
@@ -70,7 +71,6 @@ class NewEntryGUI:
         )
 
     def _save_entry_data(self, entry_data: GuiEntryData):
-        from python_search.apps.notification_ui import send_notification
         send_notification(f"Creating new entry")
         key = self._sanitize_key(entry_data.key)
         interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
@@ -216,6 +216,7 @@ class NewEntryGUI:
                     sys.exit(1)
 
                 if "Escape" in event:
+                    print("Hiding window")
                     from python_search.host_system.window_hide import HideWindow
                     HideWindow().hide()
 
