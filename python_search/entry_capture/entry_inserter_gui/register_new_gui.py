@@ -194,6 +194,8 @@ class NewEntryGUI:
         window[self._TITLE_INPUT].bind("<Escape>", "Escape")
         window[self._TITLE_INPUT].bind("<Return>", "write")
         window[self._TITLE_INPUT].bind("<Control_L><s>", "write")
+        window[self._TITLE_INPUT].bind("<Control_L><r>", "refresh")
+        window[self._BODY_INPUT].bind("<Control_L><r>", "refresh")
         window[self._BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "Escape")
 
@@ -239,10 +241,13 @@ class NewEntryGUI:
                     self._save_entry_data(entry_data)
                     continue
 
-                if event and event == "refresh":
+                if event and event == "refresh" or "refresh" in event:
                     default_content = Clipboard().get_content()
                     window[self._BODY_INPUT].update(default_content)
                     self._generate_title(default_content, window)
+                    continue
+
+
 
 
                 if event == self._PREDICT_ENTRY_TYPE_READY:

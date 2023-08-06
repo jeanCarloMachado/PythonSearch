@@ -95,7 +95,7 @@ Installation successful!
 
         print("Looks like kitty is not installed in your platform. ")
         os.system(
-            f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; {HOME}/.fzf/install """
+            f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; yes | {HOME}/.fzf/install """
         )
 
     def _install_brew_if_not_present(self):
