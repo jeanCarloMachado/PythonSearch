@@ -1,6 +1,6 @@
 import os
 
-MANUAL_ADDED_PACKAGES = ['tqdm', 'regex', 'requests',  'packaging', 'filelock', 'numpy', 'tokenizers', 'bitsandbytes']
+MANUAL_ADDED_PACKAGES = ['tqdm', 'regex', 'requests',  'packaging', 'filelock', 'numpy', 'tokenizers', 'bitsandbytes', 'bitsandbytes-cuda110']
 
 
 def build_and_run():
