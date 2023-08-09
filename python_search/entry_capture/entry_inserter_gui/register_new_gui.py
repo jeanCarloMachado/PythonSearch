@@ -222,24 +222,6 @@ class NewEntryGUI:
                     from python_search.host_system.window_hide import HideWindow
                     HideWindow().hide()
 
-                if event and (event == "write" or event == "-entry-name-write"):
-                    selected_tags = []
-                    if self._tags:
-                        for key, value in values.items():
-                            if key in self._tags and value is True:
-                                selected_tags.append(key)
-
-                        entry_data = GuiEntryData(
-                            values[self._TITLE_INPUT],
-                            values[self._BODY_INPUT],
-                            values["type"],
-                            selected_tags,
-                        )
-
-                    window[self._BODY_INPUT].update("")
-                    window[self._TITLE_INPUT].update("")
-                    self._save_entry_data(entry_data)
-                    continue
 
                 if event and event == "refresh" or "refresh" in event:
                     default_content = Clipboard().get_content()
@@ -267,8 +249,33 @@ class NewEntryGUI:
                         values[self._BODY_INPUT]
                     ).default()
 
-        except Exception as e:
-            notify_exception(str(e))
+
+                if event and (event == "write" or event == "-entry-name-write"):
+
+                    selected_tags = []
+                    if self._tags:
+                        for key, value in values.items():
+                            if key in self._tags and value is True:
+                                selected_tags.append(key)
+
+                        entry_data = GuiEntryData(
+                            values[self._TITLE_INPUT],
+                            values[self._BODY_INPUT],
+                            values["type"],
+                            selected_tags,
+                        )
+
+                    window[self._BODY_INPUT].update("")
+                    window[self._TITLE_INPUT].update("")
+                    try:
+                        self._save_entry_data(entry_data)
+                    except:
+                        notify_exception()
+
+                    continue
+
+        except:
+            notify_exception()
 
     def _update_title_with_url_title_thread(self, content: str, window):
         import PySimpleGUI as sg
