@@ -1,4 +1,10 @@
 # Changelog
+
+## 0.25
+
+- Support for focusing on register new window for mac
+- Remove i3 support as it is likelly not working anymore
+
 ## 0.24.9
 - Fix Issues with Debian Installation
 - Update Installation Instructions
