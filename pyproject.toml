@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.24.9"
+version = "0.25.0"
 
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
@@ -93,8 +93,7 @@ entry_builder = 'python_search.entry_capture.entry_inserter_gui.entry_inserter_g
 prompt_editor = 'python_search.apps.prompt_editor:main'
 entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings:main'
 entries_editor = 'python_search.entry_capture.entries_editor:main'
-register_new = 'python_search.entry_capture.register_new:main'
-register_new_launch_ui = 'python_search.entry_capture.register_new:launch_ui'
+register_new_launch_ui = 'python_search.entry_capture.entry_inserter_gui.register_new_gui:launch_ui'
 share_entry = 'python_search.share:main'
 offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
 ps_fzf = 'python_search.search_ui.fzf:main'
@@ -110,6 +109,7 @@ start_streamlit_app = 'start_streamlit_app:main'
 llm_rank = 'python_search.ps_llm.t5.inference:main'
 llm_cli = 'python_search.ps_llm.llm_cli:main'
 llm_dataset = 'python_search.ps_llm.next_item_llm_dataset:main'
+ps_bundle = 'bundle:main'
 
 [tool.poetry.extras]
 model = [

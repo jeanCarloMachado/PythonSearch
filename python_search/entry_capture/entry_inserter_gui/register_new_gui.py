@@ -1,19 +1,22 @@
 from __future__ import annotations
 
-import logging
 import threading
-from dataclasses import dataclass
 from typing import List
 
 import fire
 
+from python_search.apps.notification_ui import send_notification
+from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
 from python_search.entry_capture.utils import get_page_title
 from python_search.error.exception import notify_exception
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.environment import is_mac
+from python_search.host_system.windows_focus import Focus
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
-from python_search.apps.notification_ui import send_notification
 from python_search.entry_type.type_detector import TypeDetector
+from python_search.entry_type.entity import infer_default_type
+from python_search.interpreter.base import BaseInterpreter
+from python_search.apps.clipboard import Clipboard
 
 
 class NewEntryGUI:
@@ -37,6 +40,51 @@ class NewEntryGUI:
 
         self.sg = sg
 
+    @staticmethod
+    def focus_or_launch():
+        future = Focus().async_focus_register_new()
+
+        obj = NewEntryGUI()
+        obj.launch_loop(focus_future=future)
+
+
+
+
+    @notify_exception()
+    def launch_loop(self, default_type=None, default_key="", default_content="", focus_future=None):
+        """
+        Create a new inferred entry based on the clipboard content
+        """
+
+        if not default_content:
+            default_content = Clipboard().get_content()
+
+        if not default_type:
+            default_type = infer_default_type(default_content)
+
+        self.launch(
+            "New Entry",
+            default_content=default_content,
+            default_key=default_key,
+            default_type=default_type,
+            focus_future=focus_future,
+        )
+
+    def _save_entry_data(self, entry_data: GuiEntryData):
+        send_notification(f"Creating new entry")
+        key = self._sanitize_key(entry_data.key)
+        interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
+            self._configuration
+        ).get_interpreter_from_type(entry_data.type)
+
+        dict_entry = interpreter(entry_data.value).to_dict()
+        if entry_data.tags:
+            dict_entry["tags"] = entry_data.tags
+
+        entry_inserter = FilesystemEntryInserter(self._configuration)
+        entry_inserter.insert(key, dict_entry)
+
+
     @notify_exception()
     def launch(
         self,
@@ -45,6 +93,7 @@ class NewEntryGUI:
         default_content: str = "",
         serialize_output=False,
         default_type="Snippet",
+        focus_future=None,
     ) -> GuiEntryData:
         """
         Launch the entries capture GUI.
@@ -95,7 +144,6 @@ class NewEntryGUI:
         colors = ("#FFFFFF", self.sg.theme_input_background_color())
         print(colors)
 
-        llm_component = []
 
         tags_block = []
         if self._tags:
@@ -115,14 +163,23 @@ class NewEntryGUI:
                 ),
                 self.sg.Push(),
             ],
-            llm_component,
             tags_block,
             [
                 self.sg.Button(
                     "Write entry", key="write", button_color=colors, border_width=0
+                ),
+                self.sg.Button(
+                    "Refresh", key="refresh", button_color=colors, border_width=0
                 )
             ],
         ]
+
+        if focus_future:
+            print("Waiting for focus")
+            result = focus_future.result()
+            if result:
+                print("Focus succeeded, not starting new window")
+                return
 
         window = self.sg.Window(
             window_title,
@@ -131,9 +188,14 @@ class NewEntryGUI:
             finalize=True,
         )
 
+
+        window.set_title("Register New")
+
         window[self._TITLE_INPUT].bind("<Escape>", "Escape")
         window[self._TITLE_INPUT].bind("<Return>", "write")
         window[self._TITLE_INPUT].bind("<Control_L><s>", "write")
+        window[self._TITLE_INPUT].bind("<Control_L><r>", "refresh")
+        window[self._BODY_INPUT].bind("<Control_L><r>", "refresh")
         window[self._BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "Escape")
 
@@ -146,60 +208,74 @@ class NewEntryGUI:
                 self._generate_title(default_content, window)
 
 
-        while True:
-            event, values = window.read()
-            print("Event: ", event)
-            if event == self.sg.WINDOW_CLOSED:
-                import sys
 
-                sys.exit(1)
+        try:
+            while True:
+                event, values = window.read()
+                print("Event: ", event)
+                if event == self.sg.WINDOW_CLOSED:
+                    import sys
+                    sys.exit(1)
 
-            if "Escape" in event:
-                import sys
+                if "Escape" in event:
+                    print("Hiding window")
+                    from python_search.host_system.window_hide import HideWindow
+                    HideWindow().hide()
 
-                sys.exit(1)
 
-            if event and (event == "write" or event == "-entry-name-write"):
-                break
+                if event and event == "refresh" or "refresh" in event:
+                    default_content = Clipboard().get_content()
+                    window[self._BODY_INPUT].update(default_content)
+                    self._generate_title(default_content, window)
+                    continue
 
-            if event == self._PREDICT_ENTRY_TYPE_READY:
-                window["type"].update(values[event])
-                continue
 
-            if event == self._PREDICT_ENTRY_TITLE_READY:
-                window[self._TITLE_INPUT].update(values[event])
 
-                self._classify_entry_type(values[self._TITLE_INPUT], values[self._BODY_INPUT], window)
-                continue
 
-            if event == "-try-entry-":
-                InterpreterMatcher.build_instance(
-                    self._configuration
-                ).get_interpreter_from_type(values["type"])(
-                    values[self._BODY_INPUT]
-                ).default()
+                if event == self._PREDICT_ENTRY_TYPE_READY:
+                    window["type"].update(values[event])
+                    continue
 
-        window.hide()
-        window.close()
-        logging.info("values", values)
+                if event == self._PREDICT_ENTRY_TITLE_READY:
+                    window[self._TITLE_INPUT].update(values[event])
 
-        selected_tags = []
-        if self._tags:
-            for key, value in values.items():
-                if key in self._tags and value is True:
-                    selected_tags.append(key)
+                    self._classify_entry_type(values[self._TITLE_INPUT], values[self._BODY_INPUT], window)
+                    continue
 
-        result = GuiEntryData(
-            values[self._TITLE_INPUT],
-            values[self._BODY_INPUT],
-            values["type"],
-            selected_tags,
-        )
+                if event == "-try-entry-":
+                    InterpreterMatcher.build_instance(
+                        self._configuration
+                    ).get_interpreter_from_type(values["type"])(
+                        values[self._BODY_INPUT]
+                    ).default()
 
-        if serialize_output:
-            result = result.__dict__
 
-        return result
+                if event and (event == "write" or event == "-entry-name-write"):
+
+                    selected_tags = []
+                    if self._tags:
+                        for key, value in values.items():
+                            if key in self._tags and value is True:
+                                selected_tags.append(key)
+
+                        entry_data = GuiEntryData(
+                            values[self._TITLE_INPUT],
+                            values[self._BODY_INPUT],
+                            values["type"],
+                            selected_tags,
+                        )
+
+                    window[self._BODY_INPUT].update("")
+                    window[self._TITLE_INPUT].update("")
+                    try:
+                        self._save_entry_data(entry_data)
+                    except:
+                        notify_exception()
+
+                    continue
+
+        except:
+            notify_exception()
 
     def _update_title_with_url_title_thread(self, content: str, window):
         import PySimpleGUI as sg
@@ -217,6 +293,8 @@ class NewEntryGUI:
             target=_update_title, args=(content, window), daemon=True
         ).start()
 
+    def _sanitize_key(self, key):
+        return key.replace("\n", " ").replace(":", " ").strip()
 
     def _generate_title(self, content, window):
         from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
@@ -259,7 +337,6 @@ class NewEntryGUI:
             yield lst[i : i + n]
 
 
-@dataclass
 class GuiEntryData:
     """
     Entry _entries schema
@@ -271,6 +348,17 @@ class GuiEntryData:
     type: str
     tags: List[str]
 
+    def __init__(self, key, value, type, tags):
+        if not key:
+            raise Exception("Key is required")
+
+        if not value:
+            raise Exception("Value is required")
+
+        self.key = key
+        self.value = value
+        self.type = type
+        self.tags = tags
 
 def main():
     fire.Fire(NewEntryGUI().launch_prompt)
@@ -278,3 +366,7 @@ def main():
 
 if __name__ == "__main__":
     fire.Fire(NewEntryGUI().launch)
+
+def launch_ui():
+
+    fire.Fire(NewEntryGUI.focus_or_launch())

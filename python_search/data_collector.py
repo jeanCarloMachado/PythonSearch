@@ -11,6 +11,10 @@ class GenericDataCollector:
 
     BASE_DATA_DESTINATION_DIR = os.environ["HOME"] + "/.python_search/data/"
 
+    def __init__(self, *, base_location=None):
+        self.base_location = base_location if base_location else GenericDataCollector.BASE_DATA_DESTINATION_DIR
+
+
     @staticmethod
     def initialize():
         import fire
@@ -24,7 +28,7 @@ class GenericDataCollector:
         datetime.now().timestamp()
 
         os.system(
-            f"mkdir -p {GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
+            f"mkdir -p {self.base_location}/{table_name}"
         )
         import datetime
 
@@ -36,7 +40,7 @@ class GenericDataCollector:
         self.logger.info(f"File {file_name} written successfully with data {data}")
 
     def data_location(self, table_name) -> str:
-        return f"{GenericDataCollector.BASE_DATA_DESTINATION_DIR}/{table_name}"
+        return f"{self.base_location}/{table_name}"
 
     def dataframe(self, table_name):
         from pyspark.sql import DataFrame
@@ -44,7 +48,7 @@ class GenericDataCollector:
 
         spark = SparkSession.builder.getOrCreate()
         result: DataFrame = spark.read.json(
-            GenericDataCollector().data_location(table_name)
+            self.data_location(table_name)
         )
         return result
 

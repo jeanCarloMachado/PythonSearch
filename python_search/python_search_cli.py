@@ -1,15 +1,14 @@
 import logging
 from typing import Optional
 
-from python_search.apps.window_manager import WindowManager
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities.core_entities import Key
 from python_search.entry_runner import EntryRunner
-from python_search.environment import is_mac
 from python_search.error.exception import notify_exception
 from python_search.events.run_performed import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
+from python_search.host_system.window_hide import HideWindow
 from python_search.search_ui.kitty import FzfInKitty
 from python_search.search_ui.fzf import Fzf
 from python_search.search_ui.preview import Preview
@@ -134,16 +133,7 @@ class PythonSearchCli:
                 self.configuration = configuration
 
             def hide_launcher(self):
-                """hide the search launcher -i2 specific"""
-                if is_mac():
-                    import os
-
-                    os.system(
-                        """osascript -e 'tell application "System Events" to keystroke "H" using {command down}'"""
-                    )
-                WindowManager.load_from_environment().hide_window(
-                    self.configuration.APPLICATION_TITLE
-                )
+                HideWindow().hide(self.configuration.APPLICATION_TITLE)
 
         return Utils(self.configuration)
 

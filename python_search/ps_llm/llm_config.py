@@ -16,13 +16,14 @@ class LLMConfig:
 
         self.TARGET_VERSION = "v15"
         self.NEW_MODEL_RELATIVE_TARGET_DIRECTORY = "t5_llm_models/model_" + self.TARGET_VERSION
-        self.BASE_MODEL_PATH = BASE_PROJECT_FOLDER + "/llm_next_item_predictor/t5/t5_llm_models"
-        self.BASE_MODEL_PATH = BASE_PROJECT_FOLDER + "/" + self.NEW_MODEL_RELATIVE_TARGET_DIRECTORY
-        self.NEXT_ITEM_PRODUCTIONALIZED_MODEL = self.BASE_MODEL_PATH + '/v2_epoch_25' if not custom_llm_config else custom_llm_config.next_item_productionalized_model
+        self.BASE_MODEL_PATH = BASE_PROJECT_FOLDER + "/t5_llm_models"
+        self.FULL_MODEL_PATH = BASE_PROJECT_FOLDER + "/" + self.NEW_MODEL_RELATIVE_TARGET_DIRECTORY
+        self.NEXT_ITEM_PRODUCTIONALIZED_MODEL = self.BASE_MODEL_PATH + '/model_v12_epoch_3' if not custom_llm_config else custom_llm_config.next_item_productionalized_model
         self.SUMMARIZATION_PRODUCTIONALIZED_MODEL = self.NEXT_ITEM_PRODUCTIONALIZED_MODEL
         self.BASE_MODEL_TO_TRAIN_OVER = 't5-base'
         self.BASE_DATASET_FOLDER = BASE_PROJECT_FOLDER + "/datasets"
         self.BASE_ORIGINAL_MODEL = 't5-small' if not custom_llm_config else custom_llm_config.base_original_model
+
 
 
 class CustomLLMConfig:
