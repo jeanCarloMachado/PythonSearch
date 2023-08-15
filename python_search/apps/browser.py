@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import sys
+
 from python_search.environment import is_mac, is_linux
 from typing import Optional, Literal, Callable
 import os
@@ -10,6 +13,7 @@ class Browser:
     """
 
     BROWSERS = Literal["firefox", "chrome"]
+    _app_mode = False
 
     def __init__(
         self,
@@ -38,17 +42,36 @@ class Browser:
     def open_shell_cmd(
         self,
         url: Optional[str] = None,
-        app_mode=False,
+        app_mode=None,
         incognito=False,
         browser: Optional[BROWSERS] = None,
+        focus_title=None,
     ) -> str:
         """
         Returns the shell command to open the browser
         """
 
+
+        self._focus_title = focus_title
+        self._app_mode = app_mode
+
+
+        if self._focus_title:
+            from python_search.host_system.windows_focus import Focus
+            if Focus().focus_window("Google Chrome", self._focus_title):
+                print("Chrome window focused instead of opening new")
+                sys.exit(0)
+
         url_expr = f"'{url}'" if url else ""
 
         if browser == "chrome":
+            if self._focus_title:
+                from python_search.host_system.windows_focus import Focus
+                if Focus().focus_window("Google Chrome", self._focus_title):
+                    print("Chrome window focused instead of opening new")
+                    sys.exit(0)
+
+
             return self._chrome(url_expr)
 
         if browser == "firefox":
@@ -60,11 +83,14 @@ class Browser:
         return "open -a Firefox {url}" if self.is_mac_func() else f"firefox {url}"
 
     def _chrome(self, url: str):
-        return (
-            f" open -a 'Google Chrome' {url}"
-            if self.is_mac_func()
-            else f"google-chrome {url}"
-        )
+
+        if self._focus_title or self._app_mode:
+            url = f'--app={url}'
+
+        if is_mac():
+            return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome {url}"
+
+        return f"google-chrome {url}"
 
     def fail_safe(self, url: str):
         if self.is_mac_func():
