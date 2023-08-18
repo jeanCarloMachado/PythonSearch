@@ -31,11 +31,14 @@ class Browser:
         app_mode=False,
         incognito=False,
         browser: Optional[BROWSERS] = None,
+        focus_title: Optional[str] = None,
     ) -> None:
         """
         performs the open
+
+        focus_title: to focus on a window that behaves like an app
         """
-        cmd_to_run = self.open_shell_cmd(url, app_mode, incognito, browser)
+        cmd_to_run = self.open_shell_cmd(url, app_mode, incognito, browser, focus_title=focus_title)
         print("Command to run:", cmd_to_run)
         self.system_func(cmd_to_run)
 
@@ -83,12 +86,10 @@ class Browser:
         return "open -a Firefox {url}" if self.is_mac_func() else f"firefox {url}"
 
     def _chrome(self, url: str):
-
-        if self._focus_title or self._app_mode:
-            url = f'--app={url}'
-
         if is_mac():
-            return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome {url}"
+            if self._focus_title or self._app_mode:
+                return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --app={url}"
+            return f"open -a 'Google Chrome'  {url}"
 
         return f"google-chrome {url}"
 

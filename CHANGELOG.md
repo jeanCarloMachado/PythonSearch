@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.26
+
+Add support to app_focus_title  in mac.
+
 ## 0.25
 
 - Support for focusing on register new window for mac
