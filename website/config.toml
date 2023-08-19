@@ -1,5 +1,0 @@
-theme = 'ananke'
-contentDir = "posts"
-languageCode = 'en-us'
-title = 'Python Search'
-baseURL = 'https://jeancarlomachado.github.io/PythonSearch/'
