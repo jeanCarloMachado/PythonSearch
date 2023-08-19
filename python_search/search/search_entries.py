@@ -58,9 +58,6 @@ class Search:
     def search(
         self,
         skip_model=False,
-        base_rank=False,
-        use_next_item_model=False,
-        stop_on_failure=False,
         inline_print=False,
         ignore_recent=False,
         query="",
@@ -76,17 +73,17 @@ class Search:
         self._entries: dict = self._configuration.commands
         # by default the rank is just in the order they are persisted in the file
         self._ranked_keys: List[str] = list(self._entries.keys())
-        self._fetch_latest_entries()
+        self.latest_entries = self._fetch_latest_used_entries()
 
         if (
             not skip_model
             and not base_rank
             and (
-                self._configuration.is_rerank_via_model_enabled() or use_next_item_model
+                self._configuration.is_rerank_via_model_enabled()
             )
         ):
             self.logger.debug("Trying to rerank")
-            self._try_torerank_via_model(stop_on_failure=stop_on_failure)
+            self._try_torerank_via_model()
 
         if query:
             self.logger.debug("Filtering results based on query")
@@ -115,7 +112,7 @@ class Search:
 
         return ranking_generated
 
-    def _try_torerank_via_model(self, stop_on_failure=False):
+    def _try_torerank_via_model(self):
         if not self._next_item_reranker:
             """Reranker not active skipping"""
             return
@@ -127,8 +124,6 @@ class Search:
             self._ranking_method_used = "LLMRankingNextModel"
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
-            if stop_on_failure:
-                raise e
 
     def _build_result(self, ignore_recent) -> RankedEntries.type:
         """
@@ -186,12 +181,10 @@ class Search:
                     self._ranked_keys.remove(key)
         return result
 
-    def _fetch_latest_entries(self):
-        """Populate the variable used_entries  with the results from redis"""
-        self.latest_entries = self._recent_keys.get_latest_used_keys(
+    def _fetch_latest_used_entries(self):
+         return self._recent_keys.get_latest_used_keys(
             self.NUMBER_OF_LATEST_ENTRIES
         )
-        return self.latest_entries
 
     def _load_configuration(self):
         self.logger.debug("Configuration not initialized, loading from file")
