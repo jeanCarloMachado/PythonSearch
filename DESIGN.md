@@ -1,4 +1,12 @@
 
-# PythonSearch
+# PythonSearch Design
 
-This repo aims to be a monorepo with all the crucial stuff to make the hole infrastructure running.
+
+Python search core is designed to run fully on the local machine.
+
+
+```mermaid
+graph LR
+    A[User] -- starts python search and interacts with --> B[FZF in kitty] 
+    B --> C[PythonSearch entries ranked]
+``` 

@@ -58,15 +58,15 @@ class Search:
     def search(
         self,
         skip_model=False,
-        inline_print=False,
         ignore_recent=False,
+        reload_enabled=False,
         query="",
     ) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
 
-        base_rank: if we want to skip the model and any reranking that also happens on top
         skip_model: if you want to use the base rank and the recent features but not the next item model
+        reload_enabled: if you are reloading entries (will trigger new embeddings to be computed as well)
         """
 
         self.logger.debug("Starting search function")
@@ -75,9 +75,17 @@ class Search:
         self._ranked_keys: List[str] = list(self._entries.keys())
         self.latest_entries = self._fetch_latest_used_entries()
 
+        if reload_enabled:
+            self.logger.debug("Skipping model due to reload")
+            skip_model=True
+            ignore_recent=True
+
+            import subprocess
+            subprocess.Popen('llm_cli t5_embeddings save_missing_keys', shell=True)
+            self.logger.debug("Triggered embeddings to be recomputed")
+
         if (
             not skip_model
-            and not base_rank
             and (
                 self._configuration.is_rerank_via_model_enabled()
             )
@@ -95,13 +103,12 @@ class Search:
         """
         Populate the variable used_entries  with the results from redis
         """
-        result = self._build_result(ignore_recent)
+        result = self._merge_result(ignore_recent)
 
         ranking_generated = self.send_ranking_generated_event(result)
         result_str = self._entries_result.build_entries_result(
             entries=result,
             ranking_uuid=ranking_generated.uuid,
-            inline_print=inline_print,
         )
 
         return result_str
@@ -125,7 +132,7 @@ class Search:
         except Exception as e:
             print(f"Failed to perform inference, reason {e}")
 
-    def _build_result(self, ignore_recent) -> RankedEntries.type:
+    def _merge_result(self, ignore_recent) -> RankedEntries.type:
         """
         Merge the search with the latest entries
         """
