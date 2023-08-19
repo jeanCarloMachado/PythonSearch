@@ -89,7 +89,7 @@ class Browser:
         if is_mac():
             if self._focus_title or self._app_mode:
                 return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --app={url}"
-            return f"open -a 'Google Chrome'  {url}"
+            return f"open -a 'Google Chrome' {url}"
 
         return f"google-chrome {url}"
 
