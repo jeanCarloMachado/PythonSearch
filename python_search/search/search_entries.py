@@ -60,6 +60,7 @@ class Search:
         skip_model=False,
         ignore_recent=False,
         reload_enabled=False,
+        fast_mode = False,
         query="",
     ) -> str:
         """
@@ -67,6 +68,7 @@ class Search:
 
         skip_model: if you want to use the base rank and the recent features but not the next item model
         reload_enabled: if you are reloading entries (will trigger new embeddings to be computed as well)
+        fast_mode: Fast mmode will not use the ranking
         """
 
         self.logger.debug("Starting search function")
@@ -83,6 +85,11 @@ class Search:
             import subprocess
             subprocess.Popen('llm_cli t5_embeddings save_missing_keys', shell=True)
             self.logger.debug("Triggered embeddings to be recomputed")
+
+        if fast_mode:
+            self.logger.debug("Skipping model and recent due to fast mode")
+            skip_model=True
+            ignore_recent=True
 
         if (
             not skip_model
