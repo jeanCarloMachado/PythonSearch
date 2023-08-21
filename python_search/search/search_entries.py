@@ -61,7 +61,6 @@ class Search:
         ignore_recent=False,
         reload_enabled=False,
         fast_mode = False,
-        query="",
     ) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
@@ -100,12 +99,6 @@ class Search:
             self.logger.debug("Trying to rerank")
             self._try_torerank_via_model()
 
-        if query:
-            self.logger.debug("Filtering results based on query")
-            from python_search.semantic_search.text2embeddings import SemanticSearch
-
-            bert = SemanticSearch()
-            self._ranked_keys = bert.rank_entries_by_query_similarity(query)
 
         """
         Populate the variable used_entries  with the results from redis

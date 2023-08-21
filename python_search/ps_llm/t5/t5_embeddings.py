@@ -65,7 +65,6 @@ class T5Embeddings:
     def save_missing_keys(self):
         """
         Create all missing entries in the embedding of p5
-
         """
         from python_search.apps.notification_ui import send_notification
         send_notification(f"Saving missing keys as pandas dataframe")

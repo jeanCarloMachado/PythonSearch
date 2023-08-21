@@ -1,8 +1,10 @@
 # Changelog
 
-## 0.26
+## 0.26 - 2023-08-19
 
-Add support to app_focus_title  in mac.
+- Add support to app_focus_title  in mac.
+- Cleanup options in ps_search
+
 
 ## 0.25
 
