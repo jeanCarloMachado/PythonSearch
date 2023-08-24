@@ -68,13 +68,6 @@ class Browser:
         url_expr = f"'{url}'" if url else ""
 
         if browser == "chrome":
-            if self._focus_title:
-                from python_search.host_system.windows_focus import Focus
-                if Focus().focus_window("Google Chrome", self._focus_title):
-                    print("Chrome window focused instead of opening new")
-                    sys.exit(0)
-
-
             return self._chrome(url_expr)
 
         if browser == "firefox":
