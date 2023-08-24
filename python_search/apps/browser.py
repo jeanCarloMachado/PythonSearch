@@ -5,6 +5,8 @@ import sys
 from python_search.environment import is_mac, is_linux
 from typing import Optional, Literal, Callable
 import os
+from python_search.apps.notification_ui import send_notification
+
 
 
 class Browser:
@@ -81,7 +83,10 @@ class Browser:
     def _chrome(self, url: str):
         if is_mac():
             if self._focus_title or self._app_mode:
+                send_notification(f"Open new chrome in app mode, can be a bit slow")
+
                 return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --app={url}"
+
             return f"open -a 'Google Chrome' {url}"
 
         return f"google-chrome {url}"
