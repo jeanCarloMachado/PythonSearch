@@ -24,8 +24,8 @@ class Browser:
         is_linux_func: Callable = is_linux,
     ):
         self.system_func = system_func
-        self.is_mac_func = is_mac_func
-        self.is_linux_func = is_linux_func
+        self._is_mac = is_mac_func
+        self._is_linux = is_linux_func
 
     def open(
         self,
@@ -78,10 +78,10 @@ class Browser:
         return self.fail_safe(url_expr)
 
     def _firefox(self, url: str):
-        return "open -a Firefox {url}" if self.is_mac_func() else f"firefox {url}"
+        return "open -a Firefox {url}" if self._is_mac() else f"firefox {url}"
 
     def _chrome(self, url: str):
-        if is_mac():
+        if self._is_mac():
             if self._focus_title or self._app_mode:
                 send_notification(f"Open new chrome in app mode, can be a bit slow")
 
@@ -92,10 +92,10 @@ class Browser:
         return f"google-chrome {url}"
 
     def fail_safe(self, url: str):
-        if self.is_mac_func():
+        if self._is_mac():
             return self._chrome(url)
 
-        if self.is_linux_func():
+        if self._is_linux():
             return self._firefox(url)
 
         raise Exception(
