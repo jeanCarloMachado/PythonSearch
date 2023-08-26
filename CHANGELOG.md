@@ -4,6 +4,7 @@
 
 - Add support to app_focus_title  in mac.
 - Cleanup options in ps_search
+- Add design doc
 
 
 ## 0.25
