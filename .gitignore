@@ -4,6 +4,7 @@
 */mlruns/*
 dist/*
 build/*
+build
 *.cache/*
 *__pycache__*
 .idea

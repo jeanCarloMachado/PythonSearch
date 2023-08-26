@@ -21,9 +21,9 @@ class Fzf:
     def get_cmd(self):
         on_change = " "
         if self.configuration.is_on_change_rank_enabled():
-            on_change = '  --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & {self._get_ranked_entries_cmd()} )" '
+            on_change = '  --bind "change:reload-sync:(entry_generator generate_for_fzf {{q}}  & ps_search )" '
 
-        cmd = f"""bash -c 'export SHELL=bash ; {self._get_ranked_entries_cmd()} | \
+        cmd = f"""bash -c 'export SHELL=bash ; ps_search --fast_mode=True  | \
         {self.get_fzf_cmd()} \
         --scheme=default \
         --tiebreak={Fzf.RANK_TIE_BREAK} \
@@ -55,9 +55,9 @@ class Fzf:
         --bind "ctrl-n:execute-silent:(nohup register_new launch_from_fzf {{}} & )" \
         --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
-        --bind "ctrl-r:reload-sync:(llm_cli t5_embeddings save_missing_keys 2>/dev/null && ps_search --inline_print=True)" \
+        --bind "ctrl-r:reload-sync:(ps_search --reload_enabled=True)" \
+        --bind "ctrl-n:reload-sync:(ps_search)" \
         --bind "ctrl-s:execute-silent:(nohup share_entry share_key {{}})" \
-        --bind "ctrl-v:reload-sync:(ps_search --inline_print=True --ignore_recent=True --query {{q}})" \
         {on_change} \
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
@@ -86,13 +86,13 @@ class Fzf:
             wrap_in_terminal_expr = " --wrap_in_terminal=True "
 
         return f"""--bind "{shortcut}:execute-silent:(nohup run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
-        --bind "{shortcut}:+reload-sync:(sleep 3 && {self._get_ranked_entries_cmd()})" \
+        --bind "{shortcut}:+reload-sync:(sleep 3 && ps_search)" \
         --bind "{shortcut}:+first" \
         --bind "{shortcut}:+clear-screen" """
 
     def _edit_key(self, shortcut) -> str:
         return f''' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" \
-                    --bind "{shortcut}:+reload-sync:(sleep 7 && {self._get_ranked_entries_cmd()})" '''
+                    --bind "{shortcut}:+reload-sync:(sleep 7 && ps_search --fast_mode=True)" '''
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
             return "--color=bg+:#ffffff,bg:#ffffff,hl:#719872,fg:#616161,header:#719872,info:#727100,pointer:#E12672,marker:#E17899,fg+:#616161,preview-bg:#ffffff,prompt:#0099BD,hl+:#719899"
@@ -102,9 +102,6 @@ class Fzf:
 
         return " "
 
-    def _get_ranked_entries_cmd(self):
-        # in mac we need tensorflow to be installed via conda
-        return f"ps_search --inline_print=True"
 
 
 def hide_current_focused_window():

@@ -13,7 +13,8 @@ def send_notification(message: str):
     if is_mac():
         cmd = f"""osascript -e 'display notification "{clean}"'"""
 
-    os.system(cmd)
+    from subprocess import Popen
+    Popen(cmd, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
 
 
 def main():

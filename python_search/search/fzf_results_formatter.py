@@ -17,9 +17,7 @@ class FzfOptimizedSearchResultsBuilder:
     def __init__(self):
         self._today = datetime.datetime.now()
 
-    def build_entries_result(
-        self, *, entries: RankedEntries.type, ranking_uuid: str, inline_print=False
-    ) -> str:
+    def build_entries_result(self, *, entries: RankedEntries.type, ranking_uuid: str) -> str:
         """Build the string to be printed in fzf"""
         position = 1
         result = ""
@@ -57,12 +55,8 @@ class FzfOptimizedSearchResultsBuilder:
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')
-            if inline_print:
-                print(content_str)
-            else:
-                result += content_str + "\n"
+            print(content_str)
 
-        return result
 
 
 def sanitize(content):

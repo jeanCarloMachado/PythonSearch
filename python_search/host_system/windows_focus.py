@@ -3,7 +3,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 class Focus:
-
     def focus_register_new(self):
         result = os.system("""
         osascript -e 'tell application "System Events" to tell process "python3"
@@ -12,6 +11,23 @@ class Focus:
                 if result is not {} then perform action "AXRaise" of item 1 of result
 end tell' 
         """)
+
+        return True if result == 0 else False
+
+
+    def focus_window(self, app, title):
+        cmd = f"""
+        osascript -e '
+        tell application "System Events"
+            tell application process "{app}"		
+                perform action "AXRaise" of (first window whose name contains "{title}")
+                set frontmost to true
+            end tell
+        end tell
+        ' 
+            """
+        result = os.system(cmd)
+        print(f" trying to focus {result}")
 
         return True if result == 0 else False
 
