@@ -69,6 +69,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
+ps_search = 'python_search.search.search_entries:main'
 python_search = 'python_search.python_search_cli:main'
 next_item_pipeline = 'python_search.next_item_predictor.next_item_pipeline:main'
 next_item = 'python_search.next_item_predictor.next_item_pipeline:main'
@@ -102,7 +103,6 @@ google_it = 'python_search.apps.google_it:main'
 recent_keys = 'python_search.events.latest_used_entries:main'
 python_search_search = 'python_search.search_ui.kitty:main'
 entry_generator = 'python_search.entry_generator:main'
-ps_search = 'python_search.search.search_entries:main'
 ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 start_streamlit_app = 'start_streamlit_app:main'
 llm_rank = 'python_search.ps_llm.t5.inference:main'

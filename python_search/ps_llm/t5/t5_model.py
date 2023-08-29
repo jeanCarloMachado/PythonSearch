@@ -12,7 +12,7 @@ class T5Model(LLMModel):
 
         self.config = LLMConfig()
 
-        self.tokenizer = T5Tokenizer.from_pretrained(self.config.BASE_ORIGINAL_MODEL,model_max_length=512)
+        self.tokenizer = T5Tokenizer.from_pretrained(self.config.BASE_ORIGINAL_MODEL,model_max_length=512, legacy=True)
         if not logger:
             logger = setup_generic_stdout_logger()
         self.logger = logger

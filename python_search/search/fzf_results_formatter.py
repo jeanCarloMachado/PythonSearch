@@ -55,7 +55,7 @@ class FzfOptimizedSearchResultsBuilder:
             #  replaces all single quotes for double ones
             #  otherwise the json does not get rendered
             content_str = content_str.replace("'", '"')
-            print(content_str)
+            print(content_str, flush=True)
 
 
 
