@@ -22,7 +22,8 @@ matplotlib = { version = "^3.5.2", optional = true }
 pandas = { version = "^1.4.3", optional = true }
 redis = { version = "^4.3.4", optional = true }
 uvicorn = { version = "^0.18.2", optional = true }
-numpy = { version = ">=1.23.4", optional = true }
+# needs to be pinned down due to bug
+numpy = { version = "==1.24.2", optional = true }
 msgpack-numpy = { version = ">=0.4.8", optional = true }
 pyspark = { version = ">=3.0", optional = true}
 mlflow = { version=">=1.29.0,<1.30.0", optional = true }
@@ -40,14 +41,14 @@ python-dateutil = "^2.8.2"
 chardet = "^5.1.0"
 jupyter = {version = "^1.0.0", optional = true}
 sentence-transformers = {version = "^2.2.2", optional = true}
+accelerate = "^0.22.0"
 
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
-
-[tool.poetry.group.dev.dependencies]
 pre-commit = "^2.20.0"
 flake8 = "^5.0.4"
+
 
 [tool.poetry.group.streamlitapps.dependencies]
 plotly = "^5.14.1"
@@ -111,7 +112,8 @@ llm_dataset = 'python_search.ps_llm.next_item_llm_dataset:main'
 ps_bundle = 'bundle:main'
 
 [tool.poetry.extras]
-model = [
+full = [
+    "torch",
     "pyspark",
     "mlflow",
     "tensorflow",
@@ -120,7 +122,6 @@ model = [
     "redis",
     "pandas",
     "numpy",
-    "pytorch",
     "scipy",
     "xgboost",
     "matplotlib",

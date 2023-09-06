@@ -25,7 +25,7 @@ class PythonSearchConfiguration(EntriesGroup):
     _default_text_editor = "vim"
     _fzf_theme = None
     use_webservice = False
-    rerank_via_model = False
+    _rerank_via_model_enabled = None
     entry_generation = False
     privacy_sensitive_terms = None
 
@@ -42,7 +42,7 @@ class PythonSearchConfiguration(EntriesGroup):
         ] = "automatic",
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False,
-        rerank_via_model=False,
+        rerank_via_model=None,
         collect_data: bool = False,
         entry_generation=False,
         privacy_sensitive_terms: Optional[List[str]] = None,
@@ -75,7 +75,7 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
-        self.rerank_via_model = rerank_via_model
+        self._rerank_via_model_enabled = rerank_via_model
 
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor
@@ -125,11 +125,15 @@ class PythonSearchConfiguration(EntriesGroup):
 
     def is_rerank_via_model_enabled(self):
         home = os.path.expanduser("~")
+
+        if self._rerank_via_model_enabled is False:
+            return False
+
         if os.path.exists(f"{home}/.python_search/feature_enable_next_item_predictor"):
             # print("rerank_via_model is enabled")
             return True
 
-        return self.rerank_via_model
+        return self._rerank_via_model_enabled
 
     def get_default_tags(self):
         return self._default_tags

@@ -31,7 +31,7 @@ class LLMDataset:
     @timer
     def build(self, save_to_disk=True):
         """
-        Generates the dataset and writes it to disk
+        Generates the dataset and writes it to disk as pickled pandas
         """
         print("Train Dataset will be saved to: ", self.DESTINATION_TRAIN)
         print("Validation Dataset will be saved to: ", self.DESTINATION_VALIDATION)
@@ -78,21 +78,21 @@ class LLMDataset:
             print("Not saving to disk")
             return
 
-        self.write(validation_set, train_set)
+        self._write(validation_set, train_set)
         print("Generated dataset worked successfully")
 
-    def write(self, validation, train):
+    def _write(self, validation, train):
         validation_df = validation.toPandas()
-        print("Saving Validation set to:", self.DESTINATION_VALIDATION)
         print("Dataset rows:", len(validation_df.index))
         validation_df.to_pickle(self.DESTINATION_VALIDATION)
 
 
         print("Saving train dataset")
         train_df = train.toPandas()
-        print("Saving Training set to:", self.DESTINATION_TRAIN)
         print("Dataset rows:", len(train_df.index))
         train_df.to_pickle(self.DESTINATION_TRAIN)
+        print("Saved validation set to:", self.DESTINATION_VALIDATION)
+        print("Saving trainig set to:", self.DESTINATION_TRAIN)
 
 
     def load(self):
