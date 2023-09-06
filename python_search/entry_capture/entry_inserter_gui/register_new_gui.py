@@ -300,7 +300,10 @@ class NewEntryGUI:
         from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 
         def _predict_key(window, content):
-            result = EntryTitleGenerator().predict(content)
+            result = None
+            if self._configuration.is_rerank_via_model_enabled():
+                result = EntryTitleGenerator().predict(content)
+
             if not result:
                 return
             window.write_event_value(self._PREDICT_ENTRY_TITLE_READY, result)

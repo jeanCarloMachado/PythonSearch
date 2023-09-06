@@ -5,19 +5,23 @@ from python_search.chat_gpt import LLMPrompt
 
 
 class TypeDetector:
+    classifier = None
 
     def __init__(self):
         from python_search.ps_llm.tasks.classity_entry_type import ClassifyEntryType
-        self.classifier = ClassifyEntryType.start_with_model()
+        from python_search.configuration.loader import ConfigurationLoader;
+        configuration = ConfigurationLoader().load_config()
+        if configuration.is_rerank_via_model_enabled():
+            self.classifier = ClassifyEntryType.start_with_model()
     def detect(self, key, content) -> Literal["Url", "Snippet", "File", "Cmd"]:
         if content.startswith("https://") or content.startswith("http://"):
             return "Url"
 
-        result = self.classifier.classify(key, content)
+        if self.classifier:
+            result = self.classifier.classify(key, content)
+            return result
 
-        #result = self._chat_gpt(key, content)
-
-        return result
+        return "Snippet"
 
 
 
