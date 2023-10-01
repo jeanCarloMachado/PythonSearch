@@ -224,12 +224,11 @@ class NewEntryGUI:
 
 
                 if event and event == "refresh" or "refresh" in event:
-                    default_content = Clipboard().get_content()
-                    window[self._BODY_INPUT].update(default_content)
-                    self._generate_title(default_content, window)
+                    new_content = Clipboard().get_content()
+                    window[self._BODY_INPUT].update(new_content)
+                    self._generate_title(new_content, window)
+                    self._classify_entry_type(default_key, new_content, window)
                     continue
-
-
 
 
                 if event == self._PREDICT_ENTRY_TYPE_READY:
