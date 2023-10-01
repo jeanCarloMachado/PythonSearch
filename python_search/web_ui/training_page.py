@@ -18,8 +18,3 @@ def load_training_page():
     st.pyplot(fig)
 
 
-def load_dataset():
-    from python_search.next_item_predictor.training_dataset import TrainingDataset
-
-    df = TrainingDataset().build(use_cache=True)
-    return df

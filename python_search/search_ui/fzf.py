@@ -41,7 +41,6 @@ class Fzf:
         --margin=0% \
         --padding=0% \
         {self._run_key("enter")} \
-        {self._run_key("ctrl-t", wrap_in_terminal=True)} \
         {self._run_key("double-click")} \
         {self._edit_key('ctrl-e')} \
         {self._edit_key('right-click')} \
@@ -54,6 +53,7 @@ class Fzf:
         --bind "ctrl-c:execute-silent:(nohup python_search _copy_entry_content {{}})" \
         --bind "ctrl-n:execute-silent:(nohup register_new launch_from_fzf {{}} & )" \
         --bind "ctrl-g:execute-silent:(google_it search {{q}})" \
+        --bind "ctrl-d:execute-silent:(monorepo_cli  register_german {{q}} &)" \
         --bind "ctrl-y:execute-silent:(python_search _copy_key_only {{}})" \
         --bind "ctrl-r:reload-sync:(ps_search --reload_enabled=True)" \
         --bind "ctrl-n:reload-sync:(ps_search)" \
@@ -63,7 +63,6 @@ class Fzf:
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
         --bind "ctrl-k:abort" \
-        --bind "ctrl-d:abort"  \
         {self._get_fzf_theme()} ; exit 0
         '
         """

@@ -60,7 +60,9 @@ class NextItemPredictor(BaseDataTask):
         df = df.select("prompt", "label")
         df.show(n=10, truncate=False)
 
-        return df
+        from python_search.ps_llm.llm_dataset import LLMDataset
+        return df.limit(LLMDataset.MAX_SIZE_PER_TASK_TRAIN_DATASET)
+
 
     def _label(selfs, row):
         result = f"1. {row['key']}"

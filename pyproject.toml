@@ -82,8 +82,6 @@ browser = 'python_search.apps.browser:main'
 python_search_webapi = 'python_search.web_api:main'
 run_entry = 'python_search.entry_runner:main'
 run_key = 'python_search.entry_runner:main'
-reminders = 'python_search.plugins.reminders:main'
-feature_toggle = 'python_search.feature_toggle:FeatureToggle.main'
 generic_data_collector = 'python_search.data_collector:GenericDataCollector.initialize'
 ps_container = 'python_search.container:start'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
@@ -108,7 +106,6 @@ ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 start_streamlit_app = 'start_streamlit_app:main'
 llm_rank = 'python_search.ps_llm.t5.inference:main'
 llm_cli = 'python_search.ps_llm.llm_cli:main'
-llm_dataset = 'python_search.ps_llm.next_item_llm_dataset:main'
 ps_bundle = 'bundle:main'
 
 [tool.poetry.extras]
@@ -129,4 +126,5 @@ full = [
     "jupyterlab",
     "scikit-learn",
     'sentence_transformers',
+    'streamlit',
 ]

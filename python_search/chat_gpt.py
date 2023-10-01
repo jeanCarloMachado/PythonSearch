@@ -75,7 +75,7 @@ Prompt:
         self.max_tokens = int(max_tokens)
 
         if model == "gpt-3.5-turbo":
-            return ChatGPTAPI().prompt(prompt)
+            return PythonSearchChatGPTAPI().prompt(prompt)
 
         import openai
 
@@ -117,7 +117,7 @@ Prompt:
         print(self.answer(prompt))
 
 
-class ChatGPTAPI:
+class PythonSearchChatGPTAPI:
     def prompt(self, text) -> str:
         import openai
 
