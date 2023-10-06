@@ -53,4 +53,7 @@ class Terminal:
         if self.configuration.get_fzf_theme() in ["dracula", "dark"]:
             return " -o background=#282a36 -o foreground=#ffffff "
 
+        if self.configuration.get_fzf_theme() in ["solarized"]:
+            return " -o background=#002b36 -o foreground=#ffffff "
+
         return " "

@@ -86,8 +86,7 @@ class Fzf:
 
         return f"""--bind "{shortcut}:execute-silent:(nohup run_key {{}}  --query_used {{q}} {wrap_in_terminal_expr} {{}} &)" \
         --bind "{shortcut}:+reload-sync:(sleep 3 && ps_search)" \
-        --bind "{shortcut}:+first" \
-        --bind "{shortcut}:+clear-screen" """
+        --bind "{shortcut}:+first" """
 
     def _edit_key(self, shortcut) -> str:
         return f''' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" \
@@ -95,6 +94,10 @@ class Fzf:
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
             return "--color=bg+:#ffffff,bg:#ffffff,hl:#719872,fg:#616161,header:#719872,info:#727100,pointer:#E12672,marker:#E17899,fg+:#616161,preview-bg:#ffffff,prompt:#0099BD,hl+:#719899"
+
+
+        if self.configuration.get_fzf_theme() in ["solarized"]:
+            return ' --color="fg:#839496,bg:#002b36,hl:#268bd2,fg+:#eee8d5,bg+:#002b36,hl+:#268bd2,info:#b58900,prompt:#b58900,pointer:#2aa198,marker:#2aa198,spinner:#2aa198,header:#268bd2" '
 
         if self.configuration.get_fzf_theme() in ["dark", "dracula"]:
             return ' --color="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#6272a4" '
