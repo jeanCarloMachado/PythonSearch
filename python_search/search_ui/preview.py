@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from colorama import Fore
 from dateutil import parser
 
 from python_search.configuration.loader import ConfigurationLoader
@@ -8,6 +7,8 @@ from python_search.logger import setup_preview_logger
 from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
+import colorful as cf
+
 
 
 class Preview:
@@ -21,7 +22,9 @@ class Preview:
         self.configuration = ConfigurationLoader()
         self.logger = setup_preview_logger()
         self.entries = self.configuration.load_entries()
-        # do not send the errors to stderr, in the future we should send to kibana or a file
+        cf.use_true_colors()
+        cf.use_style("solarized")
+        # do not send the errors to stderr, in the future we should send to kibana or a file#
 
     def display(self, entry_text: str):
         """
@@ -41,16 +44,16 @@ class Preview:
 
     def _print_values(self, data):
         print("")
-        print(f"{data['key']}")
+        print(f"{cf.cyan(data['key'])}")
 
         if "value" in data:
             print("")
             print(
-                f'{self._color_str(data["value"], self._get_color_for_type(data["type"]))}'
+                f'{cf.green(data["value"])}'
             )
         print("")
 
-        print(f"Type: {data['type']}")
+        print(f"Type: {cf.red(data['type'])}")
         if "description" in data:
             print(f"Description: {data['description']}")
 
@@ -62,8 +65,6 @@ class Preview:
         if "position" in data:
             print("Position: " + data["position"])
 
-    def _get_color_for_type(self, type):
-        return Fore.GREEN
 
     def _extract_key(self, entry_text):
         return entry_text.split(":")[0].strip()
@@ -123,9 +124,6 @@ class Preview:
 
         return result
 
-    def _color_str(self, a_string, a_color) -> str:
-        return f"{a_color}{a_string}{Fore.RESET}"
-
     def _key_exists(self, key_proposed):
         if key_proposed in self.entries:
             return True
@@ -136,7 +134,7 @@ class Preview:
         if not self._key_exists(key):
             print(
                 (
-                    f'Key "{self._color_str(key, Fore.RED)}" not found in python search data'
+                    f'Key "{cf.red(key)}" not found in python search data'
                 )
             )
             import sys

@@ -97,12 +97,76 @@ class Fzf:
 
 
         if self.configuration.get_fzf_theme() in ["solarized"]:
-            return ' --color="fg:#839496,bg:#002b36,hl:#268bd2,fg+:#6c71c4,bg+:#002b36,hl+:#268bd2,info:#b58900,prompt:#b58900,pointer:#b58900,marker:#eee8d5,spinner:#2aa198,header:#268bd2,query:#859900" '
+            theme = Theme().solarized()
+            return f' --color="fg:{theme.fg},bg:{theme.bg},hl:{theme.hl},fg+:{theme.fg_plus},bg+:{theme.bg_plus},hl+:{theme.hl_plus},info:{theme.info},prompt:{theme.prompt},pointer:{theme.pointer},marker:{theme.marker},spinner:{theme.spinner},header:{theme.header},query:{theme.query},label:{theme.label},border:{theme.border}" '
 
         if self.configuration.get_fzf_theme() in ["dark", "dracula"]:
-            return ' --color="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#6272a4" '
+            return ' --color="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#586e75" '
 
         return " "
+
+
+class Theme:
+    """
+       fg                  Text
+         preview-fg        Preview window text
+       bg                  Background
+         preview-bg        Preview window background
+       hl                  Highlighted substrings
+       fg+                 Text (current line)
+       bg+                 Background (current line)
+         gutter            Gutter on the left
+       hl+                 Highlighted substrings (current line)
+       query               Query string
+         disabled          Query string when search is disabled (--disabled)
+       info                Info line (match counters)
+       border              Border around the window (--border and --preview)
+         scrollbar         Scrollbar
+         preview-border    Border around the preview window (--preview)
+         preview-scrollbar Scrollbar
+         separator         Horizontal separator on info line
+       label               Border label (--border-label and --preview-label)
+         preview-label     Border label of the preview window (--preview-label)
+       prompt              Prompt
+       pointer             Pointer to the current line
+       marker              Multi-select marker
+       spinner             Streaming input indicator
+       header              Header
+    """
+    fg: str
+    bg: str
+    hl: str
+    fg_plus: str
+    bg_plus: str
+    hl_plus: str
+    info: str
+    prompt: str
+    pointer: str
+    marker: str
+    spinner: str
+    header: str
+    query: str
+
+    def solarized(self):
+        self.fg = "#839496"
+        self.bg = "#002b36"
+        self.hl = "#268bd2"
+        self.fg_plus = "#6c71c4"
+        self.bg_plus = "#002b36"
+        self.hl_plus = "#268bd2"
+        self.info = "#d33682"
+        self.prompt = "#b58900"
+        self.pointer = "#b58900"
+        self.marker = "#b58900"
+        self.spinner = "#2aa198"
+        self.header = "#268bd2"
+        self.query = "#268bd2"
+        self.label = self.bg
+        self.border = "#073642"
+
+        return self
+
+
 
 
 

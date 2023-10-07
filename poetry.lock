@@ -727,6 +727,20 @@ files = [
 ]
 
 [[package]]
+name = "colorful"
+version = "0.5.5"
+description = "Terminal string styling done right, in Python."
+optional = false
+python-versions = "*"
+files = [
+    {file = "colorful-0.5.5-py2.py3-none-any.whl", hash = "sha256:62c187e27c1433db9463ff93b1451898d1e7e23a7e553583fd9daeb6325182e4"},
+    {file = "colorful-0.5.5.tar.gz", hash = "sha256:66f8c1264b2a26f7293b96a03bb7a76c4bc8b9634369a0bffdcd12d618056a1d"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[[package]]
 name = "comm"
 version = "0.1.4"
 description = "Jupyter Python Comm implementation, for usage in ipykernel, xeus-python etc."
@@ -6236,9 +6250,9 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [extras]
-full = ["jupyterlab", "kafka-python", "matplotlib", "mlflow", "msgpack-numpy", "numpy", "pandas", "pyspark", "redis", "scipy", "sentence-transformers", "tensorflow", "uvicorn", "xgboost"]
+full = ["jupyterlab", "kafka-python", "matplotlib", "mlflow", "msgpack-numpy", "numpy", "pandas", "pyspark", "redis", "scipy", "sentence-transformers", "streamlit", "tensorflow", "uvicorn", "xgboost"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "05567bdf75329e2d5b40feb8db8ef0255d368ca7902a0f50fc99278fa7875943"
+content-hash = "8bb8657c9f90ca47eaeddcd01e1f6459574c938fca8141aebce87f57c624b08e"
