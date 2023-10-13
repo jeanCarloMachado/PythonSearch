@@ -9,8 +9,8 @@ from python_search.ps_llm.utils import timer
 
 class LLMDataset:
     DATASET_VERSION = 'v11'
-    VALIDATION_SIZE_TASK = 200
-    MAX_DATASET_SIZE = 5000
+    MAX_SIZE_PER_TASK_VALIDATION_DATASET = 100
+    MAX_SIZE_PER_TASK_TRAIN_DATASET = 200
 
     TASKS = [
         ClassifyEntryType,
@@ -24,23 +24,19 @@ class LLMDataset:
         from python_search.ps_llm.llm_config import LLMConfig
         llm_config = LLMConfig()
         self.BASE_DATASET_FOLDER  = llm_config.BASE_DATASET_FOLDER
-        self.DESTINATION_TRAIN = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_train.pkl"
-        self.DESTINATION_VALIDATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
+        self.TRAIN_PKL_LOCATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_train.pkl"
+        self.VALIDATION_PKL_LOCATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
         print('Version: ', self.DATASET_VERSION)
 
     @timer
-    def build(self, save_to_disk=True):
+    def generate_train_and_validation(self):
         """
-        Generates the dataset and writes it to disk
+        Generates the dataset and writes it to disk as pickled pandas
         """
-        print("Train Dataset will be saved to: ", self.DESTINATION_TRAIN)
-        print("Validation Dataset will be saved to: ", self.DESTINATION_VALIDATION)
+        print("Train Dataset will be saved to: ", self.TRAIN_PKL_LOCATION)
+        print("Validation Dataset will be saved to: ", self.VALIDATION_PKL_LOCATION)
         import pyspark.sql.functions as F
         from pyspark.sql import Window
-
-        if not save_to_disk:
-            print("Save to disk disabled")
-
 
         validation_set = None
         train_set = None
@@ -56,9 +52,8 @@ class LLMDataset:
             print("Rows for " + task.__name__ + ": " + str(df_instance.count()))
 
 
-            # @todo change this logic for datasets with very few rows
-            validation_instance = df_instance.filter(df_instance.row_num <= self.VALIDATION_SIZE_TASK).select("prompt", "label")
-            train_instance = df_instance.filter(df_instance.row_num > self.VALIDATION_SIZE_TASK).select("prompt", "label")
+            validation_instance = df_instance.filter(df_instance.row_num <= self.MAX_SIZE_PER_TASK_VALIDATION_DATASET).select("prompt", "label")
+            train_instance = df_instance.filter(df_instance.row_num > self.MAX_SIZE_PER_TASK_VALIDATION_DATASET).select("prompt", "label")
 
 
             if validation_set is not None:
@@ -69,41 +64,27 @@ class LLMDataset:
                 validation_set = validation_instance
                 train_set = train_instance
 
-
         print("Joined train set size: ", train_set.count())
         print("Joined validation set size: ", validation_set.count())
 
-
-        if not save_to_disk:
-            print("Not saving to disk")
-            return
-
-        self.write(validation_set, train_set)
+        self._write(validation_set, self.VALIDATION_PKL_LOCATION)
+        self._write(train_set, self.VALIDATION_PKL_LOCATION)
         print("Generated dataset worked successfully")
 
-    def write(self, validation, train):
+    def _write(self, validation, destination):
         validation_df = validation.toPandas()
-        print("Saving Validation set to:", self.DESTINATION_VALIDATION)
         print("Dataset rows:", len(validation_df.index))
-        validation_df.to_pickle(self.DESTINATION_VALIDATION)
-
-
-        print("Saving train dataset")
-        train_df = train.toPandas()
-        print("Saving Training set to:", self.DESTINATION_TRAIN)
-        print("Dataset rows:", len(train_df.index))
-        train_df.to_pickle(self.DESTINATION_TRAIN)
-
+        validation_df.to_pickle(destination)
+        print("Saved set to:", destination)
 
     def load(self):
         return self.load_training()
 
-    def load_training(self):
+    def _load_pickle(self, path):
         """
         Loads the dataset from disk
         """
 
-        path = self.BASE_DATASET_FOLDER+f"/{self.DATASET_VERSION}_train.pkl"
         import pandas as pd
         df = pd.read_pickle(path)
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
@@ -114,12 +95,13 @@ class LLMDataset:
         """
         Loads the dataset from disk
         """
-        import pandas as pd
+        return self._load_pickle(self.VALIDATION_PKL_LOCATION)
 
-        path = self.BASE_DATASET_FOLDER+f"/{self.DATASET_VERSION}_validation.pkl"
-        df = pd.read_pickle(path)
-        print(f"Loading dataset from path {path} with {len(df.index)} rows")
-        return df
+    def load_training(self):
+        """
+        Loads the dataset from disk
+        """
+        return self._load_pickle(self.TRAIN_PKL_LOCATION)
 
 
     def sample(self, dataset: Literal['train', 'validation'] = 'validation'):
@@ -149,8 +131,6 @@ class LLMDataset:
 
     def inspect(self):
         return len(self.load_training().index)
-
-
 
 
 

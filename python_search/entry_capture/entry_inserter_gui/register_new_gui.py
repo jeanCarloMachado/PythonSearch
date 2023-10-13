@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import threading
-from typing import List
 
 import fire
 
 from python_search.apps.notification_ui import send_notification
+from python_search.entry_capture.entry_inserter_gui.entry_gui_data import GuiEntryData
 from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
 from python_search.entry_capture.utils import get_page_title
 from python_search.error.exception import notify_exception
@@ -224,12 +224,11 @@ class NewEntryGUI:
 
 
                 if event and event == "refresh" or "refresh" in event:
-                    default_content = Clipboard().get_content()
-                    window[self._BODY_INPUT].update(default_content)
-                    self._generate_title(default_content, window)
+                    new_content = Clipboard().get_content()
+                    window[self._BODY_INPUT].update(new_content)
+                    self._generate_title(new_content, window)
+                    self._classify_entry_type(default_key, new_content, window)
                     continue
-
-
 
 
                 if event == self._PREDICT_ENTRY_TYPE_READY:
@@ -300,7 +299,10 @@ class NewEntryGUI:
         from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
 
         def _predict_key(window, content):
-            result = EntryTitleGenerator().predict(content)
+            result = None
+            if self._configuration.is_rerank_via_model_enabled():
+                result = EntryTitleGenerator().predict(content)
+
             if not result:
                 return
             window.write_event_value(self._PREDICT_ENTRY_TITLE_READY, result)
@@ -336,29 +338,6 @@ class NewEntryGUI:
         for i in range(0, len(lst), n):
             yield lst[i : i + n]
 
-
-class GuiEntryData:
-    """
-    Entry _entries schema
-
-    """
-
-    key: str
-    value: str
-    type: str
-    tags: List[str]
-
-    def __init__(self, key, value, type, tags):
-        if not key:
-            raise Exception("Key is required")
-
-        if not value:
-            raise Exception("Value is required")
-
-        self.key = key
-        self.value = value
-        self.type = type
-        self.tags = tags
 
 def main():
     fire.Fire(NewEntryGUI().launch_prompt)

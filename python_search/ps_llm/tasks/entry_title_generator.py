@@ -22,7 +22,7 @@ class EntryTitleGenerator(BaseDataTask):
         df = get_spark().createDataFrame(result, ["prompt", "label"])
 
         from python_search.ps_llm.llm_dataset import LLMDataset
-        return df.limit(LLMDataset.MAX_DATASET_SIZE)
+        return df.limit(LLMDataset.MAX_SIZE_PER_TASK_TRAIN_DATASET)
 
 
 

@@ -170,3 +170,7 @@ def main():
     import fire
 
     fire.Fire(PythonSearchCli)
+
+
+if __name__ == "__main__":
+    main()
