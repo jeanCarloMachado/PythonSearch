@@ -4,6 +4,8 @@
 
 - Add better support to solarized theme
 - Changed defualt window size
+- disable llm by configuration again
+- gracefully degrate on features without model
 
 ## 0.26 - 2023-08-19
 
