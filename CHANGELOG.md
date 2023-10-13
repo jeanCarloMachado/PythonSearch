@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.27 -  2023-10-13
+
+- Add better support to solarized theme
+- Changed defualt window size
+
 ## 0.26 - 2023-08-19
 
 - Add support to app_focus_title  in mac.

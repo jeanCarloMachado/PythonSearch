@@ -98,7 +98,7 @@ class Fzf:
 
         if self.configuration.get_fzf_theme() in ["solarized"]:
             theme = Theme().solarized()
-            return f' --color="fg:{theme.fg},bg:{theme.bg},hl:{theme.hl},fg+:{theme.fg_plus},bg+:{theme.bg_plus},hl+:{theme.hl_plus},info:{theme.info},prompt:{theme.prompt},pointer:{theme.pointer},marker:{theme.marker},spinner:{theme.spinner},header:{theme.header},query:{theme.query},label:{theme.label},border:{theme.border}" '
+            return f' --color="fg:{theme.fg},bg:{theme.bg},hl:{theme.hl},fg+:{theme.fg_plus},bg+:{theme.bg_plus},hl+:{theme.hl_plus},info:{theme.info},prompt:{theme.prompt_arrows},pointer:{theme.pointer_current_line},marker:{theme.marker},spinner:{theme.spinner},header:{theme.header},query:{theme.query},label:{theme.label},border:{theme.border}" '
 
         if self.configuration.get_fzf_theme() in ["dark", "dracula"]:
             return ' --color="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#586e75" '
@@ -140,27 +140,29 @@ class Theme:
     bg_plus: str
     hl_plus: str
     info: str
-    prompt: str
-    pointer: str
+    prompt_arrows: str
+    # the pointer of hte current line
+    pointer_current_line: str
     marker: str
     spinner: str
     header: str
     query: str
 
     def solarized(self):
-        self.fg = "#839496"
+        self.fg = "#2aa198"
         self.bg = "#002b36"
-        self.hl = "#268bd2"
+        self.hl = "#859900"
         self.fg_plus = "#6c71c4"
         self.bg_plus = "#002b36"
         self.hl_plus = "#268bd2"
         self.info = "#d33682"
-        self.prompt = "#b58900"
-        self.pointer = "#b58900"
-        self.marker = "#b58900"
+        self.prompt_arrows = "#002b36"
+
+        self.pointer_current_line = "#6c71c4"
+        self.marker = "#268bd2"
         self.spinner = "#2aa198"
         self.header = "#268bd2"
-        self.query = "#268bd2"
+        self.query = "#cb4b16"
         self.label = self.bg
         self.border = "#073642"
 

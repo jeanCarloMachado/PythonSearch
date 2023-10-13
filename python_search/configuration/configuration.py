@@ -7,8 +7,6 @@ from python_search.features import PythonSearchFeaturesSupport
 from python_search.theme import TimeBasedThemeSelector
 from python_search.ps_llm.llm_config import CustomLLMConfig
 
-
-
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search
@@ -130,7 +128,6 @@ class PythonSearchConfiguration(EntriesGroup):
             return False
 
         if os.path.exists(f"{home}/.python_search/feature_enable_next_item_predictor"):
-            # print("rerank_via_model is enabled")
             return True
 
         return self._rerank_via_model_enabled

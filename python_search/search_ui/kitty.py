@@ -12,7 +12,7 @@ class FzfInKitty:
     """
 
     FONT_SIZE: int = 16
-    _default_window_size = (800, 400)
+    _default_window_size = (950, 400)
 
     _configuration = None
 
