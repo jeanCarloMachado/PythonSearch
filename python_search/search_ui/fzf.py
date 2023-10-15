@@ -151,7 +151,7 @@ class Theme:
     def solarized(self):
         self.fg = "#2aa198"
         self.bg = "#002b36"
-        self.hl = "#859900"
+        self.hl = "#b58900"
         self.fg_plus = "#6c71c4"
         self.bg_plus = "#002b36"
         self.hl_plus = "#268bd2"
