@@ -62,7 +62,6 @@ class Fzf:
         --bind "shift-up:first" \
         --bind "esc:execute-silent:(ps_fzf hide_current_focused_window)" \
         --bind "esc:+clear-query" \
-        --bind "ctrl-k:abort" \
         {self._get_fzf_theme()} ; exit 0
         '
         """
