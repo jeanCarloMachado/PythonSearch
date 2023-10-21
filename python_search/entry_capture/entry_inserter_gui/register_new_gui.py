@@ -48,8 +48,6 @@ class NewEntryGUI:
         obj.launch_loop(focus_future=future)
 
 
-
-
     @notify_exception()
     def launch_loop(self, default_type=None, default_key="", default_content="", focus_future=None):
         """
@@ -346,6 +344,6 @@ def main():
 if __name__ == "__main__":
     fire.Fire(NewEntryGUI().launch)
 
-def launch_ui():
 
+def launch_ui():
     fire.Fire(NewEntryGUI.focus_or_launch())

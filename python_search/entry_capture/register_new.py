@@ -52,18 +52,6 @@ class RegisterNew:
     def _sanitize_key(self, key):
         return key.replace("\n", " ").replace(":", " ").strip()
 
-    def launch_from_fzf(self, key_expression):
-        import json
-
-        key = str(Key.from_fzf(key_expression))
-        key_len = len(key_expression.split(":")[0])
-        body = key_expression[key_len + 1 :]
-        body = json.loads(body.strip())
-        content = Entry(key, body).get_content_str()
-
-        self.launch_ui(default_key=key, default_content=content)
-
-
 
 def main():
     import fire
