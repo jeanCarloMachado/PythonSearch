@@ -16,6 +16,6 @@ class XFCE:
                 continue
 
             if "xfce_shortcut" in content:
-                command = f"""xfconf-query -c xfce4-keyboard-shortcuts -p '/commands/custom/{content['xfce_shortcut']}' -n -t string -s "run_key '{key}'" """
+                command = f"""xfconf-query -c xfce4-keyboard-shortcuts -p '/commands/custom/{content['xfce_shortcut']}' -n -t string -s 'run_key "{key}"' """
                 print(command)
                 os.system(command)

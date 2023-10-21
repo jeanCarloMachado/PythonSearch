@@ -81,9 +81,8 @@ class PythonSearchCli:
         """
         Starts the UI for collecting a new entry into python search
         """
-        from python_search.entry_capture.register_new import RegisterNew
-
-        return RegisterNew(self.configuration).launch_ui
+        from python_search.entry_capture.entry_inserter_gui import register_new_gui
+        return register_new_gui.launch_ui()
 
     def _copy_entry_content(self, entry_str: str):
         """

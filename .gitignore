@@ -23,3 +23,4 @@ website/themes/ananke/
 my_model_directory/
 t5_llm_models/*
 python_search/llm_next_item_predictor/t5/t5_llm_models/*
+.idea/*

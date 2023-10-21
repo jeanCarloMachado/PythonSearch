@@ -22,6 +22,7 @@ class T5Model(LLMModel):
     def load_productionalized_model() -> LLMModel:
         return T5Model.load_trained_model(LLMConfig().SUMMARIZATION_PRODUCTIONALIZED_MODEL)
 
+
     @staticmethod
     def load_trained_model(model_path: Optional[str] = None) -> LLMModel:
         llm_model = T5Model()
