@@ -47,6 +47,9 @@ class Fzf:
         --bind "ctrl-l:clear-query" \
         --bind "ctrl-l:+clear-screen" \
         --bind "ctrl-l:+first" \
+        --bind "ctrl-a:abort" \
+        --bind "ctrl-p:prev-history" \
+        --bind "ctrl-n:next-history" \
         --bind "ctrl-f:first" \
         --bind "ctrl-j:down" \
         --bind "ctrl-k:up" \
@@ -88,8 +91,10 @@ class Fzf:
         --bind "{shortcut}:+first" """
 
     def _edit_key(self, shortcut) -> str:
-        return f''' --bind "{shortcut}:execute-silent:(entries_editor edit_key {{}} & disown )" \
-                    --bind "{shortcut}:+reload-sync:(sleep 7 && ps_search --fast_mode=True)" '''
+        return f''' --bind "{shortcut}:hide-preview" \
+                            --bind "{shortcut}:+execute-silent:(entries_editor edit_key {{}} & disown )" \
+                            --bind "{shortcut}:+reload-sync:(ps_search --fast_mode=True)"  \
+                            --bind "{shortcut}:+show-preview"  '''
     def _get_fzf_theme(self):
         if self.configuration.get_fzf_theme() == "light":
             return "--color=bg+:#ffffff,bg:#ffffff,hl:#719872,fg:#616161,header:#719872,info:#727100,pointer:#E12672,marker:#E17899,fg+:#616161,preview-bg:#ffffff,prompt:#0099BD,hl+:#719899"

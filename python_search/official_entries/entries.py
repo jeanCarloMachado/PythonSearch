@@ -9,7 +9,7 @@ class OfficialEntries(EntriesGroup):
     """
 
     commands = {
-        "install missing dependencies of PythonSearch": {
+        "upgrade or install missing dependencies of pythonsearch": {
             "cli_cmd": "python_search  install_missing_dependencies",
         },
         "set entries project location": {
