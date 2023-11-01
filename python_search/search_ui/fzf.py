@@ -4,7 +4,6 @@ import sys
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
 
-
 class Fzf:
     PREVIEW_PERCENTAGE_SIZE = 45
     RANK_TIE_BREAK: str = "index"

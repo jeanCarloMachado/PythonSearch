@@ -13,7 +13,7 @@ def run(text=None):
     layout = [[sg.Text(text)], [sg.Button("Close")]]
 
     sg.theme("SystemDefault1")
-    _FONT = "FontAwesome" if not is_mac() else "Menlo"
+    _FONT = "Menlo"
     # Create the window
     window = sg.Window(
         "Error Window",

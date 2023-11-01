@@ -12,7 +12,7 @@ class FzfInKitty:
     """
 
     FONT_SIZE: int = 17
-    _DEFAULT_WINDOW_SIZE = (1100, 400)
+    _DEFAULT_WINDOW_SIZE = (1100, 360)
 
     _configuration = None
 
@@ -41,7 +41,7 @@ class FzfInKitty:
 
         self._title = configuration.APPLICATION_TITLE
 
-        self._FONT = "FontAwesome" if not is_mac() else "Monaco"
+        self._FONT = "monospace"
         from python_search.search_ui.fzf import Fzf
 
         self._fzf = Fzf(configuration)
