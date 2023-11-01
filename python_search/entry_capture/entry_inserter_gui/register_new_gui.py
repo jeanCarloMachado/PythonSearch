@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import threading
 
 import fire
 
 from python_search.apps.notification_ui import send_notification
 from python_search.entry_capture.entry_inserter_gui.entry_gui_data import GuiEntryData
 from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
-from python_search.entry_capture.utils import get_page_title
 from python_search.error.exception import notify_exception
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.environment import is_mac
@@ -91,7 +89,6 @@ class NewEntryGUI:
         window_title: str = "New",
         default_key: str = "",
         default_content: str = "",
-        serialize_output=False,
         default_type="Snippet",
         focus_future=None,
     ) -> GuiEntryData:
@@ -199,16 +196,6 @@ class NewEntryGUI:
         window[self._BODY_INPUT].bind("<Escape>", "Escape"),
         window["type"].bind("<Escape>", "Escape")
 
-        self._classify_entry_type(default_key, default_content, window)
-
-        if not default_key:
-            if default_content.startswith("http"):
-                self._update_title_with_url_title_thread(default_content, window)
-            else:
-                self._generate_title(default_content, window)
-
-
-
         try:
             while True:
                 event, values = window.read()
@@ -276,57 +263,21 @@ class NewEntryGUI:
         except:
             notify_exception()
 
-    def _update_title_with_url_title_thread(self, content: str, window):
-        import PySimpleGUI as sg
-        window: sg.Window = window
-
-        def _update_title(content: str, window):
-            new_title = get_page_title(content)
-            old_title = window[self._TITLE_INPUT]
-            if old_title == new_title:
-                print("Will not upgrade the title as it was already changed")
-                return
-            window[self._TITLE_INPUT].update(new_title)
-
-        threading.Thread(
-            target=_update_title, args=(content, window), daemon=True
-        ).start()
 
     def _sanitize_key(self, key):
         return key.replace("\n", " ").replace(":", " ").strip()
 
-    def _generate_title(self, content, window):
-        from python_search.ps_llm.tasks.entry_title_generator import EntryTitleGenerator
-
-        def _predict_key(window, content):
-            result = None
-            if self._configuration.is_rerank_via_model_enabled():
-                result = EntryTitleGenerator().predict(content)
-
-            if not result:
-                return
-            window.write_event_value(self._PREDICT_ENTRY_TITLE_READY, result)
-
-        threading.Thread(
-            target=_predict_key, args=(window, content), daemon=True
-        ).start()
 
     def _classify_entry_type(self, key_content, content, window):
         if not key_content:
             key_content = ""
 
-        def predict_entry_type(window, content):
-            new_type = self._type_detector.detect(key_content, content)
-            print("new_type", new_type)
+        new_type = self._type_detector.detect(key_content, content)
+        print("new_type", new_type)
 
-            if not new_type:
-                return
-            window.write_event_value(self._PREDICT_ENTRY_TYPE_READY, new_type)
-
-
-        threading.Thread(
-            target=predict_entry_type, args=(window, content), daemon=True
-        ).start()
+        if not new_type:
+            return
+        window.write_event_value(self._PREDICT_ENTRY_TYPE_READY, new_type)
 
     def _checkbox_list(self, tags):
         return ([self.sg.Checkbox(tag, key=tag, default=False) for tag in tags],)

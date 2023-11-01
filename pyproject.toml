@@ -43,6 +43,7 @@ jupyter = {version = "^1.0.0", optional = true}
 sentence-transformers = {version = "^2.2.2", optional = true}
 accelerate = "^0.22.0"
 colorful = "^0.5.5"
+ddtrace = {version = "^2.1.4", optional = true}
 
 
 [tool.poetry.dev-dependencies]
@@ -128,4 +129,5 @@ full = [
     "scikit-learn",
     'sentence_transformers',
     'streamlit',
+    'ddtrace',
 ]
