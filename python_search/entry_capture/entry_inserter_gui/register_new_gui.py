@@ -9,7 +9,6 @@ from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntr
 from python_search.error.exception import notify_exception
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.environment import is_mac
-from python_search.host_system.windows_focus import Focus
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.entry_type.type_detector import TypeDetector
 from python_search.entry_type.entity import infer_default_type
@@ -38,18 +37,10 @@ class NewEntryGUI:
 
         self.sg = sg
 
-    @staticmethod
-    def focus_or_launch():
-        future = Focus().async_focus_register_new()
-
-        obj = NewEntryGUI()
-        obj.launch_loop(focus_future=future)
-
-
 
 
     @notify_exception()
-    def launch_loop(self, default_type=None, default_key="", default_content="", focus_future=None):
+    def launch_loop(self, default_type=None, default_key="", default_content=""):
         """
         Create a new inferred entry based on the clipboard content
         """
@@ -65,7 +56,6 @@ class NewEntryGUI:
             default_content=default_content,
             default_key=default_key,
             default_type=default_type,
-            focus_future=focus_future,
         )
 
     def _save_entry_data(self, entry_data: GuiEntryData):
@@ -90,7 +80,6 @@ class NewEntryGUI:
         default_key: str = "",
         default_content: str = "",
         default_type="Snippet",
-        focus_future=None,
     ) -> GuiEntryData:
         """
         Launch the entries capture GUI.
@@ -171,20 +160,12 @@ class NewEntryGUI:
             ],
         ]
 
-        if focus_future:
-            print("Waiting for focus")
-            result = focus_future.result()
-            if result:
-                print("Focus succeeded, not starting new window")
-                return
-
         window = self.sg.Window(
             window_title,
             layout,
             font=(self._FONT, font_size),
             finalize=True,
         )
-
 
         window.set_title("Register New")
 
@@ -213,7 +194,6 @@ class NewEntryGUI:
                 if event and event == "refresh" or "refresh" in event:
                     new_content = Clipboard().get_content()
                     window[self._BODY_INPUT].update(new_content)
-                    self._generate_title(new_content, window)
                     self._classify_entry_type(default_key, new_content, window)
                     continue
 
@@ -237,7 +217,6 @@ class NewEntryGUI:
 
 
                 if event and (event == "write" or event == "-entry-name-write"):
-
                     selected_tags = []
                     if self._tags:
                         for key, value in values.items():
@@ -299,4 +278,4 @@ if __name__ == "__main__":
 
 def launch_ui():
 
-    fire.Fire(NewEntryGUI.focus_or_launch())
+    fire.Fire(NewEntryGUI().launch_loop())

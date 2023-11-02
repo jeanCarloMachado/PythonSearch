@@ -11,11 +11,13 @@ os.environ['DD_LOGS_INJECTION'] = 'true'
 os.environ['DD_PROFILING_ENABLED'] = 'true'
 #os.environ['DD_TRACE_DEBUG'] = 'true'
 
-#from ddtrace.profiling import Profiler
+from ddtrace.profiling import Profiler
 
-#prof = Profiler(
-#    env="local",  # if not specified, falls back to environment variable DD_ENV
-#    service="python_search",  # if not specified, falls back to environment variable DD_SERVICE
-#    version="1.0.3",   # if not specified, falls back to environment variable DD_VERSION
-#)
-#prof.start()
+import sys
+prof = Profiler(
+    env="local",  # if not specified, falls back to environment variable DD_ENV
+    service="python_search",  # if not specified, falls back to environment variable DD_SERVICE
+    version=str(sys.argv[0]),   # if not specified, falls back to environment variable DD_VERSION
+    tags={'entrypoint': sys.argv[0]},
+)
+prof.start()
