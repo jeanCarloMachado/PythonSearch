@@ -36,8 +36,8 @@ class PythonSearchConfiguration(EntriesGroup):
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
         fzf_theme: Literal[
-            "light", "dark", "dracula", "default", "automatic"
-        ] = "automatic",
+            "light", 'solarized'
+        ] = "light",
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False,
         rerank_via_model=None,
@@ -135,8 +135,20 @@ class PythonSearchConfiguration(EntriesGroup):
     def get_default_tags(self):
         return self._default_tags
 
-    def get_fzf_theme(self):
+    def get_fzf_theme(self) -> str:
         return self._fzf_theme
+
+    def get_theme_object(self):
+        from python_search.search_ui.theme import Theme
+        self._theme = Theme()
+        self._theme.light()
+        if self._fzf_theme == "solarized":
+            self._theme.solarized()
+
+        return self._theme
+
+
+
 
     def get_window_size(self):
         if hasattr(self, "_custom_window_size"):

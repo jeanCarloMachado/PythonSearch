@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.28 - 2023-11-02
+
+- Performance improvements
+
 ## 0.27 -  2023-10-13
 
 - Add better support to solarized theme

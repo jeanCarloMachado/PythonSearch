@@ -41,7 +41,7 @@ class FzfInKitty:
 
         self._title = configuration.APPLICATION_TITLE
 
-        self._FONT = "monospace"
+        self._FONT = "Inter"
         from python_search.search_ui.fzf import Fzf
 
         self._fzf = Fzf(configuration)
@@ -79,7 +79,7 @@ class FzfInKitty:
 
         fzf_cmd = self._fzf.get_cmd()
 
-        launch_cmd = f"""nice -19 {get_kitty_cmd()} \
+        launch_cmd = f"""{get_kitty_cmd()} \
         --title {self._title} \
         --listen-on unix:/tmp/mykitty \
         -o allow_remote_control=yes \

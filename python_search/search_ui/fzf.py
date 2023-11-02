@@ -3,6 +3,8 @@ import sys
 
 from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
+from python_search.search_ui.theme import Theme
+
 
 class Fzf:
     PREVIEW_PERCENTAGE_SIZE = 45
@@ -95,85 +97,11 @@ class Fzf:
                             --bind "{shortcut}:+reload-sync:(ps_search --fast_mode=True)"  \
                             --bind "{shortcut}:+show-preview"  '''
     def _get_fzf_theme(self):
-        if self.configuration.get_fzf_theme() == "light":
-            return "--color=bg+:#ffffff,bg:#ffffff,hl:#719872,fg:#616161,header:#719872,info:#727100,pointer:#E12672,marker:#E17899,fg+:#616161,preview-bg:#ffffff,prompt:#0099BD,hl+:#719899"
-
-
         if self.configuration.get_fzf_theme() in ["solarized"]:
             theme = Theme().solarized()
-            return f' --color="fg:{theme.fg},bg:{theme.bg},hl:{theme.hl},fg+:{theme.fg_plus},bg+:{theme.bg_plus},hl+:{theme.hl_plus},info:{theme.info},prompt:{theme.prompt_arrows},pointer:{theme.pointer_current_line},marker:{theme.marker},spinner:{theme.spinner},header:{theme.header},query:{theme.query},label:{theme.label},border:{theme.border}" '
-
-        if self.configuration.get_fzf_theme() in ["dark", "dracula"]:
-            return ' --color="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#586e75" '
-
-        return " "
-
-
-class Theme:
-    """
-       fg                  Text
-         preview-fg        Preview window text
-       bg                  Background
-         preview-bg        Preview window background
-       hl                  Highlighted substrings
-       fg+                 Text (current line)
-       bg+                 Background (current line)
-         gutter            Gutter on the left
-       hl+                 Highlighted substrings (current line)
-       query               Query string
-         disabled          Query string when search is disabled (--disabled)
-       info                Info line (match counters)
-       border              Border around the window (--border and --preview)
-         scrollbar         Scrollbar
-         preview-border    Border around the preview window (--preview)
-         preview-scrollbar Scrollbar
-         separator         Horizontal separator on info line
-       label               Border label (--border-label and --preview-label)
-         preview-label     Border label of the preview window (--preview-label)
-       prompt              Prompt
-       pointer             Pointer to the current line
-       marker              Multi-select marker
-       spinner             Streaming input indicator
-       header              Header
-    """
-    fg: str
-    bg: str
-    hl: str
-    fg_plus: str
-    bg_plus: str
-    hl_plus: str
-    info: str
-    prompt_arrows: str
-    # the pointer of hte current line
-    pointer_current_line: str
-    marker: str
-    spinner: str
-    header: str
-    query: str
-
-    def solarized(self):
-        self.fg = "#2aa198"
-        lighter_blue = "#073642"
-        self.bg = "#002b36"
-        self.hl = "#b58900"
-        self.fg_plus = "#6c71c4"
-        self.bg_plus = lighter_blue
-        self.hl_plus = "#268bd2"
-        self.info = "#d33682"
-        self.prompt_arrows = lighter_blue
-
-        self.pointer_current_line = "#6c71c4"
-        self.marker = "#268bd2"
-        self.spinner = "#2aa198"
-        self.header = "#268bd2"
-        self.query = "#cb4b16"
-        self.label = self.bg
-        self.border = "#073642"
-
-        return self
-
-
-
+        else:
+            theme = Theme().light()
+        return f' --color="fg:{theme.fg},bg:{theme.bg},hl:{theme.hl},fg+:{theme.fg_plus},bg+:{theme.bg_plus},hl+:{theme.hl_plus},info:{theme.info},prompt:{theme.prompt_arrows},pointer:{theme.pointer_current_line},marker:{theme.marker},spinner:{theme.spinner},header:{theme.header},query:{theme.query},label:{theme.label},border:{theme.border}" '
 
 
 def hide_current_focused_window():

@@ -19,11 +19,20 @@ class Preview:
     entries = None
 
     def __init__(self):
-        self.configuration = ConfigurationLoader()
+        self.configuration = ConfigurationLoader().load_config()
         self.logger = setup_preview_logger()
-        self.entries = self.configuration.load_entries()
+        self.entries = self.configuration.commands
         cf.use_true_colors()
-        cf.use_style("solarized")
+        theme = self.configuration.get_theme_object()
+        if theme.name == "solarized":
+            cf.use_style("solarized")
+        else:
+            cf.update_palette({
+                'cyan': theme.cyan,
+                'green': theme.green,
+                'red': theme.red
+            })
+
         # do not send the errors to stderr, in the future we should send to kibana or a file#
 
     def display(self, entry_text: str):
