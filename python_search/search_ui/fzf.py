@@ -153,13 +153,14 @@ class Theme:
 
     def solarized(self):
         self.fg = "#2aa198"
+        lighter_blue = "#073642"
         self.bg = "#002b36"
         self.hl = "#b58900"
         self.fg_plus = "#6c71c4"
-        self.bg_plus = "#002b36"
+        self.bg_plus = lighter_blue
         self.hl_plus = "#268bd2"
         self.info = "#d33682"
-        self.prompt_arrows = "#002b36"
+        self.prompt_arrows = lighter_blue
 
         self.pointer_current_line = "#6c71c4"
         self.marker = "#268bd2"
