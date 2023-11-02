@@ -11,8 +11,8 @@ class FzfInKitty:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE: int = 16
-    _DEFAULT_WINDOW_SIZE = (1100, 360)
+    FONT_SIZE: int = 17
+    _DEFAULT_WINDOW_SIZE = (1100, 361)
 
     _configuration = None
 

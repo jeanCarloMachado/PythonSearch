@@ -42,57 +42,78 @@ class Theme:
 
     def solarized(self):
         self.name = 'solarized'
-        self.fg = "#2aa198"
-        lighter_blue = "#073642"
-        self.bg = "#002b36"
-        self.hl = "#b58900"
-        self.fg_plus = "#6c71c4"
+
+        # Base Solarized Dark Colors
+        base03 = "#002b36"
+        base02 = "#073642"
+        base01 = "#586e75"
+        base00 = "#657b83"
+        base0 = "#839496"
+        base1 = "#93a1a1"
+        base2 = "#eee8d5"
+        base3 = "#fdf6e3"
+        yellow = "#b58900"
+        orange = "#cb4b16"
+        red = "#dc322f"
+        magenta = "#d33682"
+        violet = "#6c71c4"
+        blue = "#268bd2"
+        cyan = "#2aa198"
+        green = "#859900"
+
+        # Refactored Variables
+        self.fg = cyan
+        lighter_blue = base02
+        self.bg = base03
+        self.hl = yellow
+        self.fg_plus = violet
         self.bg_plus = lighter_blue
-        self.hl_plus = "#268bd2"
-        self.info = "#d33682"
+        self.hl_plus = blue
+        self.info = magenta
         self.prompt_arrows = lighter_blue
 
-        self.pointer_current_line = "#6c71c4"
-        self.marker = "#268bd2"
-        self.spinner = "#2aa198"
-        self.header = "#268bd2"
-        self.query = "#cb4b16"
-        self.key= "#2aa198"
+        self.pointer_current_line = violet
+        self.marker = blue
+        self.spinner = cyan
+        self.header = blue
+        self.query = orange
+        self.key = orange
         self.label = self.bg
-        self.value = '#2aa198'
-        self.border = "#073642"
-        self.type= "#dc322f"
+        self.value = cyan
+        self.border = base02
+        self.type = red
 
         return self
 
 
     def inclusivity(self):
-        self.name = 'inclusivity'
 
-        self.bg = "#F3F4F6"  # Soft grayish-white, a neutral background
-        self.fg = "#373B3F"  # Darker charcoal, for primary text
+        self.name = 'inclusivity'
+        # Base Colors
+        self.bg = "#F8F4F1"  # Creamy pastel base for a soft, neutral background
+        self.fg = "#2C2F36"  # Almost black for the primary text to ensure contrast
 
         # Highlight and Secondary colors
-        self.hl = "#CCD0D6"  # A more defined gray-blue for highlighting
-        self.hl_plus = "#B2B8BE"  # An even deeper shade for differentiation
-        self.fg_plus = "#646A70"  # Darkened gray for secondary text
-        self.bg_plus = "#E1E3E6"  # Adjusted background for UI elements
+        self.hl = "#DBD5D1"  # A slightly darker cream for subtle highlighting
+        self.hl_plus = "#B9AEA8"  # A muted taupe for differentiation
+        self.fg_plus = "#565B64"  # A soft charcoal for secondary text elements
+        self.bg_plus = "#E9E4E1"  # A hue that's between the primary background and highlight
 
         # Auxiliary colors for better visibility
-        self.info = "#6A7F9B"  # Darker blue for clarity
-        self.prompt_arrows = "#7F9A88"  # Adjusted sage green
-        self.pointer_current_line = "#FFDCAA"  # A more noticeable beige
-        self.marker = "#FF9F87"  # Brightened coral for better visibility
-        self.spinner = "#8E89C7"  # Darkened lilac
-        self.header = "#949BAD"  # More defined blue-gray
-        self.query = "#3C4145"  # Darkened to improve visibility
-        self.label = "#575C61"  # Darker gray for clarity
-        self.border = "#C8CCD1"  # Darkened border for structure
+        self.info = "#81A1C1"  # Subdued cerulean, a hint of sophisticated blue
+        self.prompt_arrows = "#D19B86"  # Pastel terracotta for a hint of earthiness
+        self.pointer_current_line = "#ECD8C6"  # A light apricot shade
+        self.marker = "#F28F77"  # Pastel coral, striking yet soft
+        self.spinner = "#8A98A6"  # Muted steel blue
+        self.header = "#949AAD"  # Subdued periwinkle for distinction
+        self.query = "#3E434A"  # A dark gray, ensuring text elements pop
+        self.label = "#6B6E78"  # Medium gray to differentiate from other text
+        self.border = self.hl_plus  # Muted taupe, again for consistent differentiation
 
-        # Adjusted colors for "key," "value," and "type" for better readability
-        self.key = "#A57680"  # Further deepened blush
-        self.value = "#637A90"  # More defined blue
-        self.type = "#FF8E58"  # A clearer shade of apricot
+        # Adjusted colors for "key," "value," and "type"
+        self.key = "#D1A8A1"  # Muted rose, soft yet distinguishable
+        self.value = "#6F8B9D"  # Pastel slate blue, offering contrast against the creamy background
+        self.type = "#F4AA5F"  # Soft tangerine to break the monotony and bring warmth
 
         return self
 
