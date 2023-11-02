@@ -57,34 +57,43 @@ class Theme:
         self.spinner = "#2aa198"
         self.header = "#268bd2"
         self.query = "#cb4b16"
+        self.key= "#2aa198"
         self.label = self.bg
+        self.value = '#2aa198'
         self.border = "#073642"
+        self.type= "#dc322f"
 
         return self
 
-    def light(self):
 
-        self.name = 'light'
-        self.fg = "#383838"  # Soft Black (Primary text)
-        self.bg = "#FAFAFA"  # Almost White Background
-        self.hl = "#D3BAA4"  # Muted Taupe (Highlight) - Neutral, yet distinct
+    def inclusivity(self):
+        self.name = 'inclusivity'
 
-        self.fg_plus = "#606060"  # Darker Gray (Secondary text)
-        self.bg_plus = "#E0E0E0"  # Light Gray
-        self.hl_plus = "#A9CCE3"  # Soft Light Blue (Highlight Plus)
+        self.bg = "#F3F4F6"  # Soft grayish-white, a neutral background
+        self.fg = "#373B3F"  # Darker charcoal, for primary text
 
-        self.info = "#5687A5"  # Deep Sky Blue
-        self.prompt_arrows = "#89A478"  # Muted Olive Green
+        # Highlight and Secondary colors
+        self.hl = "#CCD0D6"  # A more defined gray-blue for highlighting
+        self.hl_plus = "#B2B8BE"  # An even deeper shade for differentiation
+        self.fg_plus = "#646A70"  # Darkened gray for secondary text
+        self.bg_plus = "#E1E3E6"  # Adjusted background for UI elements
 
-        self.pointer_current_line = "#D38250"  # Burnt Sienna - Deeper shade for better contrast
-        self.marker = "#D47F70"  # Muted Coral
-        self.spinner = "#4A8AB0"  # Steel Blue
-        self.header = "#8C8EB3"  # Muted Lavender
-        self.query = "#5A6D7E"  # Blue Gray
-        self.label = "#C2C2C2"  # Lighter Gray
-        self.border = "#FAFAFA"  # Medium Gray for borders
-        self.cyan = "#8C8EB3"
-        self.green = "#5687A5"
-        self.red = "#D47F70"
+        # Auxiliary colors for better visibility
+        self.info = "#6A7F9B"  # Darker blue for clarity
+        self.prompt_arrows = "#7F9A88"  # Adjusted sage green
+        self.pointer_current_line = "#FFDCAA"  # A more noticeable beige
+        self.marker = "#FF9F87"  # Brightened coral for better visibility
+        self.spinner = "#8E89C7"  # Darkened lilac
+        self.header = "#949BAD"  # More defined blue-gray
+        self.query = "#3C4145"  # Darkened to improve visibility
+        self.label = "#575C61"  # Darker gray for clarity
+        self.border = "#C8CCD1"  # Darkened border for structure
+
+        # Adjusted colors for "key," "value," and "type" for better readability
+        self.key = "#A57680"  # Further deepened blush
+        self.value = "#637A90"  # More defined blue
+        self.type = "#FF8E58"  # A clearer shade of apricot
 
         return self
+
+

@@ -141,7 +141,7 @@ class PythonSearchConfiguration(EntriesGroup):
     def get_theme_object(self):
         from python_search.search_ui.theme import Theme
         self._theme = Theme()
-        self._theme.light()
+        self._theme.inclusivity()
         if self._fzf_theme == "solarized":
             self._theme.solarized()
 
