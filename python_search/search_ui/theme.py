@@ -25,8 +25,8 @@ class Theme:
        spinner             Streaming input indicator
        header              Header
     """
-    fg: str
-    bg: str
+    foreground: str
+    background: str
     hl: str
     fg_plus: str
     bg_plus: str
@@ -38,7 +38,7 @@ class Theme:
     marker: str
     spinner: str
     header: str
-    query: str
+    prompt_query: str
 
     def solarized(self):
         self.name = 'solarized'
@@ -62,9 +62,9 @@ class Theme:
         green = "#859900"
 
         # Refactored Variables
-        self.fg = cyan
+        self.foreground = cyan
         lighter_blue = base02
-        self.bg = base03
+        self.background = base03
         self.hl = yellow
         self.fg_plus = violet
         self.bg_plus = lighter_blue
@@ -76,9 +76,9 @@ class Theme:
         self.marker = blue
         self.spinner = cyan
         self.header = blue
-        self.query = orange
+        self.prompt_query = orange
         self.key = orange
-        self.label = self.bg
+        self.label = self.background
         self.value = cyan
         self.border = base02
         self.type = red
@@ -90,12 +90,13 @@ class Theme:
 
         self.name = 'inclusivity'
         # Base Colors
-        self.bg = "#F8F4F1"  # Creamy pastel base for a soft, neutral background
-        self.fg = "#2C2F36"  # Almost black for the primary text to ensure contrast
+        self.background = "#F8F4F1"  # Creamy pastel base for a soft, neutral background
+        self.foreground = "#B9AEA8"  # Almost black for the primary text to ensure contrast
+
 
         # Highlight and Secondary colors
-        self.hl = "#DBD5D1"  # A slightly darker cream for subtle highlighting
-        self.hl_plus = "#B9AEA8"  # A muted taupe for differentiation
+        self.hl = "#6F8B9D"
+        self.hl_plus = "#6F8B9D"  # A muted taupe for differentiation
         self.fg_plus = "#565B64"  # A soft charcoal for secondary text elements
         self.bg_plus = "#E9E4E1"  # A hue that's between the primary background and highlight
 
@@ -106,9 +107,9 @@ class Theme:
         self.marker = "#F28F77"  # Pastel coral, striking yet soft
         self.spinner = "#8A98A6"  # Muted steel blue
         self.header = "#949AAD"  # Subdued periwinkle for distinction
-        self.query = "#3E434A"  # A dark gray, ensuring text elements pop
+        self.prompt_query = "#3E434A"  # A dark gray, ensuring text elements pop
         self.label = "#6B6E78"  # Medium gray to differentiate from other text
-        self.border = self.hl_plus  # Muted taupe, again for consistent differentiation
+        self.border = self.background # Muted taupe, again for consistent differentiation
 
         # Adjusted colors for "key," "value," and "type"
         self.key = "#D1A8A1"  # Muted rose, soft yet distinguishable

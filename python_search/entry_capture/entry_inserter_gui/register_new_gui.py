@@ -165,6 +165,7 @@ class NewEntryGUI:
             layout,
             font=(self._FONT, font_size),
             finalize=True,
+            size=(500, 400),
         )
 
         window.set_title("Register New")

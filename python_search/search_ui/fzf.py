@@ -100,7 +100,7 @@ class Fzf:
         theme = Theme().inclusivity()
         if self.configuration.get_fzf_theme() in ["solarized"]:
             theme = Theme().solarized()
-        return f' --color="fg:{theme.fg},bg:{theme.bg},hl:{theme.hl},fg+:{theme.fg_plus},bg+:{theme.bg_plus},hl+:{theme.hl_plus},info:{theme.info},prompt:{theme.prompt_arrows},pointer:{theme.pointer_current_line},marker:{theme.marker},spinner:{theme.spinner},header:{theme.header},query:{theme.query},label:{theme.label},border:{theme.border}" '
+        return f' --color="fg:{theme.foreground},bg:{theme.background},hl:{theme.hl},fg+:{theme.fg_plus},bg+:{theme.bg_plus},hl+:{theme.hl_plus},info:{theme.info},prompt:{theme.prompt_arrows},pointer:{theme.pointer_current_line},marker:{theme.marker},spinner:{theme.spinner},header:{theme.header},query:{theme.prompt_query},label:{theme.label},border:{theme.border}" '
 
 
 def hide_current_focused_window():
