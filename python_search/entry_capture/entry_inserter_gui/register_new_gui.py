@@ -39,7 +39,6 @@ class NewEntryGUI:
         self.sg = sg
 
 
-
     @notify_exception()
     def launch_loop(self, default_type=None, default_key="", default_content=""):
         """
@@ -277,7 +276,3 @@ def main():
 
 if __name__ == "__main__":
     fire.Fire(NewEntryGUI().launch)
-
-def launch_ui():
-
-    fire.Fire(NewEntryGUI().launch_loop())

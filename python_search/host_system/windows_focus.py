@@ -1,6 +1,8 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 
+from python_search.environment import is_mac
+
 
 class Focus:
     def focus_register_new(self):
@@ -32,6 +34,9 @@ end tell'
         return True if result == 0 else False
 
     def async_focus_register_new(self):
+        if not is_mac():
+            print("MacOS not detected, won't try to focus")
+            return False
         with ThreadPoolExecutor(max_workers=1) as executor:
             future = executor.submit(self.focus_register_new)
         return future
