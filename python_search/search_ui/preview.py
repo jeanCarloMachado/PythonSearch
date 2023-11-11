@@ -19,11 +19,17 @@ class Preview:
     entries = None
 
     def __init__(self):
-        self.configuration = ConfigurationLoader()
+        self.configuration = ConfigurationLoader().load_config()
         self.logger = setup_preview_logger()
-        self.entries = self.configuration.load_entries()
+        self.entries = self.configuration.commands
         cf.use_true_colors()
-        cf.use_style("solarized")
+        theme = self.configuration.get_theme_object()
+        cf.update_palette({
+            'key': theme.key,
+            'value': theme.value,
+            'type': theme.type
+        })
+
         # do not send the errors to stderr, in the future we should send to kibana or a file#
 
     def display(self, entry_text: str):
@@ -44,16 +50,16 @@ class Preview:
 
     def _print_values(self, data):
         print("")
-        print(f"{cf.cyan(data['key'])}")
+        print(f"{cf.key(data['key'])}")
 
         if "value" in data:
             print("")
             print(
-                f'{cf.green(data["value"])}'
+                f'{cf.value(data["value"])}'
             )
         print("")
 
-        print(f"Type: {cf.red(data['type'])}")
+        print(f"Type: {cf.type(data['type'])}")
         if "description" in data:
             print(f"Description: {data['description']}")
 
@@ -134,7 +140,7 @@ class Preview:
         if not self._key_exists(key):
             print(
                 (
-                    f'Key "{cf.red(key)}" not found in python search data'
+                    f'Key "{cf.type(key)}" not found in python search data'
                 )
             )
             import sys

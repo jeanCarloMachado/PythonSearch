@@ -24,7 +24,6 @@ class Clipboard:
         import subprocess
 
         result = subprocess.getoutput(cmd)
-
         result = chomp(result)
 
         return result

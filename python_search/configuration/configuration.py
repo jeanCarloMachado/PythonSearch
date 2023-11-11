@@ -4,7 +4,7 @@ from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
-from python_search.theme import TimeBasedThemeSelector
+from python_search.search_ui.theme import Theme
 from python_search.ps_llm.llm_config import CustomLLMConfig
 
 class PythonSearchConfiguration(EntriesGroup):
@@ -36,8 +36,8 @@ class PythonSearchConfiguration(EntriesGroup):
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
         fzf_theme: Literal[
-            "light", "dark", "dracula", "default", "automatic"
-        ] = "automatic",
+            "light", 'solarized'
+        ] = "light",
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False,
         rerank_via_model=None,
@@ -79,8 +79,6 @@ class PythonSearchConfiguration(EntriesGroup):
         self._default_text_editor = default_text_editor
         self._fzf_theme = (
             fzf_theme
-            if fzf_theme != "automatic"
-            else TimeBasedThemeSelector().get_theme()
         )
         if custom_window_size:
             self._custom_window_size = custom_window_size
@@ -90,6 +88,7 @@ class PythonSearchConfiguration(EntriesGroup):
         self.entry_generation = entry_generation
         self.privacy_sensitive_terms = privacy_sensitive_terms
         self.custom_llm_config = custom_llm_config
+        self._theme = Theme()
 
     def get_next_item_predictor_model(self):
         """
@@ -135,8 +134,19 @@ class PythonSearchConfiguration(EntriesGroup):
     def get_default_tags(self):
         return self._default_tags
 
-    def get_fzf_theme(self):
+    def get_fzf_theme(self) -> str:
         return self._fzf_theme
+
+    def get_theme_object(self):
+        from python_search.search_ui.theme import Theme
+        self._theme.inclusivity()
+        if self._fzf_theme == "solarized":
+            self._theme.solarized()
+
+        return self._theme
+
+
+
 
     def get_window_size(self):
         if hasattr(self, "_custom_window_size"):

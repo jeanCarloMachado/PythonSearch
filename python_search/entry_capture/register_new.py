@@ -25,6 +25,7 @@ class RegisterNew:
         self.configuration = configuration
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
+
     @notify_exception()
     def register(self, *, key: str, value: str, tag: Optional[str] = None):
         """
@@ -48,6 +49,17 @@ class RegisterNew:
             dict_entry["tags"] = [tag]
 
         self.entry_inserter.insert(key, dict_entry)
+
+    def from_stdin_as_json(self):
+        import sys
+        import json
+
+        data = json.load(sys.stdin)
+        key = data["key"]
+        value = data["value"]
+        tag = data.get("tag", None)
+        self.register(key=key, value=value, tag=tag)
+
 
     def _sanitize_key(self, key):
         return key.replace("\n", " ").replace(":", " ").strip()

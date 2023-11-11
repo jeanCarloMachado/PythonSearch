@@ -1,8 +1,14 @@
 # Changelog
 
+## 0.28 - 2023-11-02
+
+- Performance improvements
+- Change default theme to light one
+
 ## 0.27.1 - 2023-10-21
 
 - Fixing things that were broken for glorious Linux-People.
+
 
 
 ## 0.27 -  2023-10-13

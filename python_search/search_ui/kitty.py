@@ -11,8 +11,8 @@ class FzfInKitty:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE: int = 16
-    _default_window_size = (950, 400)
+    FONT_SIZE: int = 17
+    _DEFAULT_WINDOW_SIZE = (1000, 350)
 
     _configuration = None
 
@@ -31,17 +31,17 @@ class FzfInKitty:
         self._width = (
             custom_window_size[0]
             if custom_window_size
-            else self._default_window_size[0]
+            else self._DEFAULT_WINDOW_SIZE[0]
         )
         self._height = (
             custom_window_size[1]
             if custom_window_size
-            else self._default_window_size[1]
+            else self._DEFAULT_WINDOW_SIZE[1]
         )
 
         self._title = configuration.APPLICATION_TITLE
 
-        self._FONT = "FontAwesome" if not is_mac() else "Menlo"
+        self._FONT = "Inter"
         from python_search.search_ui.fzf import Fzf
 
         self._fzf = Fzf(configuration)
@@ -79,7 +79,7 @@ class FzfInKitty:
 
         fzf_cmd = self._fzf.get_cmd()
 
-        launch_cmd = f"""nice -19 {get_kitty_cmd()} \
+        launch_cmd = f"""{get_kitty_cmd()} \
         --title {self._title} \
         --listen-on unix:/tmp/mykitty \
         -o allow_remote_control=yes \
