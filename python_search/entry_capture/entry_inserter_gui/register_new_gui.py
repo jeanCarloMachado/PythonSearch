@@ -271,8 +271,11 @@ class NewEntryGUI:
 
 
 def main():
-    fire.Fire(NewEntryGUI().launch_prompt)
+    fire.Fire(NewEntryGUI().launch)
+
+def launch_ui():
+    main()
 
 
 if __name__ == "__main__":
-    fire.Fire(NewEntryGUI().launch)
+    main()
