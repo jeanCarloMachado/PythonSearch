@@ -5,7 +5,6 @@ from typing import Optional, List, Tuple, Literal
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
 from python_search.search_ui.theme import Theme
-from python_search.theme import TimeBasedThemeSelector
 from python_search.ps_llm.llm_config import CustomLLMConfig
 
 class PythonSearchConfiguration(EntriesGroup):
@@ -80,8 +79,6 @@ class PythonSearchConfiguration(EntriesGroup):
         self._default_text_editor = default_text_editor
         self._fzf_theme = (
             fzf_theme
-            if fzf_theme != "automatic"
-            else TimeBasedThemeSelector().get_theme()
         )
         if custom_window_size:
             self._custom_window_size = custom_window_size

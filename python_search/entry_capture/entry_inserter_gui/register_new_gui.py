@@ -23,6 +23,7 @@ class NewEntryGUI:
     _PREDICT_ENTRY_TYPE_READY = "-predict-entry-type-ready-"
     _ENTRY_NAME_INPUT_SIZE = (17, 7)
     _ENTRY_BODY_INPUT_SIZE = (17, 10)
+    _WINDOW_SIZE = (600, 400)
 
     def __init__(self, configuration=None):
         if configuration:
@@ -165,7 +166,7 @@ class NewEntryGUI:
             layout,
             font=(self._FONT, font_size),
             finalize=True,
-            size=(500, 400),
+            size=self._WINDOW_SIZE,
         )
 
         window.set_title("Register New")
