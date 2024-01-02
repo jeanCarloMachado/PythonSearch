@@ -1,3 +1,7 @@
+[project]
+name = "python-search"
+version = "0.28.0"
+
 [tool.poetry]
 name = "python-search"
 version = "0.28.0"
@@ -67,6 +71,12 @@ sentence-transformers = "^2.2.2"
 cloud-tpu-client = "^0.10"
 torch-xla = "^1.0"
 
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["python_search"]  # package names should match these glob patterns (["*"] by default)
+exclude = []  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
 [build-system]
 requires = ["setuptools<=65.5.1"]
 
@@ -95,7 +105,7 @@ prompt_editor = 'python_search.apps.prompt_editor:main'
 entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings:main'
 entries_editor = 'python_search.entry_capture.entries_editor:main'
 register_new_launch_ui = 'python_search.entry_capture.entry_inserter_gui.register_new_gui:launch_ui'
-share_entry = 'python_search.share:main'
+share_entry = 'python_search.share_entry:main'
 offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
 ps_fzf = 'python_search.search_ui.fzf:main'
 error_panel = 'python_search.error.error_pane:main'
