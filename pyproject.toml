@@ -1,3 +1,7 @@
+[project]
+name = "python-search"
+version = "0.28.0"
+
 [tool.poetry]
 name = "python-search"
 version = "0.30.0"
@@ -38,6 +42,12 @@ plotly = "^5.14.1"
 streamlit = "^1.22.0"
 matplotlib = "^3.7.1"
 
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["python_search"]  # package names should match these glob patterns (["*"] by default)
+exclude = []  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.setuptools.packages.find]
 where = ["."]  # list of folders that contain the packages (["."] by default)
