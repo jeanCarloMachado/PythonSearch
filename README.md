@@ -10,7 +10,7 @@ With python search you collect and retrieve and refactor information efficiently
 - collect commands, scripts, prompts, snippets, urls, files, efficiently as python dictionaries
 - search them using a smart (ML-based) ranking or add shortcuts to them
 - refactor, reuse, generate and further automate entries as they are code
-- execute the registered entries possibly customizing the execution behaviour
+- execute the registered entries either by searching them or invoking them via shortcuts
  
 Check out [these slides](https://docs.google.com/presentation/d/10J0n0wdXYKCtB-tr2z4twY3T4TFBb8h2EGZghw7q1hk/edit#slide=id.p) if you want to know more
 
