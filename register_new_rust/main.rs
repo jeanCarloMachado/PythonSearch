@@ -2,6 +2,8 @@ use druid::widget::{Flex, TextBox, Button};
 use druid::{AppLauncher, LocalizedString, Widget, WidgetExt, WindowDesc};
 use druid_widget_nursery::DropdownSelect;
 
+use std::env;  // Import the env module for argument parsing
+
 use serde_json::json;
 
 
@@ -50,12 +52,19 @@ struct Data {
 }
 
 fn main() {
+
+    let args: Vec<String> = env::args().collect();
+    let title_default = args.get(1).unwrap_or(&"".to_string()).clone();
+    let body_default = args.get(2).unwrap_or(&"".to_string()).clone();
+    let selection_default = args.get(3).unwrap_or(&"snippet".to_string()).clone();
+
+
     let main_window = WindowDesc::new(build_ui())  // No change needed here
         .title(LocalizedString::new("rust-gui-app-title").with_placeholder("Python Search Register new"));
     let data = Data {
-        title: "".into(),
-        body: "".into(),
-        selection: "snippet".into(),  // Default value
+        title: title_default,
+        body: body_default,
+        selection: selection_default, 
     };
     AppLauncher::with_window(main_window)
         .launch(data)  // No change needed here
