@@ -1,11 +1,46 @@
-use druid::widget::{Flex, TextBox, Button};
-use druid::{AppLauncher, LocalizedString, Widget, WidgetExt, WindowDesc};
+use druid::widget::{Flex, TextBox, Button, Controller};
+use druid::{AppLauncher, LocalizedString, Widget, WidgetExt, WindowDesc, EventCtx, Event, Env};
 use druid_widget_nursery::DropdownSelect;
+use druid::keyboard_types::Key;
+use druid::KeyEvent;
+
 
 use std::env;  // Import the env module for argument parsing
 
 use serde_json::json;
 
+struct SaveCloseController;
+
+
+impl<W: Widget<Data>> Controller<Data, W> for SaveCloseController {
+    fn event(&mut self, child: &mut W, ctx: &mut EventCtx, event: &Event, data: &mut Data, env: &Env) {
+        match event {
+            Event::KeyDown(KeyEvent { key, .. }) => {
+                match key {
+                    Key::Enter => {
+                        if !ctx.has_focus() {
+                            // Save logic
+                            let output = json!({
+                                "key": &data.title,
+                                "body": &data.body,
+                                "type": &data.selection
+                            });
+                            println!("{}", output.to_string());
+                            std::process::exit(0);
+                        }
+                    }
+                    Key::Escape => {
+                        // Close the application
+                        std::process::exit(0);
+                    }
+                    _ => {}
+                }
+            }
+            _ => {}
+        }
+        child.event(ctx, event, data, env);
+    }
+}
 
 fn build_ui() -> impl Widget<Data> {  // <--- Change the return type here
     // Create two textboxes for input.
@@ -59,7 +94,7 @@ fn main() {
     let selection_default = args.get(3).unwrap_or(&"snippet".to_string()).clone();
 
 
-    let main_window = WindowDesc::new(build_ui())  // No change needed here
+    let main_window = WindowDesc::new(build_ui().controller(SaveCloseController))  // No change needed here
         .title(LocalizedString::new("rust-gui-app-title").with_placeholder("Python Search Register new"));
     let data = Data {
         title: title_default,
