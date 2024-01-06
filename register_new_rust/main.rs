@@ -75,6 +75,7 @@ fn build_ui() -> impl Widget<Data> {  // <--- Change the return type here
         ("Snippet".to_string(),"snippet".to_string()),
         ("Url".to_string(),"url".to_string()),
     ])
+    .expand_width()
     .lens(Data::selection);  // Assuming Data::selection is the field in your data model
 
 
@@ -115,11 +116,16 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let title_default = args.get(1).unwrap_or(&"".to_string()).clone();
     let body_default = args.get(2).unwrap_or(&"".to_string()).clone();
-    let selection_default = args.get(3).unwrap_or(&"snippet".to_string()).clone();
+    let mut selection_default = args.get(3).unwrap_or(&"snippet".to_string()).clone();
+
+    if body_default.starts_with("http") {
+        selection_default = "url".to_string();
+    }
+
 
 
     let main_window = WindowDesc::new(build_ui().controller(SaveCloseController))  // No change needed here
-        .title(LocalizedString::new("rust-gui-app-title").with_placeholder("Python Search Register new"));
+        .title(LocalizedString::new("rust-gui-app-title").with_placeholder("Register New Entry"));
     let data = Data {
         title: title_default,
         body: body_default,
