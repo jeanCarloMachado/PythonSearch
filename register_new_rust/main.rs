@@ -89,7 +89,7 @@ fn build_ui() -> impl Widget<Data> {  // <--- Change the return type here
             });
             println!("{}", output.to_string());
             std::process::exit(0);
-        }).expand_width();
+        }).expand_width().fix_height(40.0);
 
     // Layout widgets vertically.
     Flex::column()
@@ -125,7 +125,8 @@ fn main() {
 
 
     let main_window = WindowDesc::new(build_ui().controller(SaveCloseController))  // No change needed here
-        .title(LocalizedString::new("rust-gui-app-title").with_placeholder("Register New Entry"));
+        .title(LocalizedString::new("rust-gui-app-title").with_placeholder("Register New Entry"))
+        .window_size((400.0, 250.0));
     let data = Data {
         title: title_default,
         body: body_default,

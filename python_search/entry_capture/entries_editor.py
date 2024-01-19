@@ -7,7 +7,6 @@ from python_search.apps.terminal import Terminal
 from python_search.core_entities.core_entities import Key
 from python_search.search_ui.kitty import get_kitty_cmd
 
-
 class EntriesEditor:
     """
     Open an ide to edit the entries
@@ -84,7 +83,7 @@ class EntriesEditor:
     def _get_open_text_editor_command(self, file, line):
         if self.configuration.get_text_editor() == "vim":
             return f"{self.configuration.get_text_editor()} {file} +{line}'"
-        elif self.configuration.get_text_editor() == "docker_nvim":
+        elif self.configuration.get_text_editor() == "myvim":
             return f"{self.configuration.get_text_editor()} {file} --line={line}'"
         else:
             # if is not a known editor just open the file
