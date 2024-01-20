@@ -1,4 +1,4 @@
-[project]
+[tool.poetry]
 name = "python-search"
 version = "0.28.0"
 
