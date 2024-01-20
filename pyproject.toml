@@ -1,12 +1,11 @@
-[project]
+[tool.poetry]
 name = "python-search"
-version = "0.29.0"
-
+version = "0.30.0"
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<=3.12"
+python = ">=3.10,<=3.13"
 fire = "^0.4.0"
 pydantic = "^1.9.1"
 PyYAML = "^6.0"
@@ -15,36 +14,18 @@ colorama = "^0.4.5"
 certifi = ">=2022.6.1"
 dill = "^0.3.5.1"
 fastapi = { version = "^0.79.0", optional = true }
-kafka-python = { version = "^2.0.2", optional = true }
-scipy = { version = ">=1.8.1", optional = true }
-xgboost = { version = "^1.6.1", optional = true }
 matplotlib = { version = "^3.5.2", optional = true }
 pandas = { version = "^1.4.3", optional = true }
-redis = { version = "^4.3.4", optional = true }
-uvicorn = { version = "^0.18.2", optional = true }
 # needs to be pinned down due to bug
-numpy = { version = ">=1.24.2", optional = true }
-msgpack-numpy = { version = ">=0.4.8", optional = true }
-pyspark = { version = ">=3.0", optional = true}
-mlflow = { version=">=1.29.0,<1.30.0", optional = true }
+numpy = { version = ">=1.24.3", optional = true }
+mlflow-skinny = { version=">=1.29.0,<1.30.0", optional = true }
 pdoc3 = {version = "^0.10.0", optional = true}
-keras = {version = ">=2.10", optional = true}
 # tensorflow cannot be installed in mac m1 chips
-tensorflow = {version = ">=2.10.0", optional = true, platform = 'linux'}
-arize = { version = "^5.2.0", optional = true }
-jupyterlab = { version = "^3.5.0", optional = true }
 streamlit = {version = "^1.14.1", optional = true, python = "3.10"}
-pyroscope-io = "^0.8.0"
-tensorflow-macos = {version = "^2.11.0", optional = true, platform = "mac"}
 openai = {version=">=0.27.0"}
 python-dateutil = "^2.8.2"
 chardet = "^5.1.0"
-jupyter = {version = "^1.0.0", optional = true}
-sentence-transformers = {version = "^2.2.2", optional = true}
-accelerate = "^0.22.0"
 colorful = "^0.5.5"
-ddtrace = {version = "^2.1.4", optional = true}
-
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -58,15 +39,6 @@ streamlit = "^1.22.0"
 matplotlib = "^3.7.1"
 
 
-[tool.poetry.group.ml.dependencies]
-torch = "^2.0.1"
-transformers = "^4.29.2"
-sentencepiece = "^0.1.99"
-pyspark = "^3.4.0"
-sentence-transformers = "^2.2.2"
-cloud-tpu-client = "^0.10"
-torch-xla = "^1.0"
-
 [tool.setuptools.packages.find]
 where = ["."]  # list of folders that contain the packages (["."] by default)
 include = ["python_search"]  # package names should match these glob patterns (["*"] by default)
@@ -74,7 +46,8 @@ exclude = []  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [build-system]
-requires = ["setuptools<=65.5.1"]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 ps_search = 'python_search.search.search_entries:main'
@@ -115,24 +88,3 @@ llm_rank = 'python_search.ps_llm.t5.inference:main'
 llm_cli = 'python_search.ps_llm.llm_cli:main'
 ps_bundle = 'bundle:main'
 
-[tool.poetry.extras]
-full = [
-    "torch",
-    "pyspark",
-    "mlflow",
-    "tensorflow",
-    "uvicorn",
-    "kafka-python",
-    "redis",
-    "pandas",
-    "numpy",
-    "scipy",
-    "xgboost",
-    "matplotlib",
-    "msgpack-numpy",
-    "jupyterlab",
-    "scikit-learn",
-    'sentence_transformers',
-    'streamlit',
-    'ddtrace',
-]
