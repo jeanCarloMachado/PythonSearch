@@ -5,7 +5,6 @@ from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
 from python_search.search_ui.theme import Theme
 
-
 class Fzf:
     PREVIEW_PERCENTAGE_SIZE = 45
     RANK_TIE_BREAK: str = "index"
