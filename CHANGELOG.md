@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.31 - 2024-01-27
+
+- Cleanup github sites.
+
 ## 0.28 - 2023-11-02
 
 - Performance improvements
