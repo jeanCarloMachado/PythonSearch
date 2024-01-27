@@ -1,7 +1,7 @@
 use druid::widget::{Flex, Label, List, Scroll, TextBox, WidgetExt};
 use druid::{AppLauncher, Data, Lens, Widget, WindowDesc, Env, EventCtx, Event};
 use std::sync::Arc;
-
+use std::io::{self, BufRead};
 #[derive(Clone, Data, Lens)]
 struct AppState {
     filter_text: String,
@@ -9,19 +9,18 @@ struct AppState {
     filtered_items: Arc<Vec<String>>,
 }
 
+fn read_input() -> Vec<String> {
+    let stdin = io::stdin();
+    let lines = stdin.lock().lines();
+    lines.filter_map(|line| line.ok()).collect()
+}
+
 fn main() {
     let main_window = WindowDesc::new(build_ui)
         .title("Filter List")
         .window_size((400.0, 400.0));
 
-    let initial_items = Arc::new(vec![
-        "Apple".into(),
-        "Banana".into(),
-        "Cherry".into(),
-        "Date".into(),
-        "Fig".into(),
-        "Grape".into(),
-    ]);
+    let initial_items = Arc::new(read_input());
 
     let initial_state = AppState {
         filter_text: "".into(),
