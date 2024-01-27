@@ -12,8 +12,11 @@ class GenericDataCollector:
     BASE_DATA_DESTINATION_DIR = os.environ["HOME"] + "/.python_search/data/"
 
     def __init__(self, *, base_location=None):
-        self.base_location = base_location if base_location else GenericDataCollector.BASE_DATA_DESTINATION_DIR
-
+        self.base_location = (
+            base_location
+            if base_location
+            else GenericDataCollector.BASE_DATA_DESTINATION_DIR
+        )
 
     @staticmethod
     def initialize():
@@ -27,9 +30,7 @@ class GenericDataCollector:
 
         datetime.now().timestamp()
 
-        os.system(
-            f"mkdir -p {self.base_location}/{table_name}"
-        )
+        os.system(f"mkdir -p {self.base_location}/{table_name}")
         import datetime
 
         file_name = f"{self.data_location(table_name)}/{datetime.datetime.now(datetime.timezone.utc).timestamp()}.json"
@@ -47,9 +48,7 @@ class GenericDataCollector:
         from pyspark.sql.session import SparkSession
 
         spark = SparkSession.builder.getOrCreate()
-        result: DataFrame = spark.read.json(
-            self.data_location(table_name)
-        )
+        result: DataFrame = spark.read.json(self.data_location(table_name))
         return result
 
     def show_data(self, table_name):

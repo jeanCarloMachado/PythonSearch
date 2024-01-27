@@ -1,5 +1,6 @@
 import os
 
+
 class Project:
     def new_project(self, new_project_location):
         """

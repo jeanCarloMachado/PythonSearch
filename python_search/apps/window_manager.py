@@ -19,4 +19,3 @@ class WindowManager:
             return 0 == os.system(f"xdotool search --name '{title}' windowminimize")
 
         raise Exception("Window manager not supported")
-

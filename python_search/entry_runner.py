@@ -14,6 +14,7 @@ from python_search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
 
+
 class EntryRunner:
     """
     Responsible to execute the entries matched
@@ -44,7 +45,7 @@ class EntryRunner:
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
 
-        #if from_shortcut:
+        # if from_shortcut:
         #    from python_search.apps.notification_ui import send_notification
         #    send_notification(f"Arrived at shortcut")
 
@@ -61,6 +62,7 @@ class EntryRunner:
         # when there are no matches we actually will use the query and interpret it
         if not key and query_used:
             from python_search.interpreter.cmd import CmdInterpreter
+
             CmdInterpreter({"cli_cmd": query_used}).interpret_default()
             return
 

@@ -5,6 +5,7 @@ from python_search.configuration.configuration import PythonSearchConfiguration
 from python_search.environment import is_mac
 from python_search.search_ui.theme import Theme
 
+
 class Fzf:
     PREVIEW_PERCENTAGE_SIZE = 45
     RANK_TIE_BREAK: str = "index"
@@ -91,10 +92,11 @@ class Fzf:
         --bind "{shortcut}:+first" """
 
     def _edit_key(self, shortcut) -> str:
-        return f''' --bind "{shortcut}:hide-preview" \
+        return f""" --bind "{shortcut}:hide-preview" \
                             --bind "{shortcut}:+execute-silent:(entries_editor edit_key {{}} & disown )" \
                             --bind "{shortcut}:+reload-sync:(ps_search --fast_mode=True)"  \
-                            --bind "{shortcut}:+show-preview"  '''
+                            --bind "{shortcut}:+show-preview"  """
+
     def _get_fzf_theme(self):
         theme = Theme().inclusivity()
         if self.configuration.get_fzf_theme() in ["solarized"]:

@@ -7,6 +7,7 @@ from python_search.features import PythonSearchFeaturesSupport
 from python_search.search_ui.theme import Theme
 from python_search.ps_llm.llm_config import CustomLLMConfig
 
+
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search
@@ -35,9 +36,7 @@ class PythonSearchConfiguration(EntriesGroup):
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
-        fzf_theme: Literal[
-            "light", 'solarized'
-        ] = "light",
+        fzf_theme: Literal["light", "solarized"] = "light",
         custom_window_size: Optional[Tuple[int, int]] = None,
         use_webservice=False,
         rerank_via_model=None,
@@ -77,9 +76,7 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor
-        self._fzf_theme = (
-            fzf_theme
-        )
+        self._fzf_theme = fzf_theme
         if custom_window_size:
             self._custom_window_size = custom_window_size
 
@@ -139,14 +136,12 @@ class PythonSearchConfiguration(EntriesGroup):
 
     def get_theme_object(self):
         from python_search.search_ui.theme import Theme
+
         self._theme.inclusivity()
         if self._fzf_theme == "solarized":
             self._theme.solarized()
 
         return self._theme
-
-
-
 
     def get_window_size(self):
         if hasattr(self, "_custom_window_size"):

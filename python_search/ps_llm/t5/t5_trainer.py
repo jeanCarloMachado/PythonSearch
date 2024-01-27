@@ -8,23 +8,24 @@ from python_search.ps_llm.llm_config import LLMConfig
 
 from python_search.ps_llm.utils import timer, Timer
 
+
 def get_device(use_xla=False, force_cuda=False) -> str:
     if torch.backends.mps.is_available():
         print("Foudn apple metal device")
         return "mps"
 
-
     if use_xla:
         print("Assuming XLA device")
         import torch_xla.core.xla_model as xm
+
         return xm.xla_device()
 
     if torch.cuda.is_available() or force_cuda:
         print("Cuda device enabled")
         return "cuda"
 
-
     return "cpu"
+
 
 # Define the dataset class
 class T5Train:
@@ -33,7 +34,15 @@ class T5Train:
         print("Model directory to save on:", self.TARGET_MODEL_DIRECTORY)
 
     @timer
-    def train(self,*, epochs=10, base_model_path=None, use_xla=False, force_cuda=False, batch_size=8):
+    def train(
+        self,
+        *,
+        epochs=10,
+        base_model_path=None,
+        use_xla=False,
+        force_cuda=False,
+        batch_size=8,
+    ):
         self.device = get_device(use_xla, force_cuda)
         print("Device to train on:", self.device)
 
@@ -43,7 +52,6 @@ class T5Train:
         if not base_model_path:
             base_model_path = LLMConfig.BASE_MODEL_TO_TRAIN_OVER
         print("Using Base model path:", base_model_path)
-
 
         self.tokenizer = T5Tokenizer.from_pretrained(LLMConfig.BASE_ORIGINAL_MODEL)
         model = T5ForConditionalGeneration.from_pretrained(base_model_path)
@@ -90,7 +98,9 @@ class T5Train:
                 optimizer.step()
 
             epoch_folder = self.TARGET_MODEL_DIRECTORY + "_epoch_" + str(epoch + 1)
-            print(f"Epoch finished {epoch + 1} Loss: {loss.item()} Saving model to: {epoch_folder}")
+            print(
+                f"Epoch finished {epoch + 1} Loss: {loss.item()} Saving model to: {epoch_folder}"
+            )
             model.save_pretrained(epoch_folder)
             timer.report("Finished epoch")
 
@@ -127,7 +137,6 @@ class T5Dataset(Dataset):
             "attention_mask": input_tokenized["attention_mask"].flatten(),
             "labels": target_tokenized["input_ids"].flatten(),
         }
-
 
 
 def main():

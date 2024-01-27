@@ -16,5 +16,3 @@ def load_training_page():
     fig, ax = plt.subplots()
     ax.hist(pdf["label"], bins=20)
     st.pyplot(fig)
-
-

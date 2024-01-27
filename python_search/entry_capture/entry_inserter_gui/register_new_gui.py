@@ -5,7 +5,9 @@ import fire
 
 from python_search.apps.notification_ui import send_notification
 from python_search.entry_capture.entry_inserter_gui.entry_gui_data import GuiEntryData
-from python_search.entry_capture.filesystem_entry_inserter import FilesystemEntryInserter
+from python_search.entry_capture.filesystem_entry_inserter import (
+    FilesystemEntryInserter,
+)
 from python_search.error.exception import notify_exception
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.environment import is_mac
@@ -37,7 +39,6 @@ class NewEntryGUI:
         import PySimpleGUI as sg
 
         self.sg = sg
-
 
     @notify_exception()
     def launch_loop(self, default_type=None, default_key="", default_content=""):
@@ -71,7 +72,6 @@ class NewEntryGUI:
 
         entry_inserter = FilesystemEntryInserter(self._configuration)
         entry_inserter.insert(key, dict_entry)
-
 
     @notify_exception()
     def launch(
@@ -130,11 +130,12 @@ class NewEntryGUI:
         colors = ("#FFFFFF", self.sg.theme_input_background_color())
         print(colors)
 
-
         tags_block = []
         if self._tags:
-            tags_block = [[self.sg.Text("Tags")], [self._checkbox_list(i) for i in tags_chucks]]
-
+            tags_block = [
+                [self.sg.Text("Tags")],
+                [self._checkbox_list(i) for i in tags_chucks],
+            ]
 
         layout = [
             [self.sg.Text("Key")],
@@ -156,7 +157,7 @@ class NewEntryGUI:
                 ),
                 self.sg.Button(
                     "Refresh", key="refresh", button_color=colors, border_width=0
-                )
+                ),
             ],
         ]
 
@@ -184,20 +185,20 @@ class NewEntryGUI:
                 print("Event: ", event)
                 if event == self.sg.WINDOW_CLOSED:
                     import sys
+
                     sys.exit(1)
 
                 if "Escape" in event:
                     print("Hiding window")
                     from python_search.host_system.window_hide import HideWindow
-                    HideWindow().hide()
 
+                    HideWindow().hide()
 
                 if event and event == "refresh" or "refresh" in event:
                     new_content = Clipboard().get_content()
                     window[self._BODY_INPUT].update(new_content)
                     self._classify_entry_type(default_key, new_content, window)
                     continue
-
 
                 if event == self._PREDICT_ENTRY_TYPE_READY:
                     window["type"].update(values[event])
@@ -206,7 +207,9 @@ class NewEntryGUI:
                 if event == self._PREDICT_ENTRY_TITLE_READY:
                     window[self._TITLE_INPUT].update(values[event])
 
-                    self._classify_entry_type(values[self._TITLE_INPUT], values[self._BODY_INPUT], window)
+                    self._classify_entry_type(
+                        values[self._TITLE_INPUT], values[self._BODY_INPUT], window
+                    )
                     continue
 
                 if event == "-try-entry-":
@@ -215,7 +218,6 @@ class NewEntryGUI:
                     ).get_interpreter_from_type(values["type"])(
                         values[self._BODY_INPUT]
                     ).default()
-
 
                 if event and (event == "write" or event == "-entry-name-write"):
                     selected_tags = []
@@ -243,10 +245,8 @@ class NewEntryGUI:
         except:
             notify_exception()
 
-
     def _sanitize_key(self, key):
         return key.replace("\n", " ").replace(":", " ").strip()
-
 
     def _classify_entry_type(self, key_content, content, window):
         if not key_content:
@@ -272,6 +272,7 @@ class NewEntryGUI:
 
 def main():
     fire.Fire(NewEntryGUI().launch)
+
 
 def launch_ui():
     main()

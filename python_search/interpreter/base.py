@@ -87,4 +87,3 @@ class BaseInterpreter:
         if "directory" in self.cmd:
             cmd = f'cd {self.cmd["directory"]} ; {cmd}'
         return cmd
-

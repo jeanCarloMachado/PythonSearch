@@ -41,7 +41,7 @@ class Entry:
         self.key = key
         self.value = value
 
-    def get_content_str(self)->str:
+    def get_content_str(self) -> str:
         if not self.value:
             return ""
         if type(self.value) == str:
@@ -68,8 +68,7 @@ class Entry:
 
         return str(result)
 
-
-    def get_type_str(self) -> Literal['url', 'file', 'snippet', 'cli_cmd', 'callable']:
+    def get_type_str(self) -> Literal["url", "file", "snippet", "cli_cmd", "callable"]:
         if not self.value:
             return "snippet"
 

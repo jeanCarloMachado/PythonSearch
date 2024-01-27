@@ -85,7 +85,6 @@ def predict_entry_type_endpoint(entry: EntryData):
     return {"predicted_type": type, "prediction_uuid": uuid}
 
 
-
 @app.get("/recent_history")
 def recent_history_endpoint():
     return {"history": RecentKeys().get_latest_used_keys()}

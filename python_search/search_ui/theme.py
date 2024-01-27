@@ -1,30 +1,31 @@
 class Theme:
     """
-       fg                  Text
-         preview-fg        Preview window text
-       bg                  Background
-         preview-bg        Preview window background
-       hl                  Highlighted substrings
-       fg+                 Text (current line)
-       bg+                 Background (current line)
-         gutter            Gutter on the left
-       hl+                 Highlighted substrings (current line)
-       query               Query string
-         disabled          Query string when search is disabled (--disabled)
-       info                Info line (match counters)
-       border              Border around the window (--border and --preview)
-         scrollbar         Scrollbar
-         preview-border    Border around the preview window (--preview)
-         preview-scrollbar Scrollbar
-         separator         Horizontal separator on info line
-       label               Border label (--border-label and --preview-label)
-         preview-label     Border label of the preview window (--preview-label)
-       prompt              Prompt
-       pointer             Pointer to the current line
-       marker              Multi-select marker
-       spinner             Streaming input indicator
-       header              Header
+    fg                  Text
+      preview-fg        Preview window text
+    bg                  Background
+      preview-bg        Preview window background
+    hl                  Highlighted substrings
+    fg+                 Text (current line)
+    bg+                 Background (current line)
+      gutter            Gutter on the left
+    hl+                 Highlighted substrings (current line)
+    query               Query string
+      disabled          Query string when search is disabled (--disabled)
+    info                Info line (match counters)
+    border              Border around the window (--border and --preview)
+      scrollbar         Scrollbar
+      preview-border    Border around the preview window (--preview)
+      preview-scrollbar Scrollbar
+      separator         Horizontal separator on info line
+    label               Border label (--border-label and --preview-label)
+      preview-label     Border label of the preview window (--preview-label)
+    prompt              Prompt
+    pointer             Pointer to the current line
+    marker              Multi-select marker
+    spinner             Streaming input indicator
+    header              Header
     """
+
     foreground: str
     background: str
     hl: str
@@ -41,16 +42,19 @@ class Theme:
     prompt_query: str
 
     def inclusivity(self):
-
-        self.name = 'inclusivity'
+        self.name = "inclusivity"
         # Base Colors
         self.background = "#F8F4F1"  # Creamy pastel base for a soft, neutral background
-        self.foreground = "#ACA092"  # Almost black for the primary text to ensure contrast
+        self.foreground = (
+            "#ACA092"  # Almost black for the primary text to ensure contrast
+        )
 
         self.hl = "#6F8B9D"
         self.hl_plus = "#6F8B9D"  # A muted taupe for differentiation
         self.fg_plus = "#565B64"  # A soft charcoal for secondary text elements
-        self.bg_plus = "#E9E4E1"  # A hue that's between the primary background and highlight
+        self.bg_plus = (
+            "#E9E4E1"  # A hue that's between the primary background and highlight
+        )
 
         # Auxiliary colors for better visibility
         self.info = "#81A1C1"  # Subdued cerulean, a hint of sophisticated blue
@@ -61,7 +65,9 @@ class Theme:
         self.header = "#949AAD"  # Subdued periwinkle for distinction
         self.prompt_query = "#3E434A"  # A dark gray, ensuring text elements pop
         self.label = "#6B6E78"  # Medium gray to differentiate from other text
-        self.border = self.background # Muted taupe, again for consistent differentiation
+        self.border = (
+            self.background
+        )  # Muted taupe, again for consistent differentiation
 
         # Adjusted colors for "key," "value," and "type"
         self.key = "#D1A8A1"  # Muted rose, soft yet distinguishable
@@ -71,7 +77,7 @@ class Theme:
         return self
 
     def solarized(self):
-        self.name = 'solarized'
+        self.name = "solarized"
 
         # Base Solarized Dark Colors
         base03 = "#002b36"
@@ -114,6 +120,3 @@ class Theme:
         self.type = red
 
         return self
-
-
-

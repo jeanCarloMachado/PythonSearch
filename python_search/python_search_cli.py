@@ -59,9 +59,9 @@ class PythonSearchCli:
                 configuration = ConfigurationLoader().load_config()
             except BaseException as e:
                 import traceback
+
                 print(str(e))
                 traceback.print_exc()
-
 
                 return
 
@@ -82,6 +82,7 @@ class PythonSearchCli:
         Starts the UI for collecting a new entry into python search
         """
         from python_search.entry_capture.entry_inserter_gui import register_new_gui
+
         return register_new_gui.launch_ui()
 
     def _copy_entry_content(self, entry_str: str):

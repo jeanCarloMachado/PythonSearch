@@ -48,7 +48,7 @@ def setup_run_key_logger():
     return logger
 
 
-def setup_generic_stdout_logger(logger_name = None):
+def setup_generic_stdout_logger(logger_name=None):
     """
     Stdout logger without sending debug to stdout
     """
@@ -77,6 +77,7 @@ def interpreter_logger():
     logger.addHandler(fh)
 
     return logger
+
 
 def next_item_predictor_logger():
     logger = logging.getLogger("next_item_predictor_logger")

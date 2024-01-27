@@ -10,8 +10,8 @@ class HideWindow:
         if is_mac():
             import os
 
-            os.system("""osascript -e 'tell application "System Events" to keystroke "h" using command down'""" )
+            os.system(
+                """osascript -e 'tell application "System Events" to keystroke "h" using command down'"""
+            )
             return
-        WindowManager().hide_window(
-            title
-        )
+        WindowManager().hide_window(title)

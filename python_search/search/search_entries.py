@@ -60,7 +60,7 @@ class Search:
         skip_model=False,
         ignore_recent=False,
         reload_enabled=False,
-        fast_mode = False,
+        fast_mode=False,
     ) -> str:
         """
         Recomputes the rank and saves the results on the file to be read
@@ -78,27 +78,22 @@ class Search:
 
         if reload_enabled:
             self.logger.debug("Skipping model due to reload")
-            skip_model=True
-            ignore_recent=True
+            skip_model = True
+            ignore_recent = True
 
             import subprocess
-            subprocess.Popen('llm_cli t5_embeddings save_missing_keys', shell=True)
+
+            subprocess.Popen("llm_cli t5_embeddings save_missing_keys", shell=True)
             self.logger.debug("Triggered embeddings to be recomputed")
 
         if fast_mode:
             self.logger.debug("Skipping model and recent due to fast mode")
-            skip_model=True
-            ignore_recent=True
+            skip_model = True
+            ignore_recent = True
 
-        if (
-            not skip_model
-            and (
-                self._configuration.is_rerank_via_model_enabled()
-            )
-        ):
+        if not skip_model and (self._configuration.is_rerank_via_model_enabled()):
             self.logger.debug("Trying to rerank")
             self._try_torerank_via_model()
-
 
         """
         Populate the variable used_entries  with the results from redis
@@ -189,9 +184,7 @@ class Search:
         return result
 
     def _fetch_latest_used_entries(self):
-         return self._recent_keys.get_latest_used_keys(
-            self.NUMBER_OF_LATEST_ENTRIES
-        )
+        return self._recent_keys.get_latest_used_keys(self.NUMBER_OF_LATEST_ENTRIES)
 
     def _load_configuration(self):
         self.logger.debug("Configuration not initialized, loading from file")

@@ -10,7 +10,6 @@ from python_search.search_ui.serialized_entry import (
 import colorful as cf
 
 
-
 class Preview:
     """
     Preview the entry in the search ui
@@ -24,11 +23,7 @@ class Preview:
         self.entries = self.configuration.commands
         cf.use_true_colors()
         theme = self.configuration.get_theme_object()
-        cf.update_palette({
-            'key': theme.key,
-            'value': theme.value,
-            'type': theme.type
-        })
+        cf.update_palette({"key": theme.key, "value": theme.value, "type": theme.type})
 
         # do not send the errors to stderr, in the future we should send to kibana or a file#
 
@@ -54,9 +49,7 @@ class Preview:
 
         if "value" in data:
             print("")
-            print(
-                f'{cf.value(data["value"])}'
-            )
+            print(f'{cf.value(data["value"])}')
         print("")
 
         print(f"Type: {cf.type(data['type'])}")
@@ -70,7 +63,6 @@ class Preview:
             print(f"Tags: {data['tags']}")
         if "position" in data:
             print("Position: " + data["position"])
-
 
     def _extract_key(self, entry_text):
         return entry_text.split(":")[0].strip()
@@ -138,11 +130,7 @@ class Preview:
 
     def _load_key_data(self, key):
         if not self._key_exists(key):
-            print(
-                (
-                    f'Key "{cf.type(key)}" not found in python search data'
-                )
-            )
+            print((f'Key "{cf.type(key)}" not found in python search data'))
             import sys
 
             sys.exit(0)

@@ -48,9 +48,7 @@ class InterpreterMatcher:
         self._interpreters = INTERPRETERS_IN_ORDER
         self.logger = interpreter_logger()
 
-    def get_interpreter(
-        self, input_str: str
-    ) -> BaseInterpreter:
+    def get_interpreter(self, input_str: str) -> BaseInterpreter:
         """
         Given the string content, returns the best matched interpreter.
         Returns the instance of the matched interpreter given an text input
