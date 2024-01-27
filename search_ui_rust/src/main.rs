@@ -34,12 +34,27 @@ fn main() {
 }
 
 
+struct InitialFocusController;
+
+impl<W: Widget<AppState>> druid::widget::Controller<AppState, W> for InitialFocusController {
+    fn event(&mut self, child: &mut W, ctx: &mut EventCtx, event: &Event, data: &mut AppState, env: &Env) {
+        match event {
+            Event::WindowConnected => {
+                ctx.request_focus();
+            }
+            _ => (),
+        }
+        child.event(ctx, event, data, env)
+    }
+}
+
 fn build_ui() -> impl Widget<AppState> {
     let text_box = TextBox::new()
         .with_placeholder("Type to filter...")
         .lens(AppState::filter_text)
         .expand_width()
-        .controller(FilterController {});
+        .controller(FilterController {})
+        .controller(InitialFocusController {}); // Add the InitialFocusController here
 
     let list = List::new(|| {
         Label::new(|item: &String, _env: &_| format!("{}", item))
