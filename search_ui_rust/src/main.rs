@@ -33,6 +33,7 @@ fn main() {
         .expect("Failed to launch application");
 }
 
+
 fn build_ui() -> impl Widget<AppState> {
     let text_box = TextBox::new()
         .with_placeholder("Type to filter...")
@@ -57,7 +58,12 @@ struct FilterController;
 impl<W: Widget<AppState>> druid::widget::Controller<AppState, W> for FilterController {
     fn event(&mut self, child: &mut W, ctx: &mut EventCtx, event: &Event, data: &mut AppState, env: &Env) {
         match event {
-            Event::KeyDown(_) => {
+            Event::KeyDown(key_event) => {
+                if let druid::keyboard_types::Key::Enter = key_event.key {
+                    if let Some(first_row) = data.filtered_items.first() {
+                        println!("First row: {}", first_row);
+                    }
+                }
                 // This is a simple approach that updates the filter every time a key is pressed.
                 // You might want to refine this for better performance or user experience.
                 data.filtered_items = Arc::new(
