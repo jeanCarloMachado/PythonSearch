@@ -2,6 +2,7 @@ use druid::widget::{Flex, Label, List, Scroll, TextBox, WidgetExt};
 use druid::{AppLauncher, Data, Lens, Widget, WindowDesc, Env, EventCtx, Event};
 use std::sync::Arc;
 use std::io::{self, BufRead};
+use std::iter::FromIterator;
 #[derive(Clone, Data, Lens)]
 struct AppState {
     filter_text: String,
@@ -79,14 +80,15 @@ impl<W: Widget<AppState>> druid::widget::Controller<AppState, W> for FilterContr
                         println!("First row: {}", first_row);
                     }
                 }
-                // This is a simple approach that updates the filter every time a key is pressed.
-                // You might want to refine this for better performance or user experience.
+                // This is a lazy evaluation approach that updates the filter every time a key is pressed.
+                // It avoids cloning the entire vector by using lazy iterators.
                 data.filtered_items = Arc::new(
-                    data.items
-                        .iter()
-                        .filter(|item| item.to_lowercase().contains(&data.filter_text.to_lowercase()))
-                        .cloned()
-                        .collect(),
+                    Vec::from_iter(
+                        data.items
+                            .iter()
+                            .filter(|item| item.to_lowercase().contains(&data.filter_text.to_lowercase()))
+                            .cloned()
+                    )
                 );
             }
             _ => (),
