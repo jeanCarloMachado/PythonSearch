@@ -1,8 +1,6 @@
 
 # PythonSearch
 
-![UIS](uis.png)
-
 Join us in the [discord server](https://discord.gg/vFExqz7yGt) to discuss the project and get help.
 
 With python search you collect and retrieve and refactor information efficiently.
