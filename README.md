@@ -58,6 +58,9 @@ Done! You can run the search UI by running.
 python_search search
 ```
 
+Read our documentaiton here for more in [depth knwoledge](https://docs.google.com/document/d/1Y_-kdEea9IQshUU-anWKC8sDUJ_y3XRvQJWZ6CV3pWw/edit#heading=h.kwxo59w3vr4x).
+
+
 ## Got an issue?
 
 Create a github issue to report it or send a patch.
