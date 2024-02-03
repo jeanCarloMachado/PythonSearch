@@ -1,9 +1,8 @@
-import pyspark.sql.functions as F
 import os
-
 
 class RunPerformedCleaning:
     def clean(self):
+        import pyspark.sql.functions as F
         print("Performing the cleaning of the new events")
         from python_search.events.run_performed.dataset import EntryExecutedDataset
 
@@ -50,6 +49,8 @@ class RunPerformedCleaning:
         df_clean = EntryExecutedDataset().load_clean()
         print("Number of clean events", df_clean.count())
 
+def clean():
+    RunPerformedCleaning().clean()
 
 if __name__ == "__main__":
-    RunPerformedCleaning().clean()
+    clean()

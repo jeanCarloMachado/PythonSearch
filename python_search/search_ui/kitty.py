@@ -97,7 +97,7 @@ class FzfInKitty:
         {terminal.get_background_color()} \
         -o font_size={FzfInKitty.FONT_SIZE} \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
-         {fzf_cmd}
+        python /Users/jean.machado/projects/PySearchEntries/term_ui.py
         """
         result = os.system(launch_cmd)
         if result != 0:

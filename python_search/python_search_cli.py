@@ -67,6 +67,8 @@ class PythonSearchCli:
 
         self.configuration = configuration
         self.run_key = EntryRunner(self.configuration).run
+        import python_search.events
+        self.events = python_search.events
 
     def search(self, only_fzf=False):
         """
