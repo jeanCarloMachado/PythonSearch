@@ -11,12 +11,13 @@ class FzfInKitty:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE: int = 17
     _DEFAULT_WINDOW_SIZE = (1000, 350)
 
     _configuration = None
 
     def __init__(self, configuration=None):
+
+
         logger = logging.getLogger(name="search_ui")
         logger.addHandler(logging.StreamHandler(sys.stdout))
         logger.setLevel(logging.DEBUG)
@@ -41,7 +42,6 @@ class FzfInKitty:
 
         self._title = configuration.APPLICATION_TITLE
 
-        self._FONT = "Inter"
         from python_search.search_ui.fzf import Fzf
 
         self._fzf = Fzf(configuration)
@@ -74,6 +74,8 @@ class FzfInKitty:
 
     def launch(self) -> None:
         from python_search.apps.terminal import Terminal
+        from python_search.theme import DesertTheme
+        theme = DesertTheme()
 
         terminal = Terminal()
 
@@ -93,9 +95,10 @@ class FzfInKitty:
         -o active_tab_title_template=none \
         -o initial_window_width={self._width}  \
         -o initial_window_height={self._height} \
-        -o font_family="{self._FONT}" \
-        {terminal.get_background_color()} \
-        -o font_size={FzfInKitty.FONT_SIZE} \
+        -o background={theme.backgroud} \
+        -o foreground={theme.text} \
+        -o font_size="{theme.font_size}" \
+        -o font_family="{theme.font}" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
         python /Users/jean.machado/projects/PySearchEntries/term_ui.py
         """
