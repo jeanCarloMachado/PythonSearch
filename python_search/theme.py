@@ -22,10 +22,10 @@ class LightTheme(BaseTheme):
             'backgroud': "#FAFAFA",
             'selected': "#4F6CFF",
             'query': "#B98302",
+            'text': "#43444B",
+            'partialmatch': "#E55C57",
             'entrycontentselected': "#0E87BE",
             'entrycontentunselected': "#9FA0A7",
-            'partialmatch': "#E55C57",
-            'text': "#43444B",
             'cursor': '#AD3DAB'
         }
 
@@ -45,10 +45,13 @@ class DesertTheme(BaseTheme):
     def __init__(self):
         self.colors = {
             'backgroud': "#303030",
-            'selected': "#D78602",
-            'partialmatch': "#608700",
+            'selected': "#87D700",
+            'query': "#D78701",
+            'partialmatch': "#D78701",
             'text': "#FFFFFF",
-            'query': "##608700",
+            'entrycontentselected': "#87D700",
+            'entrycontentunselected': "#9FA0A7",
+            'cursor': '#87D700'
         }
 
         self.backgroud = self.colors['backgroud']
