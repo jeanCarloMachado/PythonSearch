@@ -74,8 +74,8 @@ class FzfInKitty:
 
     def launch(self) -> None:
         from python_search.apps.terminal import Terminal
-        from python_search.theme import DesertTheme
-        theme = DesertTheme()
+        from python_search.theme import DesertTheme, LightTheme
+        theme = LightTheme()
 
         terminal = Terminal()
 

@@ -41,7 +41,7 @@ class Entry:
         self.key = key
         self.value = value
 
-    def get_content_str(self) -> str:
+    def get_content_str(self, strip_new_lines=False) -> str:
         if not self.value:
             return ""
         if type(self.value) == str:
@@ -65,8 +65,12 @@ class Entry:
             import dill
 
             result = dill.source.getsource(value)
+        result = str(result)
 
-        return str(result)
+        if strip_new_lines:
+            result = result.replace("\n", " ")
+
+        return result
 
     def get_type_str(self) -> Literal["url", "file", "snippet", "cli_cmd", "callable"]:
         if not self.value:
