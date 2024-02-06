@@ -1,4 +1,5 @@
 import datetime
+import os
 
 
 class TimeBasedThemeSelector:
@@ -8,15 +9,28 @@ class TimeBasedThemeSelector:
         """
         now = datetime.datetime.now()
         if now.hour > 18 or now.hour < 6:
-            return "dracula"
+            return DesertTheme()
         else:
-            return "light"
+            return NewLight()
 
 class BaseTheme:
     colors = None
+    def get_colorful(self):
+        import colorful as cf
+
+        cf.update_palette(self.colors)
+        return cf
 
 
-class LightTheme(BaseTheme):
+    def __init__(self):
+        self.backgroud = self.colors['backgroud']
+        self.text = self.colors['text']
+
+        self.font_size = 16
+        self.font = "Menlo"
+
+
+class OneLight(BaseTheme):
     def __init__(self):
         self.colors = {
             'backgroud': "#FAFAFA",
@@ -26,41 +40,45 @@ class LightTheme(BaseTheme):
             'partialmatch': "#E55C57",
             'entrycontentselected': "#0E87BE",
             'entrycontentunselected': "#9FA0A7",
+            'entrytype': "#9FA0A7",
             'cursor': '#AD3DAB'
         }
 
-        self.backgroud = self.colors['backgroud']
-        self.text = self.colors['text']
+        super().__init__()
 
-        self.font_size = 16
-        self.font = "Menlo"
-    def get_colorful(self):
-        import colorful as cf
+class NewLight(BaseTheme):
+    def __init__(self):
+        self.colors = {
+            'backgroud': "#FFFFFF",
+            'selected': "#E28A44",
+            'query': "#EB727F",
+            'text': "#43444B",
+            'partialmatch': "#AC8C4A",
+            'entrycontentselected': "#83A96C",
+            'entrycontentunselected': "#9FA0A7",
+            'entrytype': "#9FA0A7",
+            'cursor': '#A852B1'
+        }
 
-        cf.update_palette(self.colors)
-        return cf
-
+        super().__init__()
 
 class DesertTheme(BaseTheme):
     def __init__(self):
+
         self.colors = {
             'backgroud': "#303030",
             'selected': "#87D700",
-            'query': "#D78701",
+            'query': "#87D700",
             'partialmatch': "#D78701",
             'text': "#FFFFFF",
             'entrycontentselected': "#87D700",
             'entrycontentunselected': "#9FA0A7",
-            'cursor': '#87D700'
+            'entrytype': "#9FA0A7",
+            'cursor': '#AB5DAC'
         }
+        super().__init__()
 
-        self.backgroud = self.colors['backgroud']
-        self.text = self.colors['text']
 
-        self.font_size = 16
-        self.font = "Menlo"
-    def get_colorful(self):
-        import colorful as cf
 
-        cf.update_palette(self.colors)
-        return cf
+def get_current_theme():
+    return TimeBasedThemeSelector().get_theme()
