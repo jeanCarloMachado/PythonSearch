@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import List
+from typing import List, Any
 from subprocess import PIPE, Popen
 
 from python_search.theme import get_current_theme
@@ -128,7 +128,7 @@ def control_size(a_string, num_chars):
     else:
         return a_string + " " * (num_chars - len(a_string))
 
-def print_highlighted(key, entry):
+def print_highlighted(key: str, entry: Any) -> None:
     key_part = cf.bold(cf.selected(f" {control_size(key, MAX_TITLE_SIZE)}"))
     body_part = f" {cf.bold(cf.entrycontentselected(control_size(entry.get_content_str(strip_new_lines=True).strip(),MAX_CONTENT_SIZE)))} "
     type_part = cf.entrytype(f"({entry.get_type_str()}) ")
