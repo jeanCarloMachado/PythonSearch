@@ -3,6 +3,10 @@ import sys
 from typing import List, Any
 from subprocess import PIPE, Popen
 
+import nltk
+tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+')
+lemmatizer = nltk.stem.WordNetLemmatizer()
+
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 theme = get_current_theme()
@@ -13,107 +17,94 @@ MAX_TITLE_SIZE=40
 MAX_CONTENT_SIZE=47
 NUMBER_ENTTRIES_RENDER=15
 
-def main():
-    from python_search.configuration.loader import ConfigurationLoader;
-    config = ConfigurationLoader().load_config()
-    commands = config.commands
-    entries: List[str] = list(commands.keys())
-    values = list(commands.values())
 
+def setup_documents(commands):
     tokenized_corpus = [tokenize((key + str(value))) for key, value in commands.items()]
     from rank_bm25 import BM25Okapi as BM25
     bm25 = BM25(tokenized_corpus)
 
-    from getch import getch
+    return bm25
 
-    os.system('clear')
-    query = ''
-    selected_row = 0
-    redraw = True
+class TermUI:
+    def main(self):
+        from python_search.configuration.loader import ConfigurationLoader;
+        config = ConfigurationLoader().load_config()
+        commands = config.commands
+        entries: List[str] = list(commands.keys())
+
+        bm25 = setup_documents(commands)
+        from getch import getch
+        os.system('clear')
+        self.query = ''
+        self.selected_row = 0
+        # hide cursor
+        print('\033[?25l', end="") 
+
+        while True: 
+            if self.query:
+                tokenized_query = tokenize(self.query)
+                self.matches = bm25.get_top_n(tokenized_query, entries, n=NUMBER_ENTTRIES_RENDER)
+            else:
+                self.matches = entries[0:NUMBER_ENTTRIES_RENDER]
+                tokenized_query = []
 
 
-    # hide cursor
-    print('\033[?25l', end="") 
-
-    while True: 
-        enter_pressed = False
-
-
-        if not query:
-            matches = entries[0:NUMBER_ENTTRIES_RENDER]
-            tokenized_query = []
-        else:
-            tokenized_query = tokenize(query)
-            matches = bm25.get_top_n(tokenized_query, entries, n=NUMBER_ENTTRIES_RENDER)
-
-
-        if redraw:
             os.system('clear')
-            print(cf.cursor(f"({len(commands)})> ")+ f"{cf.bold(cf.query(query))}" )
+            print(cf.cursor(f"({len(commands)})> ")+ f"{cf.bold(cf.query(self.query))}" )
 
 
-        # print the matches
-        if redraw:
-            for i, key in enumerate(matches):
+            # print the matches
+            for i, key in enumerate(self.matches):
                 entry = Entry(key, commands[key])
 
-                if i == selected_row:
+                if i == self.selected_row:
                     print_highlighted(key, entry)
                 else:
                     print_normal_row(key, entry, tokenized_query)
 
-        c = getch() 
-        redraw = True
+            c = getch() 
+
+            self.process_chars(self.query, c)
+
+    def process_chars(self, query, c):
         ord_c = ord(c)
         # test if the character is a delete (backspace)
         if ord_c == 127:
             #backspace
-            query = query[:-1]
-            continue
+            self.query = query[:-1]
         elif ord_c == 10:
             #enter
-            command = f'run_key "{matches[selected_row]}" &>/dev/null'
+            command = f'run_key "{self.matches[self.selected_row]}" &>/dev/null'
             Popen(command, stdout=None, stderr=None, shell=True)
-            continue
         elif ord_c == 9:
             #tab
-            Popen(f'entries_editor edit_key "{matches[selected_row]}"  &>/dev/null', stdout=None, stderr=None, shell=True)
-            continue
+            Popen(f'entries_editor edit_key "{self.matches[self.selected_row]}"  &>/dev/null', stdout=None, stderr=None, shell=True)
         elif ord_c == 92:
             #tab
-            Popen(f'share_entry share_only_value "{matches[selected_row]}" &>/dev/null', stdout=None, stderr=None, shell=True)
-            continue
+            Popen(f'share_entry share_only_value "{self.matches[self.selected_row]}" &>/dev/null', stdout=None, stderr=None, shell=True)
         elif ord_c == 47:
             #?
             Popen(f'clipboard set_content "{query}"  && run_key "search in google using clipboard content" &>/dev/null', stdout=None, stderr=None, shell=True)
-            continue
         elif ord_c == 66:
-            selected_row = selected_row + 1
-            continue
+            self.selected_row = self.selected_row + 1
         elif ord_c == 65:
-            selected_row = selected_row - 1
-            continue
+            self.selected_row = self.selected_row - 1
         elif c == '+':
             sys.exit(0)
-            continue
         elif ord_c == 68 or c == ';':
             # clean query shortucts
-            query=""
-            continue
+            self.query=""
         elif ord_c == 39 or ord_c == 67:
             sys.exit(0)
-            continue
         elif c == "-":
             # go up and clear
-            selected_row = 0
-            query = ''
+            self.selected_row = 0
+            self.query = ''
         elif c.isalnum() or c == " ":
-            query += c
-            selected_row = 0
+            self.query += c
+            self.selected_row = 0
 
-import nltk
-tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+')
-lemmatizer = nltk.stem.WordNetLemmatizer()
+
 def tokenize(string):
     tokens = tokenizer.tokenize(string)
     lemmas = [lemmatizer.lemmatize(t) for t in tokens]
@@ -142,6 +133,8 @@ def print_normal_row(key, entry, tokenized_query):
     body_part = cf.entrycontentunselected(control_size(entry.get_content_str(strip_new_lines=True).strip(),MAX_CONTENT_SIZE))
     print(f" {key_part} {body_part} " + cf.entrytype(f"({entry.get_type_str()})"))
 
+def main():
+    TermUI().main()
 
 if __name__ == "__main__":
     main()
