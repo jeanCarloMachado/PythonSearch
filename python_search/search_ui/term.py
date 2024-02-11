@@ -20,7 +20,7 @@ def main():
     entries: List[str] = list(commands.keys())
     values = list(commands.values())
 
-    tokenized_corpus = [(key + str(value)).split(" ") for key, value in commands.items()]
+    tokenized_corpus = [tokenize((key + str(value))) for key, value in commands.items()]
     from rank_bm25 import BM25Okapi as BM25
     bm25 = BM25(tokenized_corpus)
 
@@ -43,7 +43,7 @@ def main():
             matches = entries[0:NUMBER_ENTTRIES_RENDER]
             tokenized_query = []
         else:
-            tokenized_query = query.split(" ")
+            tokenized_query = tokenize(query)
             matches = bm25.get_top_n(tokenized_query, entries, n=NUMBER_ENTTRIES_RENDER)
 
 
@@ -111,6 +111,13 @@ def main():
             query += c
             selected_row = 0
 
+import nltk
+tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+')
+lemmatizer = nltk.stem.WordNetLemmatizer()
+def tokenize(string):
+    tokens = tokenizer.tokenize(string)
+    lemmas = [lemmatizer.lemmatize(t) for t in tokens]
+    return lemmas
         
 def control_size(a_string, num_chars):
     """
