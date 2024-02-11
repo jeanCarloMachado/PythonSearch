@@ -3,6 +3,7 @@ import sys
 from typing import List, Any
 from subprocess import PIPE, Popen
 
+from getch import getch
 import nltk
 tokenizer = nltk.tokenize.RegexpTokenizer(r'\w+')
 lemmatizer = nltk.stem.WordNetLemmatizer()
@@ -17,23 +18,15 @@ MAX_TITLE_SIZE=40
 MAX_CONTENT_SIZE=47
 NUMBER_ENTTRIES_RENDER=15
 
-
-def setup_documents(commands):
-    tokenized_corpus = [tokenize((key + str(value))) for key, value in commands.items()]
-    from rank_bm25 import BM25Okapi as BM25
-    bm25 = BM25(tokenized_corpus)
-
-    return bm25
-
 class TermUI:
-    def main(self):
+    _documents = None
+
+    def run(self):
         from python_search.configuration.loader import ConfigurationLoader;
         config = ConfigurationLoader().load_config()
-        commands = config.commands
-        entries: List[str] = list(commands.keys())
+        self.commands = config.commands
+        entries: List[str] = list(self.commands.keys())
 
-        bm25 = setup_documents(commands)
-        from getch import getch
         os.system('clear')
         self.query = ''
         self.selected_row = 0
@@ -43,28 +36,30 @@ class TermUI:
         while True: 
             if self.query:
                 tokenized_query = tokenize(self.query)
-                self.matches = bm25.get_top_n(tokenized_query, entries, n=NUMBER_ENTTRIES_RENDER)
+                self.matches = self.get_bm25().get_top_n(tokenized_query, entries, n=NUMBER_ENTTRIES_RENDER)
             else:
                 self.matches = entries[0:NUMBER_ENTTRIES_RENDER]
                 tokenized_query = []
 
-
             os.system('clear')
-            print(cf.cursor(f"({len(commands)})> ")+ f"{cf.bold(cf.query(self.query))}" )
+            print(cf.cursor(f"({len(self.commands)})> ")+ f"{cf.bold(cf.query(self.query))}" )
 
-
-            # print the matches
-            for i, key in enumerate(self.matches):
-                entry = Entry(key, commands[key])
-
-                if i == self.selected_row:
-                    print_highlighted(key, entry)
-                else:
-                    print_normal_row(key, entry, tokenized_query)
-
+            self.print_entries(self.commands, tokenized_query)
+            # build bm25 index while the user types
+            self.get_bm25()
             c = getch() 
-
             self.process_chars(self.query, c)
+
+    
+    def print_entries(self, commands, tokenized_query):
+        # print the matches
+        for i, key in enumerate(self.matches):
+            entry = Entry(key, commands[key])
+
+            if i == self.selected_row:
+                print_highlighted(key, entry)
+            else:
+                print_normal_row(key, entry, tokenized_query)
 
     def process_chars(self, query, c):
         ord_c = ord(c)
@@ -104,6 +99,18 @@ class TermUI:
             self.query += c
             self.selected_row = 0
 
+    def get_bm25(self):
+        if self._documents is None:
+            self._documents = self.setup_documents()
+        return self._documents
+
+    def setup_documents(self):
+        tokenized_corpus = [tokenize((key + str(value))) for key, value in self.commands.items()]
+        from rank_bm25 import BM25Okapi as BM25
+        bm25 = BM25(tokenized_corpus)
+
+        return bm25
+
 
 def tokenize(string):
     tokens = tokenizer.tokenize(string)
@@ -134,7 +141,7 @@ def print_normal_row(key, entry, tokenized_query):
     print(f" {key_part} {body_part} " + cf.entrytype(f"({entry.get_type_str()})"))
 
 def main():
-    TermUI().main()
+    TermUI().run()
 
 if __name__ == "__main__":
     main()
