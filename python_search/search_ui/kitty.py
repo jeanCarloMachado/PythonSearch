@@ -100,7 +100,7 @@ class FzfInKitty:
         -o font_size="{theme.font_size}" \
         -o font_family="{theme.font}" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
-        python /Users/jean.machado/projects/PySearchEntries/term_ui.py
+        term_ui
         """
         result = os.system(launch_cmd)
         if result != 0:

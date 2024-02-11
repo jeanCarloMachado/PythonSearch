@@ -80,6 +80,7 @@ aps_webapi = 'python_search.sdk.web_api_sdk:main'
 wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = []}
 events_etl = 'python_search.events.events_etl:main'
 chat_gpt = 'python_search.chat_gpt:main'
+term_ui = 'python_search.search_ui.term:main'
 entry_builder = 'python_search.entry_capture.entry_inserter_gui.entry_inserter_gui:main'
 prompt_editor = 'python_search.apps.prompt_editor:main'
 entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings:main'

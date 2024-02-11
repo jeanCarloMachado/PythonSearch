@@ -8,7 +8,7 @@ class TimeBasedThemeSelector:
         Returns the theme to use based on the current time
         """
         now = datetime.datetime.now()
-        if now.hour > 18 or now.hour < 6:
+        if now.hour >= 18 or now.hour < 6:
             return DesertTheme()
         else:
             return NewLight()
