@@ -86,15 +86,16 @@ class TermUI:
             self.selected_row = self.selected_row - 1
         elif c == '+':
             sys.exit(0)
-        elif ord_c == 68 or c == ';':
+        elif c == ';' or ord_c == 68:
             # clean query shortucts
             self.query=""
         elif ord_c == 39 or ord_c == 67:
             sys.exit(0)
-        elif c == "-":
+        elif c == "-"  :
             # go up and clear
             self.selected_row = 0
-            self.query = ''
+            # remove the last word
+            self.query = " ".join(list(filter(lambda x: x, self.query.split(" ")))[0:-1])
         elif c.isalnum() or c == " ":
             self.query += c
             self.selected_row = 0
