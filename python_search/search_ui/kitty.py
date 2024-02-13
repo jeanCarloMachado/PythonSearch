@@ -16,8 +16,6 @@ class FzfInKitty:
     _configuration = None
 
     def __init__(self, configuration=None):
-
-
         logger = logging.getLogger(name="search_ui")
         logger.addHandler(logging.StreamHandler(sys.stdout))
         logger.setLevel(logging.DEBUG)
@@ -75,6 +73,7 @@ class FzfInKitty:
     def launch(self) -> None:
         from python_search.apps.terminal import Terminal
         from python_search.theme import get_current_theme
+
         theme = get_current_theme()
 
         terminal = Terminal()

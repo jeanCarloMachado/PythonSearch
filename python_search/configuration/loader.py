@@ -3,6 +3,7 @@ import os
 
 from python_search.configuration.configuration import PythonSearchConfiguration
 
+
 class ConfigurationLoader:
     """
     Loads the application from the environment.py
