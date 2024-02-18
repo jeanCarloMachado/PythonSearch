@@ -10,6 +10,8 @@ from python_search.events.run_performed import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
 from python_search.search_ui.kitty import FzfInKitty
+
+
 class PythonSearchCli:
     """
     Welcome to PythonSearch, An open-source assistant that helps you collect, retrieve and refactor information (and programs) efficiently using Python
@@ -133,7 +135,6 @@ class PythonSearchCli:
                 HideWindow().hide(self.configuration.APPLICATION_TITLE)
 
         return Utils(self.configuration)
-
 
     def _entry_type_classifier(self):
         from python_search.entry_type.classifier_inference import (

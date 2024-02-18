@@ -45,4 +45,3 @@ class Terminal:
         final_cmd = f'{get_kitty_cmd()} {hold} {Terminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
 
         return final_cmd
-

@@ -5,6 +5,7 @@ import sys
 
 from python_search.environment import is_mac
 
+
 class FzfInKitty:
     """
     Renders the search ui using fzf + termite terminal
