@@ -4,7 +4,6 @@ from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
-from python_search.search_ui.theme import Theme
 from python_search.ps_llm.llm_config import CustomLLMConfig
 
 
@@ -85,7 +84,6 @@ class PythonSearchConfiguration(EntriesGroup):
         self.entry_generation = entry_generation
         self.privacy_sensitive_terms = privacy_sensitive_terms
         self.custom_llm_config = custom_llm_config
-        self._theme = Theme()
 
     def get_next_item_predictor_model(self):
         """
@@ -133,15 +131,6 @@ class PythonSearchConfiguration(EntriesGroup):
 
     def get_fzf_theme(self) -> str:
         return self._fzf_theme
-
-    def get_theme_object(self):
-        from python_search.search_ui.theme import Theme
-
-        self._theme.inclusivity()
-        if self._fzf_theme == "solarized":
-            self._theme.solarized()
-
-        return self._theme
 
     def get_window_size(self):
         if hasattr(self, "_custom_window_size"):

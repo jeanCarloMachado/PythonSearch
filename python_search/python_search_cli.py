@@ -10,10 +10,6 @@ from python_search.events.run_performed import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
 from python_search.search_ui.kitty import FzfInKitty
-from python_search.search_ui.fzf import Fzf
-from python_search.search_ui.preview import Preview
-
-
 class PythonSearchCli:
     """
     Welcome to PythonSearch, An open-source assistant that helps you collect, retrieve and refactor information (and programs) efficiently using Python
@@ -75,8 +71,6 @@ class PythonSearchCli:
         """
         Opens the Search UI. Main entrypoint of the application
         """
-        if only_fzf:
-            return Fzf(self.configuration).run()
 
         FzfInKitty.focus_or_open(self.configuration)
 
@@ -140,11 +134,6 @@ class PythonSearchCli:
 
         return Utils(self.configuration)
 
-    def _preview_entry(self, entry_text: str):
-        """
-        Recives entries from fzf and show them formatted for the preview window
-        """
-        Preview().display(entry_text)
 
     def _entry_type_classifier(self):
         from python_search.entry_type.classifier_inference import (

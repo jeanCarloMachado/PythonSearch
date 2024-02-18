@@ -5,7 +5,6 @@ import sys
 
 from python_search.environment import is_mac
 
-
 class FzfInKitty:
     """
     Renders the search ui using fzf + termite terminal
@@ -40,10 +39,6 @@ class FzfInKitty:
 
         self._title = configuration.APPLICATION_TITLE
 
-        from python_search.search_ui.fzf import Fzf
-
-        self._fzf = Fzf(configuration)
-
     @staticmethod
     def run() -> None:
         if not FzfInKitty.try_to_focus():
@@ -77,8 +72,6 @@ class FzfInKitty:
         theme = get_current_theme()
 
         terminal = Terminal()
-
-        fzf_cmd = self._fzf.get_cmd()
 
         launch_cmd = f"""{get_kitty_cmd()} \
         --title {self._title} \
