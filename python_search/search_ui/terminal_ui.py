@@ -1,7 +1,7 @@
 import os
 import sys
 from typing import List, Any
-from subprocess import PIPE, Popen
+from subprocess import Popen
 
 from getch import getch
 import nltk
@@ -12,10 +12,6 @@ lemmatizer = nltk.stem.WordNetLemmatizer()
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 
-theme = get_current_theme()
-cf = theme.get_colorful()
-
-
 class TermUI:
     MAX_LINE_SIZE = 80
     MAX_TITLE_SIZE = 40
@@ -23,6 +19,11 @@ class TermUI:
     NUMBER_ENTTRIES_RENDER = 15
 
     _documents = None
+
+    def __init__(self) -> None:
+        self.theme = get_current_theme()
+        self.cf = self.theme.get_colorful()
+        self.actions = Actions()
 
     def run(self):
         from python_search.configuration.loader import ConfigurationLoader
@@ -49,8 +50,8 @@ class TermUI:
 
             os.system("clear")
             print(
-                cf.cursor(f"({len(self.commands)})> ")
-                + f"{cf.bold(cf.query(self.query))}"
+                self.cf.cursor(f"({len(self.commands)})> ")
+                + f"{self.cf.bold(self.cf.query(self.query))}"
             )
 
             self.print_entries(tokenized_query)
@@ -64,7 +65,7 @@ class TermUI:
             return getch()
         except Exception as e:
             print(e)
-            return ""
+            return " "
 
     def print_entries(self, tokenized_query):
         # print the matches
@@ -84,42 +85,26 @@ class TermUI:
             self.query = query[:-1]
         elif ord_c == 10:
             # enter
-            command = f'run_key "{self.matches[self.selected_row]}" &>/dev/null'
-            Popen(command, stdout=None, stderr=None, shell=True)
+            self.actions.run_key(self.matches[self.selected_row])
         elif ord_c == 9:
             # tab
-            Popen(
-                f'entries_editor edit_key "{self.matches[self.selected_row]}"  &>/dev/null',
-                stdout=None,
-                stderr=None,
-                shell=True,
-            )
-        elif ord_c == 92:
+            self.actions.edit_key(self.matches[self.selected_row])
+        elif c == "'":
             # tab
-            Popen(
-                f'share_entry share_only_value "{self.matches[self.selected_row]}" &>/dev/null',
-                stdout=None,
-                stderr=None,
-                shell=True,
-            )
+            self.actions.copy_entry_value_to_clipboard(self.matches[self.selected_row])
         elif ord_c == 47:
             # ?
-            Popen(
-                f'clipboard set_content "{query}"  && run_key "search in google using clipboard content" &>/dev/null',
-                stdout=None,
-                stderr=None,
-                shell=True,
-            )
+            self.actions.search_in_google(self.query)
         elif ord_c == 66:
             self.selected_row = self.selected_row + 1
         elif ord_c == 65:
             self.selected_row = self.selected_row - 1
         elif c == "+":
             sys.exit(0)
-        elif ord_c == 68 or c == "'":
+        elif ord_c == 68 or ord_c == 39:
             # clean query shortucts
             self.query = ""
-        elif ord_c == 67 or c == ";":
+        elif ord_c == 67 or c == ";"  or c == "\\":
             sys.exit(0)
         elif c == "-":
             # go up and clear
@@ -150,30 +135,30 @@ class TermUI:
         return bm25
 
     def print_highlighted(self, key: str, entry: Any) -> None:
-        key_part = cf.bold(
-            cf.selected(f" {self.control_size(key, self.MAX_TITLE_SIZE)}")
+        key_part = self.cf.bold(
+            self.cf.selected(f" {self.control_size(key, self.MAX_TITLE_SIZE)}")
         )
-        body_part = f" {cf.bold(cf.entrycontentselected(self.control_size(entry.get_content_str(strip_new_lines=True).strip(), self.MAX_CONTENT_SIZE)))} "
-        type_part = cf.entrytype(f"({entry.get_type_str()}) ")
+        body_part = f" {self.cf.bold(self.cf.entrycontentselected(self.control_size(entry.get_content_str(strip_new_lines=True).strip(), self.MAX_CONTENT_SIZE)))} "
+        type_part = self.cf.entrytype(f"({entry.get_type_str()}) ")
         print(key_part + body_part + type_part)
 
     def print_normal_row(self, key, entry, tokenized_query):
         key_input = self.control_size(key, self.MAX_TITLE_SIZE)
         key_part = " ".join(
             [
-                str(cf.partialmatch(key_fragment))
+                str(self.cf.partialmatch(key_fragment))
                 if key_fragment in tokenized_query
                 else key_fragment
                 for key_fragment in key_input.split(" ")
             ]
         )
-        body_part = cf.entrycontentunselected(
+        body_part = self.cf.entrycontentunselected(
             self.control_size(
                 entry.get_content_str(strip_new_lines=True).strip(),
                 self.MAX_CONTENT_SIZE,
             )
         )
-        print(f" {key_part} {body_part} " + cf.entrytype(f"({entry.get_type_str()})"))
+        print(f" {key_part} {body_part} " + self.cf.entrytype(f"({entry.get_type_str()})"))
 
     def tokenize(self, string):
         tokens = tokenizer.tokenize(string)
@@ -188,6 +173,36 @@ class TermUI:
             return a_string[0 : num_chars - 3] + "..."
         else:
             return a_string + " " * (num_chars - len(a_string))
+
+
+class Actions():
+    def search_in_google(self, query):
+        Popen(
+            f'clipboard set_content "{query}"  && run_key "search in google using clipboard content" &>/dev/null',
+            stdout=None,
+            stderr=None,
+            shell=True,
+        )
+
+    def copy_entry_value_to_clipboard(self, entry_key):
+        Popen(
+            f'share_entry share_only_value "{entry_key}" &>/dev/null',
+            stdout=None,
+            stderr=None,
+            shell=True,
+        )
+
+    def edit_key(self, key):
+        Popen(
+            f'entries_editor edit_key "{key}"  &>/dev/null',
+            stdout=None,
+            stderr=None,
+            shell=True,
+        )
+
+    def run_key(self, key):
+        command = f'run_key "{key}" &>/dev/null'
+        Popen(command, stdout=None, stderr=None, shell=True)
 
 
 def main():
