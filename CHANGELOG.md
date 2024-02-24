@@ -2,7 +2,9 @@
 
 ## 0.31 - 2024-01-27
 
+- Replce fzf with a python native logic.
 - Cleanup github sites.
+- Cleanup tons of files
 
 ## 0.28 - 2023-11-02
 
