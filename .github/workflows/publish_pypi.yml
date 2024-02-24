@@ -16,7 +16,7 @@ jobs:
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN_NEW }}
         run: |
-          pip install poetry
+          curl -sSL https://install.python-poetry.org | python3 -
           poetry config virtualenvs.create false
           poetry build
           echo "Publishing now..."
