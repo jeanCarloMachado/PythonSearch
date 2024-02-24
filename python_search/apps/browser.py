@@ -8,7 +8,6 @@ import os
 from python_search.apps.notification_ui import send_notification
 
 
-
 class Browser:
     """
     Abstracts the browser features cross-platform
@@ -40,7 +39,9 @@ class Browser:
 
         focus_title: to focus on a window that behaves like an app
         """
-        cmd_to_run = self.open_shell_cmd(url, app_mode, incognito, browser, focus_title=focus_title)
+        cmd_to_run = self.open_shell_cmd(
+            url, app_mode, incognito, browser, focus_title=focus_title
+        )
         print("Command to run:", cmd_to_run)
         self.system_func(cmd_to_run)
 
@@ -56,13 +57,12 @@ class Browser:
         Returns the shell command to open the browser
         """
 
-
         self._focus_title = focus_title
         self._app_mode = app_mode
 
-
         if self._focus_title:
             from python_search.host_system.windows_focus import Focus
+
             if Focus().focus_window("Google Chrome", self._focus_title):
                 print("Chrome window focused instead of opening new")
                 sys.exit(0)

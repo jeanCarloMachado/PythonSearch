@@ -14,5 +14,5 @@ class OfficialEntries(EntriesGroup):
         },
         "set entries project location": {
             "cli_cmd": 'python_search  set_project_location "$(collect_input --prefill_with_clipboard)"',
-        }
+        },
     }

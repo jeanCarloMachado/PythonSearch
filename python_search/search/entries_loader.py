@@ -24,9 +24,10 @@ class EntriesLoader:
         detector = PrivacyDetector()
 
         for i in EntriesLoader.load_all_entries():
-            if not detector.has_sentitive_content(i.get_content_str()) and not detector.has_sentitive_content(i.key):
+            if not detector.has_sentitive_content(
+                i.get_content_str()
+            ) and not detector.has_sentitive_content(i.key):
                 yield i
-
 
     @staticmethod
     def load_all_entries() -> List[Entry]:

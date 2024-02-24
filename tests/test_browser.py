@@ -1,5 +1,7 @@
 import unittest
 from python_search.apps.browser import Browser
+
+
 class TestBrowser(unittest.TestCase):
     def test_open_chrome_on_mac(self):
         def mock_system(cmd):

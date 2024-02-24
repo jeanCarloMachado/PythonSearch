@@ -7,6 +7,7 @@ from python_search.apps.terminal import Terminal
 from python_search.core_entities.core_entities import Key
 from python_search.search_ui.kitty import get_kitty_cmd
 
+
 class EntriesEditor:
     """
     Open an ide to edit the entries

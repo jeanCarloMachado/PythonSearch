@@ -75,7 +75,6 @@ class ConfigurationLoader:
         return folder
 
     def load_entries(self):
-
         return self.load_config().commands
 
     def load_escaped_entries(self):

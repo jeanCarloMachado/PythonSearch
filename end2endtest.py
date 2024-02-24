@@ -3,8 +3,6 @@ import os
 
 
 class End2End:
-    """ """
-
     def run(self):
         self.cleanup()
         self._run_shell(

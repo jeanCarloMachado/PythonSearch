@@ -78,8 +78,10 @@ Prompt:
             return PythonSearchChatGPTAPI().prompt(prompt)
 
         import openai
+        from openai import OpenAI
 
-        openai.api_key = os.environ["OPENAI_KEY"]
+        client = OpenAI(api_key=os.environ["OPENAI_KEY"])
+
         # Set the maximum number of tokens to generate in the response
 
         if debug:
@@ -92,7 +94,7 @@ Prompt:
         try:
             # print("Open AI Key used: ", openai.api_key)
             # Generate a response
-            completion = openai.Completion.create(
+            completion = client.completions.create(
                 model=model,
                 engine=engine,
                 prompt=prompt,
@@ -103,7 +105,7 @@ Prompt:
                 presence_penalty=0,
             )
             return completion.choices[0].text.strip()
-        except openai.error.RateLimitError as e:
+        except openai.RateLimitError as e:
             print(str(e))
             from python_search.apps.notification_ui import send_notification
 
@@ -115,33 +117,6 @@ Prompt:
 
     def print_answer(self, prompt):
         print(self.answer(prompt))
-
-
-class PythonSearchChatGPTAPI:
-    def prompt(self, text) -> str:
-        import openai
-
-        openai.api_key = os.environ["OPENAI_KEY"]
-        # print("Open AI Key used: ", openai.api_key)
-
-        try:
-            result = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant"},
-                    {"role": "user", "content": text},
-                ],
-            )
-            return result.choices[0].message.content
-
-        except openai.error.RateLimitError as e:
-            print(str(e))
-            from python_search.apps.notification_ui import send_notification
-
-            send_notification(str(e))
-            return ""
-
-        return ""
 
 
 def main():

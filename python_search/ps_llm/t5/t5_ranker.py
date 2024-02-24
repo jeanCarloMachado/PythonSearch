@@ -46,16 +46,12 @@ class NextItemReranker:
         if prepend_order:
             return prepend_order_in_entries(result)
 
-
         return result
 
     def get_prompt(self, recent_history):
         if not recent_history:
             recent_history = ["gmail", "gmail", "gmail"]
         return PromptBuilder().build_prompt_inference(history=recent_history)
-
-
-
 
     def get_next_predicted_actions(
         self, *, recent_history=None, recent_history_str=None

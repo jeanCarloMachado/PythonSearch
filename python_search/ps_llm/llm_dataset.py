@@ -8,7 +8,7 @@ from python_search.ps_llm.utils import timer
 
 
 class LLMDataset:
-    DATASET_VERSION = 'v11'
+    DATASET_VERSION = "v11"
     MAX_SIZE_PER_TASK_VALIDATION_DATASET = 100
     MAX_SIZE_PER_TASK_TRAIN_DATASET = 200
 
@@ -20,13 +20,17 @@ class LLMDataset:
     ]
 
     def __init__(self):
-
         from python_search.ps_llm.llm_config import LLMConfig
+
         llm_config = LLMConfig()
-        self.BASE_DATASET_FOLDER  = llm_config.BASE_DATASET_FOLDER
-        self.TRAIN_PKL_LOCATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_train.pkl"
-        self.VALIDATION_PKL_LOCATION = f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
-        print('Version: ', self.DATASET_VERSION)
+        self.BASE_DATASET_FOLDER = llm_config.BASE_DATASET_FOLDER
+        self.TRAIN_PKL_LOCATION = (
+            f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_train.pkl"
+        )
+        self.VALIDATION_PKL_LOCATION = (
+            f"{llm_config.BASE_DATASET_FOLDER}/{self.DATASET_VERSION}_validation.pkl"
+        )
+        print("Version: ", self.DATASET_VERSION)
 
     @timer
     def generate_train_and_validation(self):
@@ -41,7 +45,6 @@ class LLMDataset:
         validation_set = None
         train_set = None
         for task in self.TASKS:
-
             task_instance = task()
             df_instance = task_instance.build_dataset()
 
@@ -51,10 +54,12 @@ class LLMDataset:
             df_instance = df_instance.withColumn("row_num", F.row_number().over(w))
             print("Rows for " + task.__name__ + ": " + str(df_instance.count()))
 
-
-            validation_instance = df_instance.filter(df_instance.row_num <= self.MAX_SIZE_PER_TASK_VALIDATION_DATASET).select("prompt", "label")
-            train_instance = df_instance.filter(df_instance.row_num > self.MAX_SIZE_PER_TASK_VALIDATION_DATASET).select("prompt", "label")
-
+            validation_instance = df_instance.filter(
+                df_instance.row_num <= self.MAX_SIZE_PER_TASK_VALIDATION_DATASET
+            ).select("prompt", "label")
+            train_instance = df_instance.filter(
+                df_instance.row_num > self.MAX_SIZE_PER_TASK_VALIDATION_DATASET
+            ).select("prompt", "label")
 
             if validation_set is not None:
                 print("Joining validation set")
@@ -86,10 +91,10 @@ class LLMDataset:
         """
 
         import pandas as pd
+
         df = pd.read_pickle(path)
         print(f"Loading dataset from path {path} with {len(df.index)} rows")
         return df
-
 
     def load_validation(self):
         """
@@ -103,9 +108,8 @@ class LLMDataset:
         """
         return self._load_pickle(self.TRAIN_PKL_LOCATION)
 
-
-    def sample(self, dataset: Literal['train', 'validation'] = 'validation'):
-        if dataset == 'validation':
+    def sample(self, dataset: Literal["train", "validation"] = "validation"):
+        if dataset == "validation":
             df = self.load_validation()
         else:
             df = self.load_training()
@@ -113,25 +117,26 @@ class LLMDataset:
         import pandas as pd
 
         def show_rows(df, nrows=20000):
-            with pd.option_context("display.max_rows", nrows): print(df)
+            with pd.option_context("display.max_rows", nrows):
+                print(df)
 
         return show_rows(df)
 
     def check_privacy(self, check_training=True):
         from python_search.privacy.privacy_detector import PrivacyDetector
+
         df = self.load_validation()
         print("Checking privacy of validation set")
-        PrivacyDetector().detect_in_list(df['label'].tolist() + df['prompt'].tolist())
+        PrivacyDetector().detect_in_list(df["label"].tolist() + df["prompt"].tolist())
 
         if not check_training:
             return
         print("Checking privacy of training set")
         df = self.load_training()
-        PrivacyDetector().detect_in_list(df['label'].tolist() + df['prompt'].tolist())
+        PrivacyDetector().detect_in_list(df["label"].tolist() + df["prompt"].tolist())
 
     def inspect(self):
         return len(self.load_training().index)
-
 
 
 def main():

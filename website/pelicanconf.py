@@ -1,14 +1,14 @@
-AUTHOR = 'JeanCarloMachado'
-SITENAME = 'Python Search'
-SITEURL = ''
+AUTHOR = "JeanCarloMachado"
+SITENAME = "Python Search"
+SITEURL = ""
 
-PATH = 'content'
+PATH = "content"
 
-TIMEZONE = 'Europe/Berlin'
+TIMEZONE = "Europe/Berlin"
 
-DEFAULT_LANG = 'en'
+DEFAULT_LANG = "en"
 
-THEME = 'themes/pelican-alchemy/alchemy'
-LINKS = [('Github', 'https://github.com/jeanCarloMachado/PythonSearch')]
+THEME = "themes/pelican-alchemy/alchemy"
+LINKS = [("Github", "https://github.com/jeanCarloMachado/PythonSearch")]
 
 DEFAULT_PAGINATION = 10

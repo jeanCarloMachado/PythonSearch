@@ -6,7 +6,6 @@ from python_search.ps_llm.tasks.base_task import BaseDataTask
 
 
 class NextItemPredictor(BaseDataTask):
-
     def prompt(self, history):
         return PromptBuilder().build_prompt_inference(history)
 
@@ -19,16 +18,14 @@ class NextItemPredictor(BaseDataTask):
 
         if skip_clean:
             print("Skipping cleaning")
-        elif 'DEV' in os.environ:
+        elif "DEV" in os.environ:
             print("Skipping clean due to DEV environment variable being set")
         else:
             RunPerformedCleaning().clean()
 
-
         return self._transform()
 
     def _transform(self):
-
         df = self._base_data().filter('shortcut != "True"')
         print(f"Dataset rows after filtering: {df.count()}")
 
@@ -48,32 +45,29 @@ class NextItemPredictor(BaseDataTask):
         df = df.withColumn("next_2", lag(df["key"], 1).over(windowSpec))
         df = df.withColumn("next_3", lag(df["key"], 2).over(windowSpec))
 
-
         from pyspark.sql.functions import udf, struct
 
         udf_prompt = udf(PromptBuilder().build_prompt_for_spark)
         udf_label = udf(self._label)
 
-        df = df.withColumn('prompt', udf_prompt(struct([df[x] for x in df.columns])))
+        df = df.withColumn("prompt", udf_prompt(struct([df[x] for x in df.columns])))
         df = df.withColumn("label", udf_label(struct([df[x] for x in df.columns])))
 
         df = df.select("prompt", "label")
         df.show(n=10, truncate=False)
 
         from python_search.ps_llm.llm_dataset import LLMDataset
-        return df.limit(LLMDataset.MAX_SIZE_PER_TASK_TRAIN_DATASET)
 
+        return df.limit(LLMDataset.MAX_SIZE_PER_TASK_TRAIN_DATASET)
 
     def _label(selfs, row):
         result = f"1. {row['key']}"
 
-        if row['next_2'] is not None:
+        if row["next_2"] is not None:
             result += f" 2. {row['next_2']}"
-        if row['next_3'] is not None:
+        if row["next_3"] is not None:
             result += f" 3. {row['next_3']}"
         return result
-
-
 
     def _base_data(self):
         from python_search.events.run_performed.dataset import EntryExecutedDataset
@@ -85,6 +79,8 @@ class NextItemPredictor(BaseDataTask):
 
         return result
 
+
 if __name__ == "__main__":
     import fire
+
     fire.Fire(NextItemPredictor)

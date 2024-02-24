@@ -10,8 +10,6 @@ from python_search.events.run_performed import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
 from python_search.search_ui.kitty import FzfInKitty
-from python_search.search_ui.fzf import Fzf
-from python_search.search_ui.preview import Preview
 
 
 class PythonSearchCli:
@@ -59,21 +57,22 @@ class PythonSearchCli:
                 configuration = ConfigurationLoader().load_config()
             except BaseException as e:
                 import traceback
+
                 print(str(e))
                 traceback.print_exc()
-
 
                 return
 
         self.configuration = configuration
         self.run_key = EntryRunner(self.configuration).run
+        import python_search.events
+
+        self.events = python_search.events
 
     def search(self, only_fzf=False):
         """
         Opens the Search UI. Main entrypoint of the application
         """
-        if only_fzf:
-            return Fzf(self.configuration).run()
 
         FzfInKitty.focus_or_open(self.configuration)
 
@@ -82,6 +81,7 @@ class PythonSearchCli:
         Starts the UI for collecting a new entry into python search
         """
         from python_search.entry_capture.entry_inserter_gui import register_new_gui
+
         return register_new_gui.launch_ui()
 
     def _copy_entry_content(self, entry_str: str):
@@ -135,12 +135,6 @@ class PythonSearchCli:
                 HideWindow().hide(self.configuration.APPLICATION_TITLE)
 
         return Utils(self.configuration)
-
-    def _preview_entry(self, entry_text: str):
-        """
-        Recives entries from fzf and show them formatted for the preview window
-        """
-        Preview().display(entry_text)
 
     def _entry_type_classifier(self):
         from python_search.entry_type.classifier_inference import (

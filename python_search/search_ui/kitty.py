@@ -11,7 +11,6 @@ class FzfInKitty:
     Renders the search ui using fzf + termite terminal
     """
 
-    FONT_SIZE: int = 17
     _DEFAULT_WINDOW_SIZE = (1000, 350)
 
     _configuration = None
@@ -41,11 +40,6 @@ class FzfInKitty:
 
         self._title = configuration.APPLICATION_TITLE
 
-        self._FONT = "Inter"
-        from python_search.search_ui.fzf import Fzf
-
-        self._fzf = Fzf(configuration)
-
     @staticmethod
     def run() -> None:
         if not FzfInKitty.try_to_focus():
@@ -74,10 +68,11 @@ class FzfInKitty:
 
     def launch(self) -> None:
         from python_search.apps.terminal import Terminal
+        from python_search.theme import get_current_theme
+
+        theme = get_current_theme()
 
         terminal = Terminal()
-
-        fzf_cmd = self._fzf.get_cmd()
 
         launch_cmd = f"""{get_kitty_cmd()} \
         --title {self._title} \
@@ -93,11 +88,12 @@ class FzfInKitty:
         -o active_tab_title_template=none \
         -o initial_window_width={self._width}  \
         -o initial_window_height={self._height} \
-        -o font_family="{self._FONT}" \
-        {terminal.get_background_color()} \
-        -o font_size={FzfInKitty.FONT_SIZE} \
+        -o background={theme.backgroud} \
+        -o foreground={theme.text} \
+        -o font_size="{theme.font_size}" \
+        -o font_family="{theme.font}" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
-         {fzf_cmd}
+        term_ui
         """
         result = os.system(launch_cmd)
         if result != 0:

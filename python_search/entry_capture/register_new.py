@@ -25,7 +25,6 @@ class RegisterNew:
         self.configuration = configuration
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
-
     @notify_exception()
     def register(self, *, key: str, value: str, type: str):
         """
@@ -46,19 +45,18 @@ class RegisterNew:
             ).get_interpreter(value)
             dict_entry = interpreter.to_dict()
         else:
-            if type == 'snippet':
-                dict_entry = {'snippet': value}
-            elif type == 'cli_cmd':
-                dict_entry = {'cli_cmd': value}
-            elif type == 'cmd':
-                dict_entry = {'cmd': value}
-            elif type == 'url':
-                dict_entry = {'url': value}
-            elif type == 'file':
-                dict_entry = {'file': value}
+            if type == "snippet":
+                dict_entry = {"snippet": value}
+            elif type == "cli_cmd":
+                dict_entry = {"cli_cmd": value}
+            elif type == "cmd":
+                dict_entry = {"cmd": value}
+            elif type == "url":
+                dict_entry = {"url": value}
+            elif type == "file":
+                dict_entry = {"file": value}
             else:
                 raise Exception(f"Unknown type {type}")
-
 
         self.entry_inserter.insert(key, dict_entry)
 
@@ -69,9 +67,8 @@ class RegisterNew:
         data = json.load(sys.stdin)
         key = data["key"]
         value = data["value"]
-        type= data["type"]
+        type = data["type"]
         self.register(key=key, value=value, type=type)
-
 
     def _sanitize_key(self, key):
         return key.replace("\n", " ").replace(":", " ").strip()
@@ -81,6 +78,3 @@ def main():
     import fire
 
     fire.Fire(RegisterNew)
-
-
-
