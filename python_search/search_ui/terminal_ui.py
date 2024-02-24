@@ -1,16 +1,20 @@
+from concurrent.futures import ProcessPoolExecutor
 import os
 import sys
 from typing import List, Any
-from subprocess import Popen
 
 from getch import getch
 import nltk
+from python_search.search_ui.search_actions import Actions
 
 tokenizer = nltk.tokenize.RegexpTokenizer(r"\w+")
 lemmatizer = nltk.stem.WordNetLemmatizer()
 
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
+
+config = ConfigurationLoader().load_config()
 
 class TermUI:
     MAX_LINE_SIZE = 80
@@ -18,18 +22,18 @@ class TermUI:
     MAX_CONTENT_SIZE = 47
     NUMBER_ENTTRIES_RENDER = 15
 
-    _documents = None
+    _documents_future = None
+    commands = None
+    documents = None
 
     def __init__(self) -> None:
         self.theme = get_current_theme()
         self.cf = self.theme.get_colorful()
         self.actions = Actions()
+        self.commands = config.commands
 
     def run(self):
-        from python_search.configuration.loader import ConfigurationLoader
 
-        config = ConfigurationLoader().load_config()
-        self.commands = config.commands
         entries: List[str] = list(self.commands.keys())
 
         os.system("clear")
@@ -40,8 +44,8 @@ class TermUI:
 
         while True:
             if self.query:
-                tokenized_query = self.tokenize(self.query)
-                self.matches = self.get_bm25().get_top_n(
+                tokenized_query = tokenize(self.query)
+                self.matches = self.read_bm25().get_top_n(
                     tokenized_query, entries, n=self.NUMBER_ENTTRIES_RENDER
                 )
             else:
@@ -56,7 +60,8 @@ class TermUI:
 
             self.print_entries(tokenized_query)
             # build bm25 index while the user types
-            self.get_bm25()
+
+            self.setup_documents()
             c = self.get_caracter()
             self.process_chars(self.query, c)
 
@@ -119,20 +124,18 @@ class TermUI:
             self.query += c
             self.selected_row = 0
 
-    def get_bm25(self):
-        if self._documents is None:
-            self._documents = self.setup_documents()
-        return self._documents
-
     def setup_documents(self):
-        tokenized_corpus = [
-            self.tokenize((key + str(value))) for key, value in self.commands.items()
-        ]
-        from rank_bm25 import BM25Okapi as BM25
+        if not self._documents_future:
+            with ProcessPoolExecutor() as executor:
+                future = executor.submit(setup_bm25)
+                self._documents_future = future
 
-        bm25 = BM25(tokenized_corpus)
+    def read_bm25(self):
+        if not self.documents:
+            self.documents = self._documents_future.result()
+        
+        return self.documents
 
-        return bm25
 
     def print_highlighted(self, key: str, entry: Any) -> None:
         key_part = self.cf.bold(
@@ -160,11 +163,6 @@ class TermUI:
         )
         print(f" {key_part} {body_part} " + self.cf.entrytype(f"({entry.get_type_str()})"))
 
-    def tokenize(self, string):
-        tokens = tokenizer.tokenize(string)
-        lemmas = [lemmatizer.lemmatize(t) for t in tokens]
-        return lemmas
-
     def control_size(self, a_string, num_chars):
         """
         Cuts when there is too long string and ads spaces when htere are too few.
@@ -175,34 +173,21 @@ class TermUI:
             return a_string + " " * (num_chars - len(a_string))
 
 
-class Actions():
-    def search_in_google(self, query):
-        Popen(
-            f'clipboard set_content "{query}"  && run_key "search in google using clipboard content" &>/dev/null',
-            stdout=None,
-            stderr=None,
-            shell=True,
-        )
+def tokenize(string):
+    tokens = tokenizer.tokenize(string)
+    lemmas = [lemmatizer.lemmatize(t) for t in tokens]
+    return lemmas
 
-    def copy_entry_value_to_clipboard(self, entry_key):
-        Popen(
-            f'share_entry share_only_value "{entry_key}" &>/dev/null',
-            stdout=None,
-            stderr=None,
-            shell=True,
-        )
 
-    def edit_key(self, key):
-        Popen(
-            f'entries_editor edit_key "{key}"  &>/dev/null',
-            stdout=None,
-            stderr=None,
-            shell=True,
-        )
+def setup_bm25():
 
-    def run_key(self, key):
-        command = f'run_key "{key}" &>/dev/null'
-        Popen(command, stdout=None, stderr=None, shell=True)
+    tokenized_corpus = [
+        tokenize((key + str(value))) for key, value in  config.commands.items()
+    ]
+    from rank_bm25 import BM25Okapi as BM25
+
+    bm25 = BM25(tokenized_corpus)
+    return bm25
 
 
 def main():
