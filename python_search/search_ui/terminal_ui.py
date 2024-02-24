@@ -101,10 +101,10 @@ class TermUI:
             self.selected_row = self.selected_row - 1
         elif c == "+":
             sys.exit(0)
-        elif ord_c == 68 or ord_c == 39:
+        elif ord_c == 68 or c == ";":
             # clean query shortucts
             self.query = ""
-        elif ord_c == 67 or c == ";"  or c == "\\":
+        elif ord_c == 67 or c == "\\" :
             sys.exit(0)
         elif c == "-":
             # go up and clear
