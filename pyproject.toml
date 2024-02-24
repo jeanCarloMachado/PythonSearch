@@ -1,10 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.28.0"
-
-[tool.poetry]
-name = "python-search"
-version = "0.30.0"
+version = "0.31"
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
