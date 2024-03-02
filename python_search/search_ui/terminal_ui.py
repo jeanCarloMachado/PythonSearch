@@ -31,6 +31,8 @@ class TermUI:
         self.cf = self.theme.get_colorful()
         self.actions = Actions()
         self.commands = config.commands
+        #from tiny_data_wharehouse.data_wharehouse import DataWharehouse
+        #self.tindw = DataWharehouse()
 
     def run(self):
 
@@ -91,6 +93,7 @@ class TermUI:
         elif ord_c == 10:
             # enter
             self.actions.run_key(self.matches[self.selected_row])
+            #self.tindw.write_event('TypedQuery', {'query': self.query, 'executed': True})
         elif ord_c == 9:
             # tab
             self.actions.edit_key(self.matches[self.selected_row])
