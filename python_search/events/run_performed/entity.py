@@ -14,9 +14,9 @@ class EntryExecuted(BaseModel):
     key: str
     # for when a query was typed by the user
     # @todo rename to something more meaningful
-    query_input: str
+    query_input: Optional[str] = None
     # for when it is started from a shortcut
-    shortcut: str
+    shortcut: Optional[str] = None
     # unix timestamp
     timestamp: Optional[str] = None
     rank_uuid: Optional[str] = None

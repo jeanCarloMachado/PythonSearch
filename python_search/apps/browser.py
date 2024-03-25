@@ -39,6 +39,7 @@ class Browser:
 
         focus_title: to focus on a window that behaves like an app
         """
+        url = url.strip()
         cmd_to_run = self.open_shell_cmd(
             url, app_mode, incognito, browser, focus_title=focus_title
         )
@@ -76,6 +77,10 @@ class Browser:
             return self._firefox(url_expr)
 
         return self.fail_safe(url_expr)
+
+    def open_stdin(self):
+        import sys
+        self.open(sys.stdin.read())
 
     def _firefox(self, url: str):
         return "open -a Firefox {url}" if self._is_mac() else f"firefox {url}"
