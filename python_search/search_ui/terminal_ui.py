@@ -1,20 +1,13 @@
-from concurrent.futures import ProcessPoolExecutor
+import asyncio
 import os
 import sys
 from typing import List, Any
 
 from getch import getch
-import nltk
 from python_search.search_ui.search_actions import Actions
 
-tokenizer = nltk.tokenize.RegexpTokenizer(r"\w+")
-lemmatizer = nltk.stem.WordNetLemmatizer()
-
-from python_search.configuration.loader import ConfigurationLoader
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
-
-config = ConfigurationLoader().load_config()
 
 class TermUI:
     MAX_LINE_SIZE = 80
@@ -30,12 +23,31 @@ class TermUI:
         self.theme = get_current_theme()
         self.cf = self.theme.get_colorful()
         self.actions = Actions()
-        self.commands = config.commands
-        #from tiny_data_wharehouse.data_wharehouse import DataWharehouse
-        #self.tindw = DataWharehouse()
+        import nltk
+        self.tokenizer = nltk.tokenize.RegexpTokenizer(r"\w+")
+        self.lemmatizer = nltk.stem.WordNetLemmatizer()
+        from python_search.configuration.loader import ConfigurationLoader
+        self.commands = ConfigurationLoader().load_config().commands
+        self.bm25_task = asyncio.create_task(self.setup_bm25())
 
-    def run(self):
+    async def setup_bm25(self):
+        tokenized_corpus = [
+            self.tokenize((key + str(value))) for key, value in self.commands.items()
+        ]
+        from rank_bm25 import BM25Okapi as BM25
 
+        bm25 = BM25(tokenized_corpus)
+        return bm25
+
+    def tokenize(self, string):
+        tokens = self.tokenizer.tokenize(string)
+        lemmas = [self.lemmatizer.lemmatize(t) for t in tokens]
+        return lemmas
+
+    async def run(self):
+        """
+        Rrun the application main loop
+        """
         entries: List[str] = list(self.commands.keys())
 
         os.system("clear")
@@ -43,29 +55,37 @@ class TermUI:
         self.selected_row = 0
         # hide cursor
         print("\033[?25l", end="")
+        print(
+            self.cf.cursor(f"({len(self.commands)})> ")
+            + f"{self.cf.bold(self.cf.query(self.query))}"
+        )
+        self.matches = entries[0: self.NUMBER_ENTTRIES_RENDER]
+        tokenized_query = []
+        self.print_entries(tokenized_query)
 
         while True:
-            if self.query:
-                tokenized_query = tokenize(self.query)
-                self.matches = self.read_bm25().get_top_n(
-                    tokenized_query, entries, n=self.NUMBER_ENTTRIES_RENDER
-                )
-            else:
-                self.matches = entries[0 : self.NUMBER_ENTTRIES_RENDER]
-                tokenized_query = []
-
             os.system("clear")
             print(
                 self.cf.cursor(f"({len(self.commands)})> ")
                 + f"{self.cf.bold(self.cf.query(self.query))}"
             )
 
+            if self.query:
+                tokenized_query = self.tokenize(self.query)
+                try:
+                    self.bm25 = await self.bm25_task
+                    self.matches = self.bm25.get_top_n(
+                        tokenized_query, entries, n=self.NUMBER_ENTTRIES_RENDER
+                    )
+                except Exception:
+                    pass
+
             self.print_entries(tokenized_query)
             # build bm25 index while the user types
 
-            self.setup_documents()
             c = self.get_caracter()
             self.process_chars(self.query, c)
+
 
     def get_caracter(self):
         try:
@@ -127,18 +147,6 @@ class TermUI:
             self.query += c
             self.selected_row = 0
 
-    def setup_documents(self):
-        if not self._documents_future:
-            with ProcessPoolExecutor() as executor:
-                future = executor.submit(setup_bm25)
-                self._documents_future = future
-
-    def read_bm25(self):
-        if not self.documents:
-            self.documents = self._documents_future.result()
-        
-        return self.documents
-
 
     def print_highlighted(self, key: str, entry: Any) -> None:
         key_part = self.cf.bold(
@@ -176,25 +184,14 @@ class TermUI:
             return a_string + " " * (num_chars - len(a_string))
 
 
-def tokenize(string):
-    tokens = tokenizer.tokenize(string)
-    lemmas = [lemmatizer.lemmatize(t) for t in tokens]
-    return lemmas
 
 
-def setup_bm25():
-
-    tokenized_corpus = [
-        tokenize((key + str(value))) for key, value in  config.commands.items()
-    ]
-    from rank_bm25 import BM25Okapi as BM25
-
-    bm25 = BM25(tokenized_corpus)
-    return bm25
 
 
+async def main_async():
+    await TermUI().run()
 def main():
-    TermUI().run()
+    asyncio.run(main_async())
 
 
 if __name__ == "__main__":
