@@ -32,7 +32,7 @@ class Daemon:
             schedule.run_pending()
             time.sleep(1)
 
-    def _rewrite_bm25_database(self):
+    def rewrite_bm25_database(self):
         from python_search.search_ui.bm25_search import Bm25Search
         Bm25Search().build_bm25()
         print("Bm25 database rewritten")
