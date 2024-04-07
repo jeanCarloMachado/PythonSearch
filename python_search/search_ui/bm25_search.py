@@ -1,36 +1,52 @@
 from typing import List
+import os
+from rank_bm25 import BM25Okapi as BM25
+import nltk
+from python_search.configuration.loader import ConfigurationLoader
 
 
-class Search:
+class Bm25Search:
+    DATABASE_LOCATION = '/tmp/bm25.pickle'
 
     NUMBER_ENTRIES_TO_RETURN= 15
-    def __init__(self):
-        import nltk
+    def __init__(self, number_entries_to_return = None):
         self.tokenizer = nltk.tokenize.RegexpTokenizer(r"\w+")
         self.lemmatizer = nltk.stem.WordNetLemmatizer()
-        from python_search.configuration.loader import ConfigurationLoader
         self.commands = ConfigurationLoader().load_config().commands
         self.entries: List[str] = list(self.commands.keys())
         self.bm25 = self.setup_bm25()
+        self.number_entries_to_return = number_entries_to_return if number_entries_to_return else self.NUMBER_ENTRIES_TO_RETURN
+
+    def searialize_database(self, bm25):
+        import pickle
+        with open(self.DATABASE_LOCATION, "wb") as f:
+            pickle.dump(bm25, f)
+
+    def desearialize_database(self):
+        import pickle
+        with open(self.DATABASE_LOCATION, "rb") as f:
+            return pickle.load(f)
 
     def setup_bm25(self):
+        if os.path.exists(self.DATABASE_LOCATION):
+            print("Loading bm25 from disk")
+            return self.desearialize_database()
+
         tokenized_corpus = [
             self.tokenize((key + str(value))) for key, value in self.commands.items()
         ]
-        from rank_bm25 import BM25Okapi as BM25
 
         bm25 = BM25(tokenized_corpus)
+        self.searialize_database(bm25)
+
         return bm25
 
     def search(self, query):
-        if not query:
-            return self.entries[0: self.NUMBER_ENTRIES_TO_RETURN], []
-
 
         tokenized_query = self.tokenize(query)
 
         matches = self.bm25.get_top_n(
-            tokenized_query, self.entries, n=self.NUMBER_ENTRIES_TO_RETURN
+            tokenized_query, self.entries, n=self.number_entries_to_return
         )
 
         return matches, tokenized_query
@@ -40,3 +56,9 @@ class Search:
         tokens = self.tokenizer.tokenize(string)
         lemmas = [self.lemmatizer.lemmatize(t) for t in tokens]
         return lemmas
+
+
+if __name__ == "__main__":
+    import fire
+    fire.Fire()
+

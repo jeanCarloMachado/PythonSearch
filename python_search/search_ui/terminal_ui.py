@@ -5,17 +5,18 @@ from typing import Any
 
 from getch import getch
 
-from python_search.search_ui.bm25_search import Search
+from python_search.search_ui.bm25_search import Bm25Search
 from python_search.search_ui.search_actions import Actions
 
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 
-
 class TermUI:
     MAX_LINE_SIZE = 80
     MAX_TITLE_SIZE = 40
     MAX_CONTENT_SIZE = 47
+    NUMBER_ENTRIES_TO_RETURN = 16
+
 
     _documents_future = None
     commands = None
@@ -29,7 +30,7 @@ class TermUI:
         self.commands = ConfigurationLoader().load_config().commands
         from python_search.configuration.loader import ConfigurationLoader
         self.commands = ConfigurationLoader().load_config().commands
-        self.search = Search()
+        self.search = Bm25Search(number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
 
 
     async def run(self):
@@ -37,19 +38,17 @@ class TermUI:
         Rrun the application main loop
         """
 
-        os.system("clear")
         self.query = ""
         self.selected_row = 0
         # hide cursor
-        print("\033[?25l", end="")
         self.print_first_line()
+        self.hide_cursor()
 
         self.matches, selected_query_terms = self.search.search(query='')
         self.print_entries(self.matches, selected_query_terms)
 
         while True:
             self.print_first_line()
-
             self.matches, selected_query_terms = self.search.search(query=self.query)
 
             self.print_entries(self.matches, selected_query_terms)
@@ -58,20 +57,20 @@ class TermUI:
             c = self.get_caracter()
             self.process_chars(self.query, c)
 
+    def hide_cursor(self):
+        print("\033[?25l", end="")
     def get_caracter(self):
         try:
             return getch()
         except Exception as e:
-            print(e)
             return " "
 
     def print_first_line(self):
-        os.system("clear")
         print(
+            "\x1b[2J\x1b[H" +
             self.cf.cursor(f"({len(self.commands)})> ")
             + f"{self.cf.bold(self.cf.query(self.query))}"
         )
-
 
     def print_entries(self, matches, tokenized_query):
         # print the matches
