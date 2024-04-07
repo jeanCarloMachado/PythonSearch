@@ -22,6 +22,8 @@ class Bm25Search:
         with open(self.DATABASE_LOCATION, "wb") as f:
             pickle.dump(bm25, f)
 
+        print("New bm25 config saved at /tmp/bm25.pickle")
+
     def desearialize_database(self):
         import pickle
         with open(self.DATABASE_LOCATION, "rb") as f:
@@ -32,6 +34,9 @@ class Bm25Search:
             print("Loading bm25 from disk")
             return self.desearialize_database()
 
+        return self.build_bm25()
+
+    def build_bm25(self):
         tokenized_corpus = [
             self.tokenize((key + str(value))) for key, value in self.commands.items()
         ]
@@ -42,6 +47,9 @@ class Bm25Search:
         return bm25
 
     def search(self, query):
+
+        if not query:
+            return self.entries[0:self.number_entries_to_return], []
 
         tokenized_query = self.tokenize(query)
 

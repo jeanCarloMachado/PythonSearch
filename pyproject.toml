@@ -27,6 +27,9 @@ python-dateutil = "^2.8.2"
 chardet = "^5.1.0"
 colorful = "^0.5.5"
 openapi = "^1.1.0"
+schedule = "^1.2.1"
+python-daemon = "^3.0.1"
+
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -89,4 +92,5 @@ start_streamlit_app = 'start_streamlit_app:main'
 llm_rank = 'python_search.ps_llm.t5.inference:main'
 llm_cli = 'python_search.ps_llm.llm_cli:main'
 ps_bundle = 'bundle:main'
+ps_daemon =  'python_search.daemon:main'
 
