@@ -1,19 +1,21 @@
 import asyncio
 import os
 import sys
-from typing import List, Any
+from typing import Any
 
 from getch import getch
+
+from python_search.search_ui.bm25_search import Search
 from python_search.search_ui.search_actions import Actions
 
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 
+
 class TermUI:
     MAX_LINE_SIZE = 80
     MAX_TITLE_SIZE = 40
     MAX_CONTENT_SIZE = 47
-    NUMBER_ENTTRIES_RENDER = 15
 
     _documents_future = None
     commands = None
@@ -23,69 +25,38 @@ class TermUI:
         self.theme = get_current_theme()
         self.cf = self.theme.get_colorful()
         self.actions = Actions()
-        import nltk
-        self.tokenizer = nltk.tokenize.RegexpTokenizer(r"\w+")
-        self.lemmatizer = nltk.stem.WordNetLemmatizer()
         from python_search.configuration.loader import ConfigurationLoader
         self.commands = ConfigurationLoader().load_config().commands
-        self.bm25_task = asyncio.create_task(self.setup_bm25())
+        from python_search.configuration.loader import ConfigurationLoader
+        self.commands = ConfigurationLoader().load_config().commands
+        self.search = Search()
 
-    async def setup_bm25(self):
-        tokenized_corpus = [
-            self.tokenize((key + str(value))) for key, value in self.commands.items()
-        ]
-        from rank_bm25 import BM25Okapi as BM25
-
-        bm25 = BM25(tokenized_corpus)
-        return bm25
-
-    def tokenize(self, string):
-        tokens = self.tokenizer.tokenize(string)
-        lemmas = [self.lemmatizer.lemmatize(t) for t in tokens]
-        return lemmas
 
     async def run(self):
         """
         Rrun the application main loop
         """
-        entries: List[str] = list(self.commands.keys())
 
         os.system("clear")
         self.query = ""
         self.selected_row = 0
         # hide cursor
         print("\033[?25l", end="")
-        print(
-            self.cf.cursor(f"({len(self.commands)})> ")
-            + f"{self.cf.bold(self.cf.query(self.query))}"
-        )
-        self.matches = entries[0: self.NUMBER_ENTTRIES_RENDER]
-        tokenized_query = []
-        self.print_entries(tokenized_query)
+        self.print_first_line()
+
+        self.matches, selected_query_terms = self.search.search(query='')
+        self.print_entries(self.matches, selected_query_terms)
 
         while True:
-            os.system("clear")
-            print(
-                self.cf.cursor(f"({len(self.commands)})> ")
-                + f"{self.cf.bold(self.cf.query(self.query))}"
-            )
+            self.print_first_line()
 
-            if self.query:
-                tokenized_query = self.tokenize(self.query)
-                try:
-                    self.bm25 = await self.bm25_task
-                    self.matches = self.bm25.get_top_n(
-                        tokenized_query, entries, n=self.NUMBER_ENTTRIES_RENDER
-                    )
-                except Exception:
-                    pass
+            self.matches, selected_query_terms = self.search.search(query=self.query)
 
-            self.print_entries(tokenized_query)
+            self.print_entries(self.matches, selected_query_terms)
             # build bm25 index while the user types
 
             c = self.get_caracter()
             self.process_chars(self.query, c)
-
 
     def get_caracter(self):
         try:
@@ -94,9 +65,17 @@ class TermUI:
             print(e)
             return " "
 
-    def print_entries(self, tokenized_query):
+    def print_first_line(self):
+        os.system("clear")
+        print(
+            self.cf.cursor(f"({len(self.commands)})> ")
+            + f"{self.cf.bold(self.cf.query(self.query))}"
+        )
+
+
+    def print_entries(self, matches, tokenized_query):
         # print the matches
-        for i, key in enumerate(self.matches):
+        for i, key in enumerate(matches):
             entry = Entry(key, self.commands[key])
 
             if i == self.selected_row:
@@ -113,7 +92,6 @@ class TermUI:
         elif ord_c == 10:
             # enter
             self.actions.run_key(self.matches[self.selected_row])
-            #self.tindw.write_event('TypedQuery', {'query': self.query, 'executed': True})
         elif ord_c == 9:
             # tab
             self.actions.edit_key(self.matches[self.selected_row])
@@ -182,8 +160,6 @@ class TermUI:
             return a_string[0 : num_chars - 3] + "..."
         else:
             return a_string + " " * (num_chars - len(a_string))
-
-
 
 
 
