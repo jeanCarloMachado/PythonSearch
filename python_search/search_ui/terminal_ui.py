@@ -14,7 +14,7 @@ class TermUI:
     MAX_LINE_SIZE = 80
     MAX_TITLE_SIZE = 40
     MAX_CONTENT_SIZE = 47
-    NUMBER_ENTRIES_TO_RETURN = 16
+    NUMBER_ENTRIES_TO_RETURN = 15
 
 
     _documents_future = None
@@ -106,7 +106,7 @@ class TermUI:
         elif c == "+":
             sys.exit(0)
         elif ord_c == 68 or c == ";":
-            # clean query shortucts
+            # clean query shortcuts
             self.query = ""
         elif ord_c == 67 or c == "\\" :
             sys.exit(0)
@@ -122,7 +122,6 @@ class TermUI:
         elif c.isalnum() or c == " ":
             self.query += c
             self.selected_row = 0
-
 
     def print_highlighted(self, key: str, entry: Any) -> None:
         key_part = self.cf.bold(
