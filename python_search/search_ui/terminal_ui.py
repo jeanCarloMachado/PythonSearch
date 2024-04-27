@@ -105,7 +105,7 @@ class TermUI:
             self.selected_row = self.selected_row - 1
         elif c == "+":
             sys.exit(0)
-        elif ord_c == 68:
+        elif ord_c == 68 or c == ';':
             # clean query shortcuts
             self.query = ""
         elif ord_c == 67 or c == "\\" :
@@ -128,7 +128,7 @@ class TermUI:
             self.cf.selected(f" {self.control_size(key, self.MAX_TITLE_SIZE)}")
         )
         body_part = f" {self.cf.bold(self.cf.entrycontentselected(self.control_size(entry.get_content_str(strip_new_lines=True).strip(), self.MAX_CONTENT_SIZE)))} "
-        type_part = self.cf.entrytype(f"({entry.get_type_str()}) ")
+        type_part = self.cf.entrytype(f"{entry.get_type_str()} ")
         print(key_part + body_part + type_part)
 
     def print_normal_row(self, key, entry, tokenized_query):
@@ -147,7 +147,7 @@ class TermUI:
                 self.MAX_CONTENT_SIZE,
             )
         )
-        print(f" {key_part} {body_part} " + self.cf.entrytype(f"({entry.get_type_str()})"))
+        print(f" {key_part} {body_part} " + self.cf.entrytype(f"{entry.get_type_str()}"))
 
     def control_size(self, a_string, num_chars):
         """

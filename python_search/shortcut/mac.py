@@ -4,7 +4,7 @@ import subprocess
 import shutil
 from typing import Optional
 
-from python_search.search_ui.kitty import FzfInKitty
+from python_search.search_ui.kitty import KittySearch
 
 
 class Mac:
@@ -44,7 +44,7 @@ class Mac:
             "⌃Space",
             "Launch python search",
             Mac.START_SHORTCUT_NUMBER,
-            FzfInKitty.focus_kitty_command() + " || python_search_search launch",
+            KittySearch.focus_kitty_command() + " || python_search_search launch",
         )
         Mac.START_SHORTCUT_NUMBER += 1
 

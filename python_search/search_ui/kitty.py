@@ -6,12 +6,12 @@ import sys
 from python_search.environment import is_mac
 
 
-class FzfInKitty:
+class KittySearch:
     """
     Renders the search ui using fzf + termite terminal
     """
 
-    _DEFAULT_WINDOW_SIZE = (1000, 350)
+    _DEFAULT_WINDOW_SIZE = (985, 345)
 
     _configuration = None
 
@@ -42,8 +42,8 @@ class FzfInKitty:
 
     @staticmethod
     def run() -> None:
-        if not FzfInKitty.try_to_focus():
-            FzfInKitty().launch()
+        if not KittySearch.try_to_focus():
+            KittySearch().launch()
 
     @staticmethod
     def try_to_focus():
@@ -53,14 +53,14 @@ class FzfInKitty:
         if not os.path.exists("/tmp/mykitty"):
             return False
 
-        result = os.system(FzfInKitty.focus_kitty_command())
+        result = os.system(KittySearch.focus_kitty_command())
 
         return result == 0
 
     @staticmethod
     def focus_or_open(configuration):
-        if not FzfInKitty.try_to_focus():
-            FzfInKitty(configuration).launch()
+        if not KittySearch.try_to_focus():
+            KittySearch(configuration).launch()
 
     @staticmethod
     def focus_kitty_command():
@@ -109,7 +109,7 @@ def get_kitty_cmd() -> str:
 def main():
     import fire
 
-    fire.Fire(FzfInKitty)
+    fire.Fire(KittySearch)
 
 
 if __name__ == "__main__":

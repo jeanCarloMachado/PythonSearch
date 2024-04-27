@@ -9,7 +9,7 @@ from python_search.error.exception import notify_exception
 from python_search.events.run_performed import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
-from python_search.search_ui.kitty import FzfInKitty
+from python_search.search_ui.kitty import KittySearch
 
 
 class PythonSearchCli:
@@ -74,7 +74,7 @@ class PythonSearchCli:
         Opens the Search UI. Main entrypoint of the application
         """
 
-        FzfInKitty.focus_or_open(self.configuration)
+        KittySearch.focus_or_open(self.configuration)
 
     def register_new_ui(self):
         """
