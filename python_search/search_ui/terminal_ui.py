@@ -99,13 +99,13 @@ class TermUI:
         elif ord_c == 47:
             # ?
             self.actions.search_in_google(self.query)
-        elif ord_c == 66:
+        elif ord_c == 66 or c == '.':
             self.selected_row = self.selected_row + 1
-        elif ord_c == 65:
+        elif ord_c == 65 or c == ',':
             self.selected_row = self.selected_row - 1
         elif c == "+":
             sys.exit(0)
-        elif ord_c == 68 or c == ";":
+        elif ord_c == 68:
             # clean query shortcuts
             self.query = ""
         elif ord_c == 67 or c == "\\" :
