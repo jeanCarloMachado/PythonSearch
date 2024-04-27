@@ -2,7 +2,6 @@ from typing import List
 
 from python_search.configuration.loader import ConfigurationLoader
 
-
 class EntryChangeDetector:
 
     HASH_FILE = "/tmp/entries_md5"

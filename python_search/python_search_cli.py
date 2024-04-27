@@ -118,11 +118,6 @@ class PythonSearchCli:
 
         return ShortcutGenerator(self.configuration).configure
 
-    def _features(self):
-        """Feature toggle system"""
-        from python_search.feature_toggle import FeatureToggle
-
-        return FeatureToggle()
 
     def _utils(self):
         """Here commands that are small topics and dont fit the rest"""

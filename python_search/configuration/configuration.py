@@ -4,8 +4,6 @@ from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
-from python_search.ps_llm.llm_config import CustomLLMConfig
-
 
 class PythonSearchConfiguration(EntriesGroup):
     """
@@ -42,7 +40,6 @@ class PythonSearchConfiguration(EntriesGroup):
         collect_data: bool = False,
         entry_generation=False,
         privacy_sensitive_terms: Optional[List[str]] = None,
-        custom_llm_config: Optional[CustomLLMConfig] = None,
     ):
         """
 
@@ -83,34 +80,6 @@ class PythonSearchConfiguration(EntriesGroup):
         self.collect_data = collect_data
         self.entry_generation = entry_generation
         self.privacy_sensitive_terms = privacy_sensitive_terms
-        self.custom_llm_config = custom_llm_config
-
-    def get_next_item_predictor_model(self):
-        """
-        Return the model used by the application
-
-        :return:
-        """
-        version = "v2"
-
-        if version == "v1":
-            from python_search.next_item_predictor.next_item_model_v2 import (
-                NextItemModelV1,
-            )
-
-            return NextItemModelV1()
-        else:
-            from python_search.next_item_predictor.next_item_model_v2 import (
-                NextItemBaseModelV2,
-            )
-
-            return NextItemBaseModelV2()
-
-    def is_on_change_rank_enabled(self):
-        """
-        Enables the behaviour of ranking fzf on any type and given chat-gpt completions around it
-        """
-        return False
 
     def get_text_editor(self):
         return self._default_text_editor
