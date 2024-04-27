@@ -12,8 +12,8 @@ from python_search.core_entities.core_entities import Entry
 
 class TermUI:
     MAX_LINE_SIZE = 80
-    MAX_TITLE_SIZE = 40
-    MAX_CONTENT_SIZE = 47
+    MAX_KEY_SIZE = 45
+    MAX_CONTENT_SIZE = 40
     NUMBER_ENTRIES_TO_RETURN = 15
 
 
@@ -125,14 +125,14 @@ class TermUI:
 
     def print_highlighted(self, key: str, entry: Any) -> None:
         key_part = self.cf.bold(
-            self.cf.selected(f" {self.control_size(key, self.MAX_TITLE_SIZE)}")
+            self.cf.selected(f" {self.control_size(key, self.MAX_KEY_SIZE)}")
         )
         body_part = f" {self.cf.bold(self.cf.entrycontentselected(self.control_size(entry.get_content_str(strip_new_lines=True).strip(), self.MAX_CONTENT_SIZE)))} "
         type_part = self.cf.entrytype(f"{entry.get_type_str()} ")
         print(key_part + body_part + type_part)
 
     def print_normal_row(self, key, entry, tokenized_query):
-        key_input = self.control_size(key, self.MAX_TITLE_SIZE)
+        key_input = self.control_size(key, self.MAX_KEY_SIZE)
         key_part = " ".join(
             [
                 str(self.cf.partialmatch(key_fragment))
