@@ -53,6 +53,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 ps_search = 'python_search.search.search_entries:main'
+pys = 'python_search.python_search_cli:main'
 python_search = 'python_search.python_search_cli:main'
 next_item_pipeline = 'python_search.next_item_predictor.next_item_pipeline:main'
 next_item = 'python_search.next_item_predictor.next_item_pipeline:main'

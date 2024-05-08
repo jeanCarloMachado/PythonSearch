@@ -29,6 +29,10 @@ class EntriesLoader:
             ) and not detector.has_sentitive_content(i.key):
                 yield i
 
+
+    def entries_total(self) -> int:
+        return len(ConfigurationLoader().load_entries())
+
     @staticmethod
     def load_all_entries() -> List[Entry]:
         """

@@ -45,11 +45,13 @@ class EntryRunner:
             from_shortcut means that the key execution was triggered by a desktop shortcut
         """
 
-        # if from_shortcut:
-        #    from python_search.apps.notification_ui import send_notification
-        #    send_notification(f"Arrived at shortcut")
-
         key = str(Key.from_fzf(entry_text))
+        if not key:
+            raise Exception(f"No key found {key} from {entry_text}")
+
+        if from_shortcut is True:
+            from_shortcut = "True"
+
         input_str = key
         if wrap_in_terminal:
             os.environ["new-window-non-cli"] = "1"

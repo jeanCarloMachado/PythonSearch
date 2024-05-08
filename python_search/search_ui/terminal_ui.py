@@ -1,11 +1,12 @@
 import asyncio
 import sys
-from typing import Any
+from typing import Any, List
 
 from getch import getch
 
 from python_search.search_ui.bm25_search import Bm25Search
 from python_search.search_ui.search_actions import Actions
+from python_search.search_ui.semantic_search import SemanticSearch
 
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
@@ -16,20 +17,39 @@ class TermUI:
     MAX_CONTENT_SIZE = 40
     NUMBER_ENTRIES_TO_RETURN = 15
 
-
     _documents_future = None
     commands = None
     documents = None
+
 
     def __init__(self) -> None:
         self.theme = get_current_theme()
         self.cf = self.theme.get_colorful()
         self.actions = Actions()
+        self.previous_query = ''
         from python_search.configuration.loader import ConfigurationLoader
         self.commands = ConfigurationLoader().load_config().commands
-        from python_search.configuration.loader import ConfigurationLoader
-        self.commands = ConfigurationLoader().load_config().commands
-        self.search = Bm25Search(number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
+
+        self.search_bm25 = Bm25Search(number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
+        self.search_semantic = SemanticSearch(number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
+
+    def search(self, query) -> List[str]:
+        """ gets 1 from each type of search at a time and merge them to remove duplicates"""
+
+        bm25_results = self.search_bm25.search(query)
+        semantic_results = self.search_semantic.search(query)
+
+        final_results= []
+        for i in range(self.NUMBER_ENTRIES_TO_RETURN):
+            if bm25_results[i] not in final_results and bm25_results[i] in self.commands:
+                final_results.append(bm25_results[i])
+
+            if semantic_results[i] not in final_results and semantic_results[i] in self.commands:
+                final_results.append(semantic_results[i])
+
+            if len(final_results) >= self.NUMBER_ENTRIES_TO_RETURN:
+                break
+        return final_results
 
 
     async def run(self):
@@ -43,14 +63,17 @@ class TermUI:
         self.print_first_line()
         self.hide_cursor()
 
-        self.matches, selected_query_terms = self.search.search(query='')
-        self.print_entries(self.matches, selected_query_terms)
+        self.matches = self.search(query='')
+        self.print_entries(self.matches)
 
         while True:
             self.print_first_line()
-            self.matches, selected_query_terms = self.search.search(query=self.query)
 
-            self.print_entries(self.matches, selected_query_terms)
+            if self.query != self.previous_query:
+                self.matches = self.search(query=self.query)
+            self.previous_query = self.query
+            self.previous_matches = self.matches
+            self.print_entries(self.matches)
             # build bm25 index while the user types
 
             c = self.get_caracter()
@@ -71,15 +94,18 @@ class TermUI:
             + f"{self.cf.bold(self.cf.query(self.query))}"
         )
 
-    def print_entries(self, matches, tokenized_query):
+    def print_entries(self, matches: List[str]):
         # print the matches
         for i, key in enumerate(matches):
-            entry = Entry(key, self.commands[key])
+            try:
+                entry = Entry(key, self.commands[key])
+            except Exception as e:
+                continue
 
             if i == self.selected_row:
                 self.print_highlighted(key, entry)
             else:
-                self.print_normal_row(key, entry, tokenized_query)
+                self.print_normal_row(key, entry)
 
     def process_chars(self, query, c):
         ord_c = ord(c)
@@ -131,28 +157,19 @@ class TermUI:
         type_part = self.cf.entrytype(f"{entry.get_type_str()} ")
         print(key_part + body_part + type_part)
 
-    def print_normal_row(self, key, entry, tokenized_query):
+    def print_normal_row(self, key, entry):
         key_input = self.control_size(key, self.MAX_KEY_SIZE)
-        key_part = " ".join(
-            [
-                str(self.cf.partialmatch(key_fragment))
-                if key_fragment in tokenized_query
-                else key_fragment
-                for key_fragment in key_input.split(" ")
-            ]
-        )
         body_part = self.cf.entrycontentunselected(
             self.control_size(
                 self.sanitize_line(entry.get_content_str(strip_new_lines=True)),
                 self.MAX_CONTENT_SIZE,
             )
         )
-        print(f" {key_part} {body_part} " + self.cf.entrytype(f"{entry.get_type_str()}"))
+        print(f" {key_input} {body_part} " + self.cf.entrytype(f"{entry.get_type_str()}"))
     def sanitize_line(self, line):
         line = line.strip()
         line.replace("\n", "")
         return line
-
 
     def control_size(self, a_string, num_chars):
         """
@@ -162,9 +179,6 @@ class TermUI:
             return a_string[0 : num_chars - 3] + "..."
         else:
             return a_string + " " * (num_chars - len(a_string))
-
-
-
 
 async def main_async():
     await TermUI().run()

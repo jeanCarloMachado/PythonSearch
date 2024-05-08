@@ -48,10 +48,10 @@ class Bm25Search:
 
         return bm25
 
-    def search(self, query):
 
+    def search(self, query: List[str] = None) -> List[str]:
         if not query:
-            return self.entries[0:self.number_entries_to_return], []
+            return self.entries[0:self.number_entries_to_return]
 
         tokenized_query = self.tokenize(query)
 
@@ -59,10 +59,10 @@ class Bm25Search:
             tokenized_query, self.entries, n=self.number_entries_to_return
         )
 
-        return matches, tokenized_query
+        return matches
 
 
-    def tokenize(self, string):
+    def tokenize(self, string) -> List[str]:
         tokens = self.tokenizer.tokenize(string)
         lemmas = [self.lemmatizer.lemmatize(t) for t in tokens]
         return lemmas

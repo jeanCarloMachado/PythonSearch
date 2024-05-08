@@ -1,9 +1,3 @@
-"""
-
-Core entities reused in the hole project.
-They should be side-effect free
-
-"""
 from __future__ import annotations
 
 from typing import Optional, Literal
