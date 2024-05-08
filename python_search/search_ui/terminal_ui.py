@@ -127,7 +127,7 @@ class TermUI:
         key_part = self.cf.bold(
             self.cf.selected(f" {self.control_size(key, self.MAX_KEY_SIZE)}")
         )
-        body_part = f" {self.cf.bold(self.cf.entrycontentselected(self.control_size(entry.get_content_str(strip_new_lines=True).strip(), self.MAX_CONTENT_SIZE)))} "
+        body_part = f" {self.cf.bold(self.cf.entrycontentselected(self.control_size(self.sanitize_line(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE)))} "
         type_part = self.cf.entrytype(f"{entry.get_type_str()} ")
         print(key_part + body_part + type_part)
 
@@ -143,11 +143,16 @@ class TermUI:
         )
         body_part = self.cf.entrycontentunselected(
             self.control_size(
-                entry.get_content_str(strip_new_lines=True).strip(),
+                self.sanitize_line(entry.get_content_str(strip_new_lines=True)),
                 self.MAX_CONTENT_SIZE,
             )
         )
         print(f" {key_part} {body_part} " + self.cf.entrytype(f"{entry.get_type_str()}"))
+    def sanitize_line(self, line):
+        line = line.strip()
+        line.replace("\n", "")
+        return line
+
 
     def control_size(self, a_string, num_chars):
         """

@@ -33,7 +33,7 @@ class EntryRunner:
         self,
         entry_text: str,
         query_used: str = "",
-        from_shortcut=False,
+        from_shortcut=None,
         wrap_in_terminal=False,
     ):
         """
