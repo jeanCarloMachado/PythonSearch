@@ -2,17 +2,17 @@ from typing import List
 
 from python_search.configuration.loader import ConfigurationLoader
 
+
 class EntryChangeDetector:
 
     HASH_FILE = "/tmp/entries_md5"
 
     def has_changed(self) -> bool:
-        result =  self.current_entries_md5() != self.previous_entries_md5()
+        result = self.current_entries_md5() != self.previous_entries_md5()
 
         if result:
             self.save_current_entries_md5()
         return result
-
 
     def previous_entries_md5(self) -> str:
         try:
@@ -25,9 +25,9 @@ class EntryChangeDetector:
         with open(self.HASH_FILE, "w") as file:
             file.write(self.current_entries_md5())
 
-
     def current_entries_md5(self) -> str:
         import hashlib
+
         self.commands = ConfigurationLoader().load_config().commands
         self.entries: List[str] = list(self.commands.keys())
 
@@ -38,5 +38,5 @@ class EntryChangeDetector:
 
 if __name__ == "__main__":
     import fire
-    fire.Fire(EntryChangeDetector)
 
+    fire.Fire(EntryChangeDetector)

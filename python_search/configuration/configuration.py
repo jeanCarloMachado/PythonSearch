@@ -5,6 +5,7 @@ from typing import Optional, List, Tuple, Literal
 from python_search.entries_group import EntriesGroup
 from python_search.features import PythonSearchFeaturesSupport
 
+
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search

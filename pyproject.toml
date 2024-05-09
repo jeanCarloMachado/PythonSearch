@@ -6,7 +6,7 @@ authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<=3.13"
-fire = "^0.4.0"
+fire = ">=0.6"
 pydantic = "^1.9.1"
 PyYAML = "^6.0"
 PySimpleGUI = "^4.60.1"
@@ -14,7 +14,7 @@ colorama = "^0.4.5"
 certifi = ">=2022.6.1"
 dill = "^0.3.5.1"
 matplotlib = { version = "^3.5.2", optional = true }
-pandas = { version = "^1.4.3", optional = true }
+pandas = { version = "*", optional = true }
 # needs to be pinned down due to bug
 numpy = { version = ">=1.24.3", optional = true }
 pdoc3 = {version = "^0.10.0", optional = true}
@@ -27,6 +27,7 @@ openapi = "^1.1.0"
 schedule = "^1.2.1"
 python-daemon = "^3.0.1"
 chromadb = "^0.5.0"
+tiny-data-warehouse = "^0.1.5"
 
 
 [tool.poetry.dev-dependencies]

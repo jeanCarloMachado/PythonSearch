@@ -80,6 +80,7 @@ class Browser:
 
     def open_stdin(self):
         import sys
+
         self.open(sys.stdin.read())
 
     def _firefox(self, url: str):

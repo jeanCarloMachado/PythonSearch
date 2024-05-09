@@ -1,4 +1,5 @@
 """ Module responsible for the logic of editing entry files """
+
 import logging
 import subprocess
 from typing import Optional

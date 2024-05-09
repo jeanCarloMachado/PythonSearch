@@ -1,7 +1,7 @@
 from subprocess import Popen
 
 
-class Actions():
+class Actions:
     def search_in_google(self, query):
         Popen(
             f'clipboard set_content "{query}"  && run_key "search in google using clipboard content" &>/dev/null',

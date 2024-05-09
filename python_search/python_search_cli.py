@@ -71,7 +71,6 @@ class PythonSearchCli:
         self.events = python_search.events
         self._semantic_search = SemanticSearch
 
-
     def search(self, only_fzf=False):
         """
         Opens the Search UI. Main entrypoint of the application
@@ -120,7 +119,6 @@ class PythonSearchCli:
         from python_search.shortcut.generator import ShortcutGenerator
 
         return ShortcutGenerator(self.configuration).configure
-
 
     def _utils(self):
         """Here commands that are small topics and dont fit the rest"""

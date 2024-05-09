@@ -1,8 +1,10 @@
 import datetime
 
+
 class TimeBasedThemeSelector:
     HOUR_FROM = 8
     HOUR_TO = 17
+
     def get_theme(self) -> str:
         """
         Returns the theme to use based on the current time
@@ -12,6 +14,7 @@ class TimeBasedThemeSelector:
             return NewLight()
         else:
             return DesertTheme()
+
 
 class BaseTheme:
     colors = None
@@ -62,6 +65,7 @@ class NewLight(BaseTheme):
         }
 
         super().__init__()
+
 
 class DesertTheme(BaseTheme):
     def __init__(self):
