@@ -27,6 +27,7 @@ class TermUI:
         self.cf = self.theme.get_colorful()
         self.actions = Actions()
         self.previous_query = ""
+        self.tdw = None
         from python_search.configuration.loader import ConfigurationLoader
 
         self.commands = ConfigurationLoader().load_config().commands
@@ -69,6 +70,7 @@ class TermUI:
 
         self.query = ""
         self.selected_row = 0
+        self.selected_query = -1
         # hide cursor
         self.print_first_line()
         self.hide_cursor()
@@ -118,7 +120,7 @@ class TermUI:
             else:
                 self.print_normal_row(key, entry)
 
-    def process_chars(self, query, c):
+    def process_chars(self, query: str, c: str):
         ord_c = ord(c)
         # test if the character is a delete (backspace)
         if ord_c == 127:
@@ -127,6 +129,10 @@ class TermUI:
         elif ord_c == 10:
             # enter
             self.actions.run_key(self.matches[self.selected_row])
+            if self.query:
+                self._get_data_warehouse().write_event(
+                    "python_search_typed_query", {"query": query}
+                )
         elif ord_c == 9:
             # tab
             self.actions.edit_key(self.matches[self.selected_row])
@@ -136,10 +142,20 @@ class TermUI:
         elif ord_c == 47:
             # ?
             self.actions.search_in_google(self.query)
-        elif ord_c == 66 or c == ".":
-            self.selected_row = self.selected_row + 1
-        elif ord_c == 65 or c == ",":
-            self.selected_row = self.selected_row - 1
+        # handle arrows
+        elif ord_c == 66:
+            if self.selected_row < len(self.matches) - 1:
+                self.selected_row = self.selected_row + 1
+        elif ord_c == 65:
+            if self.selected_row > 0:
+                self.selected_row = self.selected_row - 1
+        elif c == ".":
+            self.selected_query += 1
+            self.query = self.get_query(self.selected_query)
+        elif c == ",":
+            if self.selected_query >= 0:
+                self.selected_query -= 1
+            self.query = self.get_query(self.selected_query)
         elif c == "+":
             sys.exit(0)
         elif ord_c == 68 or c == ";":
@@ -159,6 +175,24 @@ class TermUI:
         elif c.isalnum() or c == " ":
             self.query += c
             self.selected_row = 0
+
+    def get_query(self, position):
+        # len
+        df = self._get_data_warehouse().event("python_search_typed_query")
+        if position >= len(df):
+            return ""
+
+        return df.sort_values(by="tdw_timestamp", ascending=False).iloc[position][
+            "query"
+        ]
+
+    def _get_data_warehouse(self):
+        if not self.tdw:
+            from tiny_data_warehouse import DataWarehouse
+
+            self.tdw = DataWarehouse()
+
+        return self.tdw
 
     def print_highlighted(self, key: str, entry: Any) -> None:
         key_part = self.cf.bold(
