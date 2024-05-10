@@ -24,7 +24,7 @@ class RegisterNew:
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
     def launch_ui(self):
-        from declarative_ui import UIBuilder
+        from python_search.declarative_ui import UIBuilder
         from python_search.apps.clipboard import Clipboard
 
         clipboard_content = Clipboard().get_content()
