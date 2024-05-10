@@ -9,8 +9,8 @@ from python_search.error.exception import notify_exception
 from python_search.events.run_performed import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
-from python_search.search_ui.kitty import KittySearch
-from python_search.search_ui.semantic_search import SemanticSearch
+from python_search.search.search_ui.kitty import KittySearch
+from python_search.search.search_ui.semantic_search import SemanticSearch
 
 
 class PythonSearchCli:

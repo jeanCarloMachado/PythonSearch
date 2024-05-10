@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.31"
+version = "0.40"
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
@@ -73,7 +73,7 @@ aps_webapi = 'python_search.sdk.web_api_sdk:main'
 wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = []}
 events_etl = 'python_search.events.events_etl:main'
 chat_gpt = 'python_search.chat_gpt:main'
-term_ui = 'python_search.search_ui.terminal_ui:main'
+term_ui = 'python_search.search.search_ui.terminal_ui:main'
 entry_builder = 'python_search.entry_capture.entry_inserter_gui.entry_inserter_gui:main'
 prompt_editor = 'python_search.apps.prompt_editor:main'
 entry_embeddings = 'python_search.next_item_predictor.features.entry_embeddings:main'
@@ -81,11 +81,10 @@ entries_editor = 'python_search.entry_capture.entries_editor:main'
 register_new_launch_ui = 'python_search.entry_capture.entry_inserter_gui.register_new_gui:launch_ui'
 share_entry = 'python_search.share_entry:main'
 offline_evaluation = 'python_search.next_item_predictor.offline_evaluation:main'
-ps_fzf = 'python_search.search_ui.fzf:main'
 error_panel = 'python_search.error.error_pane:main'
 google_it = 'python_search.apps.google_it:main'
 recent_keys = 'python_search.events.latest_used_entries:main'
-python_search_search = 'python_search.search_ui.kitty:main'
+python_search_search = 'python_search.search.search_ui.kitty:main'
 entry_generator = 'python_search.entry_generator:main'
 ps_text_next_predictor = 'python_search.textual_next_predictor.predictor:main'
 start_streamlit_app = 'start_streamlit_app:main'

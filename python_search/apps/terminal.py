@@ -2,7 +2,6 @@ import os
 
 from python_search.configuration.loader import ConfigurationLoader
 
-
 class Terminal:
     """
     Terminal abstraction for Python Search
@@ -40,7 +39,7 @@ class Terminal:
         if hold_terminal_open_on_end:
             hold = " --hold "
 
-        from python_search.search_ui.kitty import get_kitty_cmd
+        from python_search.search.search_ui.kitty import get_kitty_cmd
 
         final_cmd = f'{get_kitty_cmd()} {hold} {Terminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
 

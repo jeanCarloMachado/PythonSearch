@@ -4,15 +4,16 @@ from typing import Any, List
 
 from getch import getch
 
-from python_search.search_ui.bm25_search import Bm25Search
-from python_search.search_ui.search_actions import Actions
-from python_search.search_ui.semantic_search import SemanticSearch
+from python_search.search.search_ui.bm25_search import Bm25Search
+from python_search.search.search_ui.search_actions import Actions
+from python_search.search.search_ui.semantic_search import SemanticSearch
 
+from python_search.configuration.loader import ConfigurationLoader
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 
 
-class TermUI:
+class SearchTerminalUi:
     MAX_LINE_SIZE = 80
     MAX_KEY_SIZE = 45
     MAX_CONTENT_SIZE = 40
@@ -28,7 +29,6 @@ class TermUI:
         self.actions = Actions()
         self.previous_query = ""
         self.tdw = None
-        from python_search.configuration.loader import ConfigurationLoader
 
         self.commands = ConfigurationLoader().load_config().commands
 
@@ -94,7 +94,7 @@ class TermUI:
     def hide_cursor(self):
         print("\033[?25l", end="")
 
-    def get_caracter(self):
+    def get_caracter(self) -> str:
         try:
             return getch()
         except Exception as e:
@@ -230,7 +230,7 @@ class TermUI:
 
 
 async def main_async():
-    await TermUI().run()
+    await SearchTerminalUi().run()
 
 
 def main():

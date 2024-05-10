@@ -10,7 +10,7 @@ from python_search.core_entities.core_entities import Key
 from python_search.interpreter.interpreter_matcher import InterpreterMatcher
 from python_search.logger import setup_run_key_logger
 from python_search.error.exception import notify_exception
-from python_search.search_ui.serialized_entry import (
+from python_search.search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
 
