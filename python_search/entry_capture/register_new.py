@@ -23,6 +23,30 @@ class RegisterNew:
         self.configuration = configuration
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
+    def launch_ui(self):
+        from declarative_ui import UIBuilder
+        from python_search.apps.clipboard import Clipboard
+
+        clipboard_content = Clipboard().get_content()
+        default_type = "snippet"
+        if clipboard_content.startswith("http"):
+            default_type = "url"
+        result = UIBuilder().build(
+            [
+                {"key": "key", "type": "input"},
+                {"key": "value", "type": "text", "value": clipboard_content},
+                {
+                    "key": "type",
+                    "type": "select",
+                    "value": default_type,
+                    "values": ["snippet", "cli_cmd", "cmd", "url", "file"],
+                },
+            ],
+            title="Register New Entry",
+        )
+
+        self.register(key=result["key"], value=result["value"], type=result["type"])
+
     @notify_exception()
     def register(self, *, key: str, value: str, type: str):
         """

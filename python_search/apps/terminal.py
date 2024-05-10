@@ -2,6 +2,7 @@ import os
 
 from python_search.configuration.loader import ConfigurationLoader
 
+
 class Terminal:
     """
     Terminal abstraction for Python Search
