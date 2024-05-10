@@ -57,8 +57,10 @@ class Entry:
         if "callable" in self.value and type(self.value['callable']) != str:
             value = self.value.get("callable")
             import dill
-
             result = dill.source.getsource(value)
+        elif "callable" in self.value:
+            result = self.value.get("callable")
+
         result = str(result)
 
         if strip_new_lines:

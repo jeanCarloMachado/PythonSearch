@@ -28,12 +28,18 @@ class EntryChangeDetector:
     def current_entries_md5(self) -> str:
         import hashlib
 
-        import subprocess
-        output = subprocess.getoutput('pys _entries_loader load_entries_as_json')
+        result = ""
 
-        # md5 call
-        result = hashlib.md5(output.encode())
-        return result.hexdigest()
+        try:
+            import subprocess
+
+            output = subprocess.getoutput("pys _entries_loader load_entries_as_json")
+            result = hashlib.md5(output.encode())
+            result = result.hexdigest()
+        except Exception as e:
+            pass
+
+        return result
 
 
 if __name__ == "__main__":

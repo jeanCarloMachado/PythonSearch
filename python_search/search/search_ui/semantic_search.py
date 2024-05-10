@@ -45,6 +45,8 @@ class SemanticSearch:
         return collection
 
     def search(self, query: str):
+        if not query:
+            query = ""
         results = self.collection.query(
             query_texts=[query], n_results=self.number_entries_to_return
         )["ids"][0]

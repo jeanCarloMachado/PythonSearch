@@ -30,10 +30,10 @@ class EntriesLoader:
 
         return json.dumps(result)
 
-
     @staticmethod
     def load_privacy_neutral_only() -> List[Entry]:
         from python_search.privacy.privacy_detector import PrivacyDetector
+
         detector = PrivacyDetector()
 
         for i in EntriesLoader.load_all_entries():
@@ -59,4 +59,5 @@ class EntriesLoader:
 
 if __name__ == "__main__":
     import fire
+
     fire.Fire(EntriesLoader)

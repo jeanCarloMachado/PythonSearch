@@ -28,12 +28,14 @@ class SearchTerminalUi:
         self.actions = Actions()
         self.previous_query = ""
         self.tdw = None
+        self.reloaded = False
 
         self.setup_entries()
 
     def setup_entries(self):
         import subprocess, json
-        output = subprocess.getoutput('pys _entries_loader load_entries_as_json ')
+
+        output = subprocess.getoutput("pys _entries_loader load_entries_as_json ")
         self.commands = json.loads(output)
 
         self.search_bm25 = Bm25Search(
@@ -42,7 +44,6 @@ class SearchTerminalUi:
         self.search_semantic = SemanticSearch(
             self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
         )
-
 
     def search(self, query) -> List[str]:
         """gets 1 from each type of search at a time and merge them to remove duplicates"""
@@ -86,8 +87,9 @@ class SearchTerminalUi:
         while True:
             self.print_first_line()
 
-            if self.query != self.previous_query:
+            if self.query != self.previous_query or self.reloaded:
                 self.matches = self.search(query=self.query)
+                self.reloaded = False
             self.previous_query = self.query
             self.previous_matches = self.matches
             self.print_entries(self.matches)
@@ -172,6 +174,7 @@ class SearchTerminalUi:
             print("Reloading data...")
             self.setup_entries()
             self.query = ""
+            self.reloaded = True
             self.selected_row = 0
         elif c == "-":
             # go up and clear
@@ -180,7 +183,6 @@ class SearchTerminalUi:
             self.query = " ".join(
                 list(filter(lambda x: x, self.query.split(" ")))[0:-1]
             )
-            # append a space in the end to make easy to contruct the next work
             self.query += " "
         elif c.isalnum() or c == " ":
             self.query += c

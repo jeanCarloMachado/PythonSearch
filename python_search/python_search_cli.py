@@ -73,7 +73,6 @@ class PythonSearchCli:
         self._semantic_search = SemanticSearch
         self._entries_loader = EntriesLoader
 
-
     def search(self, only_fzf=False):
         """
         Opens the Search UI. Main entrypoint of the application
