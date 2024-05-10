@@ -36,7 +36,6 @@ class PythonSearchConfiguration(EntriesGroup):
         default_text_editor: Optional[str] = None,
         fzf_theme: Literal["light", "solarized"] = "light",
         custom_window_size: Optional[Tuple[int, int]] = None,
-        use_webservice=False,
         rerank_via_model=None,
         collect_data: bool = False,
         entry_generation=False,
@@ -69,15 +68,12 @@ class PythonSearchConfiguration(EntriesGroup):
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
-        self._rerank_via_model_enabled = rerank_via_model
-
         self._initialization_time = datetime.datetime.now()
         self._default_text_editor = default_text_editor
         self._fzf_theme = fzf_theme
         if custom_window_size:
             self._custom_window_size = custom_window_size
 
-        self.use_webservice = use_webservice
         self.collect_data = collect_data
         self.entry_generation = entry_generation
         self.privacy_sensitive_terms = privacy_sensitive_terms

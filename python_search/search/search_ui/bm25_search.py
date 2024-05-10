@@ -2,7 +2,6 @@ from typing import List
 import os
 from rank_bm25 import BM25Okapi as BM25
 import nltk
-from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_change import EntryChangeDetector
 
 
@@ -11,10 +10,10 @@ class Bm25Search:
 
     NUMBER_ENTRIES_TO_RETURN = 15
 
-    def __init__(self, number_entries_to_return=None):
+    def __init__(self, entries, number_entries_to_return=None):
         self.tokenizer = nltk.tokenize.RegexpTokenizer(r"\w+")
         self.lemmatizer = nltk.stem.WordNetLemmatizer()
-        self.commands = ConfigurationLoader().load_config().commands
+        self.commands = entries
         self.entries: List[str] = list(self.commands.keys())
         self.entry_change_detector = EntryChangeDetector()
         self.bm25 = self.setup_bm25()
@@ -38,7 +37,7 @@ class Bm25Search:
         with open(self.DATABASE_LOCATION, "rb") as f:
             return pickle.load(f)
 
-    def setup_bm25(self):
+    def setup_bm25(self, force_rebuild=False):
         if (
             os.path.exists(self.DATABASE_LOCATION)
             and self.entry_change_detector.has_changed() is False

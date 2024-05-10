@@ -8,8 +8,13 @@ import os
 
 class SemanticSearch:
 
-    def __init__(self, number_entries_to_return=None):
+    def __init__(self, entries: dict = None, number_entries_to_return=None):
         self.setup()
+        if entries:
+            self.entries = EntriesLoader.convert_to_list_of_entries(entries)
+        else:
+            self.entries = EntriesLoader.load_all_entries()
+
         self.number_entries_to_return = (
             number_entries_to_return if number_entries_to_return else 15
         )
@@ -29,11 +34,7 @@ class SemanticSearch:
     def setup_entries(self):
         collection = self.client.get_or_create_collection("entries")
 
-        loader = EntriesLoader()
-        # load entries
-        entries: List[Entry] = loader.load_all_entries()
-
-        for entry in tqdm.tqdm(entries, total=loader.entries_total()):
+        for entry in tqdm.tqdm(self.entries):
             collection.upsert(
                 documents=[
                     entry.key + " " + entry.get_content_str() + entry.get_type_str()

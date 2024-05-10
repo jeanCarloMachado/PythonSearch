@@ -8,7 +8,6 @@ from python_search.search.search_ui.bm25_search import Bm25Search
 from python_search.search.search_ui.search_actions import Actions
 from python_search.search.search_ui.semantic_search import SemanticSearch
 
-from python_search.configuration.loader import ConfigurationLoader
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 
@@ -30,14 +29,20 @@ class SearchTerminalUi:
         self.previous_query = ""
         self.tdw = None
 
-        self.commands = ConfigurationLoader().load_config().commands
+        self.setup_entries()
+
+    def setup_entries(self):
+        import subprocess, json
+        output = subprocess.getoutput('pys _entries_loader load_entries_as_json ')
+        self.commands = json.loads(output)
 
         self.search_bm25 = Bm25Search(
-            number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
+            self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
         )
         self.search_semantic = SemanticSearch(
-            number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
+            self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
         )
+
 
     def search(self, query) -> List[str]:
         """gets 1 from each type of search at a time and merge them to remove duplicates"""
@@ -161,8 +166,13 @@ class SearchTerminalUi:
         elif ord_c == 68 or c == ";":
             # clean query shortcuts
             self.query = ""
-        elif ord_c == 67 or c == "\\":
+        elif ord_c == 67:
             sys.exit(0)
+        elif ord_c == 92:
+            print("Reloading data...")
+            self.setup_entries()
+            self.query = ""
+            self.selected_row = 0
         elif c == "-":
             # go up and clear
             self.selected_row = 0

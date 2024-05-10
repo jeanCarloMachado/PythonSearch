@@ -28,11 +28,11 @@ class EntryChangeDetector:
     def current_entries_md5(self) -> str:
         import hashlib
 
-        self.commands = ConfigurationLoader().load_config().commands
-        self.entries: List[str] = list(self.commands.keys())
+        import subprocess
+        output = subprocess.getoutput('pys _entries_loader load_entries_as_json')
 
         # md5 call
-        result = hashlib.md5(str(self.entries).encode())
+        result = hashlib.md5(output.encode())
         return result.hexdigest()
 
 
