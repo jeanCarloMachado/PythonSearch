@@ -39,9 +39,9 @@ class SearchTerminalUi:
         self.reloaded = False
         self.first_run = True
 
-        self.setup_entries()
+        self._setup_entries()
 
-    def setup_entries(self):
+    def _setup_entries(self):
         import subprocess, json
 
         output = subprocess.getoutput("pys _entries_loader load_entries_as_json ")
@@ -60,12 +60,12 @@ class SearchTerminalUi:
         Rrun the application main loop
         """
 
+        self._hide_cursor()
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
         # hide cursor
         self.print_first_line()
-        self.hide_cursor()
 
         self.matches = self.search(query="")
         self.print_entries(self.matches)
@@ -116,7 +116,7 @@ class SearchTerminalUi:
 
         return final_results
 
-    def hide_cursor(self):
+    def _hide_cursor(self):
         print("\033[?25l", end="")
 
     def get_caracter(self) -> str:
@@ -190,7 +190,7 @@ class SearchTerminalUi:
             sys.exit(0)
         elif ord_c == 92:
             print("Reloading data...")
-            self.setup_entries()
+            self._setup_entries()
             self.query = ""
             self.reloaded = True
             self.selected_row = 0
