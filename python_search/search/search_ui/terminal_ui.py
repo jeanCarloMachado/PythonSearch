@@ -11,6 +11,7 @@ from python_search.search.search_ui.semantic_search import SemanticSearch
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 
+
 class SearchTerminalUi:
     MAX_LINE_SIZE = 80
     MAX_KEY_SIZE = 45
@@ -25,11 +26,13 @@ class SearchTerminalUi:
     def __init__(self) -> None:
         self.theme = get_current_theme()
         self.cf = self.theme.get_colorful()
-        self.cf.update_palette({
-            'green': "#97AE5E",
-            'yellow': '#DB9D3E',
-            'red': '#E56B55',
-        })
+        self.cf.update_palette(
+            {
+                "green": "#97AE5E",
+                "yellow": "#DB9D3E",
+                "red": "#E56B55",
+            }
+        )
         self.actions = Actions()
         self.previous_query = ""
         self.tdw = None
@@ -51,37 +54,6 @@ class SearchTerminalUi:
             self.search_semantic = SemanticSearch(
                 self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
             )
-
-
-    def search(self, query) -> List[str]:
-        """gets 1 from each type of search at a time and merge them to remove duplicates"""
-
-        bm25_results = self.search_bm25.search(query)
-
-        semantic_results = []
-        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run:
-            semantic_results = self.search_semantic.search(query)
-
-        final_results = []
-        for i in range(self.NUMBER_ENTRIES_TO_RETURN):
-            if (
-                bm25_results[i] not in final_results
-                and bm25_results[i] in self.commands
-            ):
-                final_results.append(bm25_results[i])
-
-            if semantic_results and (
-                semantic_results[i] not in final_results
-                and semantic_results[i] in self.commands
-            ):
-                final_results.append(semantic_results[i])
-
-            if len(final_results) >= self.NUMBER_ENTRIES_TO_RETURN:
-                break
-
-        self.first_run = False
-
-        return final_results
 
     async def run(self):
         """
@@ -113,6 +85,36 @@ class SearchTerminalUi:
                 self.search_semantic.search(self.query)
             c = self.get_caracter()
             self.process_chars(self.query, c)
+
+    def search(self, query) -> List[str]:
+        """gets 1 from each type of search at a time and merge them to remove duplicates"""
+
+        bm25_results = self.search_bm25.search(query)
+
+        semantic_results = []
+        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run:
+            semantic_results = self.search_semantic.search(query)
+
+        final_results = []
+        for i in range(self.NUMBER_ENTRIES_TO_RETURN):
+            if (
+                bm25_results[i] not in final_results
+                and bm25_results[i] in self.commands
+            ):
+                final_results.append(bm25_results[i])
+
+            if semantic_results and (
+                semantic_results[i] not in final_results
+                and semantic_results[i] in self.commands
+            ):
+                final_results.append(semantic_results[i])
+
+            if len(final_results) >= self.NUMBER_ENTRIES_TO_RETURN:
+                break
+
+        self.first_run = False
+
+        return final_results
 
     def hide_cursor(self):
         print("\033[?25l", end="")
@@ -217,6 +219,7 @@ class SearchTerminalUi:
     def _get_data_warehouse(self):
         if not self.tdw:
             from tiny_data_warehouse import DataWarehouse
+
             self.tdw = DataWarehouse()
 
         return self.tdw
@@ -225,21 +228,19 @@ class SearchTerminalUi:
         key_part = self.cf.bold(
             self.cf.selected(f" {self.control_size(key, self.MAX_KEY_SIZE)}")
         )
-        body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_line(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
+        body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_content(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
         print(key_part + body_part)
 
     def print_normal_row(self, key, entry):
         key_input = self.control_size(key, self.MAX_KEY_SIZE)
         body_part = self.color_based_on_type(
             self.control_size(
-                self.sanitize_line(entry.get_content_str(strip_new_lines=True)),
+                self.sanitize_content(entry.get_content_str(strip_new_lines=True)),
                 self.MAX_CONTENT_SIZE,
             ),
             entry,
         )
-        print(
-            f" {key_input} {body_part} "
-        )
+        print(f" {key_input} {body_part} ")
 
     def color_based_on_type(self, content, entry):
         type = entry.get_type_str()
@@ -254,10 +255,12 @@ class SearchTerminalUi:
 
         return content
 
-
-    def sanitize_line(self, line):
+    def sanitize_content(self, line) -> str:
+        """
+        Transform content into suitable to display in terminal row
+        """
         line = line.strip()
-        line.replace("\n", "")
+        line = line.replace("\n", "")
         return line
 
     def control_size(self, a_string, num_chars):

@@ -26,10 +26,10 @@ class SemanticSearch:
 
     def get_chroma_instance(self):
         import chromadb
+
         self.chroma_path = os.environ["HOME"] + "/.chroma_python_search.db"
         self.client = chromadb.PersistentClient(path=self.chroma_path)
         return self.client
-
 
     def setup_entries(self):
         collection = self.client.get_or_create_collection("entries")

@@ -54,9 +54,10 @@ class Entry:
         if "cli_cmd" in self.value or "cmd" in self.value:
             result = self.value.get("cli_cmd", self.value.get("cmd"))
 
-        if "callable" in self.value and type(self.value['callable']) != str:
+        if "callable" in self.value and type(self.value["callable"]) != str:
             value = self.value.get("callable")
             import dill
+
             result = dill.source.getsource(value)
         elif "callable" in self.value:
             result = self.value.get("callable")
@@ -90,6 +91,4 @@ class Entry:
         return "snippet"
 
     def get_serialized_value(self):
-        return {
-            self.get_type_str(): self.get_content_str()
-        }
+        return {self.get_type_str(): self.get_content_str()}
