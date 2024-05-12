@@ -109,7 +109,8 @@ class SearchTerminalUi:
             self.print_entries(self.matches)
 
             # kept here just to warmup chroma
-            self.search_semantic.search(self.query)
+            if self.ENABLE_SEMANTIC_SEARCH:
+                self.search_semantic.search(self.query)
             c = self.get_caracter()
             self.process_chars(self.query, c)
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-search"
-version = "0.40"
+version = "0.41"
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
@@ -26,8 +26,8 @@ colorful = "^0.5.5"
 openapi = "^1.1.0"
 schedule = "^1.2.1"
 python-daemon = "^3.0.1"
-chromadb = "^0.5.0"
-tiny-data-warehouse = "^0.1.5"
+chromadb = ">=0.5.0"
+tiny-data-warehouse = ">=0.1.5"
 
 
 [tool.poetry.dev-dependencies]
