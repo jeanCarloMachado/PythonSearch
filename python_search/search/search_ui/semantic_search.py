@@ -1,6 +1,3 @@
-from typing import List
-
-from python_search.core_entities.core_entities import Entry
 from python_search.search.entries_loader import EntriesLoader
 import tqdm
 import os
@@ -20,16 +17,19 @@ class SemanticSearch:
         )
 
     def setup(self):
-        import chromadb
-
-        self.chroma_path = os.environ["HOME"] + "/.chroma_python_search.db"
-        self.client = chromadb.PersistentClient(path=self.chroma_path)
-
+        self.get_chroma_instance()
         try:
             self.collection = self.client.get_collection("entries")
         except:
             print("Collection not found")
             self.collection = self.setup_entries()
+
+    def get_chroma_instance(self):
+        import chromadb
+        self.chroma_path = os.environ["HOME"] + "/.chroma_python_search.db"
+        self.client = chromadb.PersistentClient(path=self.chroma_path)
+        return self.client
+
 
     def setup_entries(self):
         collection = self.client.get_or_create_collection("entries")

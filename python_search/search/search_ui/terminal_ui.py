@@ -21,6 +21,7 @@ class SearchTerminalUi:
     _documents_future = None
     commands = None
     documents = None
+    ENABLE_SEMANTIC_SEARCH = True
 
     def __init__(self) -> None:
         self.theme = get_current_theme()
@@ -29,6 +30,7 @@ class SearchTerminalUi:
         self.previous_query = ""
         self.tdw = None
         self.reloaded = False
+        self.first_run = True
 
         self.setup_entries()
 
@@ -41,15 +43,20 @@ class SearchTerminalUi:
         self.search_bm25 = Bm25Search(
             self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
         )
-        self.search_semantic = SemanticSearch(
-            self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
-        )
+        if self.ENABLE_SEMANTIC_SEARCH:
+            self.search_semantic = SemanticSearch(
+                self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
+            )
+
 
     def search(self, query) -> List[str]:
         """gets 1 from each type of search at a time and merge them to remove duplicates"""
 
         bm25_results = self.search_bm25.search(query)
-        semantic_results = self.search_semantic.search(query)
+
+        semantic_results = []
+        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run:
+            semantic_results = self.search_semantic.search(query)
 
         final_results = []
         for i in range(self.NUMBER_ENTRIES_TO_RETURN):
@@ -59,7 +66,7 @@ class SearchTerminalUi:
             ):
                 final_results.append(bm25_results[i])
 
-            if (
+            if semantic_results and (
                 semantic_results[i] not in final_results
                 and semantic_results[i] in self.commands
             ):
@@ -67,6 +74,9 @@ class SearchTerminalUi:
 
             if len(final_results) >= self.NUMBER_ENTRIES_TO_RETURN:
                 break
+
+        self.first_run = False
+
         return final_results
 
     async def run(self):
@@ -93,8 +103,9 @@ class SearchTerminalUi:
             self.previous_query = self.query
             self.previous_matches = self.matches
             self.print_entries(self.matches)
-            # build bm25 index while the user types
 
+            # kept here just to warmup chroma
+            self.search_semantic.search(self.query)
             c = self.get_caracter()
             self.process_chars(self.query, c)
 
