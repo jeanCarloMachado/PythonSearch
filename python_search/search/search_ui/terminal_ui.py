@@ -11,11 +11,10 @@ from python_search.search.search_ui.semantic_search import SemanticSearch
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
 
-
 class SearchTerminalUi:
     MAX_LINE_SIZE = 80
     MAX_KEY_SIZE = 45
-    MAX_CONTENT_SIZE = 40
+    MAX_CONTENT_SIZE = 45
     NUMBER_ENTRIES_TO_RETURN = 15
 
     _documents_future = None
@@ -26,6 +25,11 @@ class SearchTerminalUi:
     def __init__(self) -> None:
         self.theme = get_current_theme()
         self.cf = self.theme.get_colorful()
+        self.cf.update_palette({
+            'green': "#97AE5E",
+            'yellow': '#DB9D3E',
+            'red': '#E56B55',
+        })
         self.actions = Actions()
         self.previous_query = ""
         self.tdw = None
@@ -212,7 +216,6 @@ class SearchTerminalUi:
     def _get_data_warehouse(self):
         if not self.tdw:
             from tiny_data_warehouse import DataWarehouse
-
             self.tdw = DataWarehouse()
 
         return self.tdw
@@ -221,21 +224,35 @@ class SearchTerminalUi:
         key_part = self.cf.bold(
             self.cf.selected(f" {self.control_size(key, self.MAX_KEY_SIZE)}")
         )
-        body_part = f" {self.cf.bold(self.cf.entrycontentselected(self.control_size(self.sanitize_line(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE)))} "
-        type_part = self.cf.entrytype(f"{entry.get_type_str()} ")
-        print(key_part + body_part + type_part)
+        body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_line(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
+        print(key_part + body_part)
 
     def print_normal_row(self, key, entry):
         key_input = self.control_size(key, self.MAX_KEY_SIZE)
-        body_part = self.cf.entrycontentunselected(
+        body_part = self.color_based_on_type(
             self.control_size(
                 self.sanitize_line(entry.get_content_str(strip_new_lines=True)),
                 self.MAX_CONTENT_SIZE,
-            )
+            ),
+            entry,
         )
         print(
-            f" {key_input} {body_part} " + self.cf.entrytype(f"{entry.get_type_str()}")
+            f" {key_input} {body_part} "
         )
+
+    def color_based_on_type(self, content, entry):
+        type = entry.get_type_str()
+        if type == "snippet":
+            return self.cf.yellow(content)
+        elif type == "cli_cmd" or type == "cmd":
+            return self.cf.red(content)
+        elif type == "url":
+            return self.cf.green(content)
+        elif type == "file":
+            return self.cf.green(content)
+
+        return content
+
 
     def sanitize_line(self, line):
         line = line.strip()
