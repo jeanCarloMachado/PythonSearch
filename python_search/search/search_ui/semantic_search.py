@@ -1,12 +1,14 @@
 from python_search.search.entries_loader import EntriesLoader
+import chromadb
 import tqdm
 import os
 
+CHROMA_DB_PATH = os.environ["HOME"] + "/.chroma_python_search.db"
 
 class SemanticSearch:
-
     def __init__(self, entries: dict = None, number_entries_to_return=None):
-        self.setup()
+        self.get_chroma_instance()
+        self.collection = self.client.get_collection("entries")
         if entries:
             self.entries = EntriesLoader.convert_to_list_of_entries(entries)
         else:
@@ -16,20 +18,11 @@ class SemanticSearch:
             number_entries_to_return if number_entries_to_return else 15
         )
 
-    def setup(self):
-        self.get_chroma_instance()
-        try:
-            self.collection = self.client.get_collection("entries")
-        except:
-            print("Collection not found")
-            self.collection = self.setup_entries()
 
     def get_chroma_instance(self):
-        import chromadb
-
-        self.chroma_path = os.environ["HOME"] + "/.chroma_python_search.db"
-        self.client = chromadb.PersistentClient(path=self.chroma_path)
+        self.client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
         return self.client
+
 
     def setup_entries(self):
         collection = self.client.get_or_create_collection("entries")
@@ -48,12 +41,16 @@ class SemanticSearch:
         if not query:
             query = ""
         results = self.collection.query(
-            query_texts=[query], n_results=self.number_entries_to_return
+            query_texts=[query], n_results=self.number_entries_to_return,
+            include=[]
         )["ids"][0]
         return results
 
+def chroma_run_webserver():
+    cmd = 'chroma run --path ' + CHROMA_DB_PATH
+    print(cmd)
+    os.system(cmd)
 
 if __name__ == "__main__":
     import fire
-
-    fire.Fire(SemanticSearch)
+    fire.Fire()

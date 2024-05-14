@@ -55,7 +55,7 @@ class SearchTerminalUi:
                 self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
             )
 
-    async def run(self):
+    def run(self):
         """
         Rrun the application main loop
         """
@@ -80,9 +80,6 @@ class SearchTerminalUi:
             self.previous_matches = self.matches
             self.print_entries(self.matches)
 
-            # kept here just to warmup chroma
-            if self.ENABLE_SEMANTIC_SEARCH:
-                self.search_semantic.search(self.query)
             c = self.get_caracter()
             self.process_chars(self.query, c)
 
@@ -272,13 +269,8 @@ class SearchTerminalUi:
         else:
             return a_string + " " * (num_chars - len(a_string))
 
-
-async def main_async():
-    await SearchTerminalUi().run()
-
-
 def main():
-    asyncio.run(main_async())
+    asyncio.run(SearchTerminalUi().run())
 
 
 if __name__ == "__main__":
