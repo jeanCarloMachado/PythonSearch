@@ -21,9 +21,9 @@ class DataConfig:
     entries_dump_file = BASE_DATA_FOLDER + "/entries_dumped/latest/000.parquet"
     cached_configuration = "/tmp/search_and_run_configuration_cached"
     # this path exists in the docker container but not necessarily in the host
-    BASELINE_EXPERIMENT_NAME = f"baseline_rank_v0"
-    NEXT_ITEM_EXPERIMENT_NAME = f"next_item_v1"
-    ENTRY_TYPE_CLASSIFIER_EXPERIMENT_NAME = f"entry_type_classifier_v2"
+    BASELINE_EXPERIMENT_NAME = "baseline_rank_v0"
+    NEXT_ITEM_EXPERIMENT_NAME = "next_item_v1"
+    ENTRY_TYPE_CLASSIFIER_EXPERIMENT_NAME = "entry_type_classifier_v2"
     OLD_SEARCH_RUNS_PERFORMED_FOLDER = (
         BASE_DATA_FOLDER + "/data_warehouse/dataframes/SearchRunPerformed"
     )

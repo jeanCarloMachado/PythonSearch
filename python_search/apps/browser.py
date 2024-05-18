@@ -89,7 +89,7 @@ class Browser:
     def _chrome(self, url: str):
         if self._is_mac():
             if self._focus_title or self._app_mode:
-                send_notification(f"Open new chrome in app mode, can be a bit slow")
+                send_notification("Open new chrome in app mode, can be a bit slow")
 
                 return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --app={url}"
 

@@ -24,7 +24,7 @@ entries = {
     },
     # cli cmds will additional open a new terminal window and execute the  command
     "edit current project _entries source code": {
-        "cli_cmd": f"python_search edit_main",
+        "cli_cmd": "python_search edit_main",
     },
     # urls will be opened in the browser
     "documentation about entities python search": {
@@ -49,7 +49,7 @@ entries = {
     },
     # example with shortcuts
     "gmail application": {
-        "url": f"https://mail.google.com/",
+        "url": "https://mail.google.com/",
         "mac_shortcuts": ["⌥M"],
         "xfce_shortcut": "<Super>m",
     },

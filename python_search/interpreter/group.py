@@ -11,7 +11,7 @@ class GroupInterpreter(BaseInterpreter):
         if type(cmd) is dict and "members" in cmd:
             if cmd["members"] is dict:
                 raise Exception(
-                    f"Members as dict are no longer valid, use list instead"
+                    "Members as dict are no longer valid, use list instead"
                 )
 
             self.cmd["members"] = cmd["members"]

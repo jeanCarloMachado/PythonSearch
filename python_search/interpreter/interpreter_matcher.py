@@ -106,7 +106,7 @@ class InterpreterMatcher:
                 command_instance = interpreter(cmd, self.context)
                 print(f"Matched command instance {command_instance}")
                 return command_instance
-            except CommandDoNotMatchException as e:
+            except CommandDoNotMatchException:
                 pass
 
         raise Exception("Received a dict but did not match any type")

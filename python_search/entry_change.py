@@ -1,6 +1,4 @@
-from typing import List
 
-from python_search.configuration.loader import ConfigurationLoader
 
 
 class EntryChangeDetector:
@@ -36,7 +34,7 @@ class EntryChangeDetector:
             output = subprocess.getoutput("pys _entries_loader load_entries_as_json")
             result = hashlib.md5(output.encode())
             result = result.hexdigest()
-        except Exception as e:
+        except Exception:
             pass
 
         return result

@@ -14,7 +14,7 @@ def notify_exception():
                 result = func(*args, **kwargs)
             except Exception as e:
                 from python_search.apps.notification_ui import send_notification
-                import sys, traceback
+                import traceback
 
                 send_notification(f"Exception {e}")
                 os.system(f"echo '{traceback.format_exc()}' |  error_panel run")

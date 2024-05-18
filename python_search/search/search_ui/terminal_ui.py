@@ -42,7 +42,8 @@ class SearchTerminalUi:
         self._setup_entries()
 
     def _setup_entries(self):
-        import subprocess, json
+        import subprocess
+        import json
 
         output = subprocess.getoutput("pys _entries_loader load_entries_as_json ")
         self.commands = json.loads(output)
@@ -119,7 +120,7 @@ class SearchTerminalUi:
     def get_caracter(self) -> str:
         try:
             return getch()
-        except Exception as e:
+        except Exception:
             return " "
 
     def print_first_line(self):
@@ -134,7 +135,7 @@ class SearchTerminalUi:
         for i, key in enumerate(matches):
             try:
                 entry = Entry(key, self.commands[key])
-            except Exception as e:
+            except Exception:
                 continue
 
             if i == self.selected_row:

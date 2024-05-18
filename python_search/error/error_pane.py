@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 
-from python_search.environment import is_mac
 
 
 def run(text=None):

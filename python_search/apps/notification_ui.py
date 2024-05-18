@@ -1,4 +1,3 @@
-import os
 
 
 def send_notification(message: str):

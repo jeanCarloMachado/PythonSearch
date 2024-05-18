@@ -49,7 +49,7 @@ class Mac:
         Mac.START_SHORTCUT_NUMBER += 1
 
         for key, content in list(self.configuration.commands.items()):
-            if not type(content) is dict:
+            if type(content) is not dict:
                 continue
 
             if "mac_shortcut" in content:
@@ -115,7 +115,7 @@ enabled = yes
 
         try:
             output = subprocess.check_output(get_pid_app, shell=True, text=True)
-        except Exception as e:
+        except Exception:
             print("Could not find PID! Restart will fail, try again.")
             return
         if len(output) < 3:

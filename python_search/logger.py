@@ -72,7 +72,7 @@ def interpreter_logger():
     ch.setLevel(logging.WARNING)
     logger.addHandler(ch)
 
-    fh = logging.FileHandler(f"/tmp/debug_interpreter")
+    fh = logging.FileHandler("/tmp/debug_interpreter")
     fh.setLevel(logging.INFO)
     logger.addHandler(fh)
 
@@ -83,7 +83,7 @@ def next_item_predictor_logger():
     logger = logging.getLogger("next_item_predictor_logger")
     logger.propagate = False
 
-    fh = logging.FileHandler(f"/tmp/log_next_item_predictor")
+    fh = logging.FileHandler("/tmp/log_next_item_predictor")
     fh.setLevel(logging.DEBUG)
     logger.addHandler(fh)
     logger.setLevel(logging.DEBUG)

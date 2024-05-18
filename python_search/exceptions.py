@@ -24,7 +24,7 @@ class RunException(Exception):
 class RegisterNewException(Exception):
     @staticmethod
     def empty_content():
-        return RegisterNewException(f"Will not register as content looks too small")
+        return RegisterNewException("Will not register as content looks too small")
 
 
 class MissingConfigException:
