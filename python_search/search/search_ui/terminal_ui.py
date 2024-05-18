@@ -1,6 +1,6 @@
 import asyncio
 import sys
-from typing import Any, List
+from typing import Any
 
 from getch import getch
 
@@ -41,6 +41,73 @@ class SearchTerminalUi:
 
         self._setup_entries()
 
+
+    def run(self):
+        """
+        Rrun the application main loop
+        """
+
+        self._hide_cursor()
+        self.query = ""
+        self.selected_row = 0
+        self.selected_query = -1
+        # hide cursor
+        while True:
+            self.print_first_line()
+            if self.query != self.previous_query or self.reloaded:
+                self.matches = self.search(query=self.query)
+                self.reloaded = False
+            self.previous_query = self.query
+            current_key = 0
+            self.matches = []
+            for key in self.search(self.query):
+                try:
+                    entry = Entry(key, self.commands[key])
+                except Exception:
+                    continue
+
+                if current_key == self.selected_row:
+                    self.print_highlighted(key, entry)
+                else:
+                    self.print_normal_row(key, entry)
+
+                current_key += 1
+                self.matches.append(key)
+
+            c = self.get_caracter()
+            self.process_chars(self.query, c)
+
+    def search(self, query):
+        """gets 1 from each type of search at a time and merge them to remove duplicates"""
+
+        already_returned = []
+        bm25_results = self.search_bm25.search(query)
+
+        semantic_results = []
+        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run:
+            semantic_results = self.search_semantic.search(query)
+
+        for i in range(self.NUMBER_ENTRIES_TO_RETURN):
+            if (
+                bm25_results[i] not in already_returned
+                and bm25_results[i] in self.commands
+            ):
+                already_returned.append(bm25_results[i])
+                yield bm25_results[i]
+
+            if semantic_results and (
+                semantic_results[i] not in already_returned
+                and semantic_results[i] in self.commands
+            ):
+                already_returned.append(semantic_results[i])
+                yield semantic_results[i]
+
+            if len(already_returned) >= self.NUMBER_ENTRIES_TO_RETURN:
+                return
+
+        self.first_run = False
+
+
     def _setup_entries(self):
         import subprocess
         import json
@@ -55,64 +122,6 @@ class SearchTerminalUi:
             self.search_semantic = SemanticSearch(
                 self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
             )
-
-    def run(self):
-        """
-        Rrun the application main loop
-        """
-
-        self._hide_cursor()
-        self.query = ""
-        self.selected_row = 0
-        self.selected_query = -1
-        # hide cursor
-        self.print_first_line()
-
-        self.matches = self.search(query="")
-        self.print_entries(self.matches)
-
-        while True:
-            self.print_first_line()
-
-            if self.query != self.previous_query or self.reloaded:
-                self.matches = self.search(query=self.query)
-                self.reloaded = False
-            self.previous_query = self.query
-            self.previous_matches = self.matches
-            self.print_entries(self.matches)
-
-            c = self.get_caracter()
-            self.process_chars(self.query, c)
-
-    def search(self, query) -> List[str]:
-        """gets 1 from each type of search at a time and merge them to remove duplicates"""
-
-        bm25_results = self.search_bm25.search(query)
-
-        semantic_results = []
-        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run:
-            semantic_results = self.search_semantic.search(query)
-
-        final_results = []
-        for i in range(self.NUMBER_ENTRIES_TO_RETURN):
-            if (
-                bm25_results[i] not in final_results
-                and bm25_results[i] in self.commands
-            ):
-                final_results.append(bm25_results[i])
-
-            if semantic_results and (
-                semantic_results[i] not in final_results
-                and semantic_results[i] in self.commands
-            ):
-                final_results.append(semantic_results[i])
-
-            if len(final_results) >= self.NUMBER_ENTRIES_TO_RETURN:
-                break
-
-        self.first_run = False
-
-        return final_results
 
     def _hide_cursor(self):
         print("\033[?25l", end="")
@@ -130,18 +139,6 @@ class SearchTerminalUi:
             + f"{self.cf.bold(self.cf.query(self.query))}"
         )
 
-    def print_entries(self, matches: List[str]):
-        # print the matches
-        for i, key in enumerate(matches):
-            try:
-                entry = Entry(key, self.commands[key])
-            except Exception:
-                continue
-
-            if i == self.selected_row:
-                self.print_highlighted(key, entry)
-            else:
-                self.print_normal_row(key, entry)
 
     def process_chars(self, query: str, c: str):
         ord_c = ord(c)

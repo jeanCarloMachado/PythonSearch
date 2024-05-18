@@ -25,9 +25,15 @@ class SemanticSearch:
 
 
     def setup_entries(self):
-        collection = self.client.get_or_create_collection("entries")
+        print("Setting up documents")
+        existing_ids = self.client.get_or_create_collection("entries").get()["ids"]
+        missing_entries = [
+            entry for entry in self.entries if entry.key not in existing_ids
+        ]
+        print("Found ", len(missing_entries), " missing entries")
 
-        for entry in tqdm.tqdm(self.entries):
+        collection = self.client.get_or_create_collection("entries")
+        for entry in tqdm.tqdm(missing_entries):
             collection.upsert(
                 documents=[
                     entry.key + " " + entry.get_content_str() + entry.get_type_str()
