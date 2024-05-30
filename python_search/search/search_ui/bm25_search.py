@@ -12,7 +12,7 @@ class Bm25Search:
 
     def __init__(self, entries, number_entries_to_return=None):
         self.tokenizer = nltk.tokenize.RegexpTokenizer(r"\w+")
-        self.lemmatizer = nltk.stem.WordNetLemmatizer()
+        self.lemmatizer = nltk.stem.PorterStemmer()
         self.commands = entries
         self.entries: List[str] = list(self.commands.keys())
         self.entry_change_detector = EntryChangeDetector()
@@ -70,7 +70,7 @@ class Bm25Search:
 
     def tokenize(self, string) -> List[str]:
         tokens = self.tokenizer.tokenize(string)
-        lemmas = [self.lemmatizer.lemmatize(t) for t in tokens]
+        lemmas = [self.lemmatizer.stem(t) for t in tokens]
         return lemmas
 
 
