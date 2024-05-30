@@ -41,7 +41,6 @@ class SearchTerminalUi:
 
         self._setup_entries()
 
-
     def run(self):
         """
         Rrun the application main loop
@@ -107,7 +106,6 @@ class SearchTerminalUi:
 
         self.first_run = False
 
-
     def _setup_entries(self):
         import subprocess
         import json
@@ -138,7 +136,6 @@ class SearchTerminalUi:
             + self.cf.cursor(f"({len(self.commands)})> ")
             + f"{self.cf.bold(self.cf.query(self.query))}"
         )
-
 
     def process_chars(self, query: str, c: str):
         ord_c = ord(c)
@@ -266,6 +263,7 @@ class SearchTerminalUi:
             return a_string[0 : num_chars - 3] + "..."
         else:
             return a_string + " " * (num_chars - len(a_string))
+
 
 def main():
     asyncio.run(SearchTerminalUi().run())

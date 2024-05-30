@@ -70,8 +70,7 @@ class Clipboard:
 
         if enable_notifications or notify:
             from python_search.apps.notification_ui import send_notification
-
-            send_notification(f"Content copied: {content}")
+            send_notification(content)
 
 
 def main():

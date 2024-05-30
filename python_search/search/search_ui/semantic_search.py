@@ -5,6 +5,7 @@ import os
 
 CHROMA_DB_PATH = os.environ["HOME"] + "/.chroma_python_search.db"
 
+
 class SemanticSearch:
     def __init__(self, entries: dict = None, number_entries_to_return=None):
         self.get_chroma_instance()
@@ -18,11 +19,9 @@ class SemanticSearch:
             number_entries_to_return if number_entries_to_return else 15
         )
 
-
     def get_chroma_instance(self):
         self.client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
         return self.client
-
 
     def setup_entries(self):
         print("Setting up documents")
@@ -47,16 +46,18 @@ class SemanticSearch:
         if not query:
             query = ""
         results = self.collection.query(
-            query_texts=[query], n_results=self.number_entries_to_return,
-            include=[]
+            query_texts=[query], n_results=self.number_entries_to_return, include=[]
         )["ids"][0]
         return results
 
+
 def chroma_run_webserver():
-    cmd = 'chroma run --path ' + CHROMA_DB_PATH
+    cmd = "chroma run --path " + CHROMA_DB_PATH
     print(cmd)
     os.system(cmd)
 
+
 if __name__ == "__main__":
     import fire
+
     fire.Fire()

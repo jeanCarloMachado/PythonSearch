@@ -1,6 +1,3 @@
-
-
-
 class EntryChangeDetector:
 
     HASH_FILE = "/tmp/entries_md5"

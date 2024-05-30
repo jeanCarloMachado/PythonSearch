@@ -1,7 +1,6 @@
 import PySimpleGUI as sg
 
 
-
 def run(text=None):
     if not text:
         import sys
