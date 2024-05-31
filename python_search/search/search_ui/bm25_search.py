@@ -48,13 +48,31 @@ class Bm25Search:
 
     def build_bm25(self):
         tokenized_corpus = [
-            self.tokenize((key + str(value))) for key, value in self.commands.items()
+            self.tokenize((key + str(value))) + self.split_key(key) for key, value in self.commands.items()
         ]
 
         bm25 = BM25(tokenized_corpus)
         self.searialize_database(bm25)
 
         return bm25
+
+    def split_key(self, key):
+        """
+        Create more combinations of initials for searching the document
+        """
+        result = []
+
+        initials = ""
+        for word in key.split(" "):
+            if len(word) < 1:
+                continue
+            result+= word[0]
+            initials += word[0]
+
+        result.append(initials)
+
+        return result
+
 
     def search(self, query: List[str] = None) -> List[str]:
         if not query:

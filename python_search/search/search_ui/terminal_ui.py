@@ -266,7 +266,12 @@ class SearchTerminalUi:
 
 
 def main():
-    asyncio.run(SearchTerminalUi().run())
+    try:
+        asyncio.run(SearchTerminalUi().run())
+    except Exception as e:
+        print(e)
+        breakpoint()
+
 
 
 if __name__ == "__main__":

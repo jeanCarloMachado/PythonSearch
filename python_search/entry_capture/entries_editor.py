@@ -1,4 +1,4 @@
-""" Module responsible for the logic of editing entry files """
+"""Module responsible for the logic of editing entry files"""
 
 import logging
 import subprocess

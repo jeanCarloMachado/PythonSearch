@@ -1,5 +1,4 @@
 class EntryChangeDetector:
-
     HASH_FILE = "/tmp/entries_md5"
 
     def has_changed(self) -> bool:
