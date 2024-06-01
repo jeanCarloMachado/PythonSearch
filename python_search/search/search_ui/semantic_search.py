@@ -1,10 +1,8 @@
 from python_search.search.entries_loader import EntriesLoader
-import chromadb
 import tqdm
 import os
 
 CHROMA_DB_PATH = os.environ["HOME"] + "/.chroma_python_search.db"
-
 
 class SemanticSearch:
     def __init__(self, entries: dict = None, number_entries_to_return=None):
@@ -20,6 +18,7 @@ class SemanticSearch:
         )
 
     def get_chroma_instance(self):
+        import chromadb
         self.client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
         return self.client
 

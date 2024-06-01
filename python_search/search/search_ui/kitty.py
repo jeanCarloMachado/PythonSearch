@@ -40,33 +40,11 @@ class KittySearch:
 
         self._title = configuration.APPLICATION_TITLE
 
-    @staticmethod
-    def run() -> None:
-        if not KittySearch.try_to_focus():
-            KittySearch().launch()
-
-    @staticmethod
-    def try_to_focus():
-        """
-        Focuses the terminal if it is already open
-        """
-        if not os.path.exists("/tmp/mykitty"):
-            return False
-
-        result = os.system(KittySearch.focus_kitty_command())
-
-        return result == 0
-
-    @staticmethod
-    def focus_or_open(configuration):
-        if not KittySearch.try_to_focus():
-            KittySearch(configuration).launch()
-
-    @staticmethod
-    def focus_kitty_command():
-        return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
 
     def launch(self) -> None:
+        """
+        Entry point for the application to launch the search ui
+        """
         from python_search.apps.terminal import Terminal
         from python_search.theme import get_current_theme
 
@@ -93,11 +71,37 @@ class KittySearch:
         -o font_size="{theme.font_size}" \
         -o font_family="{theme.font}" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
-        term_ui
+         /Users/jean.machado/miniconda3/envs/python312/bin/term_ui
         """
         result = os.system(launch_cmd)
         if result != 0:
-            raise Exception("Search run fzf projection failed")
+            raise Exception("Failed: " + str(result), launch_cmd)
+    @staticmethod
+    def run() -> None:
+        if not KittySearch.try_to_focus():
+            KittySearch().launch()
+
+    @staticmethod
+    def try_to_focus():
+        """
+        Focuses the terminal if it is already open
+        """
+        if not os.path.exists("/tmp/mykitty"):
+            return False
+
+        result = os.system(KittySearch.focus_kitty_command())
+
+        return result == 0
+
+    @staticmethod
+    def focus_or_open(configuration):
+        if not KittySearch.try_to_focus():
+            KittySearch(configuration).launch()
+
+    @staticmethod
+    def focus_kitty_command():
+        return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
+
 
 
 def get_kitty_cmd() -> str:

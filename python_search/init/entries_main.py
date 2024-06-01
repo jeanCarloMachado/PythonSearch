@@ -27,13 +27,6 @@ entries = {
     "edit current project _entries source code": {
         "cli_cmd": "python_search edit_main",
     },
-    # urls will be opened in the browser
-    "documentation about entities python search": {
-        "url": "https://github.com/jeanCarloMachado/PythonSearch/blob/main/docs/entities.md"
-    },
-    "python search cli source code online reference": {
-        "url": "https://shorturl.at/bdeK6"
-    },
     # snippets copy  the content of the snippet to the clipboard when executed
     "date current today now copy": {
         "snippet": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),

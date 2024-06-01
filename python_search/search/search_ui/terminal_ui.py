@@ -110,7 +110,7 @@ class SearchTerminalUi:
         import subprocess
         import json
 
-        output = subprocess.getoutput("pys _entries_loader load_entries_as_json ")
+        output = subprocess.getoutput("/Users/jean.machado/miniconda3/envs/python312/bin/pys _entries_loader load_entries_as_json ")
         self.commands = json.loads(output)
 
         self.search_bm25 = Bm25Search(
@@ -269,7 +269,9 @@ def main():
     try:
         asyncio.run(SearchTerminalUi().run())
     except Exception as e:
+        import traceback
         print(e)
+        traceback.print_exc()
         breakpoint()
 
 
