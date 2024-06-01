@@ -38,7 +38,7 @@ class FileInterpreter(BaseInterpreter):
         filename, file_extension = os.path.splitext(self.cmd["file"])
 
         if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:
-            return "docker_nvim"
+            return "vim"
 
         if os.path.isdir(self.cmd["file"]):
             if is_mac():
@@ -51,7 +51,7 @@ class FileInterpreter(BaseInterpreter):
         elif file_extension == ".ipynb":
             return "pycharm"
 
-        return "docker_nvim"
+        return "vim"
 
     def interpret_default(self):
         executable = self.get_executable()
@@ -59,7 +59,7 @@ class FileInterpreter(BaseInterpreter):
         cmd = f'{executable} "{self.cmd["file"]}"'
 
         final_cmd = self.cmd
-        if executable in ["vim", "docker_nvim"]:
+        if executable in ["vim"]:
             final_cmd["cli_cmd"] = cmd
         else:
             final_cmd["cmd"] = cmd

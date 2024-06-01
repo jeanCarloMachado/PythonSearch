@@ -70,7 +70,7 @@ class EntriesEditor:
         cmd: str = (
             f" {get_kitty_cmd()} {terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
-            f"; {self._get_open_text_editor_command(file_name, line)} && llm_cli t5_embeddings save_missing_keys "
+            f"; {self._get_open_text_editor_command(file_name, line) }"
         )
         print(cmd)
 
@@ -85,8 +85,6 @@ class EntriesEditor:
     def _get_open_text_editor_command(self, file, line):
         if self.configuration.get_text_editor() == "vim":
             return f"{self.configuration.get_text_editor()} {file} +{line}'"
-        elif self.configuration.get_text_editor() == "myvim":
-            return f"{self.configuration.get_text_editor()} {file} --line={line}'"
         else:
             # if is not a known editor just open the file
             return f"{self.configuration.get_text_editor()} {file}'"

@@ -20,7 +20,7 @@ class Actions:
 
     def edit_key(self, key):
         Popen(
-            f'entries_editor edit_key "{key}"  &>/dev/null',
+            f'/Users/jean.machado/miniconda3/envs/python312/bin/entries_editor edit_key "{key}" ',
             stdout=None,
             stderr=None,
             shell=True,

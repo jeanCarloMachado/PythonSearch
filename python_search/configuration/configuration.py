@@ -36,7 +36,6 @@ class PythonSearchConfiguration(EntriesGroup):
         default_text_editor: Optional[str] = None,
         fzf_theme: Literal["light", "solarized"] = "light",
         custom_window_size: Optional[Tuple[int, int]] = None,
-        rerank_via_model=None,
         collect_data: bool = False,
         entry_generation=False,
         privacy_sensitive_terms: Optional[List[str]] = None,
@@ -91,6 +90,9 @@ class PythonSearchConfiguration(EntriesGroup):
             return True
 
         return self._rerank_via_model_enabled
+
+    def get_python_installation_path(self):
+        return "/Users/jean.machado/miniconda3/envs/python312/bin"
 
     def get_default_tags(self):
         return self._default_tags
