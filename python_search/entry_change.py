@@ -1,3 +1,5 @@
+from python_search.host_system.system_paths import SystemPaths
+
 class EntryChangeDetector:
     HASH_FILE = "/tmp/entries_md5"
 
@@ -27,7 +29,8 @@ class EntryChangeDetector:
         try:
             import subprocess
 
-            output = subprocess.getoutput("pys _entries_loader load_entries_as_json")
+
+            output = subprocess.getoutput(SystemPaths.BINARIES_PATH+"/pys _entries_loader load_entries_as_json")
             result = hashlib.md5(output.encode())
             result = result.hexdigest()
         except Exception:

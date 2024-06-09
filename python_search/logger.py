@@ -5,10 +5,6 @@ import sys
 def setup_inference_logger():
     logger = logging.getLogger("inference_logger")
 
-    # fh = logging.FileHandler("/tmp/inference.txt")
-    # fh.setLevel(logging.WARNING)
-    # logger.addHandler(fh)
-
     ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.DEBUG)
     logger.addHandler(ch)
@@ -35,9 +31,6 @@ def setup_run_key_logger():
     Code has to be fast
     """
     logger = logging.getLogger("run-key")
-    # fh = logging.FileHandler("/tmp/run_key.txt")
-    # fh.setLevel(logging.DEBUG)
-    # logger.addHandler(fh)
 
     ch = logging.StreamHandler()
     ch.setLevel(logging.WARNING)

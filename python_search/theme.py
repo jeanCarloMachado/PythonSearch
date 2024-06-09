@@ -1,6 +1,5 @@
 import datetime
 
-
 class TimeBasedThemeSelector:
     HOUR_FROM = 8
     HOUR_TO = 17
