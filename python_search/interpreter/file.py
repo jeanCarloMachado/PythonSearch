@@ -1,6 +1,7 @@
 import os
 from typing import Any
 
+from python_search.host_system.system_paths import SystemPaths
 from python_search.context import Context
 from python_search.environment import is_mac
 from python_search.exceptions import CommandDoNotMatchException
@@ -38,20 +39,14 @@ class FileInterpreter(BaseInterpreter):
         filename, file_extension = os.path.splitext(self.cmd["file"])
 
         if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:
-            return "vim"
+            return SystemPaths.VIM_BINNARY
 
         if os.path.isdir(self.cmd["file"]):
             if is_mac():
                 return "open"
             return "nautilus"
 
-        if file_extension == ".pdf":
-            return "zathura"
-
-        elif file_extension == ".ipynb":
-            return "pycharm"
-
-        return "vim"
+        return SystemPaths.VIM_BINNARY
 
     def interpret_default(self):
         executable = self.get_executable()
