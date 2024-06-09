@@ -1,13 +1,14 @@
 import sys
 
 
-class UIBuilder:
+class DeclarativeUI:
     def __init__(self, title="The title"):
         self.title = title
 
     def build(self, spec: dict, title=None):
         """
         Launch the _entries capture GUI.
+        Example DeclarativeUI().build([{"type": "text", "key": "key", "value": "value"}])
         """
         import PySimpleGUI as sg
 
@@ -31,11 +32,11 @@ class UIBuilder:
                     expand_x=True,
                     expand_y=True,
                     font=("Helvetica", font_size),
-                    size=item.get("size", (20, 5)),
+                    size=item.get("size", (item.get("size", (20, 5)))),
                 )
             elif item["type"] == "input":
                 element = sg.Input(
-                    item.get("Value", ""),
+                    item.get("value", ""),
                     key=item.get("key", ""),
                     expand_x=True,
                     expand_y=True,

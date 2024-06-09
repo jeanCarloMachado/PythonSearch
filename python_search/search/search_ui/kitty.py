@@ -11,7 +11,7 @@ class KittySearch:
     Renders the search ui using fzf + termite terminal
     """
 
-    _DEFAULT_WINDOW_SIZE = (985, 345)
+    _DEFAULT_WINDOW_SIZE = (955, 230)
 
     _configuration = None
 
@@ -39,7 +39,6 @@ class KittySearch:
         )
 
         self._title = configuration.APPLICATION_TITLE
-
 
     def launch(self) -> None:
         """
@@ -69,13 +68,14 @@ class KittySearch:
         -o background={theme.backgroud} \
         -o foreground={theme.text} \
         -o font_size="{theme.font_size}" \
-        -o font_family="{theme.font}" \
+        -o font_family="SF\ Pro" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
          /Users/jean.machado/miniconda3/envs/python312/bin/term_ui
         """
         result = os.system(launch_cmd)
         if result != 0:
             raise Exception("Failed: " + str(result), launch_cmd)
+
     @staticmethod
     def run() -> None:
         if not KittySearch.try_to_focus():
@@ -101,7 +101,6 @@ class KittySearch:
     @staticmethod
     def focus_kitty_command():
         return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
-
 
 
 def get_kitty_cmd() -> str:

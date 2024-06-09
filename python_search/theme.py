@@ -30,7 +30,7 @@ class BaseTheme:
         self.text = self.colors["text"]
 
         self.font_size = 16
-        self.font = "Menlo"
+        self.font = "SF Pro"
 
 
 class OneLight(BaseTheme):

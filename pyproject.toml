@@ -67,7 +67,6 @@ ps_container = 'python_search.container:start'
 ps_webapi = 'python_search.sdk.web_api_sdk:main'
 aps_webapi = 'python_search.sdk.web_api_sdk:main'
 wrap_log_command = {reference = "wrap_log_command.sh", type = "file", extras = []}
-events_etl = 'python_search.events.events_etl:main'
 chat_gpt = 'python_search.chat_gpt:main'
 term_ui = 'python_search.search.search_ui.terminal_ui:main'
 entry_builder = 'python_search.entry_capture.entry_inserter_gui.entry_inserter_gui:main'

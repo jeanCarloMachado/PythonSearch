@@ -3,7 +3,6 @@ from python_search.apps.clipboard import Clipboard
 from python_search.core_entities.core_entities import Entry, Key
 from python_search.error.exception import notify_exception
 
-
 class ShareEntry:
     def __init__(self):
         self._entries = ConfigurationLoader().load_entries()

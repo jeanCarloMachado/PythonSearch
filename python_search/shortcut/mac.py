@@ -44,7 +44,8 @@ class Mac:
             "⌃Space",
             "Launch python search",
             Mac.START_SHORTCUT_NUMBER,
-            KittySearch.focus_kitty_command() + " || /Users/jean.machado/miniconda3/envs/python312/bin/python_search_search launch",
+            KittySearch.focus_kitty_command()
+            + " || /Users/jean.machado/miniconda3/envs/python312/bin/python_search_search launch",
         )
         Mac.START_SHORTCUT_NUMBER += 1
 

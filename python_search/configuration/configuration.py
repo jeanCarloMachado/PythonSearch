@@ -3,8 +3,6 @@ import os
 from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
-from python_search.features import PythonSearchFeaturesSupport
-
 
 class PythonSearchConfiguration(EntriesGroup):
     """
@@ -58,17 +56,15 @@ class PythonSearchConfiguration(EntriesGroup):
         if entries_groups:
             self.aggregate_commands(entries_groups)
 
-        self.supported_features: PythonSearchFeaturesSupport = (
-            PythonSearchFeaturesSupport.default()
-        )
-
         if default_tags:
             self._default_tags = default_tags
 
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
         self._initialization_time = datetime.datetime.now()
-        self._default_text_editor = default_text_editor
+        self._default_text_editor = (
+            default_text_editor if default_text_editor else "vim"
+        )
         self._fzf_theme = fzf_theme
         if custom_window_size:
             self._custom_window_size = custom_window_size

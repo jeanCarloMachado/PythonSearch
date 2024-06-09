@@ -1,1 +1,1 @@
-from python_search.declarative_ui.declarative_ui import UIBuilder
+from python_search.declarative_ui.declarative_ui import DeclarativeUI

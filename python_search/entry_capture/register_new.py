@@ -24,14 +24,14 @@ class RegisterNew:
         self.entry_inserter = FilesystemEntryInserter(configuration)
 
     def launch_ui(self):
-        from python_search.declarative_ui import UIBuilder
+        from python_search.declarative_ui import DeclarativeUI
         from python_search.apps.clipboard import Clipboard
 
         clipboard_content = Clipboard().get_content()
         default_type = "snippet"
         if clipboard_content.startswith("http"):
             default_type = "url"
-        result = UIBuilder().build(
+        result = DeclarativeUI().build(
             [
                 {"key": "key", "type": "input"},
                 {"key": "value", "type": "text", "value": clipboard_content},

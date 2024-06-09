@@ -16,7 +16,7 @@ class SearchTerminalUi:
     MAX_LINE_SIZE = 80
     MAX_KEY_SIZE = 45
     MAX_CONTENT_SIZE = 45
-    NUMBER_ENTRIES_TO_RETURN = 15
+    NUMBER_ENTRIES_TO_RETURN = 10
 
     _documents_future = None
     commands = None
@@ -108,9 +108,12 @@ class SearchTerminalUi:
 
     def _setup_entries(self):
         import subprocess
+
+        output = subprocess.getoutput(
+            "/Users/jean.machado/miniconda3/envs/python312/bin/pys _entries_loader load_entries_as_json "
+        )
         import json
 
-        output = subprocess.getoutput("/Users/jean.machado/miniconda3/envs/python312/bin/pys _entries_loader load_entries_as_json ")
         self.commands = json.loads(output)
 
         self.search_bm25 = Bm25Search(
@@ -252,7 +255,7 @@ class SearchTerminalUi:
         Transform content into suitable to display in terminal row
         """
         line = line.strip()
-        line = line.replace("\n", "")
+        line = line.replace("\\r\\n", "")
         return line
 
     def control_size(self, a_string, num_chars):
@@ -270,10 +273,10 @@ def main():
         asyncio.run(SearchTerminalUi().run())
     except Exception as e:
         import traceback
+
         print(e)
         traceback.print_exc()
         breakpoint()
-
 
 
 if __name__ == "__main__":

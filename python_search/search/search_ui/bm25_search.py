@@ -48,7 +48,8 @@ class Bm25Search:
 
     def build_bm25(self):
         tokenized_corpus = [
-            self.tokenize((key + str(value))) + self.split_key(key) for key, value in self.commands.items()
+            self.tokenize((key + str(value))) + self.split_key(key)
+            for key, value in self.commands.items()
         ]
 
         bm25 = BM25(tokenized_corpus)
@@ -66,13 +67,12 @@ class Bm25Search:
         for word in key.split(" "):
             if len(word) < 1:
                 continue
-            result+= word[0]
+            result += word[0]
             initials += word[0]
 
         result.append(initials)
 
         return result
-
 
     def search(self, query: List[str] = None) -> List[str]:
         if not query:
@@ -80,9 +80,15 @@ class Bm25Search:
 
         tokenized_query = self.tokenize(query)
 
-        matches = self.bm25.get_top_n(
-            tokenized_query, self.entries, n=self.number_entries_to_return
-        )
+        try:
+            matches = self.bm25.get_top_n(
+                tokenized_query, self.entries, n=self.number_entries_to_return
+            )
+        except:
+            self.build_bm25()
+            matches = self.bm25.get_top_n(
+                tokenized_query, self.entries, n=self.number_entries_to_return
+            )
 
         return matches
 
