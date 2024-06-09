@@ -10,7 +10,7 @@ from python_search.search.search_ui.semantic_search import SemanticSearch
 
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
-from python_search.system_paths import SystemPaths
+from python_search.host_system.system_paths import SystemPaths
 
 
 class SearchTerminalUi:

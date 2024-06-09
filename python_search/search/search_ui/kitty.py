@@ -2,7 +2,7 @@ import os
 
 import logging
 import sys
-from python_search.system_paths import SystemPaths
+from python_search.host_system.system_paths import SystemPaths
 from python_search.environment import is_mac
 
 
@@ -50,7 +50,7 @@ class KittySearch:
         theme = get_current_theme()
 
         terminal = Terminal()
-        from python_search.system_paths import SystemPaths
+        from python_search.host_system.system_paths import SystemPaths
 
 
         launch_cmd = f"""{get_kitty_cmd()} \
