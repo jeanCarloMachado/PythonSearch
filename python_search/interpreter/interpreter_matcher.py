@@ -5,7 +5,6 @@ from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.interpreter.file import FileInterpreter
-from python_search.interpreter.group import GroupInterpreter
 from python_search.interpreter.python import PythonInterpreter
 from python_search.interpreter.snippet import SnippetInterpreter
 from python_search.interpreter.url import UrlInterpreter
@@ -14,12 +13,10 @@ from python_search.logger import interpreter_logger
 INTERPRETERS_IN_ORDER = [
     UrlInterpreter,
     FileInterpreter,
-    GroupInterpreter,
     SnippetInterpreter,
     PythonInterpreter,
     CmdInterpreter,
 ]
-
 
 class InterpreterMatcher:
     """
