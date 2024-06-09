@@ -1,13 +1,23 @@
 import datetime
 
-class TimeBasedThemeSelector:
+
+class ThemeSelector:
     HOUR_FROM = 8
     HOUR_TO = 17
 
     def get_theme(self) -> str:
+
         """
         Returns the theme to use based on the current time
         """
+        import os ;  home = os.environ['HOME']
+        if os.path.exists(home + '/.python_search/theme'):
+            theme = open(home + '/.python_search/theme').read().strip()
+            if theme == 'Desert':
+                return DesertTheme()
+
+
+
         now = datetime.datetime.now()
         if now.hour >= self.HOUR_FROM and now.hour <= self.HOUR_TO:
             return NewLight()
@@ -83,4 +93,4 @@ class DesertTheme(BaseTheme):
 
 
 def get_current_theme():
-    return TimeBasedThemeSelector().get_theme()
+    return ThemeSelector().get_theme()
