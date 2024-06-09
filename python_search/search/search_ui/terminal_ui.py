@@ -10,6 +10,7 @@ from python_search.search.search_ui.semantic_search import SemanticSearch
 
 from python_search.theme import get_current_theme
 from python_search.core_entities.core_entities import Entry
+from python_search.system_paths import SystemPaths
 
 
 class SearchTerminalUi:
@@ -110,7 +111,7 @@ class SearchTerminalUi:
         import subprocess
 
         output = subprocess.getoutput(
-            "/Users/jean.machado/miniconda3/envs/python312/bin/pys _entries_loader load_entries_as_json "
+            SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json "
         )
         import json
 

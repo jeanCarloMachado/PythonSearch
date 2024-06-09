@@ -5,12 +5,12 @@ import shutil
 from typing import Optional
 
 from python_search.search.search_ui.kitty import KittySearch
+from python_search.system_paths import SystemPaths
 
 
 class Mac:
     """
     Mac support for tool iCanHazShortcut
-
     """
 
     START_SHORTCUT_NUMBER = 1
@@ -97,7 +97,7 @@ class Mac:
     ) -> str:
         print(f"Generating shortcut for {key}")
         if custom_cmd is None:
-            custom_cmd = f'run_key "{key}"'
+            custom_cmd = f'{SystemPaths.BINARIES_PATH}/run_key "{key}"'
 
         return f"""
 

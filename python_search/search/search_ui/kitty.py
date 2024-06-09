@@ -2,7 +2,7 @@ import os
 
 import logging
 import sys
-
+from python_search.system_paths import SystemPaths
 from python_search.environment import is_mac
 
 
@@ -50,6 +50,8 @@ class KittySearch:
         theme = get_current_theme()
 
         terminal = Terminal()
+        from python_search.system_paths import SystemPaths
+
 
         launch_cmd = f"""{get_kitty_cmd()} \
         --title {self._title} \
@@ -70,7 +72,7 @@ class KittySearch:
         -o font_size="{theme.font_size}" \
         -o font_family="SF\ Pro" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
-         /Users/jean.machado/miniconda3/envs/python312/bin/term_ui
+         {SystemPaths.BINARIES_PATH}/term_ui
         """
         result = os.system(launch_cmd)
         if result != 0:
@@ -105,7 +107,7 @@ class KittySearch:
 
 def get_kitty_cmd() -> str:
     if is_mac():
-        return "/Applications/kitty.app/Contents/MacOS/kitty"
+        return SystemPaths.KITTY_BINNARY
     return "kitty"
 
 
