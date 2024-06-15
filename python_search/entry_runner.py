@@ -14,6 +14,7 @@ from python_search.search.search_ui.serialized_entry import (
     decode_serialized_data_from_entry_text,
 )
 
+
 class EntryRunner:
     """
     Responsible to execute the entries matched

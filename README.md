@@ -1,7 +1,8 @@
 
 # PythonSearch
 
-With python search you collect and retrieve and refactor information efficiently.
+Python search is a minimal search engine writting in python for developers productivity.
+With PythoSearch you collect and retrieve and refactor information efficiently.
 
 - collect commands, scripts, prompts, snippets, urls, files, efficiently as python dictionaries
 - retrieve or execute the registered entries (depending on the type) either by searching them or invoking them via shortcuts

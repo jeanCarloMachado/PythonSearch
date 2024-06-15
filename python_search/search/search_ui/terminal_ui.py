@@ -17,7 +17,7 @@ class SearchTerminalUi:
     MAX_LINE_SIZE = 80
     MAX_KEY_SIZE = 45
     MAX_CONTENT_SIZE = 45
-    NUMBER_ENTRIES_TO_RETURN = 10
+    NUMBER_ENTRIES_TO_RETURN = 6
 
     _documents_future = None
     commands = None

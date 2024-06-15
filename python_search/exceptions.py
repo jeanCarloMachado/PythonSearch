@@ -14,6 +14,7 @@ class CommandDoNotMatchException(Exception):
             f"Not Valid {entity.__class__.__name__} command {cmd}"
         )
 
+
 class RunException(Exception):
     @staticmethod
     def key_does_not_exist(key: str):

@@ -11,7 +11,7 @@ class KittySearch:
     Renders the search ui using fzf + termite terminal
     """
 
-    _DEFAULT_WINDOW_SIZE = (955, 230)
+    _DEFAULT_WINDOW_SIZE = (990, 170)
 
     _configuration = None
 
@@ -51,7 +51,6 @@ class KittySearch:
 
         terminal = Terminal()
         from python_search.host_system.system_paths import SystemPaths
-
 
         launch_cmd = f"""{get_kitty_cmd()} \
         --title {self._title} \

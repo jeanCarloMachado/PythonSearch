@@ -18,6 +18,7 @@ INTERPRETERS_IN_ORDER = [
     CmdInterpreter,
 ]
 
+
 class InterpreterMatcher:
     """
     Matches a query with an entry interpreter

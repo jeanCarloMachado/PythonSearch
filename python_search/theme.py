@@ -6,17 +6,16 @@ class ThemeSelector:
     HOUR_TO = 17
 
     def get_theme(self) -> str:
-
         """
         Returns the theme to use based on the current time
         """
-        import os ;  home = os.environ['HOME']
-        if os.path.exists(home + '/.python_search/theme'):
-            theme = open(home + '/.python_search/theme').read().strip()
-            if theme == 'Desert':
+        import os
+
+        home = os.environ["HOME"]
+        if os.path.exists(home + "/.python_search/theme"):
+            theme = open(home + "/.python_search/theme").read().strip()
+            if theme == "Desert":
                 return DesertTheme()
-
-
 
         now = datetime.datetime.now()
         if now.hour >= self.HOUR_FROM and now.hour <= self.HOUR_TO:
@@ -38,7 +37,7 @@ class BaseTheme:
         self.backgroud = self.colors["backgroud"]
         self.text = self.colors["text"]
 
-        self.font_size = 16
+        self.font_size = 17
         self.font = "SF Pro"
 
 
@@ -92,5 +91,5 @@ class DesertTheme(BaseTheme):
         super().__init__()
 
 
-def get_current_theme():
+def get_current_theme() -> BaseTheme:
     return ThemeSelector().get_theme()
