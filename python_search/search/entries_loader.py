@@ -31,18 +31,6 @@ class EntriesLoader:
         return json.dumps(result)
 
     @staticmethod
-    def load_privacy_neutral_only() -> List[Entry]:
-        from python_search.privacy.privacy_detector import PrivacyDetector
-
-        detector = PrivacyDetector()
-
-        for i in EntriesLoader.load_all_entries():
-            if not detector.has_sentitive_content(
-                i.get_content_str()
-            ) and not detector.has_sentitive_content(i.key):
-                yield i
-
-    @staticmethod
     def load_all_entries() -> List[Entry]:
         """
         Return just the key names strings

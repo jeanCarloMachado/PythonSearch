@@ -14,9 +14,8 @@ from python_search.host_system.system_paths import SystemPaths
 
 
 class SearchTerminalUi:
-    MAX_LINE_SIZE = 80
-    MAX_KEY_SIZE = 45
-    MAX_CONTENT_SIZE = 45
+    MAX_KEY_SIZE = 35
+    MAX_CONTENT_SIZE = 35
     NUMBER_ENTRIES_TO_RETURN = 6
 
     _documents_future = None
