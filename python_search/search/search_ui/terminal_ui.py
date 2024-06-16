@@ -26,13 +26,6 @@ class SearchTerminalUi:
     def __init__(self) -> None:
         self.theme = get_current_theme()
         self.cf = self.theme.get_colorful()
-        self.cf.update_palette(
-            {
-                "green": "#97AE5E",
-                "yellow": "#DB9D3E",
-                "red": "#E56B55",
-            }
-        )
         self.actions = Actions()
         self.previous_query = ""
         self.tdw = None
