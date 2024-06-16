@@ -16,6 +16,8 @@ class ThemeSelector:
             theme = open(home + "/.python_search/theme").read().strip()
             if theme == "Desert":
                 return DesertTheme()
+            elif theme == "D2":
+                return D2Theme()
 
         now = datetime.datetime.now()
         if now.hour >= self.HOUR_FROM and now.hour <= self.HOUR_TO:
@@ -74,6 +76,20 @@ class NewLight(BaseTheme):
 
         super().__init__()
 
+class D2Theme(BaseTheme):
+    def __init__(self):
+        self.colors = {
+            "backgroud": "#1C2918",
+            "selected": "#5FDE33",
+            "query": "#87D700",
+            "partialmatch": "#B3150C",
+            "text": "#D7D2CA",
+            "entrycontentselected": "#5FDE33",
+            "entrycontentunselected": "#9FA0A7",
+            "entrytype": "#B3150C",
+            "cursor": "#E90100",
+        }
+        super().__init__()
 
 class DesertTheme(BaseTheme):
     def __init__(self):
