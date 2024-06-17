@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5 - 2024-06-17 Major simplifications
+
+- Tailoring the project towards minimal setup
+
 ## 0.31 - 2024-01-27
 
 - Replce fzf with a python native logic.

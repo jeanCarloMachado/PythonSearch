@@ -1,7 +1,7 @@
 from typing import List
 
 from python_search.configuration.loader import ConfigurationLoader
-from python_search.core_entities.core_entities import Entry
+from python_search.core_entities import Entry
 
 
 class EntriesLoader:

@@ -1,15 +1,16 @@
 import asyncio
 import sys
 from typing import Any
+import json
 
 from getch import getch
 
+from python_search.core_entities import Entry
 from python_search.search.search_ui.bm25_search import Bm25Search
 from python_search.search.search_ui.search_actions import Actions
 from python_search.search.search_ui.semantic_search import SemanticSearch
 
 from python_search.theme import get_current_theme
-from python_search.core_entities.core_entities import Entry
 from python_search.host_system.system_paths import SystemPaths
 
 
@@ -105,7 +106,7 @@ class SearchTerminalUi:
         output = subprocess.getoutput(
             SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json "
         )
-        import json
+
 
         self.commands = json.loads(output)
 
