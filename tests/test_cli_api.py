@@ -18,5 +18,9 @@ def test_all():
     assert_command_does_not_fail(f"{binary} edit_entries_main --help")
 
 
+
+def test_standalone_scripts():
+    assert_command_does_not_fail("entries_editor --help")
+
 def assert_command_does_not_fail(cmd):
     assert os.system(cmd) == 0
