@@ -1,6 +1,5 @@
 import datetime
 
-
 class ThemeSelector:
     """
     A class that selects theme.

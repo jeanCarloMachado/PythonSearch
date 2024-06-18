@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from python_search.configuration.data_config import DataConfig
-from python_search.data_collector import GenericDataCollector
+from python_search.events.data_collector import GenericDataCollector
 
 
 class EntryExecutedDataset:
