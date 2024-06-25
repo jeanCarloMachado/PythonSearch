@@ -2,6 +2,7 @@ import asyncio
 import sys
 from typing import Any
 import json
+import time
 
 from getch import getch
 
@@ -9,12 +10,13 @@ from python_search.core_entities import Entry
 from python_search.search.search_ui.bm25_search import Bm25Search
 from python_search.search.search_ui.search_actions import Actions
 from python_search.search.search_ui.semantic_search import SemanticSearch
-from python_search.search.search_ui.search_utils import statsd
+from python_search.search.search_ui.search_utils import setup_datadog
 
 from python_search.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
 
 
+start_time_script = time.time()
 class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 35
@@ -33,6 +35,7 @@ class SearchTerminalUi:
         self.tdw = None
         self.reloaded = False
         self.first_run = True
+        self.statsd = setup_datadog()
 
         self._setup_entries()
 
@@ -41,7 +44,7 @@ class SearchTerminalUi:
         Rrun the application main loop
         """
 
-        statsd.increment("python_search_run_triggered")
+        self.statsd.increment("ps_run_triggered")
         self._hide_cursor()
         self.query = ""
         self.selected_row = 0
@@ -69,8 +72,13 @@ class SearchTerminalUi:
                 current_key += 1
                 self.matches.append(key)
 
+            # blocking function call
+            if self.first_run:
+                end = time.time()
+                # get diff in milliseconds between time to start adn time to end
+                self.statsd.histogram("ps_time_to_render_first_run_seconds", (end - start_time_script))
             c = self.get_caracter()
-            statsd.increment("python_search_run_get_char")
+            self.statsd.increment("python_search_run_get_char")
             self.process_chars(self.query, c)
 
     def search(self, query):
@@ -80,7 +88,7 @@ class SearchTerminalUi:
         bm25_results = self.search_bm25.search(query)
 
         semantic_results = []
-        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run:
+        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run and not self.reloaded:
             semantic_results = self.search_semantic.search(query)
 
         for i in range(self.NUMBER_ENTRIES_TO_RETURN):
@@ -146,6 +154,7 @@ class SearchTerminalUi:
         elif ord_c == 10:
             # enter
             self.actions.run_key(self.matches[self.selected_row])
+            self.statsd.increment("ps_run_key")
             if self.query:
                 self._get_data_warehouse().write_event(
                     "python_search_typed_query", {"query": query}
