@@ -9,6 +9,7 @@ from python_search.core_entities import Entry
 from python_search.search.search_ui.bm25_search import Bm25Search
 from python_search.search.search_ui.search_actions import Actions
 from python_search.search.search_ui.semantic_search import SemanticSearch
+from python_search.search.search_ui.search_utils import statsd
 
 from python_search.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
@@ -40,6 +41,7 @@ class SearchTerminalUi:
         Rrun the application main loop
         """
 
+        statsd.increment("python_search_run_triggered")
         self._hide_cursor()
         self.query = ""
         self.selected_row = 0
@@ -68,6 +70,7 @@ class SearchTerminalUi:
                 self.matches.append(key)
 
             c = self.get_caracter()
+            statsd.increment("python_search_run_get_char")
             self.process_chars(self.query, c)
 
     def search(self, query):
@@ -165,11 +168,11 @@ class SearchTerminalUi:
                 self.selected_row = self.selected_row - 1
         elif c == ".":
             self.selected_query += 1
-            self.query = self.get_query(self.selected_query)
+            self.query = self.get_previously_used_query(self.selected_query)
         elif c == ",":
             if self.selected_query >= 0:
                 self.selected_query -= 1
-            self.query = self.get_query(self.selected_query)
+            self.query = self.get_previously_used_query(self.selected_query)
         elif c == "+":
             sys.exit(0)
         elif ord_c == 68 or c == ";":
@@ -195,7 +198,7 @@ class SearchTerminalUi:
             self.query += c
             self.selected_row = 0
 
-    def get_query(self, position):
+    def get_previously_used_query(self, position) -> str:
         # len
         df = self._get_data_warehouse().event("python_search_typed_query")
         if position >= len(df):
