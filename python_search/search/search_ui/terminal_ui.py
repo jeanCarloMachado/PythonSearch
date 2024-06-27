@@ -3,7 +3,7 @@ import sys
 from typing import Any
 import json
 import time
-
+startup_time = time.time_ns()
 from getch import getch
 
 from python_search.core_entities import Entry
@@ -16,7 +16,8 @@ from python_search.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
 
 
-start_time_script = time.time()
+statsd = setup_datadog()
+
 class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 35
@@ -35,7 +36,6 @@ class SearchTerminalUi:
         self.tdw = None
         self.reloaded = False
         self.first_run = True
-        self.statsd = setup_datadog()
 
         self._setup_entries()
 
@@ -43,43 +43,45 @@ class SearchTerminalUi:
         """
         Rrun the application main loop
         """
-
-        self.statsd.increment("ps_run_triggered")
+        statsd.increment("ps_run_triggered")
         self._hide_cursor()
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
-        # hide cursor
+
+        
+
+        end_startup = time.time_ns()
+        duration_startup_seconds = (end_startup - startup_time) / 1000**3
+        statsd.histogram("ps_startup_no_render_seconds", duration_startup_seconds)
         while True:
-            self.print_first_line()
-            if self.query != self.previous_query or self.reloaded:
-                self.matches = self.search(query=self.query)
-                self.reloaded = False
-            self.previous_query = self.query
-            current_key = 0
-            self.matches = []
-            for key in self.search(self.query):
-                try:
-                    entry = Entry(key, self.commands[key])
-                except Exception:
-                    continue
-
-                if current_key == self.selected_row:
-                    self.print_highlighted(key, entry)
-                else:
-                    self.print_normal_row(key, entry)
-
-                current_key += 1
-                self.matches.append(key)
-
             # blocking function call
-            if self.first_run:
-                end = time.time()
-                # get diff in milliseconds between time to start adn time to end
-                self.statsd.histogram("ps_time_to_render_first_run_seconds", (end - start_time_script))
+            self.render()
             c = self.get_caracter()
-            self.statsd.increment("python_search_run_get_char")
             self.process_chars(self.query, c)
+    
+    @statsd.timed("ps_render")
+    def render(self):
+        self.print_first_line()
+        if self.query != self.previous_query or self.reloaded:
+            self.matches = self.search(query=self.query)
+            self.reloaded = False
+        self.previous_query = self.query
+        current_key = 0
+        self.matches = []
+        for key in self.search(self.query):
+            try:
+                entry = Entry(key, self.commands[key])
+            except Exception:
+                continue
+
+            if current_key == self.selected_row:
+                self.print_highlighted(key, entry)
+            else:
+                self.print_normal_row(key, entry)
+
+            current_key += 1
+            self.matches.append(key)
 
     def search(self, query):
         """gets 1 from each type of search at a time and merge them to remove duplicates"""
@@ -154,7 +156,7 @@ class SearchTerminalUi:
         elif ord_c == 10:
             # enter
             self.actions.run_key(self.matches[self.selected_row])
-            self.statsd.increment("ps_run_key")
+            statsd.increment("ps_run_key")
             if self.query:
                 self._get_data_warehouse().write_event(
                     "python_search_typed_query", {"query": query}
