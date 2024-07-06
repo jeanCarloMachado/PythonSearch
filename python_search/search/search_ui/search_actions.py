@@ -26,6 +26,6 @@ class Actions:
             shell=True,
         )
 
-    def run_key(self, key):
+    def run_key(self, key: str) -> None:
         command = f'run_key "{key}" &>/dev/null'
         Popen(command, stdout=None, stderr=None, shell=True)

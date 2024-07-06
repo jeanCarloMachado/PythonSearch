@@ -3,6 +3,7 @@ import sys
 from typing import Any
 import json
 import time
+
 startup_time = time.time_ns()
 from getch import getch
 
@@ -15,13 +16,14 @@ from python_search.search.search_ui.search_utils import setup_datadog
 from python_search.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
 
-
 statsd = setup_datadog()
+
 
 class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 35
     NUMBER_ENTRIES_TO_RETURN = 6
+    RUN_KEY_EVENT = "python_search_run_key"
 
     _documents_future = None
     commands = None
@@ -33,6 +35,7 @@ class SearchTerminalUi:
         self.cf = self.theme.get_colorful()
         self.actions = Actions()
         self.previous_query = ""
+        self.typed_up_to_run = ""
         self.tdw = None
         self.reloaded = False
         self.first_run = True
@@ -49,8 +52,6 @@ class SearchTerminalUi:
         self.selected_row = 0
         self.selected_query = -1
 
-        
-
         end_startup = time.time_ns()
         duration_startup_seconds = (end_startup - startup_time) / 1000**3
         statsd.histogram("ps_startup_no_render_seconds", duration_startup_seconds)
@@ -59,16 +60,16 @@ class SearchTerminalUi:
             self.render()
             c = self.get_caracter()
             self.process_chars(self.query, c)
-    
+
     @statsd.timed("ps_render")
     def render(self):
         self.print_first_line()
         if self.query != self.previous_query or self.reloaded:
-            self.matches = self.search(query=self.query)
+            self.matched_keys = self.search(query=self.query)
             self.reloaded = False
         self.previous_query = self.query
         current_key = 0
-        self.matches = []
+        self.matched_keys = []
         for key in self.search(self.query):
             try:
                 entry = Entry(key, self.commands[key])
@@ -81,7 +82,7 @@ class SearchTerminalUi:
                 self.print_normal_row(key, entry)
 
             current_key += 1
-            self.matches.append(key)
+            self.matched_keys.append(key)
 
     def search(self, query):
         """gets 1 from each type of search at a time and merge them to remove duplicates"""
@@ -120,7 +121,6 @@ class SearchTerminalUi:
             SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json "
         )
 
-
         self.commands = json.loads(output)
 
         self.search_bm25 = Bm25Search(
@@ -148,6 +148,7 @@ class SearchTerminalUi:
         )
 
     def process_chars(self, query: str, c: str):
+        self.typed_up_to_run += c
         ord_c = ord(c)
         # test if the character is a delete (backspace)
         if ord_c == 127:
@@ -155,24 +156,33 @@ class SearchTerminalUi:
             self.query = query[:-1]
         elif ord_c == 10:
             # enter
-            self.actions.run_key(self.matches[self.selected_row])
+            self.actions.run_key(self.matched_keys[self.selected_row])
             statsd.increment("ps_run_key")
-            if self.query:
-                self._get_data_warehouse().write_event(
-                    "python_search_typed_query", {"query": query}
-                )
+            self._get_data_warehouse().write_event(
+                self.RUN_KEY_EVENT,
+                {
+                    "query": query,
+                    "key": self.matched_keys[self.selected_row],
+                    "type_sequence": self.typed_up_to_run,
+                },
+            )
+
+            self.typed_up_to_run = ""
+
         elif ord_c == 9:
             # tab
-            self.actions.edit_key(self.matches[self.selected_row])
+            self.actions.edit_key(self.matched_keys[self.selected_row])
         elif c == "'":
             # tab
-            self.actions.copy_entry_value_to_clipboard(self.matches[self.selected_row])
+            self.actions.copy_entry_value_to_clipboard(
+                self.matched_keys[self.selected_row]
+            )
         elif ord_c == 47:
             # ?
             self.actions.search_in_google(self.query)
         # handle arrows
         elif ord_c == 66:
-            if self.selected_row < len(self.matches) - 1:
+            if self.selected_row < len(self.matched_keys) - 1:
                 self.selected_row = self.selected_row + 1
         elif ord_c == 65:
             if self.selected_row > 0:
@@ -211,7 +221,7 @@ class SearchTerminalUi:
 
     def get_previously_used_query(self, position) -> str:
         # len
-        df = self._get_data_warehouse().event("python_search_typed_query")
+        df = self._get_data_warehouse().event(self.RUN_KEY_EVENT)
         if position >= len(df):
             return ""
 

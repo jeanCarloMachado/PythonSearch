@@ -2,8 +2,6 @@ import logging
 import sys
 
 
-
-
 def setup_run_key_logger():
     """
     Code has to be fast
@@ -17,7 +15,6 @@ def setup_run_key_logger():
     logger.setLevel(logging.INFO)
 
     return logger
-
 
 
 def interpreter_logger():
@@ -35,7 +32,6 @@ def interpreter_logger():
     return logger
 
 
-
 def setup_data_writter_logger(event_name):
     logger = logging.getLogger(f"data-writer_{event_name}")
 
@@ -46,4 +42,3 @@ def setup_data_writter_logger(event_name):
     logger.setLevel(logging.WARNING)
 
     return logger
-

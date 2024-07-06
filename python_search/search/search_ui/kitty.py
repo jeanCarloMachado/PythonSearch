@@ -62,7 +62,7 @@ class KittySearch:
         -o window_border_width=0 \
         -o window_padding_width=0 \
         -o hide_window_decorations=titlebar-only \
-        -o background_opacity=1 \
+        -o background_opacity=0.9 \
         -o active_tab_title_template=none \
         -o initial_window_width={self._width}  \
         -o initial_window_height={self._height} \

@@ -1,6 +1,6 @@
 from typing import List
 import os
-from rank_bm25 import BM25Okapi as BM25
+from rank_bm25 import BM25Plus as BM25
 import nltk
 from python_search.entry_change import EntryChangeDetector
 

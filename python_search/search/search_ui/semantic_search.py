@@ -52,12 +52,6 @@ class SemanticSearch:
         return results
 
 
-def chroma_run_webserver():
-    cmd = "chroma run --path " + CHROMA_DB_PATH
-    print(cmd)
-    os.system(cmd)
-
-
 if __name__ == "__main__":
     import fire
 
