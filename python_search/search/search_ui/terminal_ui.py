@@ -47,21 +47,26 @@ class SearchTerminalUi:
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
-
         end_startup = time.time_ns()
         duration_startup_seconds = (end_startup - startup_time) / 1000**3
         statsd.histogram("ps_startup_no_render_seconds", duration_startup_seconds)
+
+
+        if self.first_run:
+            self.render()
+            self.first_run = False
+
         while True:
             # blocking function call
-
-            self.render()
             c = self.get_caracter()
+            # sets query here
             self.process_chars(self.query, c)
+            self.render()
+            self.previous_query = self.query
 
     @statsd.timed("ps_render")
     def render(self):
         self.print_first_line()
-        self.previous_query = self.query
         current_key = 0
         self.matched_keys = []
 
@@ -79,7 +84,6 @@ class SearchTerminalUi:
             current_key += 1
             self.matched_keys.append(key)
 
-        self.first_run = False
 
     def _setup_entries(self):
         import subprocess
