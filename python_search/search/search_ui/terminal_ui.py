@@ -84,7 +84,9 @@ class SearchTerminalUi:
             self.matched_keys.append(key)
 
     def search(self, query):
-        """gets 1 from each type of search at a time and merge them to remove duplicates"""
+        """
+        gets 1 from each type of search at a time and merge them to remove duplicates
+        """
 
         already_returned = []
         bm25_results = self.search_bm25.search(query)

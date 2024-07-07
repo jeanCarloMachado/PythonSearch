@@ -84,7 +84,7 @@ class Bm25Search:
             matches = self.bm25.get_top_n(
                 tokenized_query, self.entries, n=self.number_entries_to_return
             )
-        except:
+        except Exception:
             self.build_bm25()
             matches = self.bm25.get_top_n(
                 tokenized_query, self.entries, n=self.number_entries_to_return

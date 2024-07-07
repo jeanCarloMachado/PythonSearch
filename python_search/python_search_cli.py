@@ -6,7 +6,7 @@ from python_search.configuration.loader import ConfigurationLoader
 from python_search.core_entities import Key
 from python_search.entry_runner import EntryRunner
 from python_search.error.exception import notify_exception
-from python_search.events.run_performed import EntryExecuted
+from python_search.events.run_performed.entity import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
 from python_search.search.entries_loader import EntriesLoader

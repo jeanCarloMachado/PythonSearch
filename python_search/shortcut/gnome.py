@@ -57,10 +57,7 @@ class Gnome:
         item_s = "/" + key.replace(" ", "/").replace(".", "/") + "/"
         firstname = "custom"
         # get the current list of custom shortcuts
-        get = lambda cmd: subprocess.check_output(["/bin/bash", "-c", cmd]).decode(
-            "utf-8"
-        )
-        array_str = get("gsettings get " + key)
+        array_str = self.get("gsettings get " + key)
         # in case the array was empty, remove the annotation hints
         command_result = array_str.lstrip("@as")
         current = eval(command_result)
@@ -83,6 +80,9 @@ class Gnome:
         for cmd in [cmd0, cmd1, cmd2, cmd3]:
             print(f"CMD executing: {cmd}")
             subprocess.call(["/bin/bash", "-c", cmd])
+
+    def get(cmd):
+        return subprocess.check_output(["/bin/bash", "-c", cmd]).decode("utf-8")
 
     def _generate_identifier(self, string):
         """

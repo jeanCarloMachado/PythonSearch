@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
+import datetime
+import os
+
+from python_search.configuration.configuration import PythonSearchConfiguration
+from python_search.official_entries.entries import OfficialEntries
+
 """
 This is a initial version of python_search _entries to give you a sense of what is possible.
 Feel free to delete all the _entries here. You will want to versionate your _entries
 """
-
-import datetime
-import os
-
-from python_search.official_entries.entries import OfficialEntries
 
 entries = {
     # NEW_ENTRIES_HERE
@@ -57,6 +58,5 @@ entries = {
     },
 }
 
-from python_search.configuration.configuration import PythonSearchConfiguration
 
 config = PythonSearchConfiguration(entries=entries, entries_groups=[OfficialEntries])
