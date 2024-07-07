@@ -72,7 +72,7 @@ class EntryRunner:
         )
 
         self._logger.info("Passed interpreter")
-        from python_search.events.run_performed import EntryExecuted
+        from python_search.events.run_performed.entity import EntryExecuted
         from python_search.events.run_performed.writer import LogRunPerformedClient
 
         run_performed = EntryExecuted(

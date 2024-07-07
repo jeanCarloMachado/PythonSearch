@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_capture.filesystem_entry_inserter import (
     FilesystemEntryInserter,

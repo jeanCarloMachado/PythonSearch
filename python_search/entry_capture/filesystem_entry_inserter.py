@@ -4,7 +4,7 @@ import shutil
 from datetime import datetime
 
 from python_search.configuration.configuration import PythonSearchConfiguration
-from python_search.events.run_performed import EntryExecuted
+from python_search.events.run_performed.entity import EntryExecuted
 
 
 class FilesystemEntryInserter:
