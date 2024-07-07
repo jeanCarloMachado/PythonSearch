@@ -29,8 +29,6 @@ class SearchLogic:
         if query == self.last_query:
             yield from self.in_results_list
             return
-
-
         self.last_query = query
         self.in_results_list = []
         bm25_results = self.search_bm25.search(query)
@@ -52,6 +50,13 @@ class SearchLogic:
             ):
                 self.in_results_list.append(bm25_results[i])
                 yield bm25_results[i]
+                continue
+
+            string_search_key = self.string_match(query)
+            if string_search_key and string_search_key not in self.in_results_list:
+                self.in_results_list.append(string_search_key)
+                yield string_search_key
+                continue
 
             if semantic_results and (
                 semantic_results[i] not in self.in_results_list
@@ -59,6 +64,18 @@ class SearchLogic:
             ):
                 self.in_results_list.append(semantic_results[i])
                 yield semantic_results[i]
+                continue
+            
+
+
+    def string_match(self, query: str) -> str:
+        if len(query) < 3:
+            return
+
+        for i in self.commands.keys():
+            if query in i:
+                yield i
+
 
         
         
