@@ -51,17 +51,15 @@ class SearchTerminalUi:
         duration_startup_seconds = (end_startup - startup_time) / 1000**3
         statsd.histogram("ps_startup_no_render_seconds", duration_startup_seconds)
 
-
-        if self.first_run:
-            self.render()
-            self.first_run = False
+        self.render()
+        self.first_run = False
 
         while True:
             # blocking function call
             c = self.get_caracter()
-            # sets query here
             self.process_chars(self.query, c)
             self.render()
+            # sets query here
             self.previous_query = self.query
 
     @statsd.timed("ps_render")
@@ -83,7 +81,6 @@ class SearchTerminalUi:
 
             current_key += 1
             self.matched_keys.append(key)
-
 
     def _setup_entries(self):
         import subprocess
