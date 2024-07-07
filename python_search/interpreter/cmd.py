@@ -2,7 +2,7 @@ import os
 from typing import Optional
 
 from python_search.apps.notification_ui import send_notification
-from python_search.apps.terminal import Terminal
+from python_search.apps.terminal import KittyTerminal
 from python_search.context import Context
 from python_search.exceptions import CommandDoNotMatchException
 from python_search.interpreter.base import BaseInterpreter
@@ -23,7 +23,7 @@ class CmdInterpreter(BaseInterpreter):
         """ """
         self.context = context
 
-        if type(cmd) == str:
+        if isinstance(cmd, str):
             self.cmd = {WRAP_IN_TERMINAL: True, "cmd": cmd}
             return
 
@@ -60,7 +60,7 @@ class CmdInterpreter(BaseInterpreter):
         logger.info("Running it in a new terminal")
 
         hold_terminal = False if "not_hold_terminal" in self.cmd else True
-        cmd = Terminal().wrap_cmd_into_terminal(
+        cmd = KittyTerminal().wrap_cmd_into_terminal(
             cmd,
             title=self._get_window_title(),
             hold_terminal_open_on_end=hold_terminal,

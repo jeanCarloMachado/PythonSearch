@@ -6,7 +6,7 @@ class PythonInterpreter(BaseInterpreter):
     def __init__(self, cmd, context=None):
         self.context = context
 
-        if type(cmd) is dict and "callable" in cmd:
+        if isinstance(cmd, dict) and "callable" in cmd:
             self.cmd = cmd
             return
 

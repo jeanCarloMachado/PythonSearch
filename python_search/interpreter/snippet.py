@@ -12,11 +12,11 @@ class SnippetInterpreter(BaseInterpreter):
     def __init__(self, cmd, context=None):
         self.context = context
 
-        if type(cmd) == str:
+        if isinstance(cmd, str):
             self.cmd = {"snippet": cmd}
             return
 
-        if type(cmd) is dict and "snippet" in cmd:
+        if isinstance(cmd, dict) and "snippet" in cmd:
             self.cmd = cmd
             return
 

@@ -18,10 +18,10 @@ class FileInterpreter(BaseInterpreter):
         self.context = context
         self.cmd = cmd
 
-        if type(cmd) == str:
+        if isinstance(cmd, str):
             self.cmd = {"file": cmd}
 
-        if type(cmd) == dict and "file" not in cmd:
+        if isinstance(cmd, dict) and "file" not in cmd:
             raise CommandDoNotMatchException(
                 f"Not Valid {self.__class__.__name__} command {cmd}"
             )
@@ -58,7 +58,6 @@ class FileInterpreter(BaseInterpreter):
             final_cmd["cli_cmd"] = cmd
         else:
             final_cmd["cmd"] = cmd
-            # final_cmd["new-window-non-cli"] = True
 
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 

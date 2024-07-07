@@ -11,11 +11,11 @@ class UrlInterpreter(BaseInterpreter):
     def __init__(self, cmd, context=None):
         self.context = context
 
-        if type(cmd) == str and UrlInterpreter.is_url(cmd):
+        if isinstance(cmd, str) and UrlInterpreter.is_url(cmd):
             self.cmd = {"url": cmd}
             return
 
-        if type(cmd) is dict and "url" in cmd:
+        if isinstance(cmd, dict) and "url" in cmd:
             self.cmd = cmd
             return
 

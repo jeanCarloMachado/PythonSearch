@@ -12,7 +12,7 @@ class XFCE:
         )
 
         for key, content in list(self.configuration.commands.items()):
-            if type(content) is not dict:
+            if not isinstance(content, dict):
                 continue
 
             if "xfce_shortcut" in content:

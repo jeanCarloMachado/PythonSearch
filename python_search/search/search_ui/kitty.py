@@ -44,12 +44,12 @@ class KittySearch:
         """
         Entry point for the application to launch the search ui
         """
-        from python_search.apps.terminal import Terminal
+        from python_search.apps.terminal import KittyTerminal
         from python_search.theme import get_current_theme
 
         theme = get_current_theme()
 
-        terminal = Terminal()
+        terminal = KittyTerminal()
         from python_search.host_system.system_paths import SystemPaths
 
         launch_cmd = f"""{get_kitty_cmd()} \

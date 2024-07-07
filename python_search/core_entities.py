@@ -38,7 +38,8 @@ class Entry:
     def get_content_str(self, strip_new_lines=False) -> str:
         if not self.value:
             return ""
-        if type(self.value) == str:
+
+        if isinstance(self.value, str):
             result = self.value
             return result
 
@@ -54,11 +55,12 @@ class Entry:
         if "cli_cmd" in self.value or "cmd" in self.value:
             result = self.value.get("cli_cmd", self.value.get("cmd"))
 
-        if "callable" in self.value and type(self.value["callable"]) != str:
+        if "callable" in self.value and not isinstance(self.value["callable"], str):
             value = self.value.get("callable")
             import dill
 
             result = dill.source.getsource(value)
+
         elif "callable" in self.value:
             result = self.value.get("callable")
 

@@ -16,7 +16,7 @@ class Gnome:
 
         shortcut_found = False
         for key, content in list(self.configuration.commands.items()):
-            if type(content) is dict and "gnome_shortcut" in content:
+            if isinstance(content, dict) and "gnome_shortcut" in content:
                 logging.info(f"Generating shortcut for {key}")
                 identifier = self._generate_identifier(key)
                 cmd = f'run_key "{key}" --from_shortcut=True'

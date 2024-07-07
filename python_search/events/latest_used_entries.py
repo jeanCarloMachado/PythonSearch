@@ -34,7 +34,7 @@ class RecentKeys:
         for file in list_of_files:
             try:
                 data = json.load(open(file, "r"))
-            except:
+            except Exception:
                 continue
 
             key = data["key"]

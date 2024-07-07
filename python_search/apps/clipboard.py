@@ -2,15 +2,6 @@ from typing import Union
 from python_search.environment import is_mac
 
 
-def chomp(x):
-    """remove special chars from end of string"""
-    if x.endswith("\r\n"):
-        return x[:-2]
-    if x.endswith("\n") or x.endswith("\r"):
-        return x[:-1]
-    return x
-
-
 class Clipboard:
     def get_content(self, source="--primary") -> str:
         """
@@ -24,9 +15,17 @@ class Clipboard:
         import subprocess
 
         result = subprocess.getoutput(cmd)
-        result = chomp(result)
+        result = self.chomp(result)
 
         return result
+
+    def chomp(self, x):
+        """remove special chars from end of string"""
+        if x.endswith("\r\n"):
+            return x[:-2]
+        if x.endswith("\n") or x.endswith("\r"):
+            return x[:-1]
+        return x
 
     def set_content(
         self, content: Union[str, None] = None, enable_notifications=True, notify=False
@@ -48,7 +47,7 @@ class Clipboard:
         if not content:
             raise Exception("Tryring to set empty to clipboard")
 
-        if type(content) != str:
+        if not isinstance(content, str):
             raise Exception("Tryring to set a non string to clipboard")
 
         # overrides previous content

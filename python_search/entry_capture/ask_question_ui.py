@@ -1,7 +1,7 @@
 import os
 import time
 
-from python_search.apps.terminal import Terminal
+from python_search.apps.terminal import KittyTerminal
 
 
 class AskQuestion:
@@ -11,7 +11,7 @@ class AskQuestion:
         if os.path.exists(content_file):
             os.remove(content_file)
 
-        cmd = f"""kitty {Terminal.GENERIC_TERMINAL_PARAMS} bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
+        cmd = f"""kitty {KittyTerminal.GENERIC_TERMINAL_PARAMS} bash -c 'printf "{message}: "; read tmp; echo "$tmp" >{content_file}' &"""
         os.system(cmd)
 
         while not os.path.exists(content_file):

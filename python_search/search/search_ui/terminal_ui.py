@@ -4,9 +4,6 @@ from typing import Any
 import json
 import time
 
-startup_time = time.time_ns()
-from getch import getch
-
 from python_search.core_entities import Entry
 from python_search.search.search_ui.bm25_search import Bm25Search
 from python_search.search.search_ui.search_actions import Actions
@@ -15,7 +12,9 @@ from python_search.search.search_ui.search_utils import setup_datadog
 
 from python_search.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
+from getch import getch
 
+startup_time = time.time_ns()
 statsd = setup_datadog()
 
 
@@ -167,6 +166,7 @@ class SearchTerminalUi:
                 },
             )
 
+            statsd.gauge("ps_query_len_size", len(self.typed_up_to_run))
             self.typed_up_to_run = ""
 
         elif ord_c == 9:

@@ -46,7 +46,7 @@ class EntriesGroup:
         result = {}
         class_name_tag = self.__class__.__name__
         for key, command in self.commands.items():
-            if type(command) is dict:
+            if isinstance(command, dict):
                 if "tags" not in command:
                     command["tags"] = [class_name_tag]
                 else:

@@ -1,9 +1,8 @@
 import os
-
 from python_search.configuration.loader import ConfigurationLoader
 
 
-class Terminal:
+class KittyTerminal:
     """
     Terminal abstraction for Python Search
     The underlying terminal is kitty but we could support more in the future if needed
@@ -42,6 +41,6 @@ class Terminal:
 
         from python_search.search.search_ui.kitty import get_kitty_cmd
 
-        final_cmd = f'{get_kitty_cmd()} {hold} {Terminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
+        final_cmd = f'{get_kitty_cmd()} {hold} {KittyTerminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
 
         return final_cmd
