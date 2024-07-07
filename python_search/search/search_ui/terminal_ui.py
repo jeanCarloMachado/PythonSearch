@@ -3,12 +3,10 @@ import sys
 from typing import Any
 import json
 import time
-from typing import Generator
 
 from python_search.core_entities import Entry
-from python_search.search.search_ui.bm25_search import Bm25Search
+from python_search.search.search_ui.SearchLogic import SearchLogic
 from python_search.search.search_ui.search_actions import Actions
-from python_search.search.search_ui.semantic_search import SemanticSearch
 from python_search.search.search_ui.search_utils import setup_datadog
 
 from python_search.theme import get_current_theme
@@ -22,13 +20,11 @@ statsd = setup_datadog()
 class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 35
-    NUMBER_ENTRIES_TO_RETURN = 6
     RUN_KEY_EVENT = "python_search_run_key"
 
     _documents_future = None
     commands = None
     documents = None
-    ENABLE_SEMANTIC_SEARCH = True
 
     def __init__(self) -> None:
         self.theme = get_current_theme()
@@ -57,6 +53,7 @@ class SearchTerminalUi:
         statsd.histogram("ps_startup_no_render_seconds", duration_startup_seconds)
         while True:
             # blocking function call
+
             self.render()
             c = self.get_caracter()
             self.process_chars(self.query, c)
@@ -64,13 +61,11 @@ class SearchTerminalUi:
     @statsd.timed("ps_render")
     def render(self):
         self.print_first_line()
-        if self.query != self.previous_query or self.reloaded:
-            self.matched_keys = self.search(query=self.query)
-            self.reloaded = False
         self.previous_query = self.query
         current_key = 0
         self.matched_keys = []
-        for key in self.search(self.query):
+
+        for key in self.search_logic.search(self.query):
             try:
                 entry = Entry(key, self.commands[key])
             except Exception:
@@ -84,36 +79,6 @@ class SearchTerminalUi:
             current_key += 1
             self.matched_keys.append(key)
 
-    def search(self, query: str) -> Generator[str, None, None]:
-        """
-        gets 1 from each type of search at a time and merge them to remove duplicates
-        """
-
-        already_returned = []
-        bm25_results = self.search_bm25.search(query)
-
-        semantic_results = []
-        if self.ENABLE_SEMANTIC_SEARCH and not self.first_run and not self.reloaded:
-            semantic_results = self.search_semantic.search(query)
-
-        for i in range(self.NUMBER_ENTRIES_TO_RETURN):
-            if (
-                bm25_results[i] not in already_returned
-                and bm25_results[i] in self.commands
-            ):
-                already_returned.append(bm25_results[i])
-                yield bm25_results[i]
-
-            if semantic_results and (
-                semantic_results[i] not in already_returned
-                and semantic_results[i] in self.commands
-            ):
-                already_returned.append(semantic_results[i])
-                yield semantic_results[i]
-
-            if len(already_returned) >= self.NUMBER_ENTRIES_TO_RETURN:
-                return
-
         self.first_run = False
 
     def _setup_entries(self):
@@ -124,16 +89,7 @@ class SearchTerminalUi:
         )
 
         self.commands = json.loads(output)
-        self._setup_search()
-
-    def _setup_search(self):
-        self.search_bm25 = Bm25Search(
-            self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
-        )
-        if self.ENABLE_SEMANTIC_SEARCH:
-            self.search_semantic = SemanticSearch(
-                self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
-            )
+        self.search_logic = SearchLogic(self.commands)
 
     def _hide_cursor(self):
         print("\033[?25l", end="")
