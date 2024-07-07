@@ -3,6 +3,7 @@ import sys
 from typing import Any
 import json
 import time
+from typing import Generator
 
 from python_search.core_entities import Entry
 from python_search.search.search_ui.bm25_search import Bm25Search
@@ -83,7 +84,7 @@ class SearchTerminalUi:
             current_key += 1
             self.matched_keys.append(key)
 
-    def search(self, query):
+    def search(self, query: str) -> Generator[str, None, None]:
         """
         gets 1 from each type of search at a time and merge them to remove duplicates
         """
@@ -123,7 +124,9 @@ class SearchTerminalUi:
         )
 
         self.commands = json.loads(output)
+        self._setup_search()
 
+    def _setup_search(self):
         self.search_bm25 = Bm25Search(
             self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
         )
