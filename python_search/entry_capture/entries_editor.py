@@ -56,7 +56,7 @@ class EntriesEditor:
         import os
 
         os.system(
-            f"open -a pycharm '{self.configuration.get_project_root() + '/entries_main.py'}'"
+            f"open -a 'Visual Studio Code' '{self.configuration.get_project_root() + '/entries_main.py'}'"
         )
 
     def _edit_file(self, file_name: str, line: Optional[int] = 30, dry_run=False):

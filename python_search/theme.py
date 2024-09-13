@@ -51,7 +51,7 @@ class BaseTheme:
         self.backgroud = self.colors["backgroud"]
         self.text = self.colors["text"]
 
-        self.font_size = 17
+        self.font_size = 19
         self.font = "SF Pro"
 
 
@@ -61,6 +61,7 @@ class NewLight(BaseTheme):
             "backgroud": "#FFFFFF",
             "selected": "#E28A44",
             "query": "#EB727F",
+            "query_enabled": "#d33682",
             "text": "#43444B",
             "partialmatch": "#AC8C4A",
             "entrycontentselected": "#83A96C",
@@ -81,6 +82,7 @@ class DesertTheme(BaseTheme):
             "backgroud": "#303030",
             "selected": "#87D700",
             "query": "#87D700",
+            "query_enabled": "#d33682",
             "partialmatch": "#D78701",
             "text": "#FFFFFF",
             "entrycontentselected": "#87D700",
@@ -100,6 +102,7 @@ class D2Theme(BaseTheme):
             "backgroud": "#1C2918",
             "selected": "#5FDE33",
             "query": "#87D700",
+            "query_enabled": "#d33682",
             "partialmatch": "#B3150C",
             "text": "#D7D2CA",
             "entrycontentselected": "#5FDE33",

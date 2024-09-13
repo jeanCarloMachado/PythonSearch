@@ -9,7 +9,7 @@ class SearchLogic:
     ENABLE_SEMANTIC_SEARCH = True
     NUMBER_ENTRIES_TO_RETURN = 6
 
-    def __init__(self, commands) -> None:
+    def __init__(self, commands: dict[str, str]) -> None:
         self.commands = commands
         self.search_bm25 = Bm25Search(
             self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
@@ -26,47 +26,52 @@ class SearchLogic:
         gets 1 from each type of search at a time and merge them to remove duplicates
         """
 
-        if query == self.last_query:
+        if query == self.last_query and query != "" and self.last_query is not None:
             yield from self.in_results_list
             return
         self.last_query = query
         self.in_results_list = []
+
         bm25_results = self.search_bm25.search(query)
+        bm25_results = iter(bm25_results)
 
         semantic_results = []
         if self.ENABLE_SEMANTIC_SEARCH:
             semantic_results = self.search_semantic.search(query)
-        
+
+        semantic_results = iter(semantic_results)
 
         self.results = []
 
-        for i in range(self.NUMBER_ENTRIES_TO_RETURN):
-            if len(self.in_results_list) == self.NUMBER_ENTRIES_TO_RETURN:
+        while True:
+            yield next(self.get_a_unique_result(bm25_results, " bm25 "))
+            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
+                return
+            try:
+                yield next(
+                    self.get_a_unique_result(self.string_match(query), " string match")
+                )
+            except Exception:
+                pass
+            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
+                return
+            try:
+                yield next(self.get_a_unique_result(semantic_results, " semantic "))
+            except Exception:
+                pass
+            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
 
+    def get_a_unique_result(self, given_iterator=None, key_prefix=None):
+        while candidate := next(given_iterator):
             if (
-                bm25_results[i] not in self.in_results_list
-                and bm25_results[i] in self.commands
+                candidate not in self.in_results_list
+                and candidate in self.commands.keys()
             ):
-                self.in_results_list.append(bm25_results[i])
-                yield bm25_results[i]
-                continue
-
-            string_search_key = self.string_match(query)
-            if string_search_key and string_search_key not in self.in_results_list:
-                self.in_results_list.append(string_search_key)
-                yield string_search_key
-                continue
-
-            if semantic_results and (
-                semantic_results[i] not in self.in_results_list
-                and semantic_results[i] in self.commands
-            ):
-                self.in_results_list.append(semantic_results[i])
-                yield semantic_results[i]
-                continue
-            
-
+                self.in_results_list.append(candidate)
+                if key_prefix and False:
+                    candidate = key_prefix + candidate
+                yield candidate
 
     def string_match(self, query: str) -> str:
         if len(query) < 3:
@@ -75,7 +80,3 @@ class SearchLogic:
         for i in self.commands.keys():
             if query in i:
                 yield i
-
-
-        
-        

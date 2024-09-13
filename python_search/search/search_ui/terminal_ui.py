@@ -19,7 +19,7 @@ statsd = setup_datadog()
 
 class SearchTerminalUi:
     MAX_KEY_SIZE = 35
-    MAX_CONTENT_SIZE = 35
+    MAX_CONTENT_SIZE = 46
     RUN_KEY_EVENT = "python_search_run_key"
 
     _documents_future = None
@@ -37,6 +37,7 @@ class SearchTerminalUi:
         self.first_run = True
 
         self._setup_entries()
+        self.normal_mode = False
 
     def run(self):
         """
@@ -57,7 +58,7 @@ class SearchTerminalUi:
         while True:
             # blocking function call
             c = self.get_caracter()
-            self.process_chars(self.query, c)
+            self.process_chars(c)
             self.render()
             # sets query here
             self.previous_query = self.query
@@ -72,7 +73,7 @@ class SearchTerminalUi:
             try:
                 entry = Entry(key, self.commands[key])
             except Exception:
-                continue
+                entry = Entry(key, {"snippet": "Error loading entry"})
 
             if current_key == self.selected_row:
                 self.print_highlighted(key, entry)
@@ -102,35 +103,33 @@ class SearchTerminalUi:
             return " "
 
     def print_first_line(self):
+        if self.normal_mode:
+            content = self.cf.query_enabled("* " + self.query)
+        else:
+            content = self.cf.query(self.query)
+
         print(
             "\x1b[2J\x1b[H"
             + self.cf.cursor(f"({len(self.commands)})> ")
-            + f"{self.cf.bold(self.cf.query(self.query))}"
+            + f"{self.cf.bold(content)}"
         )
 
-    def process_chars(self, query: str, c: str):
+    def process_chars(self, c: str):
         self.typed_up_to_run += c
         ord_c = ord(c)
         # test if the character is a delete (backspace)
         if ord_c == 127:
             # backspace
-            self.query = query[:-1]
+            self.query = self.query[:-1]
         elif ord_c == 10:
             # enter
-            self.actions.run_key(self.matched_keys[self.selected_row])
-            statsd.increment("ps_run_key")
-            self._get_data_warehouse().write_event(
-                self.RUN_KEY_EVENT,
-                {
-                    "query": query,
-                    "key": self.matched_keys[self.selected_row],
-                    "type_sequence": self.typed_up_to_run,
-                },
-            )
-
-            statsd.gauge("ps_query_len_size", len(self.typed_up_to_run))
-            self.typed_up_to_run = ""
-
+            self.run_key()
+        elif c in ["1", "2", "3", "4", "5", "6"] and self.normal_mode:
+            self.selected_row = int(c) - 1
+            self.run_key()
+        # elif ord_c == 27:
+        # swap between modes via esc
+        # self.normal_mode = not self.normal_mode
         elif ord_c == 9:
             # tab
             self.actions.edit_key(self.matched_keys[self.selected_row])
@@ -181,15 +180,28 @@ class SearchTerminalUi:
             self.query += c
             self.selected_row = 0
 
+    def run_key(self):
+        self.actions.run_key(self.matched_keys[self.selected_row])
+        statsd.increment("ps_run_key")
+        self._get_data_warehouse().write_event(
+            self.RUN_KEY_EVENT,
+            {
+                "query": self.query,
+                "key": self.matched_keys[self.selected_row],
+                "type_sequence": self.typed_up_to_run,
+            },
+        )
+
+        statsd.gauge("ps_query_len_size", len(self.typed_up_to_run))
+        self.typed_up_to_run = ""
+
     def get_previously_used_query(self, position) -> str:
         # len
         df = self._get_data_warehouse().event(self.RUN_KEY_EVENT)
         if position >= len(df):
             return ""
 
-        return df.sort_values(by="tdw_timestamp", ascending=False).iloc[position][
-            "query"
-        ]
+        return df.sort_values(by="tdw_timestamp", ascending=False).iloc[position]["key"]
 
     def _get_data_warehouse(self):
         if not self.tdw:

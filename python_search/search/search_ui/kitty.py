@@ -11,7 +11,7 @@ class KittySearch:
     Renders the search ui using fzf + termite terminal
     """
 
-    _DEFAULT_WINDOW_SIZE = (800, 170)
+    _DEFAULT_WINDOW_SIZE = (1000, 190)
 
     _configuration = None
 
