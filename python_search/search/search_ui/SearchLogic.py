@@ -44,7 +44,11 @@ class SearchLogic:
         self.results = []
 
         while True:
-            yield next(self.get_a_unique_result(bm25_results, " bm25 "))
+            try: 
+                yield next(self.get_a_unique_result(bm25_results, " bm25 "))
+            except StopIteration:
+                return
+
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
             try:
