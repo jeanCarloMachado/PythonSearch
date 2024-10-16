@@ -2,6 +2,7 @@ import os
 
 import logging
 import sys
+from python_search.apps.terminal import KittyTerminal
 from python_search.host_system.system_paths import SystemPaths
 from python_search.environment import is_mac
 
@@ -44,15 +45,18 @@ class KittySearch:
         """
         Entry point for the application to launch the search ui
         """
-        from python_search.apps.terminal import KittyTerminal
-        from python_search.theme import get_current_theme
 
-        theme = get_current_theme()
-
+        cmd = self.get_kitty_complete_cmd()
+        self._logger.debug(f"Launching kitty with cmd: {cmd}")
+        result = os.system(cmd)
+        if result != 0:
+            raise Exception("Failed: " + str(result), cmd)
+    
+    def get_kitty_complete_cmd(self) -> str:
         terminal = KittyTerminal()
-        from python_search.host_system.system_paths import SystemPaths
-
-        launch_cmd = f"""{get_kitty_cmd()} \
+        from python_search.theme import get_current_theme
+        theme = get_current_theme()
+        return f"""{self.get_kitty_cmd()} \
         --title {self._title} \
         --listen-on unix:/tmp/mykitty \
         -o allow_remote_control=yes \
@@ -69,13 +73,9 @@ class KittySearch:
         -o background={theme.backgroud} \
         -o foreground={theme.text} \
         -o font_size="{theme.font_size}" \
-        -o font_family="SF\ Pro" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
          {SystemPaths.BINARIES_PATH}/term_ui
         """
-        result = os.system(launch_cmd)
-        if result != 0:
-            raise Exception("Failed: " + str(result), launch_cmd)
 
     @staticmethod
     def run() -> None:
@@ -104,10 +104,10 @@ class KittySearch:
         return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
 
 
-def get_kitty_cmd() -> str:
-    if is_mac():
-        return SystemPaths.KITTY_BINNARY
-    return "kitty"
+    def get_kitty_cmd(self) -> str:
+        if is_mac():
+            return SystemPaths.KITTY_BINNARY
+        return "kitty"
 
 
 def main():
