@@ -56,7 +56,7 @@ class EntriesEditor:
         import os
 
         os.system(
-            f"open -a 'Visual Studio Code' '{self.configuration.get_project_root() + '/entries_main.py'}'"
+            f"kitty vim '{self.configuration.get_project_root() + '/entries_main.py'}'"
         )
 
     def _edit_file(self, file_name: str, line: Optional[int] = 30, dry_run=False):
@@ -68,7 +68,7 @@ class EntriesEditor:
 
         terminal = KittyTerminal()
         cmd: str = (
-            f" {get_kitty_cmd()} {terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
+            f" {terminal.get_kitty_cmd()} {terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
             f" {self.configuration.get_project_root()} "
             f"; {self._get_open_text_editor_command(file_name, line) }"
         )
