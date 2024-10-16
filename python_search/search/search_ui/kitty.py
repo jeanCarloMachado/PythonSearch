@@ -50,7 +50,7 @@ class KittySearch:
         self._logger.debug(f"Launching kitty with cmd: {cmd}")
         result = os.system(cmd)
         if result != 0:
-            raise Exception("Failed: " + str(result), cmd)
+            raise Exception("Failed: " + str(result))
     
     def get_kitty_complete_cmd(self) -> str:
         terminal = KittyTerminal()
@@ -58,8 +58,6 @@ class KittySearch:
         theme = get_current_theme()
         return f"""{self.get_kitty_cmd()} \
         --title {self._title} \
-        --listen-on unix:/tmp/mykitty \
-        -o allow_remote_control=yes \
         -o draw_minimal_borders=no \
         -o window_padding_width=0  \
         -o placement_strategy=center \
@@ -114,6 +112,11 @@ def main():
     import fire
 
     fire.Fire(KittySearch)
+
+def get_kitty_cmd() -> str:
+    if is_mac():
+        return SystemPaths.KITTY_BINNARY
+    return "kitty"
 
 
 if __name__ == "__main__":
