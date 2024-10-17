@@ -58,7 +58,6 @@ class KittySearch:
         theme = get_current_theme()
         return f"""{self.get_kitty_cmd()} \
         --title {self._title} \
-        -o draw_minimal_borders=no \
         -o window_padding_width=0  \
         -o placement_strategy=center \
         -o window_border_width=0 \
@@ -85,27 +84,23 @@ class KittySearch:
         """
         Focuses the terminal if it is already open
         """
-        if not os.path.exists("/tmp/mykitty"):
+        home = os.path.expanduser("~")
+        if not os.path.exists(f"{home}/mykitty"):
             return False
 
-        result = os.system(KittySearch.focus_kitty_command())
+        result = os.system(f'kitty @ --to unix:{home}/mykitty focus-window')
+        print(result)
 
-        return result == 0
-
-    @staticmethod
-    def focus_or_open(configuration):
-        if not KittySearch.try_to_focus():
-            KittySearch(configuration).launch()
+        return result == True
 
     @staticmethod
-    def focus_kitty_command():
-        return f"{get_kitty_cmd()} @ --to unix:/tmp/mykitty focus-window"
-
+    def focus_or_open(configuration=None):
+        #if not KittySearch.try_to_focus():
+        #print("Opening kitty")
+        KittySearch(configuration).launch()
 
     def get_kitty_cmd(self) -> str:
-        if is_mac():
-            return SystemPaths.KITTY_BINNARY
-        return "kitty"
+        return SystemPaths.KITTY_BINNARY
 
 
 def main():
@@ -114,9 +109,7 @@ def main():
     fire.Fire(KittySearch)
 
 def get_kitty_cmd() -> str:
-    if is_mac():
-        return SystemPaths.KITTY_BINNARY
-    return "kitty"
+    return SystemPaths.KITTY_BINNARY
 
 
 if __name__ == "__main__":
