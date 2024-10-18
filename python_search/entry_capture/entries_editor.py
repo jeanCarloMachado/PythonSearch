@@ -92,5 +92,8 @@ class EntriesEditor:
 
 def main():
     import fire
-
     fire.Fire(EntriesEditor)
+
+
+if __name__ == "__main__":
+    main()

@@ -73,3 +73,8 @@ class EntriesGroup:
         from python_search.configuration.loader import ConfigurationLoader
 
         return ConfigurationLoader().get_entries_project_root()
+
+
+if __name__ == "__main__":
+    import fire
+    fire.Fire()

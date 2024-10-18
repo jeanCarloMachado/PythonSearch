@@ -6,5 +6,11 @@
 		{
 			"path": "../PersonalMonorepo"
 		}
-	]
+	],
+	"settings": {
+		"vim.enableNeovim": true,
+		"vim.disableExtension": false,
+		"vim.easymotion": true,
+		"vim.vimrc.enable": true
+	}
 }

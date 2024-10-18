@@ -21,6 +21,7 @@ class InstallDependencies:
         self._install_shortcut_mac()
         self._install_wctrl()
         self._install_xsel()
+        self._install_ack()
 
         print(
             """
@@ -142,6 +143,20 @@ Installation successful!
 
         if is_debian_based():
             os.system("sudo apt-get install wmctrl")
+
+
+    def _install_ack(self):
+
+        if self.is_mac():
+            os.system("brew install ack")
+        if is_debian_based():
+            os.system("sudo apt-get install ack")
+        if is_archlinux():
+            os.system("sudo pacman -S ack")
+
+
+        
+
 
     def _install_xsel(self):
         if is_debian_based():

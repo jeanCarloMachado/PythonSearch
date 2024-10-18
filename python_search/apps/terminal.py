@@ -39,8 +39,12 @@ class KittyTerminal:
         if hold_terminal_open_on_end:
             hold = " --hold "
 
-        from python_search.search.search_ui.kitty import get_kitty_cmd
 
-        final_cmd = f'{get_kitty_cmd()} {hold} {KittyTerminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
+        final_cmd = f'{self.get_kitty_cmd()} {hold} {KittyTerminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
 
         return final_cmd
+
+
+    def get_kitty_cmd(self):
+        from python_search.search.search_ui.kitty import get_kitty_cmd
+        return get_kitty_cmd()
