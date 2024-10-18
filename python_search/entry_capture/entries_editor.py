@@ -38,12 +38,12 @@ class EntriesEditor:
             return
 
         # needs to be case-insensitive search
-        cmd = f"ack -i '{key}' {self.configuration.get_project_root()} --py || true"
+        cmd = f"/opt/homebrew/bin/ack -i '{key}' {self.configuration.get_project_root()} --py || true"
         logging.info(f"Command: {cmd}")
         result_shell = subprocess.check_output(cmd, shell=True, text=True)
 
         if not result_shell:
-            logging.info("Could not find match edit main file")
+            print("Could not find match edit main file, output: ", result_shell)
             self.edit_default()
             return
 
@@ -83,11 +83,8 @@ class EntriesEditor:
         os.system(cmd)
 
     def _get_open_text_editor_command(self, file, line):
-        if self.configuration.get_text_editor() == "vim":
-            return f"{self.configuration.get_text_editor()} {file} +{line}'"
-        else:
-            # if is not a known editor just open the file
-            return f"{self.configuration.get_text_editor()} {file}'"
+        # vim only supported
+        return f"vim {file} +{line}'"
 
 
 def main():
