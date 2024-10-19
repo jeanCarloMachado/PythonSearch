@@ -46,5 +46,5 @@ class KittyTerminal:
 
 
     def get_kitty_cmd(self):
-        from python_search.search.search_ui.kitty import get_kitty_cmd
+        from python_search.search.search_ui.kitty_search import get_kitty_cmd
         return get_kitty_cmd()

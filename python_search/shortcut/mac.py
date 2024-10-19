@@ -4,7 +4,7 @@ import subprocess
 import shutil
 from typing import Optional
 
-from python_search.search.search_ui.kitty import KittySearch
+from python_search.search.search_ui.kitty_search import KittySearch
 from python_search.host_system.system_paths import SystemPaths
 
 

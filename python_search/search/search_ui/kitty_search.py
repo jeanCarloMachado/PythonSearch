@@ -5,8 +5,9 @@ import sys
 from python_search.apps.terminal import KittyTerminal
 from python_search.host_system.system_paths import SystemPaths
 from python_search.environment import is_mac
+import sys
 
-
+SOCKET_PATH = "/tmp/mykitty"
 class KittySearch:
     """
     Renders the search ui using fzf + termite terminal
@@ -58,6 +59,8 @@ class KittySearch:
         theme = get_current_theme()
         return f"""{self.get_kitty_cmd()} \
         --title {self._title} \
+        --listen-on unix:{SOCKET_PATH} \
+        -o allow_remote_control=yes \
         -o window_padding_width=0  \
         -o placement_strategy=center \
         -o window_border_width=0 \
@@ -71,32 +74,38 @@ class KittySearch:
         -o foreground={theme.text} \
         -o font_size="{theme.font_size}" \
         {terminal.GLOBAL_TERMINAL_PARAMS} \
-         {SystemPaths.BINARIES_PATH}/term_ui
+         {SystemPaths.BINARIES_PATH}/term_ui &
         """
 
     @staticmethod
-    def run() -> None:
-        if not KittySearch.try_to_focus():
-            KittySearch().launch()
-
-    @staticmethod
-    def try_to_focus():
+    def try_to_focus() -> bool:
         """
         Focuses the terminal if it is already open
         """
-        home = os.path.expanduser("~")
-        if not os.path.exists(f"{home}/mykitty"):
+        if not os.path.exists(SOCKET_PATH):
+            print(f"File {SOCKET_PATH} not found")
             return False
 
-        result = os.system(f'kitty @ --to unix:{home}/mykitty focus-window')
-        print(result)
+        cmd = f'{SystemPaths.KITTY_BINNARY} @ --to unix:{SOCKET_PATH} focus-window '
+        print("Cmd: ", cmd)
+        result = os.system(cmd)
+        print(result, "Type: ", type(result))
+        sys.exit(0)
 
-        return result == True
+        return result == 0
 
     @staticmethod
     def focus_or_open(configuration=None):
-        #if not KittySearch.try_to_focus():
-        #print("Opening kitty")
+        if os.environ.get("SKIP_FOCUS"):
+            KittySearch(configuration).launch()
+            return
+
+        print("Trying to focus")
+        if KittySearch.try_to_focus():
+            print("Focused instead of launching")
+            os.exit(0)
+            return
+
         KittySearch(configuration).launch()
 
     def get_kitty_cmd(self) -> str:
