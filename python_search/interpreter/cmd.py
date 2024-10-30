@@ -5,6 +5,7 @@ from python_search.apps.notification_ui import send_notification
 from python_search.apps.terminal import KittyTerminal
 from python_search.context import Context
 from python_search.exceptions import CommandDoNotMatchException
+from python_search.host_system.system_paths import SystemPaths
 from python_search.interpreter.base import BaseInterpreter
 from python_search.logger import setup_run_key_logger
 
@@ -85,9 +86,14 @@ class CmdInterpreter(BaseInterpreter):
         import subprocess
         import sys
 
+        env = os.environ
+        env["PATH"] = SystemPaths().BINARIES_PATH + ":" + env["PATH"]
+
         p = subprocess.Popen(
             cmd,
             shell=True,
+            # add path to the system path
+            env=env,
             stdin=None,
             stdout=sys.stdout,
             stderr=sys.stderr,
