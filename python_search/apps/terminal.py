@@ -26,12 +26,7 @@ class KittyTerminal:
         """
         wraps the command in a terminal but does not execute it
         """
-        shell = (
-            os.environ["PYTHON_SEARCH_CUSTOM_SHELL"]
-            if "PYTHON_SEARCH_CUSTOM_SHELL" in os.environ
-            else "bash"
-        )
-        shell = "/bin/bash"
+        shell = "/bin/zsh"
         # quoting here makes a big difference
         cmd = f"{shell} -c '{cmd}'"
 
