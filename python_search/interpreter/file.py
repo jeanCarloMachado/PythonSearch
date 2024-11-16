@@ -36,16 +36,8 @@ class FileInterpreter(BaseInterpreter):
         )
 
     def get_executable(self):
-        filename, file_extension = os.path.splitext(self.cmd["file"])
-
-        if file_extension in [".py", ".vim", ".", ".rc", ".yaml", ".yml", ".conf"]:
-            return SystemPaths.VIM_BINNARY
-
-        if os.path.isdir(self.cmd["file"]):
-            if is_mac():
-                return "open"
-            return "nautilus"
-
+        if not os.path.exists(SystemPaths.VIM_BINNARY):
+            raise Exception("Vim binnary not found in path {SystemPaths.VIM_BINNARY}")
         return SystemPaths.VIM_BINNARY
 
     def interpret_default(self):
@@ -53,11 +45,8 @@ class FileInterpreter(BaseInterpreter):
 
         cmd = f'{executable} "{self.cmd["file"]}"'
 
-        final_cmd = self.cmd
-        if executable in ["vim"]:
-            final_cmd["cli_cmd"] = cmd
-        else:
-            final_cmd["cmd"] = cmd
+        final_cmd = {}
+        final_cmd["cli_cmd"] = cmd
 
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 
