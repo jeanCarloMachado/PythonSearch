@@ -66,7 +66,7 @@ class MacKarabinerElements:
             ]
         },
         """
-        print("Processing shortcut: ", shortcut)
+        print("Processing shortcut: ", shortcut, ' for key: ', key)
         shortcut_dict = {}
         shortcut_dict['description'] = f"RUN {key} with shortcut {shortcut}"
         shortcut_dict['manipulators'] = [
@@ -79,16 +79,24 @@ class MacKarabinerElements:
         for character in shortcut:
             if character == '⌘':
                 if 'modifiers' not in shortcut_dict['manipulators'][0]['from']:
-                    shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': []}
-                shortcut_dict['manipulators'][0]['from']['modifiers']['mandatory'].append('left_gui')
+                    shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': ['left_gui']}
+                else:
+                    shortcut_dict['manipulators'][0]['from']['modifiers']['mandatory'].append('left_gui')
             elif character == '⇧':
                 if 'modifiers' not in shortcut_dict['manipulators'][0]['from']:
-                        shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': []}
-                shortcut_dict['manipulators'][0]['from']['modifiers']['mandatory'].append('left_shift')
+                    shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': ['left_shift']}
+                else:
+                    shortcut_dict['manipulators'][0]['from']['modifiers']['mandatory'].append('left_shift')
             elif character == '⌥':
                 if 'modifiers' not in shortcut_dict['manipulators'][0]['from']:
-                    shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': []}
-                shortcut_dict['manipulators'][0]['from']['modifiers']['mandatory'].append('left_alt')
+                    shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': ['left_alt']}
+                else:
+                    shortcut_dict['manipulators'][0]['from']['modifiers']['mandatory'].append('left_alt')
+            elif character == '⌃':
+                if 'modifiers' not in shortcut_dict['manipulators'][0]['from']:
+                    shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': ['left_control']}
+                else:
+                    shortcut_dict['manipulators'][0]['from']['modifiers']['mandatory'].append('left_control')
         
             # test if is alphanumeric
             if character.isalnum():
