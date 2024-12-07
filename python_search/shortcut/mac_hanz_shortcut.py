@@ -8,7 +8,7 @@ from python_search.search.search_ui.kitty_search import KittySearch
 from python_search.host_system.system_paths import SystemPaths
 
 
-class Mac:
+class MacHanzShortcut:
     """
     Mac support for tool iCanHazShortcut
     """
@@ -43,11 +43,11 @@ class Mac:
         content_to_write += self._add_shortcut(
             "⌃Space",
             "Launch python search",
-            Mac.START_SHORTCUT_NUMBER,
+            MacHanzShortcut.START_SHORTCUT_NUMBER,
             KittySearch.focus_kitty_command()
             + " || /Users/jean.machado/miniconda3/envs/python312/bin/python_search_search launch",
         )
-        Mac.START_SHORTCUT_NUMBER += 1
+        MacHanzShortcut.START_SHORTCUT_NUMBER += 1
 
         for key, content in list(self.configuration.commands.items()):
             if not isinstance(content, dict):
@@ -56,17 +56,17 @@ class Mac:
             if "mac_shortcut" in content:
                 shortcut_found = True
                 content_to_write += self._add_shortcut(
-                    content["mac_shortcut"], key, Mac.START_SHORTCUT_NUMBER
+                    content["mac_shortcut"], key, MacHanzShortcut.START_SHORTCUT_NUMBER
                 )
-                Mac.START_SHORTCUT_NUMBER += 1
+                MacHanzShortcut.START_SHORTCUT_NUMBER += 1
 
             if "mac_shortcuts" in content:
                 shortcut_found = True
                 for shortcut in content["mac_shortcuts"]:
                     content_to_write += self._add_shortcut(
-                        shortcut, key, Mac.START_SHORTCUT_NUMBER
+                        shortcut, key, MacHanzShortcut.START_SHORTCUT_NUMBER
                     )
-                    Mac.START_SHORTCUT_NUMBER += 1
+                    MacHanzShortcut.START_SHORTCUT_NUMBER += 1
 
         if not shortcut_found:
             print("No shortcuts found for mac")
@@ -85,7 +85,7 @@ class Mac:
         print("Restarting shortcut app")
         os.system("open -a iCanHazShortcut")
 
-        print(f"Done! {Mac.START_SHORTCUT_NUMBER} shortcuts generated")
+        print(f"Done! {MacHanzShortcut.START_SHORTCUT_NUMBER} shortcuts generated")
 
         number_of_items = subprocess.getoutput(
             f"grep '\[shortcut' {self.config_folder}config.ini | wc -l"
