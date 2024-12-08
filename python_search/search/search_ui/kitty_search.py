@@ -55,7 +55,7 @@ class KittySearch:
     
     def get_kitty_complete_cmd(self) -> str:
         terminal = KittyTerminal()
-        from python_search.theme import get_current_theme
+        from python_search.apps.theme.theme import get_current_theme
         theme = get_current_theme()
         return f"""{self.get_kitty_cmd()} \
         --title {self._title} \

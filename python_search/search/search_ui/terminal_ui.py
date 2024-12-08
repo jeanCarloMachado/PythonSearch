@@ -9,7 +9,7 @@ from python_search.search.search_ui.SearchLogic import SearchLogic
 from python_search.search.search_ui.search_actions import Actions
 from python_search.search.search_ui.search_utils import setup_datadog
 
-from python_search.theme import get_current_theme
+from python_search.apps.theme.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
 from getch import getch
 

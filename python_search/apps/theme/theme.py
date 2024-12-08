@@ -1,59 +1,5 @@
-import datetime
 
-
-class ThemeSelector:
-    """
-    A class that selects theme.
-    If the user has a theme file in their home directory, it will use that theme.
-    Otherwise, it will use the NewLight theme during the day and the Desert theme at night.
-
-    Methods:
-        get_theme(): Returns the theme to use based on the current time.
-    """
-
-    _HOUR_FROM = 8
-    _HOUR_TO = 17
-
-    def get_theme(self) -> str:
-        """
-        Returns the theme to use based on the current time.
-
-        Returns:
-            str: The selected theme.
-        """
-        import os
-
-        home = os.environ["HOME"]
-        if os.path.exists(home + "/.python_search/theme"):
-            theme = open(home + "/.python_search/theme").read().strip()
-            if theme == "Desert":
-                return DesertTheme()
-            elif theme == "D2":
-                return D2Theme()
-
-        now = datetime.datetime.now()
-        if now.hour >= self._HOUR_FROM and now.hour <= self._HOUR_TO:
-            return NewLight()
-        else:
-            return DesertTheme()
-
-
-class BaseTheme:
-    colors = None
-
-    def get_colorful(self):
-        import colorful as cf
-
-        cf.update_palette(self.colors)
-        return cf
-
-    def __init__(self):
-        self.backgroud = self.colors["backgroud"]
-        self.text = self.colors["text"]
-
-        self.font_size = 19
-        self.font = "SF Pro"
-
+from python_search.apps.theme.BaseTheme import BaseTheme
 
 class NewLight(BaseTheme):
     def __init__(self):
@@ -117,4 +63,5 @@ class D2Theme(BaseTheme):
 
 
 def get_current_theme() -> BaseTheme:
+    from python_search.apps.theme.ThemeSelector import ThemeSelector
     return ThemeSelector().get_theme()
