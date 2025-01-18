@@ -11,7 +11,7 @@ from python_search.events.run_performed.entity import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
 from python_search.search.entries_loader import EntriesLoader
-from python_search.search.search_ui.kitty_search import KittySearch
+from python_search.search.search_ui.kitty_for_search_ui import KittyForSearchUI
 from python_search.search.search_ui.semantic_search import SemanticSearch
 
 
@@ -73,14 +73,14 @@ class PythonSearchCli:
         self.events = python_search.events
         self._semantic_search = SemanticSearch
         self._entries_loader = EntriesLoader
-        self._kitty_search = KittySearch
+        self._kitty_search = KittyForSearchUI
 
     def search(self):
         """
         Opens the Search UI. Main entrypoint of the application
         """
 
-        KittySearch.focus_or_open(self.configuration)
+        KittyForSearchUI.focus_or_open(self.configuration)
 
     def register_new_ui(self):
         """

@@ -1,4 +1,4 @@
-from python_search.search.search_ui.SearchLogic import SearchLogic
+from python_search.search.search_ui.QueryLogic import QueryLogic
 
 
 def test_first():
@@ -10,6 +10,6 @@ def test_first():
         "key 5": "value 5",
         "key 6": "value 6",
     }
-    search = SearchLogic(entries)
+    search = QueryLogic(entries)
     assert list(search.search("key 2"))[0] == "key 2"
-    assert len(list(search.search(""))) == SearchLogic.NUMBER_ENTRIES_TO_RETURN
+    assert len(list(search.search(""))) == QueryLogic.NUMBER_ENTRIES_TO_RETURN

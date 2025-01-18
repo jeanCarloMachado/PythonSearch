@@ -6,7 +6,7 @@ from typing import Optional
 
 from python_search.apps.terminal import KittyTerminal
 from python_search.core_entities import Key
-from python_search.search.search_ui.kitty_search import get_kitty_cmd
+from python_search.search.search_ui.kitty_for_search_ui import get_kitty_cmd
 
 
 class EntriesEditor:

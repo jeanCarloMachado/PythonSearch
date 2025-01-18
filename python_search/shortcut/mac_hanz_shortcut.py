@@ -4,7 +4,7 @@ import subprocess
 import shutil
 from typing import Optional
 
-from python_search.search.search_ui.kitty_search import KittySearch
+from python_search.search.search_ui.kitty_for_search_ui import KittyForSearchUI
 from python_search.host_system.system_paths import SystemPaths
 
 
@@ -44,7 +44,7 @@ class MacHanzShortcut:
             "⌃Space",
             "Launch python search",
             MacHanzShortcut.START_SHORTCUT_NUMBER,
-            KittySearch.focus_kitty_command()
+            KittyForSearchUI.focus_kitty_command()
             + " || /Users/jean.machado/miniconda3/envs/python312/bin/python_search_search launch",
         )
         MacHanzShortcut.START_SHORTCUT_NUMBER += 1

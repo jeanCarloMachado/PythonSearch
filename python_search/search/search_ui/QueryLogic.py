@@ -5,7 +5,7 @@ from python_search.search.search_ui.semantic_search import SemanticSearch
 from typing import Generator
 
 
-class SearchLogic:
+class QueryLogic:
     ENABLE_SEMANTIC_SEARCH = True
     NUMBER_ENTRIES_TO_RETURN = 10
 

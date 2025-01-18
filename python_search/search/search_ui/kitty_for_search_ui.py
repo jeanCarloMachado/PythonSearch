@@ -8,7 +8,7 @@ from python_search.environment import is_mac
 import sys
 
 SOCKET_PATH = "/tmp/mykitty"
-class KittySearch:
+class KittyForSearchUI:
     """
     Renders the search ui using fzf + termite terminal
     """
@@ -97,16 +97,16 @@ class KittySearch:
     @staticmethod
     def focus_or_open(configuration=None):
         if os.environ.get("SKIP_FOCUS"):
-            KittySearch(configuration).launch()
+            KittyForSearchUI(configuration).launch()
             return
 
         print("Trying to focus")
-        if KittySearch.try_to_focus():
+        if KittyForSearchUI.try_to_focus():
             print("Focused instead of launching")
             os.exit(0)
             return
 
-        KittySearch(configuration).launch()
+        KittyForSearchUI(configuration).launch()
 
     def get_kitty_cmd(self) -> str:
         return SystemPaths.KITTY_BINNARY
@@ -115,7 +115,7 @@ class KittySearch:
 def main():
     import fire
 
-    fire.Fire(KittySearch)
+    fire.Fire(KittyForSearchUI)
 
 def get_kitty_cmd() -> str:
     return SystemPaths.KITTY_BINNARY

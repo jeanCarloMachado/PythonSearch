@@ -5,7 +5,7 @@ import json
 import time
 
 from python_search.core_entities import Entry
-from python_search.search.search_ui.SearchLogic import SearchLogic
+from python_search.search.search_ui.QueryLogic import QueryLogic
 from python_search.search.search_ui.search_actions import Actions
 from python_search.search.search_ui.search_utils import setup_datadog
 
@@ -91,7 +91,7 @@ class SearchTerminalUi:
         )
 
         self.commands = json.loads(output)
-        self.search_logic = SearchLogic(self.commands)
+        self.search_logic = QueryLogic(self.commands)
 
     def _hide_cursor(self):
         print("\033[?25l", end="")

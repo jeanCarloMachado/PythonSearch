@@ -22,7 +22,7 @@ class Actions:
 
     def edit_key(self, key):
         Popen(
-            f'{SystemPaths.BINARIES_PATH}/entries_editor edit_key "{key}"',
+            f'{SystemPaths.BINARIES_PATH}/entries_editor edit_key "{key}" &>/dev/null',
             stdout=None,
             stderr=None,
             shell=True,
