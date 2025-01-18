@@ -7,7 +7,7 @@ from typing import Generator
 
 class SearchLogic:
     ENABLE_SEMANTIC_SEARCH = True
-    NUMBER_ENTRIES_TO_RETURN = 6
+    NUMBER_ENTRIES_TO_RETURN = 10
 
     def __init__(self, commands: dict[str, str]) -> None:
         self.commands = commands

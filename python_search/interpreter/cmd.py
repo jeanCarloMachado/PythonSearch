@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 from typing import Optional
 
 from python_search.apps.notification_ui import send_notification
@@ -83,8 +85,6 @@ class CmdInterpreter(BaseInterpreter):
     def _execute(self, cmd):
         logger.info(f"To run as subprocess: {cmd}")
 
-        import subprocess
-        import sys
 
         env = os.environ
         env["PATH"] = SystemPaths().BINARIES_PATH + ":" + env["PATH"]

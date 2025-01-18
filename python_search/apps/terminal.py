@@ -8,14 +8,24 @@ class KittyTerminal:
     The underlying terminal is kitty but we could support more in the future if needed
     """
 
+    DEFAULT_HEIGHT = '50c'
+    DEFAULT_WIDTH = '120c'
+    FONT_SIZE = 15
+
+
     # these parameters are applied both to all kitty windows of pythons search
     # including the generic params and the python search main window
-    GLOBAL_TERMINAL_PARAMS = " -o remember_window_size=yes -o confirm_os_window_close=0  -o remember_window_size=n -o macos_quit_when_last_window_closed=yes "
+    GLOBAL_TERMINAL_PARAMS = " -o remember_window_size=yes " + \
+    " -o confirm_os_window_close=0 " + \
+    " -o remember_window_size=n " + \
+    " -o resize_in_steps=1 " + \
+    " -o macos_quit_when_last_window_closed=yes "
 
-    DEFAULT_HEIGHT = 900
-    DEFAULT_WIDTH = 1200
-    FONT_SIZE = 15
-    GENERIC_TERMINAL_PARAMS = f" {GLOBAL_TERMINAL_PARAMS} -o initial_window_width={DEFAULT_WIDTH} -o initial_window_height={DEFAULT_HEIGHT} -o font_size={FONT_SIZE} "
+    GENERIC_TERMINAL_PARAMS = f" {GLOBAL_TERMINAL_PARAMS} " + \
+    f" -o initial_window_width={DEFAULT_WIDTH} " + \
+    f" -o initial_window_height={DEFAULT_HEIGHT} " + \
+    f" -o font_size={FONT_SIZE} "
+
 
     def __init__(self):
         self.configuration = ConfigurationLoader().get_config_instance()
