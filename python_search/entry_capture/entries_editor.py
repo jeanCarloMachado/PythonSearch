@@ -14,6 +14,8 @@ class EntriesEditor:
     Open an ide to edit the entries
     """
 
+    ACK_PATH = '/opt/homebrew/bin/ack'
+
     def __init__(self, configuration=None):
         if not configuration:
             from python_search.configuration.loader import ConfigurationLoader
@@ -38,7 +40,7 @@ class EntriesEditor:
             return
 
         # needs to be case-insensitive search
-        cmd = f"/opt/homebrew/bin/ack -i '{key}' {self.configuration.get_project_root()} --py || true"
+        cmd = f"{EntriesEditor.ACK_PATH} -i '{key}' {self.configuration.get_project_root()} --python || true"
         logging.info(f"Command: {cmd}")
         result_shell = subprocess.check_output(cmd, shell=True, text=True)
 
