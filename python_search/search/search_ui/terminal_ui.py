@@ -133,7 +133,9 @@ class SearchTerminalUi:
         # self.normal_mode = not self.normal_mode
         elif ord_c == 9:
             # tab
-            self.actions.edit_key(self.matched_keys[self.selected_row])
+            self.actions.edit_key(self.matched_keys[self.selected_row], block=True)
+            self._setup_entries()
+            self.reloaded = True
         elif c == "'":
             # tab
             self.actions.copy_entry_value_to_clipboard(
@@ -164,7 +166,6 @@ class SearchTerminalUi:
         elif ord_c == 67:
             sys.exit(0)
         elif ord_c == 92 or c == ']':
-            print("Reloading data...")
             self._setup_entries()
             self.reloaded = True
         elif c == "-":
