@@ -1,4 +1,5 @@
 import asyncio
+import os
 import sys
 from typing import Any
 import json
@@ -16,7 +17,8 @@ from getch import getch
 startup_time = time.time_ns()
 statsd = setup_datadog()
 
-
+# disable hugging face warning about forking token paralelism when reloading entries
+os.environ["TOKENIZERS_PARALLELISM"] = 'false'
 class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 46
@@ -44,7 +46,8 @@ class SearchTerminalUi:
         Rrun the application main loop
         """
         statsd.increment("ps_run_triggered")
-        self._hide_cursor()
+        # hide cursor
+        print("\033[?25l", end="")
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
@@ -87,14 +90,12 @@ class SearchTerminalUi:
         import subprocess
 
         output = subprocess.getoutput(
-            SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json "
+            SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json 2>/dev/null"
         )
 
         self.commands = json.loads(output)
         self.search_logic = QueryLogic(self.commands)
 
-    def _hide_cursor(self):
-        print("\033[?25l", end="")
 
     def get_caracter(self) -> str:
         try:
@@ -123,10 +124,10 @@ class SearchTerminalUi:
             self.query = self.query[:-1]
         elif ord_c == 10:
             # enter
-            self.run_key()
+            self._run_key()
         elif c in ["1", "2", "3", "4", "5", "6"] and self.normal_mode:
             self.selected_row = int(c) - 1
-            self.run_key()
+            self._run_key()
         # elif ord_c == 27:
         # swap between modes via esc
         # self.normal_mode = not self.normal_mode
@@ -162,12 +163,10 @@ class SearchTerminalUi:
             self.query = ""
         elif ord_c == 67:
             sys.exit(0)
-        elif ord_c == 92:
+        elif ord_c == 92 or c == ']':
             print("Reloading data...")
             self._setup_entries()
-            self.query = ""
             self.reloaded = True
-            self.selected_row = 0
         elif c == "-":
             # go up and clear
             self.selected_row = 0
@@ -180,7 +179,7 @@ class SearchTerminalUi:
             self.query += c
             self.selected_row = 0
 
-    def run_key(self):
+    def _run_key(self):
         self.actions.run_key(self.matched_keys[self.selected_row])
         statsd.increment("ps_run_key")
         self._get_data_warehouse().write_event(
