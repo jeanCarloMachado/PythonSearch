@@ -22,20 +22,13 @@ class Actions:
 
     def edit_key(self, key, block=False):
 
-        if not block:
-            Popen(
-                f'{SystemPaths.BINARIES_PATH}/entries_editor edit_key "{key}" &>/dev/null',
-                stdout=None,
-                stderr=None,
-                shell=True,
-            )
-        else:
-            p = Popen(
-                f'{SystemPaths.BINARIES_PATH}/entries_editor edit_key "{key}" &>/dev/null',
-                stdout=None,
-                stderr=None,
-                shell=True,
-            )
+        p = Popen(
+            f'{SystemPaths.BINARIES_PATH}/entries_editor edit_key "{key}" &>/dev/null',
+            stdout=None,
+            stderr=None,
+            shell=True,
+        )
+        if block:
             p.wait()
 
     def run_key(self, key: str) -> None:
