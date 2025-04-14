@@ -13,7 +13,7 @@ class KittyForSearchUI:
     Renders the search ui using fzf + termite terminal
     """
 
-    _DEFAULT_WINDOW_SIZE = ('86c', '12c')
+    _DEFAULT_WINDOW_SIZE = ('86c', '10c')
 
     _configuration = None
 

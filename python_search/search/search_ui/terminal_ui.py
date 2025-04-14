@@ -12,6 +12,9 @@ from python_search.search.search_ui.search_utils import setup_datadog
 
 from python_search.apps.theme.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
+from python_search.logger import setup_term_ui_logger
+
+logger = setup_term_ui_logger()
 from getch import getch
 
 startup_time = time.time_ns()
@@ -61,6 +64,7 @@ class SearchTerminalUi:
         while True:
             # blocking function call
             c = self.get_caracter()
+            logger.info("processing char" + c)
             self.process_chars(c)
             self.render()
             # sets query here
@@ -69,6 +73,7 @@ class SearchTerminalUi:
     @statsd.timed("ps_render")
     def render(self):
         self.print_first_line()
+        logger.info("rendering loop started")
         current_key = 0
         self.matched_keys = []
 
@@ -85,21 +90,24 @@ class SearchTerminalUi:
 
             current_key += 1
             self.matched_keys.append(key)
-
+        
     def _setup_entries(self):
         import subprocess
 
         output = subprocess.getoutput(
             SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json 2>/dev/null"
         )
-
+        #print("output", output)
         self.commands = json.loads(output)
         self.search_logic = QueryLogic(self.commands)
 
 
     def get_caracter(self) -> str:
         try:
-            return getch()
+
+            logger.info("getting char")
+            c = getch()
+            return c
         except Exception:
             return " "
 

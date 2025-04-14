@@ -1,19 +1,23 @@
+from python_search.logger import setup_term_ui_logger
 from python_search.search.search_ui.bm25_search import Bm25Search
 from python_search.search.search_ui.semantic_search import SemanticSearch
 
 
-from typing import Generator
+from typing import Generator, Iterator
 
-
+logger = setup_term_ui_logger()
 class QueryLogic:
+    # TODO: this number above 7 causes problems
+    NUMBER_ENTRIES_TO_RETURN = 7
     ENABLE_SEMANTIC_SEARCH = True
-    NUMBER_ENTRIES_TO_RETURN = 10
+    ENABLE_BM25_SEARCH = True
 
     def __init__(self, commands: dict[str, str]) -> None:
         self.commands = commands
-        self.search_bm25 = Bm25Search(
-            self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
-        )
+        if self.ENABLE_BM25_SEARCH:
+            self.search_bm25 = Bm25Search(
+                self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
+            )
         if self.ENABLE_SEMANTIC_SEARCH:
             self.search_semantic = SemanticSearch(
                 self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
@@ -29,59 +33,68 @@ class QueryLogic:
         if query == self.last_query and query != "" and self.last_query is not None:
             yield from self.in_results_list
             return
+
+        logger.info("Query: '{}'".format(query))
         self.last_query = query
         self.in_results_list = []
 
-        bm25_results = self.search_bm25.search(query)
+        bm25_results = []
+        if self.ENABLE_BM25_SEARCH:
+            bm25_results = self.search_bm25.search(query)
         bm25_results = iter(bm25_results)
 
         semantic_results = []
         if self.ENABLE_SEMANTIC_SEARCH:
             semantic_results = self.search_semantic.search(query)
-
         semantic_results = iter(semantic_results)
 
         self.results = []
+        
+        logger.info("Starting query logic loop")
 
         while True:
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
-            try:
-                yield next(
-                    self.get_a_unique_result(self.string_match(query), " string match")
-                )
-            except Exception:
-                pass
-            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
-                return
-            try: 
-                yield next(self.get_a_unique_result(bm25_results, " bm25 "))
-            except Exception:
-                pass
-            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
-                return
-            try:
-                yield next(self.get_a_unique_result(semantic_results, " semantic "))
-            except Exception:
-                pass
+
+            if self.ENABLE_BM25_SEARCH:
+                yield from self.get_a_unique_result(bm25_results)
+
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
 
-    def get_a_unique_result(self, given_iterator=None, key_prefix=None):
-        while candidate := next(given_iterator):
-            if (
-                candidate not in self.in_results_list
-                and candidate in self.commands.keys()
-            ):
-                self.in_results_list.append(candidate)
-                if key_prefix and False:
-                    candidate = key_prefix + candidate
-                yield candidate
+            yield from self.get_a_unique_result(self.string_match(query))
 
-    def string_match(self, query: str) -> str:
-        if len(query) < 3:
+
+
+            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
+                return
+
+            if self.ENABLE_SEMANTIC_SEARCH:
+                yield from self.get_a_unique_result(semantic_results)
+
+            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
+                return
+
+    def get_a_unique_result(self, given_iterator: Iterator[str]):
+        logger.info("getting a unique result")
+        try:
+            while candidate := next(given_iterator):
+                if (
+                    candidate not in self.in_results_list
+                    and candidate in self.commands.keys()
+                ):
+                    self.in_results_list.append(candidate)
+                    logger.info("Number of results in in_results_list" + str(len(self.in_results_list)))
+                    logger.info("candidate" + candidate)
+                    yield candidate
+        except StopIteration:
+            logger.info("StopIteration triggered")
             return
 
+
+    def string_match(self, query: str) -> Iterator[str]:
+        logger.info("Looking for string match for" + query)
         for i in self.commands.keys():
-            if query in i:
+            if query in i: 
                 yield i
+

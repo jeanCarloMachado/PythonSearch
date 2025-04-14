@@ -2,6 +2,20 @@ import logging
 import sys
 
 
+def setup_term_ui_logger():
+    logger = logging.getLogger("term-ui")
+    logger.setLevel(logging.INFO)
+
+    fh = logging.FileHandler("/tmp/term-ui")
+    fh.setLevel(logging.INFO)
+    logger.addHandler(fh)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    logger.addHandler(ch)
+
+    return logger
+
 def setup_run_key_logger():
     """
     Code has to be fast
