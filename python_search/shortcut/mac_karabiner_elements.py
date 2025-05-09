@@ -32,6 +32,7 @@ class MacKarabinerElements:
         # write the new content to the main file
         with open(self.MAIN_KARABINER_ELEMENTS_FILE, "w") as file:
             json.dump(karabiner_content, file, indent=4)
+            print(f"Karabiner elements file {self.MAIN_KARABINER_ELEMENTS_FILE} updated")
     
     def parse_mac_shortcut(self, shortcut: str, content: dict, key: str):
         """

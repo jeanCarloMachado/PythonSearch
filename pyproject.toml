@@ -71,4 +71,5 @@ register_new_launch_ui = 'python_search.entry_capture.entry_inserter_gui.registe
 share_entry = 'python_search.share_entry:main'
 error_panel = 'python_search.error.error_pane:main'
 google_it = 'python_search.apps.google_it:main'
+ps_shortcuts_visualizer = 'python_search.shortcut.visualizer:main'
 
