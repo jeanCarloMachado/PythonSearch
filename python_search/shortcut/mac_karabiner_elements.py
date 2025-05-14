@@ -77,6 +77,12 @@ class MacKarabinerElements:
                 "type": "basic"
             }
         ]
+
+        if shortcut == 'right_gui':
+            shortcut_dict['manipulators'][0]['from']['key_code'] = 'right_gui'
+            return shortcut_dict
+
+
         for character in shortcut:
             if character == '⌘':
                 if 'modifiers' not in shortcut_dict['manipulators'][0]['from']:
