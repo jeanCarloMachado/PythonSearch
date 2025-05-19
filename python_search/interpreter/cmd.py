@@ -85,8 +85,11 @@ class CmdInterpreter(BaseInterpreter):
     def _execute(self, cmd):
         logger.info(f"To run as subprocess: {cmd}")
 
-
         env = os.environ
+        # add homebrew path to the path
+
+        env["PATH"] = "/opt/homebrew/bin:" + env["PATH"]
+        # add system path to the path
         env["PATH"] = SystemPaths().BINARIES_PATH + ":" + env["PATH"]
 
         p = subprocess.Popen(

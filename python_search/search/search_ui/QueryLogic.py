@@ -7,9 +7,8 @@ from typing import Generator, Iterator
 
 logger = setup_term_ui_logger()
 class QueryLogic:
-    # TODO: this number above 7 causes problems
     NUMBER_ENTRIES_TO_RETURN = 7
-    ENABLE_SEMANTIC_SEARCH = True
+    ENABLE_SEMANTIC_SEARCH = False
     ENABLE_BM25_SEARCH = True
 
     def __init__(self, commands: dict[str, str]) -> None:
@@ -56,21 +55,28 @@ class QueryLogic:
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
 
-            if self.ENABLE_BM25_SEARCH:
-                yield from self.get_a_unique_result(bm25_results)
+            try:
+                yield next(self.get_a_unique_result(self.string_match(query)))
+            except StopIteration:
+                logger.info("StopIteration triggered")
 
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
 
-            yield from self.get_a_unique_result(self.string_match(query))
-
-
+            if self.ENABLE_BM25_SEARCH:
+                try:
+                    yield next(self.get_a_unique_result(bm25_results))
+                except StopIteration:
+                    logger.info("StopIteration triggered")
 
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
 
             if self.ENABLE_SEMANTIC_SEARCH:
-                yield from self.get_a_unique_result(semantic_results)
+                try:
+                    yield next(self.get_a_unique_result(semantic_results))
+                except StopIteration:
+                    logger.info("StopIteration triggered")
 
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
@@ -94,7 +100,9 @@ class QueryLogic:
 
     def string_match(self, query: str) -> Iterator[str]:
         logger.info("Looking for string match for" + query)
-        for i in self.commands.keys():
-            if query in i: 
-                yield i
+        for key in self.commands.keys():
+            if query in key: 
+                yield key
+            elif query in str(self.commands[key]):
+                yield key
 

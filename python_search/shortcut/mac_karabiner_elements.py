@@ -81,7 +81,17 @@ class MacKarabinerElements:
         if shortcut == 'right_gui':
             shortcut_dict['manipulators'][0]['from']['key_code'] = 'right_gui'
             return shortcut_dict
+        if shortcut == 'right_gui_shift':
+            shortcut_dict['manipulators'][0]['from']['key_code'] = 'right_gui'
+            shortcut_dict['manipulators'][0]['from']['modifiers'] = {'mandatory': ['left_shift']}
+            return shortcut_dict
 
+        if shortcut == 'right_alt':
+            shortcut_dict['manipulators'][0]['from']['key_code'] = 'right_alt'
+            return shortcut_dict
+
+        if 'return_or_enter' in shortcut:
+            shortcut_dict['manipulators'][0]['from']['key_code'] = 'return_or_enter'
 
         for character in shortcut:
             if character == '⌘':
