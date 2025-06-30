@@ -2,6 +2,7 @@ import sys
 import fire
 
 from python_search.apps.clipboard import Clipboard
+from python_search.declarative_ui.declarative_ui import DeclarativeUI
 
 
 class CollectInput:
@@ -19,59 +20,24 @@ class CollectInput:
         """
         Launch the _entries capture GUI.
         """
+
         import contextlib
 
+        if prefill_with_clipboard:
+            default_content = Clipboard().get_content()
+            print("Prefilling with clipboard content", default_content)
+
         with contextlib.redirect_stdout(None):
-            import PySimpleGUI as sg
-
-            if prefill_with_clipboard:
-                default_content = Clipboard().get_content()
-
-            font_size = 14
-            sg.theme("SystemDefault1")
-
-            input_field = sg.Input(
-                key="content",
-                default_text=default_content,
-                expand_x=True,
-                expand_y=True,
+            result = DeclarativeUI().build(
+                [
+                    {"key": "content", "type": "input", "value": default_content},
+                ],
+                title=name,
             )
 
-            layout = [
-                [input_field],
-                [sg.Button("Continue", key="write")],
-            ]
-
-            window = sg.Window(
-                name,
-                layout,
-                finalize=True,
-                font=("Helvetica", font_size),
-                alpha_channel=0.99,
-            )
-
-            if default_content != "":
-                input_field.update(select=True)
-            # workaround for mac bug
-            window.read(timeout=100)
-            window.set_alpha(1.0)
-
-            window["content"].bind("<Return>", "_Enter")
-            window["content"].bind("<Escape>", "_Esc")
-
-            while True:
-                event, values = window.read()
-
-                if event and (event == "write" or event.endswith("_Enter")):
-                    break
-                if event == sg.WINDOW_CLOSED or event.endswith("_Esc"):
-                    sys.exit(1)
-
-            window.close()
-        result = values["content"]
         if set_as_clipboard:
-            Clipboard().set_content(result)
-        return result
+            Clipboard().set_content(result["content"])
+        return result["content"]
 
 
 def main():
