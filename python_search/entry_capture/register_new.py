@@ -58,7 +58,10 @@ class RegisterNew:
         Returns:
 
         """
+
         key = self._sanitize_key(key)
+        if not key:
+            raise Exception("Key is required")
 
         if not type:
             interpreter: BaseInterpreter = InterpreterMatcher.build_instance(
