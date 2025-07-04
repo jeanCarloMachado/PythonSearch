@@ -58,7 +58,7 @@ class QueryLogic:
             try:
                 yield next(self.get_a_unique_result(self.string_match(query)))
             except StopIteration:
-                logger.info("StopIteration triggered")
+                logger.info("StopIteration triggered for string match with query: '" + query + "'")
 
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
@@ -67,7 +67,7 @@ class QueryLogic:
                 try:
                     yield next(self.get_a_unique_result(bm25_results))
                 except StopIteration:
-                    logger.info("StopIteration triggered")
+                    logger.info("StopIteration triggered for bm25")
 
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
@@ -76,13 +76,12 @@ class QueryLogic:
                 try:
                     yield next(self.get_a_unique_result(semantic_results))
                 except StopIteration:
-                    logger.info("StopIteration triggered")
+                    logger.info("StopIteration triggered for semantic")
 
             if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
                 return
 
     def get_a_unique_result(self, given_iterator: Iterator[str]):
-        logger.info("getting a unique result")
         try:
             while candidate := next(given_iterator):
                 if (
@@ -94,14 +93,15 @@ class QueryLogic:
                     logger.info("candidate" + candidate)
                     yield candidate
         except StopIteration:
-            logger.info("StopIteration triggered")
+            logger.info("StopIteration triggered for get_a_unique_result")
             return
 
 
     def string_match(self, query: str) -> Iterator[str]:
-        logger.info("Looking for string match for" + query)
         for key in self.commands.keys():
-            if query in key: 
+            if not query:
+                yield key
+            elif query in key: 
                 yield key
             elif query in str(self.commands[key]):
                 yield key

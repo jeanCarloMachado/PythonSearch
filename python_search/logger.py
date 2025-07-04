@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 
@@ -6,12 +7,12 @@ def setup_term_ui_logger():
     logger = logging.getLogger("term-ui")
     logger.setLevel(logging.INFO)
 
-    fh = logging.FileHandler("/tmp/term-ui")
-    fh.setLevel(logging.INFO)
-    logger.addHandler(fh)
-
     ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
+    if os.environ.get("PS_DEBUG"):
+        ch.setLevel(logging.INFO)
+    else:
+        ch.setLevel(logging.WARNING)
+        
     logger.addHandler(ch)
 
     return logger
@@ -39,20 +40,18 @@ def interpreter_logger():
     ch.setLevel(logging.WARNING)
     logger.addHandler(ch)
 
-    fh = logging.FileHandler("/tmp/debug_interpreter")
-    fh.setLevel(logging.INFO)
-    logger.addHandler(fh)
-
     return logger
 
 
 def setup_data_writter_logger(event_name):
     logger = logging.getLogger(f"data-writer_{event_name}")
 
-    fh = logging.FileHandler(f"/tmp/data-writer_event_{event_name}")
-    fh.setLevel(logging.DEBUG)
-    logger.addHandler(fh)
-
-    logger.setLevel(logging.WARNING)
+    ch = logging.StreamHandler()
+    if os.environ.get("PS_DEBUG"):
+        ch.setLevel(logging.INFO)
+    else:
+        ch.setLevel(logging.WARNING)
+    logger.addHandler(ch)
+    logger.setLevel(logging.INFO)
 
     return logger

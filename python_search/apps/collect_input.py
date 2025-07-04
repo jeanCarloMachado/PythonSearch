@@ -25,7 +25,6 @@ class CollectInput:
 
         if prefill_with_clipboard:
             default_content = Clipboard().get_content()
-            print("Prefilling with clipboard content", default_content)
 
         with contextlib.redirect_stdout(None):
             result = DeclarativeUI().build(
