@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "python-search"
-version = "0.50"
+version = "0.51"
 description = "Build your knowledge database in python and retrieve it efficiently"
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<=3.13"
+python = ">=3.10,<=3.14"
 fire = ">=0.6"
 pydantic = "*"
 PyYAML = "^6.0"

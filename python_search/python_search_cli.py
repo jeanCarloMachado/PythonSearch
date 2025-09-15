@@ -24,7 +24,6 @@ class PythonSearchCli:
 
     configuration: PythonSearchConfiguration
 
-    @staticmethod
     def install_missing_dependencies():
         """
         Install all missing dependencies that cannot be provided through the default installer
@@ -55,17 +54,9 @@ class PythonSearchCli:
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         if not configuration:
             logging.debug("No _configuration provided, using default")
-
-            try:
-                configuration = ConfigurationLoader().load_config()
-            except BaseException as e:
-                import traceback
-
-                print(str(e))
-                traceback.print_exc()
-
-                return
-
+            
+        configuration = ConfigurationLoader().load_config()
+            
         self.configuration = configuration
         self.run_key = EntryRunner(self.configuration).run
         import python_search.events
