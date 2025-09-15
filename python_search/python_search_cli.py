@@ -24,6 +24,7 @@ class PythonSearchCli:
 
     configuration: PythonSearchConfiguration
 
+    @staticmethod
     def install_missing_dependencies():
         """
         Install all missing dependencies that cannot be provided through the default installer
@@ -34,13 +35,13 @@ class PythonSearchCli:
         InstallDependencies().install_all()
 
     @staticmethod
-    def new_project(project_name: str):
+    def new_project():
         """
         Create a new project in the current directory with the given name
         """
         from python_search.init.project import Project
 
-        Project().new_project(project_name)
+        Project().new_project()
 
     @staticmethod
     def set_project_location(location: str):
@@ -54,17 +55,22 @@ class PythonSearchCli:
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         if not configuration:
             logging.debug("No _configuration provided, using default")
-            
-        configuration = ConfigurationLoader().load_config()
-            
+        
         self.configuration = configuration
-        self.run_key = EntryRunner(self.configuration).run
         import python_search.events
 
         self.events = python_search.events
         self._semantic_search = SemanticSearch
         self._entries_loader = EntriesLoader
         self._kitty_search = KittyForSearchUI
+
+    def run_key(self, key: str):
+        EntryRunner(self._get_configuration()).run(key)
+
+    def _get_configuration(self):
+        if not self.configuration:
+            self.configuration = ConfigurationLoader().load_config()
+        return self.configuration
 
     def search(self):
         """

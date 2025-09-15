@@ -1,11 +1,17 @@
 import os
+from typing import Optional
 
 
 class Project:
-    def new_project(self, new_project_location):
+    def __init__(self):
+        self.HOME = os.environ["HOME"]
+
+    def new_project(self, new_project_location: Optional[str] = None):
         """
         Initialize a new project to use Python search and make sure all remaining dependencies exist
         """
+        if not new_project_location:
+            new_project_location = self.HOME + "/python_search_entries"
 
         is_relative_path = new_project_location[0] != "/"
         if is_relative_path:

@@ -131,7 +131,7 @@ Installation successful!
 
         print("Installing kitty manually via curl")
         os.system(
-            "curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin"
+            "brew install --cask kitty"
         )
 
         # sets a light theme in kitty
@@ -147,7 +147,7 @@ Installation successful!
 
     def _install_ack(self):
 
-        if self.is_mac():
+        if is_mac():
             os.system("brew install ack")
         if is_debian_based():
             os.system("sudo apt-get install ack")
