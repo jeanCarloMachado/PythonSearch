@@ -8,17 +8,17 @@
                         "manipulators": [
                             {
                                 "from": { "key_code": "caps_lock" },
-                                "to": [{ "shell_command": "/opt/miniconda3/envs/python312/bin/pss focus_or_open" }],
+                                "to": [{ "shell_command": "/Users/jeanmachado/miniconda3/envs/python313/bin/pss focus_or_open" }],
                                 "type": "basic"
                             }
                         ]
                     },
-                    {
+                    {  
                         "description": "REGINSTER NEW PYTHON SEARCH",
                         "manipulators": [
                             {
                                 "from": { "key_code": "grave_accent_and_tilde" },
-                                "to": [{ "shell_command": "/opt/miniconda3/envs/python312/bin/python_search register_new_ui" }],
+                                "to": [{ "shell_command": "/Users/jeanmachado/miniconda3/envs/python313/bin/python_search register_new_ui" }],
                                 "type": "basic"
                             }
                         ]

@@ -33,7 +33,6 @@ class PythonSearchConfiguration(EntriesGroup):
         default_tags=None,
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
-        fzf_theme: Literal["light", "solarized"] = "light",
         custom_window_size: Optional[Tuple[int, int]] = None,
         collect_data: bool = False,
         entry_generation=False,
@@ -46,7 +45,6 @@ class PythonSearchConfiguration(EntriesGroup):
         :param default_tags:
         :param tags_dependent_inserter_marks:
         :param default_text_editor:
-        :param fzf_theme: the theme to use for fzf
         :param custom_window_size: the size of the fzf window
         :param use_webservice: if True, the ranking will be generated via a webservice
         :param collect_data: if True, we will collect data about the entries you run in your machine
@@ -66,7 +64,6 @@ class PythonSearchConfiguration(EntriesGroup):
         self._default_text_editor = (
             default_text_editor if default_text_editor else "vim"
         )
-        self._fzf_theme = fzf_theme
         if custom_window_size:
             self._custom_window_size = custom_window_size
 

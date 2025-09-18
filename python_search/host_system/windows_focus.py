@@ -19,6 +19,9 @@ end tell'
         return True if result == 0 else False
 
     def focus_window(self, app, title):
+        """
+        Focuses on a window with the given app and title
+        """
         cmd = f"""
         osascript -e '
         tell application "System Events"
