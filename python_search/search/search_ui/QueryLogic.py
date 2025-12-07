@@ -51,35 +51,40 @@ class QueryLogic:
         
         logger.info("Starting query logic loop")
 
-        while True:
-            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
-                return
-
-            try:
-                yield next(self.get_a_unique_result(self.string_match(query)))
-            except StopIteration:
-                logger.info("StopIteration triggered for string match with query: '" + query + "'")
-
-            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
-                return
-
+        # Get iterators for all search methods
+        string_match_iter = self.get_a_unique_result(self.string_match(query))
+        
+        # Prioritize string matching for short queries, BM25 for longer ones
+        search_methods = []
+        if len(query) <= 3:
+            # For short queries, prioritize exact string matches
+            search_methods = [string_match_iter]
             if self.ENABLE_BM25_SEARCH:
+                search_methods.append(self.get_a_unique_result(bm25_results))
+        else:
+            # For longer queries, prioritize BM25 then string matching
+            if self.ENABLE_BM25_SEARCH:
+                search_methods.append(self.get_a_unique_result(bm25_results))
+            search_methods.append(string_match_iter)
+            
+        if self.ENABLE_SEMANTIC_SEARCH:
+            search_methods.append(self.get_a_unique_result(semantic_results))
+
+        # Round-robin through search methods
+        while len(self.in_results_list) < self.NUMBER_ENTRIES_TO_RETURN and search_methods:
+            methods_to_remove = []
+            
+            for i, method in enumerate(search_methods):
                 try:
-                    yield next(self.get_a_unique_result(bm25_results))
+                    yield next(method)
+                    if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
+                        return
                 except StopIteration:
-                    logger.info("StopIteration triggered for bm25")
-
-            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
-                return
-
-            if self.ENABLE_SEMANTIC_SEARCH:
-                try:
-                    yield next(self.get_a_unique_result(semantic_results))
-                except StopIteration:
-                    logger.info("StopIteration triggered for semantic")
-
-            if len(self.in_results_list) >= self.NUMBER_ENTRIES_TO_RETURN:
-                return
+                    methods_to_remove.append(i)
+            
+            # Remove exhausted iterators
+            for i in reversed(methods_to_remove):
+                search_methods.pop(i)
 
     def get_a_unique_result(self, given_iterator: Iterator[str]):
         try:
@@ -98,11 +103,41 @@ class QueryLogic:
 
 
     def string_match(self, query: str) -> Iterator[str]:
+        if not query:
+            # For empty queries, return all keys but limit to avoid performance issues
+            count = 0
+            for key in self.commands.keys():
+                if count >= self.NUMBER_ENTRIES_TO_RETURN:
+                    break
+                yield key
+                count += 1
+            return
+            
+        # Convert query to lowercase for case-insensitive search
+        query_lower = query.lower()
+        count = 0
+        
+        # First pass: exact key matches (fastest)
         for key in self.commands.keys():
-            if not query:
+            if count >= self.NUMBER_ENTRIES_TO_RETURN:
+                break
+            if query_lower in key.lower():
                 yield key
-            elif query in key: 
-                yield key
-            elif query in str(self.commands[key]):
-                yield key
+                count += 1
+        
+        # Second pass: content matches (slower, only if needed)
+        if count < self.NUMBER_ENTRIES_TO_RETURN:
+            for key in self.commands.keys():
+                if count >= self.NUMBER_ENTRIES_TO_RETURN:
+                    break
+                # Skip if already matched in first pass
+                if query_lower not in key.lower():
+                    try:
+                        command_str = str(self.commands[key]).lower()
+                        if query_lower in command_str:
+                            yield key
+                            count += 1
+                    except:
+                        # Skip entries that can't be converted to string
+                        continue
 

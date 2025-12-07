@@ -80,9 +80,18 @@ class SearchTerminalUi:
         self.print_first_line()
         logger.info("rendering loop started")
         
-        # Get all search results
-        search_results = self.search_logic.search(self.query)
-        self.all_matched_keys = list(search_results)
+        # Simple debouncing: only search if enough time has passed or query is different
+        current_time = time.time() * 1000  # Convert to milliseconds
+        should_search = (
+            self.query != self.previous_query or 
+            (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
+        )
+
+        if should_search:
+            self._last_search_time = current_time
+            search_results = self.search_logic.search(self.query)
+            self.all_matched_keys = list(search_results)
+        # If not searching due to debounce, keep using previous results
         
         # Calculate visible range based on scroll offset
         start_idx = self.scroll_offset
