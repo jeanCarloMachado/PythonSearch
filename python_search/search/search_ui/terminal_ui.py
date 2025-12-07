@@ -84,9 +84,9 @@ class SearchTerminalUi:
                 entry = Entry(key, {"snippet": "Error loading entry"})
 
             if current_key == self.selected_row:
-                self.print_highlighted(key, entry)
+                self.print_highlighted(key, entry, current_key + 1)
             else:
-                self.print_normal_row(key, entry)
+                self.print_normal_row(key, entry, current_key + 1)
 
             current_key += 1
             self.matched_keys.append(key)
@@ -219,14 +219,16 @@ class SearchTerminalUi:
 
         return self.tdw
 
-    def print_highlighted(self, key: str, entry: Any) -> None:
+    def print_highlighted(self, key: str, entry: Any, index: int) -> None:
+        index_part = self.cf.bold(self.cf.selected(f"{index:2d}. "))
         key_part = self.cf.bold(
-            self.cf.selected(f" {self.control_size(key, self.MAX_KEY_SIZE)}")
+            self.cf.selected(f"{self.control_size(key, self.MAX_KEY_SIZE)}")
         )
         body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_content(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
-        print(key_part + body_part)
+        print(index_part + key_part + body_part)
 
-    def print_normal_row(self, key, entry):
+    def print_normal_row(self, key, entry, index):
+        index_part = f"{index:2d}. "
         key_input = self.control_size(key, self.MAX_KEY_SIZE)
         body_part = self.color_based_on_type(
             self.control_size(
@@ -235,7 +237,7 @@ class SearchTerminalUi:
             ),
             entry,
         )
-        print(f" {key_input} {body_part} ")
+        print(f"{index_part}{key_input} {body_part} ")
 
     def color_based_on_type(self, content, entry):
         type = entry.get_type_str()
