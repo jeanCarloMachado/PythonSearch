@@ -44,6 +44,9 @@ class SearchTerminalUi:
         self._last_search_time = 0
         self.scroll_offset = 0  # For pagination
         self.all_matched_keys = []  # Store all search results
+        self.query = ""
+        self.selected_row = 0
+        self.selected_query = -1
 
         self._setup_entries()
         self.normal_mode = False
@@ -89,8 +92,14 @@ class SearchTerminalUi:
 
         if should_search:
             self._last_search_time = current_time
-            search_results = self.search_logic.search(self.query)
-            self.all_matched_keys = list(search_results)
+            try:
+                # search now returns a list, not a generator
+                self.all_matched_keys = self.search_logic.search(self.query)
+            except Exception as e:
+                logger.error(f"Error during search: {e}")
+                # Keep using previous results or empty list
+                if not hasattr(self, 'all_matched_keys') or self.all_matched_keys is None:
+                    self.all_matched_keys = []
         # If not searching due to debounce, keep using previous results
         
         # Calculate visible range based on scroll offset
