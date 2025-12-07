@@ -7,7 +7,7 @@ from typing import Generator, Iterator
 
 logger = setup_term_ui_logger()
 class QueryLogic:
-    NUMBER_ENTRIES_TO_RETURN = 7
+    NUMBER_ENTRIES_TO_RETURN = 50
     ENABLE_SEMANTIC_SEARCH = False
     ENABLE_BM25_SEARCH = True
 

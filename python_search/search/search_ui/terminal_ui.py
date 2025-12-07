@@ -25,6 +25,7 @@ class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 46
     RUN_KEY_EVENT = "python_search_run_key"
+    DISPLAY_ROWS = 7  # Number of rows to display at once
     DEBOUNCE_DELAY_MS = 75  # 75ms debounce delay
 
     _documents_future = None
@@ -41,6 +42,8 @@ class SearchTerminalUi:
         self.reloaded = False
         self.first_run = True
         self._last_search_time = 0
+        self.scroll_offset = 0  # For pagination
+        self.all_matched_keys = []  # Store all search results
 
         self._setup_entries()
         self.normal_mode = False
@@ -55,6 +58,7 @@ class SearchTerminalUi:
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
+        self.scroll_offset = 0
         end_startup = time.time_ns()
         duration_startup_seconds = (end_startup - startup_time) / 1000**3
         statsd.histogram("ps_startup_no_render_seconds", duration_startup_seconds)
@@ -75,36 +79,33 @@ class SearchTerminalUi:
     def render(self):
         self.print_first_line()
         logger.info("rendering loop started")
-        current_key = 0
-        self.matched_keys = []
-
-        # Simple debouncing: only search if enough time has passed or query is different
-        current_time = time.time() * 1000  # Convert to milliseconds
-        should_search = (
-            self.query != self.previous_query or 
-            (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
-        )
-
-        if should_search:
-            self._last_search_time = current_time
-            search_results = self.search_logic.search(self.query)
-        else:
-            # Use previous search results to avoid excessive searching
-            search_results = self.search_logic.search(self.previous_query) if self.previous_query else self.search_logic.search("")
-
-        for key in search_results:
+        
+        # Get all search results
+        search_results = self.search_logic.search(self.query)
+        self.all_matched_keys = list(search_results)
+        
+        # Calculate visible range based on scroll offset
+        start_idx = self.scroll_offset
+        end_idx = min(start_idx + self.DISPLAY_ROWS, len(self.all_matched_keys))
+        
+        # Update matched_keys for backward compatibility
+        self.matched_keys = self.all_matched_keys[start_idx:end_idx]
+        
+        current_display_row = 0
+        for i in range(start_idx, end_idx):
+            key = self.all_matched_keys[i]
             try:
                 entry = Entry(key, self.commands[key])
             except Exception:
                 entry = Entry(key, {"snippet": "Error loading entry"})
 
-            if current_key == self.selected_row:
-                self.print_highlighted(key, entry)
+            # Adjust selected row to be relative to display
+            if current_display_row == (self.selected_row - self.scroll_offset):
+                self.print_highlighted(key, entry, i + 1)
             else:
-                self.print_normal_row(key, entry)
+                self.print_normal_row(key, entry, i + 1)
 
-            current_key += 1
-            self.matched_keys.append(key)
+            current_display_row += 1
         
     def _setup_entries(self):
         import subprocess
@@ -119,7 +120,6 @@ class SearchTerminalUi:
 
     def get_caracter(self) -> str:
         try:
-
             logger.info("getting char")
             c = getch()
             return c
@@ -145,6 +145,8 @@ class SearchTerminalUi:
         if ord_c == 127:
             # backspace
             self.query = self.query[:-1]
+            self.selected_row = 0
+            self.scroll_offset = 0
         elif ord_c == 10:
             # enter
             self._run_key()
@@ -156,36 +158,50 @@ class SearchTerminalUi:
         # self.normal_mode = not self.normal_mode
         elif ord_c == 9:
             # tab
-            self.actions.edit_key(self.matched_keys[self.selected_row], block=True)
-            self._setup_entries()
-            self.reloaded = True
+            if self.selected_row < len(self.all_matched_keys):
+                self.actions.edit_key(self.all_matched_keys[self.selected_row], block=True)
+                self._setup_entries()
+                self.reloaded = True
         elif c == "'":
-            # tab
-            self.actions.copy_entry_value_to_clipboard(
-                self.matched_keys[self.selected_row]
-            )
+            # copy to clipboard
+            if self.selected_row < len(self.all_matched_keys):
+                self.actions.copy_entry_value_to_clipboard(
+                    self.all_matched_keys[self.selected_row]
+                )
         elif ord_c == 47:
             # ?
             self.actions.search_in_google(self.query)
         # handle arrows
-        elif ord_c == 66:
-            if self.selected_row < len(self.matched_keys) - 1:
+        elif ord_c == 66:  # Down arrow
+            if self.selected_row < len(self.all_matched_keys) - 1:
                 self.selected_row = self.selected_row + 1
-        elif ord_c == 65:
+                # Check if we need to scroll down
+                if self.selected_row >= self.scroll_offset + self.DISPLAY_ROWS:
+                    self.scroll_offset = self.selected_row - self.DISPLAY_ROWS + 1
+        elif ord_c == 65:  # Up arrow
             if self.selected_row > 0:
                 self.selected_row = self.selected_row - 1
+                # Check if we need to scroll up
+                if self.selected_row < self.scroll_offset:
+                    self.scroll_offset = self.selected_row
         elif c == ".":
             self.selected_query += 1
             self.query = self.get_previously_used_query(self.selected_query)
+            self.selected_row = 0
+            self.scroll_offset = 0
         elif c == ",":
             if self.selected_query >= 0:
                 self.selected_query -= 1
             self.query = self.get_previously_used_query(self.selected_query)
+            self.selected_row = 0
+            self.scroll_offset = 0
         elif c == "+":
             sys.exit(0)
         elif ord_c == 68 or c == ";":
             # clean query shortcuts
             self.query = ""
+            self.selected_row = 0
+            self.scroll_offset = 0
         elif ord_c == 67:
             sys.exit(0)
         elif ord_c == 92 or c == ']':
@@ -194,6 +210,7 @@ class SearchTerminalUi:
         elif c == "-":
             # go up and clear
             self.selected_row = 0
+            self.scroll_offset = 0
             # remove the last word
             self.query = " ".join(
                 list(filter(lambda x: x, self.query.split(" ")))[0:-1]
@@ -202,21 +219,24 @@ class SearchTerminalUi:
         elif c.isalnum() or c == " ":
             self.query += c
             self.selected_row = 0
+            self.scroll_offset = 0
 
     def _run_key(self):
-        self.actions.run_key(self.matched_keys[self.selected_row])
-        statsd.increment("ps_run_key")
-        self._get_data_warehouse().write_event(
-            self.RUN_KEY_EVENT,
-            {
-                "query": self.query,
-                "key": self.matched_keys[self.selected_row],
-                "type_sequence": self.typed_up_to_run,
-            },
-        )
+        if self.selected_row < len(self.all_matched_keys):
+            selected_key = self.all_matched_keys[self.selected_row]
+            self.actions.run_key(selected_key)
+            statsd.increment("ps_run_key")
+            self._get_data_warehouse().write_event(
+                self.RUN_KEY_EVENT,
+                {
+                    "query": self.query,
+                    "key": selected_key,
+                    "type_sequence": self.typed_up_to_run,
+                },
+            )
 
-        statsd.gauge("ps_query_len_size", len(self.typed_up_to_run))
-        self.typed_up_to_run = ""
+            statsd.gauge("ps_query_len_size", len(self.typed_up_to_run))
+            self.typed_up_to_run = ""
 
     def get_previously_used_query(self, position) -> str:
         # len
@@ -234,15 +254,15 @@ class SearchTerminalUi:
 
         return self.tdw
 
-    def print_highlighted(self, key: str, entry: Any) -> None:
+    def print_highlighted(self, key: str, entry: Any, index: int) -> None:
         key_part = self.cf.bold(
-            self.cf.selected(f" {self.control_size(key, self.MAX_KEY_SIZE)}")
+            self.cf.selected(f"{index:2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}")
         )
         body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_content(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
         print(key_part + body_part)
 
-    def print_normal_row(self, key, entry):
-        key_input = self.control_size(key, self.MAX_KEY_SIZE)
+    def print_normal_row(self, key, entry, index):
+        key_input = self.control_size(key, self.MAX_KEY_SIZE - 4)
         body_part = self.color_based_on_type(
             self.control_size(
                 self.sanitize_content(entry.get_content_str(strip_new_lines=True)),
@@ -250,7 +270,7 @@ class SearchTerminalUi:
             ),
             entry,
         )
-        print(f" {key_input} {body_part} ")
+        print(f"{index:2d}. {key_input} {body_part} ")
 
     def color_based_on_type(self, content, entry):
         type = entry.get_type_str()
