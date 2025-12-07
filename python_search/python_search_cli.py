@@ -35,13 +35,13 @@ class PythonSearchCli:
         InstallDependencies().install_all()
 
     @staticmethod
-    def new_project(project_name: str):
+    def new_project():
         """
         Create a new project in the current directory with the given name
         """
         from python_search.init.project import Project
 
-        Project().new_project(project_name)
+        Project().new_project()
 
     @staticmethod
     def set_project_location(location: str):
@@ -55,25 +55,22 @@ class PythonSearchCli:
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         if not configuration:
             logging.debug("No _configuration provided, using default")
-
-            try:
-                configuration = ConfigurationLoader().load_config()
-            except BaseException as e:
-                import traceback
-
-                print(str(e))
-                traceback.print_exc()
-
-                return
-
+        
         self.configuration = configuration
-        self.run_key = EntryRunner(self.configuration).run
         import python_search.events
 
         self.events = python_search.events
         self._semantic_search = SemanticSearch
         self._entries_loader = EntriesLoader
         self._kitty_search = KittyForSearchUI
+
+    def run_key(self, key: str):
+        EntryRunner(self._get_configuration()).run(key)
+
+    def _get_configuration(self):
+        if not self.configuration:
+            self.configuration = ConfigurationLoader().load_config()
+        return self.configuration
 
     def search(self):
         """
@@ -121,7 +118,7 @@ class PythonSearchCli:
         """
         from python_search.shortcut.generator import ShortcutGenerator
 
-        return ShortcutGenerator(self.configuration).configure
+        return ShortcutGenerator(self._get_configuration()).configure
 
     def _utils(self):
         """Here commands that are small topics and dont fit the rest"""

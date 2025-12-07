@@ -2,11 +2,13 @@
 import json
 import os
 
+from python_search.host_system.system_paths import SystemPaths
+
 
 class MacKarabinerElements:
     def __init__(self, configuration):
         home = os.environ.get("HOME")
-        self.BASE_KARABINER_ELEMENTS_FILE = f"{home}/.config/karabiner/karabiner_base.json"
+        self.BASE_KARABINER_ELEMENTS_FILE = f"{SystemPaths.PYTHON_SEARCH_PATH}/karabiner_base.json"
         self.MAIN_KARABINER_ELEMENTS_FILE = f"{home}/.config/karabiner/karabiner.json"
         self.configuration = configuration
 
@@ -35,37 +37,11 @@ class MacKarabinerElements:
             print(f"Karabiner elements file {self.MAIN_KARABINER_ELEMENTS_FILE} updated")
     
     def parse_mac_shortcut(self, shortcut: str, content: dict, key: str):
-        """
+        f"""
         Shortcut:
         is the expression that maps the shortcut
         example: "⌘⇧t"
 
-        Example output:
-
-        {
-            "description": "RUN PYTHON SEARCH",
-            "manipulators": [
-                {
-                    "from": { "key_code": "caps_lock" },
-                    "to": [{ "shell_command": "/opt/miniconda3/envs/python312/bin/pss focus_or_open" }],
-                    "type": "basic"
-                }
-            ]
-        },
-        or 
-        {
-            "description": "calendar",
-            "manipulators": [
-                {
-                    "from": {
-                        "key_code": "c",
-                        "modifiers": { "mandatory": ["left_alt"] }
-                    },
-                    "to": [{ "shell_command": "/opt/miniconda3/envs/python312/bin/run_key 'google calendar' " }],
-                    "type": "basic"
-                }
-            ]
-        },
         """
         print("Processing shortcut: ", shortcut, ' for key: ', key)
         shortcut_dict = {}
@@ -73,7 +49,7 @@ class MacKarabinerElements:
         shortcut_dict['manipulators'] = [
             {
                 "from": {},
-                "to": [{ "shell_command": f"/opt/miniconda3/envs/python312/bin/run_key '{key}'" }],
+                "to": [{ "shell_command": SystemPaths.BINARIES_PATH + "/run_key '" + key + "'" }],
                 "type": "basic"
             }
         ]

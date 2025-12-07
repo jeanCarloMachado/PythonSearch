@@ -39,15 +39,11 @@ class Browser:
 
         focus_title: to focus on a window that behaves like an app
         """
-        if not url:
-            raise Exception("URL is required")
-        print(' test jean ')
         url = url.strip()
         cmd_to_run = self.open_shell_cmd(
             url, app_mode, incognito, browser, focus_title=focus_title
         )
         print("Command to run:", cmd_to_run)
-
         self.system_func(cmd_to_run)
 
     def open_shell_cmd(

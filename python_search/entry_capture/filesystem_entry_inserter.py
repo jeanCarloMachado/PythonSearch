@@ -4,6 +4,7 @@ import shutil
 from datetime import datetime
 
 from python_search.configuration.configuration import PythonSearchConfiguration
+from python_search.events.run_performed.entity import EntryExecuted
 
 
 class FilesystemEntryInserter:
@@ -38,6 +39,12 @@ class FilesystemEntryInserter:
         row_entry = str(entry)
         line_to_add = f"    '{key}': {row_entry},"
         self._append_entry(line_to_add)
+
+        from python_search.events.run_performed.writer import LogRunPerformedClient
+
+        LogRunPerformedClient(self._configuration).send(
+            EntryExecuted(key=key, query_input="", shortcut=False)
+        )
 
         from python_search.apps.notification_ui import send_notification
 

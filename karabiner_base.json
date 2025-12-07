@@ -1,0 +1,33 @@
+{
+    "profiles": [
+        {
+            "complex_modifications": {
+                "rules": [
+                    {
+                        "description": "RUN PYTHON SEARCH",
+                        "manipulators": [
+                            {
+                                "from": { "key_code": "caps_lock" },
+                                "to": [{ "shell_command": "/Users/jeanmachado/miniconda3/envs/python313/bin/python_search search focus_or_open" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {  
+                        "description": "REGINSTER NEW PYTHON SEARCH",
+                        "manipulators": [
+                            {
+                                "from": { "key_code": "grave_accent_and_tilde" },
+                                "to": [{ "shell_command": "/Users/jeanmachado/miniconda3/envs/python313/bin/python_search register_new_ui" }],
+                                "type": "basic"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "name": "Default profile",
+            "selected": true,
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
+        }
+    ]
+}

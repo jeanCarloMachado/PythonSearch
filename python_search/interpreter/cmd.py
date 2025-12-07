@@ -89,8 +89,8 @@ class CmdInterpreter(BaseInterpreter):
         # add homebrew path to the path
 
         env["PATH"] = "/opt/homebrew/bin:" + env["PATH"]
-        env["PATH"] = "/opt/miniconda3/envs/python312/bin:" + env["PATH"]
-        env["PATH"] = "/opt/miniconda3/envs/python313/bin:" + env["PATH"]
+        env['PYTHONPATH'] = SystemPaths().BINARIES_PATH 
+        env['SHELL'] = "/bin/zsh"
         # add system path to the path
         env["PATH"] = SystemPaths().BINARIES_PATH + ":" + env["PATH"]
 
