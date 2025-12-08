@@ -88,7 +88,7 @@ class EntriesEditor:
 
     def _get_open_text_editor_command(self, file, line):
         # vim only supported
-        return f"vim {file} +{line}'"
+        return f"vim {file} +{line}"
 
 
 def main():
