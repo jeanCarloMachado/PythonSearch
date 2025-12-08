@@ -1,4 +1,3 @@
-import os
 from python_search.configuration.loader import ConfigurationLoader
 
 
@@ -46,7 +45,10 @@ class KittyTerminal:
         if hold_terminal_open_on_end:
             hold = " --hold "
 
-        final_cmd = f'{self.get_kitty_cmd()} {hold} {KittyTerminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
+        final_cmd = (
+            f'{self.get_kitty_cmd()} {hold} '
+            f'{KittyTerminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
+        )
 
         return final_cmd
 

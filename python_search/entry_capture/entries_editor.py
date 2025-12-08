@@ -6,7 +6,6 @@ from typing import Optional
 
 from python_search.apps.terminal import KittyTerminal
 from python_search.core_entities import Key
-from python_search.search.search_ui.kitty_for_search_ui import get_kitty_cmd
 
 
 class EntriesEditor:
@@ -40,7 +39,10 @@ class EntriesEditor:
             return
 
         # needs to be case-insensitive search
-        cmd = f"{EntriesEditor.ACK_PATH} -i '{key}' {self.configuration.get_project_root()} --python || true"
+        cmd = (
+            f"{EntriesEditor.ACK_PATH} -i '{key}' "
+            f"{self.configuration.get_project_root()} --python || true"
+        )
         logging.info(f"Command: {cmd}")
         result_shell = subprocess.check_output(cmd, shell=True, text=True)
 
@@ -70,9 +72,9 @@ class EntriesEditor:
 
         terminal = KittyTerminal()
         cmd: str = (
-            f" {terminal.get_kitty_cmd()} {terminal.GENERIC_TERMINAL_PARAMS} bash -c 'cd"
-            f" {self.configuration.get_project_root()} "
-            f"; {self._get_open_text_editor_command(file_name, line) }"
+            f" {terminal.get_kitty_cmd()} {terminal.GENERIC_TERMINAL_PARAMS} "
+            f"bash -c 'cd {self.configuration.get_project_root()} && "
+            f"{self._get_open_text_editor_command(file_name, line)}'"
         )
         print(cmd)
 

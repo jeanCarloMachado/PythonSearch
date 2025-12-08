@@ -112,7 +112,7 @@ class SearchTerminalUi:
         end_idx = min(start_idx + self.DISPLAY_ROWS, len(self.all_matched_keys))
 
         # Update matched_keys for backward compatibility
-        self.matched_keys = self.all_matched_keys[start_idx:end_idx]
+        self.matched_keys = self.all_matched_keys[start_idx: end_idx]
 
         current_display_row = 0
         for i in range(start_idx, end_idx):
@@ -167,7 +167,7 @@ class SearchTerminalUi:
         # test if the character is a delete (backspace)
         if ord_c == 127:
             # backspace
-            self.query = self.query[:-1]
+            self.query = self.query[: -1]
             self.selected_row = 0
             self.scroll_offset = 0
         elif ord_c == 10:
@@ -238,7 +238,7 @@ class SearchTerminalUi:
             self.scroll_offset = 0
             # remove the last word
             self.query = " ".join(
-                list(filter(lambda x: x, self.query.split(" ")))[0:-1]
+                list(filter(lambda x: x, self.query.split(" ")))[0: -1]
             )
             self.query += " "
         elif c.isalnum() or c == " ":
@@ -282,7 +282,7 @@ class SearchTerminalUi:
     def print_highlighted(self, key: str, entry: Any, index: int) -> None:
         key_part = self.cf.bold(
             self.cf.selected(
-                f"{index:2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"
+                f"{index: 2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"
             )
         )
         body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_content(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
@@ -297,7 +297,7 @@ class SearchTerminalUi:
             ),
             entry,
         )
-        print(f"{index:2d}. {key_input} {body_part} ")
+        print(f"{index: 2d}. {key_input} {body_part} ")
 
     def color_based_on_type(self, content, entry):
         type = entry.get_type_str()

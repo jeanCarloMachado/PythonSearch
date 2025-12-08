@@ -62,7 +62,7 @@ class KittyForSearchUI:
         theme = get_current_theme()
         return f"""{self.get_kitty_cmd()} \
         --title {self._title} \
-        --listen-on unix:{SOCKET_PATH} \
+        --listen-on unix: {SOCKET_PATH} \
         -o allow_remote_control=yes \
         -o window_padding_width=0  \
         -o placement_strategy=center \
@@ -89,7 +89,7 @@ class KittyForSearchUI:
             print(f"File {SOCKET_PATH} not found")
             return False
 
-        cmd = f"{SystemPaths.KITTY_BINNARY} @ --to unix:{SOCKET_PATH} focus-window "
+        cmd = f"{SystemPaths.KITTY_BINNARY} @ --to unix: {SOCKET_PATH} focus-window "
         print("Cmd: ", cmd)
         result = os.system(cmd)
         print(result, "Type: ", type(result))
