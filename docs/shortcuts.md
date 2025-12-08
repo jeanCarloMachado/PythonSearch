@@ -9,7 +9,7 @@ The following systems are supported for generating shortcuts:
 - Mac using iCanHazShortcut
 - Linux
   - Gnome
-  - XFCE 
+  - XFCE
 
 In your entries define the shortcut:
 
@@ -23,7 +23,6 @@ In your entries define the shortcut:
 
 Then to generate the shortcuts run the following commands:
 
-```sh 
+```sh
 python_search config_shortcuts
 ```
-

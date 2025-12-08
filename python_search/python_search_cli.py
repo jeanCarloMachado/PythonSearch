@@ -55,7 +55,7 @@ class PythonSearchCli:
     def __init__(self, configuration: Optional[PythonSearchConfiguration] = None):
         if not configuration:
             logging.debug("No _configuration provided, using default")
-        
+
         self.configuration = configuration
         import python_search.events
 
@@ -84,7 +84,6 @@ class PythonSearchCli:
         Starts the UI for collecting a new entry into python search
         """
         return RegisterNew().launch_ui()
-
 
     def _copy_entry_content(self, entry_str: str):
         """

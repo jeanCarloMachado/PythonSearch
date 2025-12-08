@@ -7,7 +7,7 @@ With PythoSearch you collect and retrieve and refactor information efficiently.
 - collect commands, scripts, prompts, snippets, urls, files, efficiently as python dictionaries
 - retrieve or execute the registered entries (depending on the type) either by searching them or invoking them via shortcuts
 - refactor, reuse, generate and further automate entries as they are code
- 
+
 Check out [these slides](https://docs.google.com/presentation/d/10J0n0wdXYKCtB-tr2z4twY3T4TFBb8h2EGZghw7q1hk/edit#slide=id.p) if you want to know more
 
 <img src="https://i.imgur.com/pECSsjc.gif" width="620"/>
@@ -69,7 +69,7 @@ Create a github issue to report it or send a patch.
 Feature contributions are also welcomed! If you want to be part of the roadmap discussions reach out.
 
 ## Contributors
- 
+
 - Aeneas Christodoulou
 - Jean Machado
 - Thallys Costa
@@ -77,7 +77,7 @@ Feature contributions are also welcomed! If you want to be part of the roadmap d
 
 ## Supported Systems
 
-PythonSearch officially supports MacOS and Linux. 
+PythonSearch officially supports MacOS and Linux.
 
 ## Legal
 

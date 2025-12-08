@@ -1,9 +1,9 @@
-# Next item predictor 
+# Next item predictor
 
 Next item predictor is the model that optimizes the ranking.
 
 ## Install extras
-```sh 
+```sh
 pip install '.[server]'
 
 ```
@@ -13,4 +13,3 @@ pip install '.[server]'
 ```
 next_item_pipeline run
 ```
-

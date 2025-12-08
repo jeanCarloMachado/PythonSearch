@@ -12,7 +12,7 @@ class Focus:
                 set frontmost to true
                 windows where title contains "Register New"
                 if result is not {} then perform action "AXRaise" of item 1 of result
-end tell' 
+end tell'
         """
         )
 
@@ -25,12 +25,12 @@ end tell'
         cmd = f"""
         osascript -e '
         tell application "System Events"
-            tell application process "{app}"		
+            tell application process "{app}"
                 perform action "AXRaise" of (first window whose name contains "{title}")
                 set frontmost to true
             end tell
         end tell
-        ' 
+        '
             """
         result = os.system(cmd)
         print(f" trying to focus {result}")

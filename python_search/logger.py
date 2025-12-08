@@ -12,10 +12,11 @@ def setup_term_ui_logger():
         ch.setLevel(logging.INFO)
     else:
         ch.setLevel(logging.WARNING)
-        
+
     logger.addHandler(ch)
 
     return logger
+
 
 def setup_run_key_logger():
     """

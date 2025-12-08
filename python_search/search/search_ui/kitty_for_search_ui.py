@@ -8,12 +8,14 @@ from python_search.environment import is_mac
 import sys
 
 SOCKET_PATH = "/tmp/mykitty"
+
+
 class KittyForSearchUI:
     """
     Renders the search ui using fzf + termite terminal
     """
 
-    _DEFAULT_WINDOW_SIZE = ('86c', '10c')
+    _DEFAULT_WINDOW_SIZE = ("86c", "10c")
 
     _configuration = None
 
@@ -52,10 +54,11 @@ class KittyForSearchUI:
         result = os.system(cmd)
         if result != 0:
             raise Exception("Failed: " + str(result))
-    
+
     def get_kitty_complete_cmd(self) -> str:
         terminal = KittyTerminal()
         from python_search.apps.theme.theme import get_current_theme
+
         theme = get_current_theme()
         return f"""{self.get_kitty_cmd()} \
         --title {self._title} \
@@ -86,7 +89,7 @@ class KittyForSearchUI:
             print(f"File {SOCKET_PATH} not found")
             return False
 
-        cmd = f'{SystemPaths.KITTY_BINNARY} @ --to unix:{SOCKET_PATH} focus-window '
+        cmd = f"{SystemPaths.KITTY_BINNARY} @ --to unix:{SOCKET_PATH} focus-window "
         print("Cmd: ", cmd)
         result = os.system(cmd)
         print(result, "Type: ", type(result))
@@ -116,6 +119,7 @@ def main():
     import fire
 
     fire.Fire(KittyForSearchUI)
+
 
 def get_kitty_cmd() -> str:
     return SystemPaths.KITTY_BINNARY

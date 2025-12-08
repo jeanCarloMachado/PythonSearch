@@ -8,5 +8,4 @@ class OfficialEntries(EntriesGroup):
 
     """
 
-    commands = {
-    }
+    commands = {}

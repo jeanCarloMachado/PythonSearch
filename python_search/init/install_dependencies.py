@@ -130,9 +130,7 @@ Installation successful!
             return
 
         print("Installing kitty manually via curl")
-        os.system(
-            "brew install --cask kitty"
-        )
+        os.system("brew install --cask kitty")
 
         # sets a light theme in kitty
         os.system("kitty +kitten themes --reload-in=all One Half Light")
@@ -144,19 +142,13 @@ Installation successful!
         if is_debian_based():
             os.system("sudo apt-get install wmctrl")
 
-
     def _install_ack(self):
-
         if is_mac():
             os.system("brew install ack")
         if is_debian_based():
             os.system("sudo apt-get install ack")
         if is_archlinux():
             os.system("sudo pacman -S ack")
-
-
-        
-
 
     def _install_xsel(self):
         if is_debian_based():

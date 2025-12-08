@@ -1,5 +1,5 @@
 
-## How to debug fzf 
+## How to debug fzf
 
 Open in the terminal like this:
 

@@ -13,7 +13,7 @@ git clone git@github.com:jeanCarloMachado/PythonSearch.git
 2. Install the repo code in your enviroment
 
 ```sh
-cd PythonSearch ; 
+cd PythonSearch ;
 # install the program in devevelopment mode
 pip install -e .
 ```

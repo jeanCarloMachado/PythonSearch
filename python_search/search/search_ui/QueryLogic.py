@@ -6,6 +6,8 @@ from python_search.search.search_ui.semantic_search import SemanticSearch
 from typing import Generator, Iterator, List
 
 logger = setup_term_ui_logger()
+
+
 class QueryLogic:
     NUMBER_ENTRIES_TO_RETURN = 50
     ENABLE_SEMANTIC_SEARCH = False
@@ -39,7 +41,7 @@ class QueryLogic:
         try:
             # Get results from different search methods
             string_results = list(self.string_match(query))
-            
+
             bm25_results = []
             if self.ENABLE_BM25_SEARCH:
                 bm25_results = self.search_bm25.search(query)
@@ -52,7 +54,7 @@ class QueryLogic:
 
             # Merge results with priority
             all_results = []
-            
+
             if len(query) <= 3:
                 # For short queries, prioritize exact string matches
                 all_results.extend(string_results)
@@ -61,7 +63,7 @@ class QueryLogic:
                 # For longer queries, prioritize BM25 then string matching
                 all_results.extend(bm25_results)
                 all_results.extend(string_results)
-                
+
             all_results.extend(semantic_results)
 
             # Remove duplicates while preserving order
@@ -74,16 +76,15 @@ class QueryLogic:
                         break
 
             return self.in_results_list
-                    
+
         except Exception as e:
             logger.error(f"Error in search: {e}")
             return []
 
-
     def string_match(self, query: str) -> List[str]:
         """String matching that returns a list instead of generator"""
         results = []
-        
+
         try:
             if not query:
                 # For empty queries, return all keys but limit to avoid performance issues
@@ -94,11 +95,11 @@ class QueryLogic:
                     results.append(key)
                     count += 1
                 return results
-                
+
             # Convert query to lowercase for case-insensitive search
             query_lower = query.lower()
             count = 0
-            
+
             # First pass: exact key matches (fastest)
             for key in self.commands.keys():
                 if count >= self.NUMBER_ENTRIES_TO_RETURN:
@@ -106,7 +107,7 @@ class QueryLogic:
                 if query_lower in key.lower():
                     results.append(key)
                     count += 1
-            
+
             # Second pass: content matches (slower, only if needed)
             if count < self.NUMBER_ENTRIES_TO_RETURN:
                 for key in self.commands.keys():
@@ -122,10 +123,9 @@ class QueryLogic:
                         except:
                             # Skip entries that can't be converted to string
                             continue
-                            
+
             return results
-            
+
         except Exception as e:
             logger.error(f"Error in string_match: {e}")
             return results
-

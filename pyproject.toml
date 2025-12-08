@@ -5,8 +5,8 @@ description = "Build your knowledge database in python and retrieve it efficient
 authors = ["Jean Carlo Machado <machado.c.jean@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<=3.14"
-fire = ">=0.6"
+python = ">=3.12,<=3.14"
+fire = "^0.7.1"
 pydantic = "*"
 PyYAML = "^6.0"
 colorama = "^0.4.5"

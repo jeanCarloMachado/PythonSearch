@@ -14,7 +14,7 @@ class EntriesEditor:
     Open an ide to edit the entries
     """
 
-    ACK_PATH = '/opt/homebrew/bin/ack'
+    ACK_PATH = "/opt/homebrew/bin/ack"
 
     def __init__(self, configuration=None):
         if not configuration:
@@ -91,6 +91,7 @@ class EntriesEditor:
 
 def main():
     import fire
+
     fire.Fire(EntriesEditor)
 
 

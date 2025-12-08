@@ -1,5 +1,5 @@
-
 from python_search.apps.theme.BaseTheme import BaseTheme
+
 
 class NewLight(BaseTheme):
     def __init__(self):
@@ -64,4 +64,5 @@ class D2Theme(BaseTheme):
 
 def get_current_theme() -> BaseTheme:
     from python_search.apps.theme.ThemeSelector import ThemeSelector
+
     return ThemeSelector().get_theme()

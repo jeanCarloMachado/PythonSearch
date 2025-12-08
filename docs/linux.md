@@ -9,4 +9,3 @@ export PATH=$PATH:$HOME/.local/bin
 ```
 
 Restart your computer after making this change to apply it.
-

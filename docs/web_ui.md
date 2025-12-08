@@ -1,5 +1,5 @@
 
-# Web UI 
+# Web UI
 
 web ui is  a streamlit application built around python search topics.
 

@@ -20,7 +20,9 @@ startup_time = time.time_ns()
 statsd = setup_datadog()
 
 # disable hugging face warning about forking token paralelism when reloading entries
-os.environ["TOKENIZERS_PARALLELISM"] = 'false'
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
 class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 46
@@ -82,12 +84,12 @@ class SearchTerminalUi:
     def render(self):
         self.print_first_line()
         logger.info("rendering loop started")
-        
+
         # Simple debouncing: only search if enough time has passed or query is different
         current_time = time.time() * 1000  # Convert to milliseconds
         should_search = (
-            self.query != self.previous_query or 
-            (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
+            self.query != self.previous_query
+            or (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
         )
 
         if should_search:
@@ -98,17 +100,20 @@ class SearchTerminalUi:
             except Exception as e:
                 logger.error(f"Error during search: {e}")
                 # Keep using previous results or empty list
-                if not hasattr(self, 'all_matched_keys') or self.all_matched_keys is None:
+                if (
+                    not hasattr(self, "all_matched_keys")
+                    or self.all_matched_keys is None
+                ):
                     self.all_matched_keys = []
         # If not searching due to debounce, keep using previous results
-        
+
         # Calculate visible range based on scroll offset
         start_idx = self.scroll_offset
         end_idx = min(start_idx + self.DISPLAY_ROWS, len(self.all_matched_keys))
-        
+
         # Update matched_keys for backward compatibility
         self.matched_keys = self.all_matched_keys[start_idx:end_idx]
-        
+
         current_display_row = 0
         for i in range(start_idx, end_idx):
             key = self.all_matched_keys[i]
@@ -124,17 +129,17 @@ class SearchTerminalUi:
                 self.print_normal_row(key, entry, i + 1)
 
             current_display_row += 1
-        
+
     def _setup_entries(self):
         import subprocess
 
         output = subprocess.getoutput(
-            SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json 2>/dev/null"
+            SystemPaths.BINARIES_PATH
+            + "/pys _entries_loader load_entries_as_json 2>/dev/null"
         )
-        #print("output", output)
+        # print("output", output)
         self.commands = json.loads(output)
         self.search_logic = QueryLogic(self.commands)
-
 
     def get_caracter(self) -> str:
         try:
@@ -177,7 +182,9 @@ class SearchTerminalUi:
         elif ord_c == 9:
             # tab
             if self.selected_row < len(self.all_matched_keys):
-                self.actions.edit_key(self.all_matched_keys[self.selected_row], block=True)
+                self.actions.edit_key(
+                    self.all_matched_keys[self.selected_row], block=True
+                )
                 self._setup_entries()
                 self.reloaded = True
         elif c == "'":
@@ -222,7 +229,7 @@ class SearchTerminalUi:
             self.scroll_offset = 0
         elif ord_c == 67:
             sys.exit(0)
-        elif ord_c == 92 or c == ']':
+        elif ord_c == 92 or c == "]":
             self._setup_entries()
             self.reloaded = True
         elif c == "-":
@@ -274,7 +281,9 @@ class SearchTerminalUi:
 
     def print_highlighted(self, key: str, entry: Any, index: int) -> None:
         key_part = self.cf.bold(
-            self.cf.selected(f"{index:2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}")
+            self.cf.selected(
+                f"{index:2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"
+            )
         )
         body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_content(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
         print(key_part + body_part)

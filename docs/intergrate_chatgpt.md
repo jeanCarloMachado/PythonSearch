@@ -3,6 +3,6 @@ To enable ChatGPT in python_search, you will need to add your OpenAI API key as 
 
 Once you have your API key, add it to your initialization files as "export OPENAI_KEY=[Key here]".
 
-Finally, run python_search register_new_ui and enter a title/enter content and select generate content or desc./Title to verify ChatGPT integration is working. 
+Finally, run python_search register_new_ui and enter a title/enter content and select generate content or desc./Title to verify ChatGPT integration is working.
 
 Once you have verified that ChatGPT is working, you can start using it to generate content for your python_search project.

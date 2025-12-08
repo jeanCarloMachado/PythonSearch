@@ -69,7 +69,7 @@ class ConfigurationLoader:
         if not folder:
             raise Exception(
                 f"""Either {current_project_location} or {env_name} must be set with the path to your entries project
-                
+
 """
             )
         return folder

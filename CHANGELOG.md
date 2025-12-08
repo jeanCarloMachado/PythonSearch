@@ -76,7 +76,7 @@
 
 ## 0.17.1
 - fixing Browser Issues on Linux
-- making Browser/URL-Code more resiliant 
+- making Browser/URL-Code more resiliant
 - Implementing Browser Tests
 ## 0.17
 
@@ -140,10 +140,10 @@
 
 ## 0.10.8
 
-- Improve prompt editor experience 
+- Improve prompt editor experience
 - Improve archlinux installation process
 - Support for "<CLIPBOARD>" in prompts to replace with clipboard content
- 
+
 ## 0.10.7
 
 - Removing Support for i3 in Favor of GNOME
@@ -152,13 +152,13 @@
 ## 0.10.6
 
 - [Backward incompatible] default_fzf_theme renamed to fzf_theme
-- Imrpove fzf themes 
+- Imrpove fzf themes
 - Improve preview window
- 
+
 ## 0.10.5
 
 - Small UI-Fixes on Linux
- 
+
 ## 0.10.4
 
 - Installation automations for mac

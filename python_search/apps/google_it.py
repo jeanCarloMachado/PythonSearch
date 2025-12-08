@@ -13,9 +13,11 @@ class GoogleIt:
             url = content
 
         os.system(f'browser open "{url}"')
-    
+
     def ask_then_search(self):
-        content = CollectInput().launch(name="Search Google", prefill_with_clipboard=True)
+        content = CollectInput().launch(
+            name="Search Google", prefill_with_clipboard=True
+        )
         self.search(content)
 
 

@@ -21,9 +21,12 @@ class Actions:
         )
 
     def edit_key(self, key, block=False):
+        # cleanup the number prefix
 
+        cmd = f'/opt/miniconda3/envs/python312/bin/entries_editor edit_key "{key}"'
+        print(f"Editing {cmd}")
         Popen(
-            f'{SystemPaths.BINARIES_PATH}/entries_editor edit_key "{key}" &>/dev/null',
+            cmd,
             stdout=None,
             stderr=None,
             shell=True,
