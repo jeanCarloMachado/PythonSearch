@@ -1,18 +1,46 @@
 import os
+import shutil
 import subprocess
 
 from python_search.entry_capture.entries_editor import EntriesEditor
 
 
-def test_ack():
-    assert os.system(f"{EntriesEditor.ACK_PATH} --help") == 0
+def test_ripgrep_available():
+    """Test that ripgrep is available (required search tool)"""
+    has_ripgrep = shutil.which("rg") is not None
+    assert (
+        has_ripgrep
+    ), "ripgrep (rg) is required for file searching. Install with: brew install ripgrep"
+
+
+def test_ripgrep_functionality():
+    """Test ripgrep basic functionality"""
+    assert os.system("rg --help > /dev/null") == 0
+
+
+def test_entries_editor_initialization():
+    """Test that EntriesEditor can initialize with ripgrep"""
+    editor = EntriesEditor()
+    assert (
+        editor._search_cmd == "/opt/homebrew/bin/rg"
+    ), f"Expected '/opt/homebrew/bin/rg', got: {editor._search_cmd}"
+
+
+def test_entries_editor_search_command():
+    """Test that EntriesEditor generates correct ripgrep commands"""
+    editor = EntriesEditor()
+    cmd = editor._build_search_command("test_key")
+    assert "/opt/homebrew/bin/rg -n -i --type py 'test_key'" in cmd
+    assert "|| true" in cmd
 
 
 def test_entries_editor_edit_key_help_command_returns_output():
     """
-    Validates that the entries_editor edit_key -h shell command returns meaningful help output.
+    Validates that the entries_editor edit_key -h shell command returns
+    meaningful help output.
 
-    Business rule: The CLI must provide help documentation for the edit_key command to assist users.
+    Business rule: The CLI must provide help documentation for the edit_key
+    command to assist users.
     Purpose: Ensures the help system works correctly and returns expected content.
 
     How it works:
@@ -59,11 +87,13 @@ def test_entries_editor_edit_key_help_command_returns_output():
     assert (
         "Edits the configuration files" in help_output
     ), f"Help output should contain the method docstring. Got: {help_output}"
-    assert (
-        "SYNOPSIS" in help_output
-    ), f"Help output should contain standard Fire help sections. Got: {help_output}"
+    assert "SYNOPSIS" in help_output, (
+        f"Help output should contain standard Fire help sections. "
+        f"Got: {help_output}"
+    )
 
     # Ensure output is not empty
-    assert (
-        len(help_output.strip()) > 50
-    ), f"Help output should be substantial, not just a brief message. Got: {help_output}"
+    assert len(help_output.strip()) > 50, (
+        f"Help output should be substantial, not just a brief message. "
+        f"Got: {help_output}"
+    )

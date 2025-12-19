@@ -3,6 +3,7 @@ import sys
 from typing import Any
 import json
 import time
+import shutil
 
 from python_search.core_entities import Entry
 from python_search.search.search_ui.QueryLogic import QueryLogic
@@ -12,9 +13,9 @@ from python_search.search.search_ui.search_utils import setup_datadog
 from python_search.apps.theme.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
 from python_search.logger import setup_term_ui_logger
+from getch import getch
 
 logger = setup_term_ui_logger()
-from getch import getch
 
 startup_time = time.time_ns()
 statsd = setup_datadog()
@@ -24,10 +25,10 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 class SearchTerminalUi:
-    MAX_KEY_SIZE = 35
-    MAX_CONTENT_SIZE = 46
+    MAX_KEY_SIZE = 52  # Enlarged by 7 characters from previous 45
+    MAX_CONTENT_SIZE = 53  # Reduced by 7 characters from previous 60
     RUN_KEY_EVENT = "python_search_run_key"
-    DISPLAY_ROWS = 7  # Number of rows to display at once
+    DEFAULT_DISPLAY_ROWS = 7  # Default number of rows to display at once
     DEBOUNCE_DELAY_MS = 75  # 75ms debounce delay
 
     _documents_future = None
@@ -49,9 +50,81 @@ class SearchTerminalUi:
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
+        self.display_rows = self._calculate_optimal_display_rows()
+
+        # Calculate dynamic sizes based on terminal width
+        self._calculate_optimal_sizes()
 
         self._setup_entries()
-        self.normal_mode = False
+
+    def _calculate_optimal_display_rows(self) -> int:
+        """Calculate optimal number of display rows based on terminal height"""
+        try:
+            # Get terminal size
+            terminal_size = shutil.get_terminal_size()
+            terminal_height = terminal_size.lines
+
+            # Reserve space for:
+            # - 1 line for the input/query line at the top
+            # - 1 line for potential spacing/buffer
+            # - Use remaining space for content rows
+            reserved_lines = 2
+
+            # Calculate optimal rows, ensuring we have at least 3 rows for content
+            # Allow up to 9 rows for larger displays, but use DEFAULT_DISPLAY_ROWS as fallback
+            max_rows = 9
+            optimal_rows = max(3, min(max_rows, terminal_height - reserved_lines))
+
+            # For very small terminals (height <= 10), reduce by 1 more to ensure typing line visibility
+            if terminal_height <= 10:
+                optimal_rows = max(3, optimal_rows - 1)
+
+            logger.debug(f"Terminal height: {terminal_height}, " f"using optimized display rows: {optimal_rows}")
+            return optimal_rows
+
+        except Exception as e:
+            logger.warning(f"Failed to calculate optimal display rows: {e}, using default")
+            return self.DEFAULT_DISPLAY_ROWS
+
+    def _calculate_optimal_sizes(self) -> None:
+        """Calculate optimal key and content sizes based on terminal width"""
+        try:
+            terminal_size = shutil.get_terminal_size()
+            terminal_width = terminal_size.columns
+
+            # Reserve space for: "99. " (4 chars) + " " (1 char) = 5 chars
+            available_width = terminal_width - 5
+
+            # Allocate roughly 40% for keys, 60% for content
+            key_width = max(30, min(50, int(available_width * 0.4)))
+            content_width = available_width - key_width
+
+            # Ensure content has a reasonable minimum
+            if content_width < 40:
+                key_width = available_width - 40
+                content_width = 40
+
+            # Adjust: enlarge key size by 7, reduce content by 7
+            key_width += 7
+            content_width -= 7
+
+            # Ensure we don't go below reasonable minimums after adjustment
+            if content_width < 33:  # Minimum content width after -7 adjustment
+                adjustment = 33 - content_width
+                key_width -= adjustment
+                content_width = 33
+
+            self.MAX_KEY_SIZE = key_width
+            self.MAX_CONTENT_SIZE = content_width
+
+            logger.debug(
+                f"Terminal width: {terminal_width}, "
+                f"Key size: {self.MAX_KEY_SIZE}, Content size: {self.MAX_CONTENT_SIZE}"
+            )
+
+        except Exception as e:
+            logger.warning(f"Failed to calculate optimal sizes: {e}, using defaults")
+            # Keep the class defaults if calculation fails
 
     def run(self):
         """
@@ -82,14 +155,24 @@ class SearchTerminalUi:
 
     @statsd.timed("ps_render")
     def render(self):
+        # Recalculate display rows and sizes in case terminal was resized
+        new_display_rows = self._calculate_optimal_display_rows()
+        if new_display_rows != self.display_rows:
+            self.display_rows = new_display_rows
+            # Adjust scroll offset if needed
+            if self.selected_row >= self.scroll_offset + self.display_rows:
+                self.scroll_offset = max(0, self.selected_row - self.display_rows + 1)
+
+        # Recalculate optimal sizes for dynamic terminal width adjustment
+        self._calculate_optimal_sizes()
+
         self.print_first_line()
         logger.info("rendering loop started")
 
         # Simple debouncing: only search if enough time has passed or query is different
         current_time = time.time() * 1000  # Convert to milliseconds
         should_search = (
-            self.query != self.previous_query
-            or (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
+            self.query != self.previous_query or (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
         )
 
         if should_search:
@@ -100,19 +183,16 @@ class SearchTerminalUi:
             except Exception as e:
                 logger.error(f"Error during search: {e}")
                 # Keep using previous results or empty list
-                if (
-                    not hasattr(self, "all_matched_keys")
-                    or self.all_matched_keys is None
-                ):
+                if not hasattr(self, "all_matched_keys") or self.all_matched_keys is None:
                     self.all_matched_keys = []
         # If not searching due to debounce, keep using previous results
 
         # Calculate visible range based on scroll offset
         start_idx = self.scroll_offset
-        end_idx = min(start_idx + self.DISPLAY_ROWS, len(self.all_matched_keys))
+        end_idx = min(start_idx + self.display_rows, len(self.all_matched_keys))
 
         # Update matched_keys for backward compatibility
-        self.matched_keys = self.all_matched_keys[start_idx: end_idx]
+        self.matched_keys = self.all_matched_keys[start_idx:end_idx]
 
         current_display_row = 0
         for i in range(start_idx, end_idx):
@@ -134,8 +214,7 @@ class SearchTerminalUi:
         import subprocess
 
         output = subprocess.getoutput(
-            SystemPaths.BINARIES_PATH
-            + "/pys _entries_loader load_entries_as_json 2>/dev/null"
+            SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json 2>/dev/null"
         )
         # print("output", output)
         self.commands = json.loads(output)
@@ -150,16 +229,9 @@ class SearchTerminalUi:
             return " "
 
     def print_first_line(self):
-        if self.normal_mode:
-            content = self.cf.query_enabled("* " + self.query)
-        else:
-            content = self.cf.query(self.query)
+        content = self.cf.query(self.query)
 
-        print(
-            "\x1b[2J\x1b[H"
-            + self.cf.cursor(f"({len(self.commands)})> ")
-            + f"{self.cf.bold(content)}"
-        )
+        print("\x1b[2J\x1b[H" + self.cf.cursor(f"({len(self.commands)})> ") + f"{self.cf.bold(content)}")
 
     def process_chars(self, c: str):
         self.typed_up_to_run += c
@@ -167,32 +239,28 @@ class SearchTerminalUi:
         # test if the character is a delete (backspace)
         if ord_c == 127:
             # backspace
-            self.query = self.query[: -1]
+            self.query = self.query[:-1]
             self.selected_row = 0
             self.scroll_offset = 0
         elif ord_c == 10:
             # enter
             self._run_key()
-        elif c in ["1", "2", "3", "4", "5", "6"] and self.normal_mode:
-            self.selected_row = int(c) - 1
-            self._run_key()
-        # elif ord_c == 27:
-        # swap between modes via esc
-        # self.normal_mode = not self.normal_mode
+        elif c in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            # Run entry by number (1-9)
+            entry_index = int(c) - 1
+            if entry_index < len(self.all_matched_keys):
+                self.selected_row = entry_index
+                self._run_key()
         elif ord_c == 9:
             # tab
             if self.selected_row < len(self.all_matched_keys):
-                self.actions.edit_key(
-                    self.all_matched_keys[self.selected_row], block=True
-                )
+                self.actions.edit_key(self.all_matched_keys[self.selected_row], block=True)
                 self._setup_entries()
                 self.reloaded = True
         elif c == "'":
             # copy to clipboard
             if self.selected_row < len(self.all_matched_keys):
-                self.actions.copy_entry_value_to_clipboard(
-                    self.all_matched_keys[self.selected_row]
-                )
+                self.actions.copy_entry_value_to_clipboard(self.all_matched_keys[self.selected_row])
         elif ord_c == 47:
             # ?
             self.actions.search_in_google(self.query)
@@ -201,8 +269,8 @@ class SearchTerminalUi:
             if self.selected_row < len(self.all_matched_keys) - 1:
                 self.selected_row = self.selected_row + 1
                 # Check if we need to scroll down
-                if self.selected_row >= self.scroll_offset + self.DISPLAY_ROWS:
-                    self.scroll_offset = self.selected_row - self.DISPLAY_ROWS + 1
+                if self.selected_row >= self.scroll_offset + self.display_rows:
+                    self.scroll_offset = self.selected_row - self.display_rows + 1
         elif ord_c == 65:  # Up arrow
             if self.selected_row > 0:
                 self.selected_row = self.selected_row - 1
@@ -237,9 +305,7 @@ class SearchTerminalUi:
             self.selected_row = 0
             self.scroll_offset = 0
             # remove the last word
-            self.query = " ".join(
-                list(filter(lambda x: x, self.query.split(" ")))[0: -1]
-            )
+            self.query = " ".join(list(filter(lambda x: x, self.query.split(" ")))[0:-1])
             self.query += " "
         elif c.isalnum() or c == " ":
             self.query += c
@@ -280,19 +346,18 @@ class SearchTerminalUi:
         return self.tdw
 
     def print_highlighted(self, key: str, entry: Any, index: int) -> None:
-        key_part = self.cf.bold(
-            self.cf.selected(
-                f"{index: 2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"
-            )
-        )
-        body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_content(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
+        key_part = self.cf.bold(self.cf.selected(f"{index: 2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"))
+        content = self.sanitize_content(entry.get_content_str(strip_new_lines=True), entry)
+        sized_content = self.control_size(content, self.MAX_CONTENT_SIZE)
+        colored_content = self.color_based_on_type(sized_content, entry)
+        body_part = f" {self.cf.bold(colored_content)} "
         print(key_part + body_part)
 
     def print_normal_row(self, key, entry, index):
         key_input = self.control_size(key, self.MAX_KEY_SIZE - 4)
         body_part = self.color_based_on_type(
             self.control_size(
-                self.sanitize_content(entry.get_content_str(strip_new_lines=True)),
+                self.sanitize_content(entry.get_content_str(strip_new_lines=True), entry),
                 self.MAX_CONTENT_SIZE,
             ),
             entry,
@@ -312,12 +377,20 @@ class SearchTerminalUi:
 
         return content
 
-    def sanitize_content(self, line) -> str:
+    def sanitize_content(self, line, entry=None) -> str:
         """
         Transform content into suitable to display in terminal row
         """
         line = line.strip()
         line = line.replace("\\r\\n", "")
+
+        # Remove http:// and https:// prefixes for URL entries
+        if entry and entry.get_type_str() == "url":
+            if line.startswith("https://"):
+                line = line[8:]  # Remove "https://"
+            elif line.startswith("http://"):
+                line = line[7:]  # Remove "http://"
+
         return line
 
     def control_size(self, a_string, num_chars):

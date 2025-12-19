@@ -15,13 +15,13 @@ class InstallDependencies:
 
         self._install_fzf()
         self._install_kitty()
-        self._install_ack()
+        self._install_ripgrep()
         self._install_tk()
         self._install_zsh_mac()
         self._install_shortcut_mac()
         self._install_wctrl()
         self._install_xsel()
-        self._install_ack()
+        self._install_ripgrep()
 
         print(
             """
@@ -29,17 +29,21 @@ Installation successful!
         """
         )
 
-    def _install_ack(self):
-        print("Installing ack")
+    def _install_ripgrep(self):
+        print("Installing ripgrep (rg) - fast file search tool")
         if is_mac():
             self._install_brew_if_not_present()
-            os.system("brew install ack")
-        if is_debian_based():
-            os.system("sudo apt-get install ack")
+            os.system("brew install ripgrep")
+        elif is_debian_based():
+            os.system("sudo apt-get install ripgrep")
+        elif is_archlinux():
+            os.system("sudo pacman -S ripgrep")
         else:
             print(
-                "Dont know how to install ack for your platform, please do so manually"
+                "Don't know how to install ripgrep for your platform, "
+                "please install manually"
             )
+            print("Visit: https://github.com/BurntSushi/ripgrep#installation")
 
     def _install_tk(self):
         if is_mac():
@@ -64,14 +68,22 @@ Installation successful!
         branch = "main"
 
         print("Downloading keyboard config ")
+        url = (
+            f"https://raw.githubusercontent.com/jeanCarloMachado/"  # noqa: E231
+            f"PythonSearch/{branch}/docs/config.ini.part1"
+        )
         self.download_file(
-            f"https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/{branch}/docs/config.ini.part1",
+            url,
             f"{HOME}/.config/iCanHazShortcut/config.ini.part1",
         )
 
         print("Downloading bom script ")
+        url = (
+            f"https://raw.githubusercontent.com/jeanCarloMachado/"  # noqa: E231
+            f"PythonSearch/{branch}/add_bom_to_file.sh"
+        )
         self.download_file(
-            f"https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/{branch}/add_bom_to_file.sh",
+            url,
             "/usr/local/bin/add_bom_to_file.sh",
         )
         os.system("chmod +x /usr/local/bin/add_bom_to_file.sh")
@@ -95,9 +107,11 @@ Installation successful!
             os.system(f"rm -rf {HOME}/.fzf/")
 
         print("Looks like kitty is not installed in your platform. ")
-        os.system(
-            f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; yes | {HOME}/.fzf/install """
+        cmd = (
+            f"git clone --depth 1 https://github.com/junegunn/fzf.git "  # noqa: E231
+            f"{HOME}/.fzf && yes | {HOME}/.fzf/install"
         )
+        os.system(cmd)
 
     def _install_brew_if_not_present(self):
         print("Brew checking...")
@@ -107,7 +121,8 @@ Installation successful!
 
         print("Installing brew for you...")
         os.system(
-            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/'
+            'Homebrew/install/HEAD/install.sh)"'
         )
 
     def _exists(self, cmd: str):
@@ -122,7 +137,8 @@ Installation successful!
             return
 
         print(
-            "Looks like kitty is not installed in your platform. Installing it for you..."
+            "Looks like kitty is not installed in your platform. "
+            "Installing it for you..."
         )
 
         if is_debian_based():
@@ -141,14 +157,6 @@ Installation successful!
 
         if is_debian_based():
             os.system("sudo apt-get install wmctrl")
-
-    def _install_ack(self):
-        if is_mac():
-            os.system("brew install ack")
-        if is_debian_based():
-            os.system("sudo apt-get install ack")
-        if is_archlinux():
-            os.system("sudo pacman -S ack")
 
     def _install_xsel(self):
         if is_debian_based():

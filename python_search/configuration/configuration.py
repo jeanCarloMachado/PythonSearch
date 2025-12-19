@@ -8,7 +8,8 @@ from python_search.entries_group import EntriesGroup
 class PythonSearchConfiguration(EntriesGroup):
     """
     The main configuration of Python Search
-    Everything to customize about the application is configurable via code through this class
+    Everything to customize about the application is configurable via code
+    through this class
     """
 
     APPLICATION_TITLE = "PythonSearchWindow"
@@ -34,6 +35,8 @@ class PythonSearchConfiguration(EntriesGroup):
         tags_dependent_inserter_marks: Optional[dict[str, Tuple[str, str]]] = None,
         default_text_editor: Optional[str] = None,
         custom_window_size: Optional[Tuple[int, int]] = None,
+        adaptive_window_sizing: bool = True,
+        window_size_preset: Optional[Literal["small", "medium", "large"]] = None,
         collect_data: bool = False,
         entry_generation=False,
         privacy_sensitive_terms: Optional[List[str]] = None,
@@ -45,9 +48,15 @@ class PythonSearchConfiguration(EntriesGroup):
         :param default_tags:
         :param tags_dependent_inserter_marks:
         :param default_text_editor:
-        :param custom_window_size: the size of the fzf window
+        :param custom_window_size: the size of the fzf window (overrides
+            adaptive sizing)
+        :param adaptive_window_sizing: if True, automatically adjust window
+            size based on display
+        :param window_size_preset: preset size category ("small", "medium",
+            "large") when using adaptive sizing
         :param use_webservice: if True, the ranking will be generated via a webservice
-        :param collect_data: if True, we will collect data about the entries you run in your machine
+        :param collect_data: if True, we will collect data about the entries
+            you run in your machine
         """
         if entries:
             self.commands = entries
@@ -66,6 +75,9 @@ class PythonSearchConfiguration(EntriesGroup):
         )
         if custom_window_size:
             self._custom_window_size = custom_window_size
+
+        self.adaptive_window_sizing = adaptive_window_sizing
+        self.window_size_preset = window_size_preset
 
         self.collect_data = collect_data
         self.entry_generation = entry_generation
@@ -97,3 +109,16 @@ class PythonSearchConfiguration(EntriesGroup):
     def get_window_size(self):
         if hasattr(self, "_custom_window_size"):
             return self._custom_window_size
+
+        # Return None to indicate adaptive sizing should be used
+        return None
+
+    def should_use_adaptive_sizing(self) -> bool:
+        """Check if adaptive window sizing should be used"""
+        return getattr(self, "adaptive_window_sizing", True) and not hasattr(
+            self, "_custom_window_size"
+        )
+
+    def get_window_size_preset(self) -> Optional[str]:
+        """Get the window size preset if specified"""
+        return getattr(self, "window_size_preset", None)
