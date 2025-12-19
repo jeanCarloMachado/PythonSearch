@@ -64,20 +64,26 @@ class SearchTerminalUi:
             terminal_size = shutil.get_terminal_size()
             terminal_height = terminal_size.lines
 
-            # For current window size, use exactly 9 rows to optimize space
-            # This leaves minimal empty space while maintaining good usability
-            optimal_rows = 9
+            # Reserve space for:
+            # - 1 line for the input/query line at the top
+            # - 1 line for potential spacing/buffer
+            # - Use remaining space for content rows
+            reserved_lines = 2
 
-            logger.debug(
-                f"Terminal height: {terminal_height}, "
-                f"using optimized display rows: {optimal_rows}"
-            )
+            # Calculate optimal rows, ensuring we have at least 3 rows for content
+            # Allow up to 9 rows for larger displays, but use DEFAULT_DISPLAY_ROWS as fallback
+            max_rows = 9
+            optimal_rows = max(3, min(max_rows, terminal_height - reserved_lines))
+
+            # For very small terminals (height <= 10), reduce by 1 more to ensure typing line visibility
+            if terminal_height <= 10:
+                optimal_rows = max(3, optimal_rows - 1)
+
+            logger.debug(f"Terminal height: {terminal_height}, " f"using optimized display rows: {optimal_rows}")
             return optimal_rows
 
         except Exception as e:
-            logger.warning(
-                f"Failed to calculate optimal display rows: {e}, using default"
-            )
+            logger.warning(f"Failed to calculate optimal display rows: {e}, using default")
             return self.DEFAULT_DISPLAY_ROWS
 
     def _calculate_optimal_sizes(self) -> None:
@@ -166,8 +172,7 @@ class SearchTerminalUi:
         # Simple debouncing: only search if enough time has passed or query is different
         current_time = time.time() * 1000  # Convert to milliseconds
         should_search = (
-            self.query != self.previous_query
-            or (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
+            self.query != self.previous_query or (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
         )
 
         if should_search:
@@ -178,10 +183,7 @@ class SearchTerminalUi:
             except Exception as e:
                 logger.error(f"Error during search: {e}")
                 # Keep using previous results or empty list
-                if (
-                    not hasattr(self, "all_matched_keys")
-                    or self.all_matched_keys is None
-                ):
+                if not hasattr(self, "all_matched_keys") or self.all_matched_keys is None:
                     self.all_matched_keys = []
         # If not searching due to debounce, keep using previous results
 
@@ -212,8 +214,7 @@ class SearchTerminalUi:
         import subprocess
 
         output = subprocess.getoutput(
-            SystemPaths.BINARIES_PATH
-            + "/pys _entries_loader load_entries_as_json 2>/dev/null"
+            SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json 2>/dev/null"
         )
         # print("output", output)
         self.commands = json.loads(output)
@@ -230,11 +231,7 @@ class SearchTerminalUi:
     def print_first_line(self):
         content = self.cf.query(self.query)
 
-        print(
-            "\x1b[2J\x1b[H"
-            + self.cf.cursor(f"({len(self.commands)})> ")
-            + f"{self.cf.bold(content)}"
-        )
+        print("\x1b[2J\x1b[H" + self.cf.cursor(f"({len(self.commands)})> ") + f"{self.cf.bold(content)}")
 
     def process_chars(self, c: str):
         self.typed_up_to_run += c
@@ -257,17 +254,13 @@ class SearchTerminalUi:
         elif ord_c == 9:
             # tab
             if self.selected_row < len(self.all_matched_keys):
-                self.actions.edit_key(
-                    self.all_matched_keys[self.selected_row], block=True
-                )
+                self.actions.edit_key(self.all_matched_keys[self.selected_row], block=True)
                 self._setup_entries()
                 self.reloaded = True
         elif c == "'":
             # copy to clipboard
             if self.selected_row < len(self.all_matched_keys):
-                self.actions.copy_entry_value_to_clipboard(
-                    self.all_matched_keys[self.selected_row]
-                )
+                self.actions.copy_entry_value_to_clipboard(self.all_matched_keys[self.selected_row])
         elif ord_c == 47:
             # ?
             self.actions.search_in_google(self.query)
@@ -312,9 +305,7 @@ class SearchTerminalUi:
             self.selected_row = 0
             self.scroll_offset = 0
             # remove the last word
-            self.query = " ".join(
-                list(filter(lambda x: x, self.query.split(" ")))[0:-1]
-            )
+            self.query = " ".join(list(filter(lambda x: x, self.query.split(" ")))[0:-1])
             self.query += " "
         elif c.isalnum() or c == " ":
             self.query += c
@@ -355,14 +346,8 @@ class SearchTerminalUi:
         return self.tdw
 
     def print_highlighted(self, key: str, entry: Any, index: int) -> None:
-        key_part = self.cf.bold(
-            self.cf.selected(
-                f"{index: 2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"
-            )
-        )
-        content = self.sanitize_content(
-            entry.get_content_str(strip_new_lines=True), entry
-        )
+        key_part = self.cf.bold(self.cf.selected(f"{index: 2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"))
+        content = self.sanitize_content(entry.get_content_str(strip_new_lines=True), entry)
         sized_content = self.control_size(content, self.MAX_CONTENT_SIZE)
         colored_content = self.color_based_on_type(sized_content, entry)
         body_part = f" {self.cf.bold(colored_content)} "
@@ -372,9 +357,7 @@ class SearchTerminalUi:
         key_input = self.control_size(key, self.MAX_KEY_SIZE - 4)
         body_part = self.color_based_on_type(
             self.control_size(
-                self.sanitize_content(
-                    entry.get_content_str(strip_new_lines=True), entry
-                ),
+                self.sanitize_content(entry.get_content_str(strip_new_lines=True), entry),
                 self.MAX_CONTENT_SIZE,
             ),
             entry,
