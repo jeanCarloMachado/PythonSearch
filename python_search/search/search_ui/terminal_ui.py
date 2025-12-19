@@ -318,7 +318,10 @@ class SearchTerminalUi:
                 f"{index: 2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"
             )
         )
-        body_part = f" {self.cf.bold(self.color_based_on_type(self.control_size(self.sanitize_content(entry.get_content_str(strip_new_lines=True)), self.MAX_CONTENT_SIZE), entry))} "
+        content = self.sanitize_content(entry.get_content_str(strip_new_lines=True))
+        sized_content = self.control_size(content, self.MAX_CONTENT_SIZE)
+        colored_content = self.color_based_on_type(sized_content, entry)
+        body_part = f" {self.cf.bold(colored_content)} "
         print(key_part + body_part)
 
     def print_normal_row(self, key, entry, index):

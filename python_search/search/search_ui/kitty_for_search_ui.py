@@ -5,7 +5,6 @@ import sys
 from python_search.apps.terminal import KittyTerminal
 from python_search.host_system.system_paths import SystemPaths
 from python_search.host_system.display_detection import AdaptiveWindowSizer
-from python_search.environment import is_mac
 
 SOCKET_PATH = "/tmp/mykitty"
 
@@ -72,7 +71,8 @@ class KittyForSearchUI:
                     return presets[env_preset]
                 else:
                     self._logger.warning(
-                        f"Unknown environment preset '{env_preset}', using adaptive sizing"
+                        f"Unknown environment preset '{env_preset}', "
+                        f"using adaptive sizing"
                     )
 
             # Check if a preset is specified in configuration
@@ -112,25 +112,27 @@ class KittyForSearchUI:
         from python_search.apps.theme.theme import get_current_theme
 
         theme = get_current_theme()
-        return f"""{self.get_kitty_cmd()} \
-        --title {self._title} \
-        --listen-on unix:{SOCKET_PATH} \
-        -o allow_remote_control=yes \
-        -o window_padding_width=0  \
-        -o placement_strategy=center \
-        -o window_border_width=0 \
-        -o window_padding_width=0 \
-        -o hide_window_decorations=titlebar-only \
-        -o background_opacity=0.9 \
-        -o active_tab_title_template=none \
-        -o initial_window_width={self._width}  \
-        -o initial_window_height={self._height} \
-        -o background={theme.backgroud} \
-        -o foreground={theme.text} \
-        -o font_size="{theme.font_size}" \
-        {terminal.GLOBAL_TERMINAL_PARAMS} \
-         {SystemPaths.BINARIES_PATH}/term_ui &
-        """
+        cmd_parts = [
+            self.get_kitty_cmd(),
+            f"--title {self._title}",
+            f"--listen-on unix:{SOCKET_PATH}",  # noqa: E231
+            "-o allow_remote_control=yes",
+            "-o window_padding_width=0",
+            "-o placement_strategy=center",
+            "-o window_border_width=0",
+            "-o window_padding_width=0",
+            "-o hide_window_decorations=titlebar-only",
+            "-o background_opacity=0.9",
+            "-o active_tab_title_template=none",
+            f"-o initial_window_width={self._width}",
+            f"-o initial_window_height={self._height}",
+            f"-o background={theme.backgroud}",
+            f"-o foreground={theme.text}",
+            f'-o font_size="{theme.font_size}"',
+            terminal.GLOBAL_TERMINAL_PARAMS,
+            f"{SystemPaths.BINARIES_PATH}/term_ui &",
+        ]
+        return " ".join(cmd_parts)
 
     @staticmethod
     def try_to_focus() -> bool:
@@ -141,7 +143,10 @@ class KittyForSearchUI:
             print(f"File {SOCKET_PATH} not found")
             return False
 
-        cmd = f"{SystemPaths.KITTY_BINNARY} @ --to unix:{SOCKET_PATH} focus-window"
+        cmd = (
+            f"{SystemPaths.KITTY_BINNARY} @ --to "
+            f"unix:{SOCKET_PATH} focus-window"  # noqa: E231
+        )
         print("Cmd: ", cmd)
         result = os.system(cmd)
         print(result, "Type: ", type(result))

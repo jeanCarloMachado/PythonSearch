@@ -68,15 +68,22 @@ Installation successful!
         branch = "main"
 
         print("Downloading keyboard config ")
+        url = (
+            f"https://raw.githubusercontent.com/jeanCarloMachado/"  # noqa: E231
+            f"PythonSearch/{branch}/docs/config.ini.part1"
+        )
         self.download_file(
-            f"https://raw.githubusercontent.com/jeanCarloMachado/"
-            f"PythonSearch/{branch}/docs/config.ini.part1",
+            url,
             f"{HOME}/.config/iCanHazShortcut/config.ini.part1",
         )
 
         print("Downloading bom script ")
+        url = (
+            f"https://raw.githubusercontent.com/jeanCarloMachado/"  # noqa: E231
+            f"PythonSearch/{branch}/add_bom_to_file.sh"
+        )
         self.download_file(
-            f"https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/{branch}/add_bom_to_file.sh",
+            url,
             "/usr/local/bin/add_bom_to_file.sh",
         )
         os.system("chmod +x /usr/local/bin/add_bom_to_file.sh")
@@ -100,9 +107,11 @@ Installation successful!
             os.system(f"rm -rf {HOME}/.fzf/")
 
         print("Looks like kitty is not installed in your platform. ")
-        os.system(
-            f""" git clone --depth 1 https://github.com/junegunn/fzf.git {HOME}/.fzf ; yes | {HOME}/.fzf/install """
+        cmd = (
+            f"git clone --depth 1 https://github.com/junegunn/fzf.git "  # noqa: E231
+            f"{HOME}/.fzf && yes | {HOME}/.fzf/install"
         )
+        os.system(cmd)
 
     def _install_brew_if_not_present(self):
         print("Brew checking...")
@@ -112,7 +121,8 @@ Installation successful!
 
         print("Installing brew for you...")
         os.system(
-            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/'
+            'Homebrew/install/HEAD/install.sh)"'
         )
 
     def _exists(self, cmd: str):
@@ -127,7 +137,8 @@ Installation successful!
             return
 
         print(
-            "Looks like kitty is not installed in your platform. Installing it for you..."
+            "Looks like kitty is not installed in your platform. "
+            "Installing it for you..."
         )
 
         if is_debian_based():
