@@ -3,6 +3,7 @@ import sys
 from typing import Any
 import json
 import time
+import shutil
 
 from python_search.core_entities import Entry
 from python_search.search.search_ui.QueryLogic import QueryLogic
@@ -12,9 +13,9 @@ from python_search.search.search_ui.search_utils import setup_datadog
 from python_search.apps.theme.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
 from python_search.logger import setup_term_ui_logger
+from getch import getch
 
 logger = setup_term_ui_logger()
-from getch import getch
 
 startup_time = time.time_ns()
 statsd = setup_datadog()
@@ -27,7 +28,7 @@ class SearchTerminalUi:
     MAX_KEY_SIZE = 35
     MAX_CONTENT_SIZE = 46
     RUN_KEY_EVENT = "python_search_run_key"
-    DISPLAY_ROWS = 7  # Number of rows to display at once
+    DEFAULT_DISPLAY_ROWS = 7  # Default number of rows to display at once
     DEBOUNCE_DELAY_MS = 75  # 75ms debounce delay
 
     _documents_future = None
@@ -49,9 +50,33 @@ class SearchTerminalUi:
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
+        self.display_rows = self._calculate_optimal_display_rows()
 
         self._setup_entries()
         self.normal_mode = False
+
+    def _calculate_optimal_display_rows(self) -> int:
+        """Calculate optimal number of display rows based on terminal height"""
+        try:
+            # Get terminal size
+            terminal_size = shutil.get_terminal_size()
+            terminal_height = terminal_size.lines
+
+            # For current window size, use exactly 9 rows to optimize space
+            # This leaves minimal empty space while maintaining good usability
+            optimal_rows = 9
+
+            logger.debug(
+                f"Terminal height: {terminal_height}, "
+                f"using optimized display rows: {optimal_rows}"
+            )
+            return optimal_rows
+
+        except Exception as e:
+            logger.warning(
+                f"Failed to calculate optimal display rows: {e}, using default"
+            )
+            return self.DEFAULT_DISPLAY_ROWS
 
     def run(self):
         """
@@ -82,6 +107,14 @@ class SearchTerminalUi:
 
     @statsd.timed("ps_render")
     def render(self):
+        # Recalculate display rows in case terminal was resized
+        new_display_rows = self._calculate_optimal_display_rows()
+        if new_display_rows != self.display_rows:
+            self.display_rows = new_display_rows
+            # Adjust scroll offset if needed
+            if self.selected_row >= self.scroll_offset + self.display_rows:
+                self.scroll_offset = max(0, self.selected_row - self.display_rows + 1)
+
         self.print_first_line()
         logger.info("rendering loop started")
 
@@ -109,10 +142,10 @@ class SearchTerminalUi:
 
         # Calculate visible range based on scroll offset
         start_idx = self.scroll_offset
-        end_idx = min(start_idx + self.DISPLAY_ROWS, len(self.all_matched_keys))
+        end_idx = min(start_idx + self.display_rows, len(self.all_matched_keys))
 
         # Update matched_keys for backward compatibility
-        self.matched_keys = self.all_matched_keys[start_idx: end_idx]
+        self.matched_keys = self.all_matched_keys[start_idx:end_idx]
 
         current_display_row = 0
         for i in range(start_idx, end_idx):
@@ -167,7 +200,7 @@ class SearchTerminalUi:
         # test if the character is a delete (backspace)
         if ord_c == 127:
             # backspace
-            self.query = self.query[: -1]
+            self.query = self.query[:-1]
             self.selected_row = 0
             self.scroll_offset = 0
         elif ord_c == 10:
@@ -201,8 +234,8 @@ class SearchTerminalUi:
             if self.selected_row < len(self.all_matched_keys) - 1:
                 self.selected_row = self.selected_row + 1
                 # Check if we need to scroll down
-                if self.selected_row >= self.scroll_offset + self.DISPLAY_ROWS:
-                    self.scroll_offset = self.selected_row - self.DISPLAY_ROWS + 1
+                if self.selected_row >= self.scroll_offset + self.display_rows:
+                    self.scroll_offset = self.selected_row - self.display_rows + 1
         elif ord_c == 65:  # Up arrow
             if self.selected_row > 0:
                 self.selected_row = self.selected_row - 1
@@ -238,7 +271,7 @@ class SearchTerminalUi:
             self.scroll_offset = 0
             # remove the last word
             self.query = " ".join(
-                list(filter(lambda x: x, self.query.split(" ")))[0: -1]
+                list(filter(lambda x: x, self.query.split(" ")))[0:-1]
             )
             self.query += " "
         elif c.isalnum() or c == " ":

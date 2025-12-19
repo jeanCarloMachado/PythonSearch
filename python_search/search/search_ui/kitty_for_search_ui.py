@@ -4,8 +4,8 @@ import logging
 import sys
 from python_search.apps.terminal import KittyTerminal
 from python_search.host_system.system_paths import SystemPaths
+from python_search.host_system.display_detection import AdaptiveWindowSizer
 from python_search.environment import is_mac
-import sys
 
 SOCKET_PATH = "/tmp/mykitty"
 
@@ -30,19 +30,71 @@ class KittyForSearchUI:
 
             configuration = ConfigurationLoader().load_config()
         self._configuration = configuration
+
+        # Determine window size based on configuration
         custom_window_size = configuration.get_window_size()
-        self._width = (
-            custom_window_size[0]
-            if custom_window_size
-            else self._DEFAULT_WINDOW_SIZE[0]
-        )
-        self._height = (
-            custom_window_size[1]
-            if custom_window_size
-            else self._DEFAULT_WINDOW_SIZE[1]
-        )
+
+        if custom_window_size:
+            # Use explicitly configured size
+            self._width = custom_window_size[0]
+            self._height = custom_window_size[1]
+        elif configuration.should_use_adaptive_sizing():
+            # Use adaptive sizing based on display characteristics
+            self._width, self._height = self._get_adaptive_window_size(configuration)
+        else:
+            # Fall back to default size
+            self._width = self._DEFAULT_WINDOW_SIZE[0]
+            self._height = self._DEFAULT_WINDOW_SIZE[1]
 
         self._title = configuration.APPLICATION_TITLE
+
+    def _get_adaptive_window_size(self, configuration) -> tuple[str, str]:
+        """Get adaptive window size based on display characteristics"""
+        try:
+            # Check for environment variable override first
+            env_width = os.environ.get("PYTHON_SEARCH_WINDOW_WIDTH")
+            env_height = os.environ.get("PYTHON_SEARCH_WINDOW_HEIGHT")
+            env_preset = os.environ.get("PYTHON_SEARCH_WINDOW_PRESET")
+
+            if env_width and env_height:
+                self._logger.debug(
+                    f"Using environment variable window size: {env_width}x{env_height}"
+                )
+                return env_width, env_height
+
+            sizer = AdaptiveWindowSizer()
+
+            # Check environment preset override
+            if env_preset:
+                presets = sizer.get_preset_sizes()
+                if env_preset in presets:
+                    self._logger.debug(f"Using environment preset: {env_preset}")
+                    return presets[env_preset]
+                else:
+                    self._logger.warning(
+                        f"Unknown environment preset '{env_preset}', using adaptive sizing"
+                    )
+
+            # Check if a preset is specified in configuration
+            preset = configuration.get_window_size_preset()
+            if preset:
+                presets = sizer.get_preset_sizes()
+                if preset in presets:
+                    self._logger.debug(f"Using configuration preset: {preset}")
+                    return presets[preset]
+                else:
+                    self._logger.warning(
+                        f"Unknown preset '{preset}', using adaptive sizing"
+                    )
+
+            # Use adaptive sizing
+            self._logger.debug("Using adaptive window sizing")
+            return sizer.get_adaptive_window_size()
+
+        except Exception as e:
+            self._logger.error(f"Failed to get adaptive window size: {e}")
+            # Fall back to default size
+            return self._DEFAULT_WINDOW_SIZE
 
     def launch(self) -> None:
         """

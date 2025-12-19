@@ -15,13 +15,13 @@ class InstallDependencies:
 
         self._install_fzf()
         self._install_kitty()
-        self._install_ack()
+        self._install_ripgrep()
         self._install_tk()
         self._install_zsh_mac()
         self._install_shortcut_mac()
         self._install_wctrl()
         self._install_xsel()
-        self._install_ack()
+        self._install_ripgrep()
 
         print(
             """
@@ -29,17 +29,21 @@ Installation successful!
         """
         )
 
-    def _install_ack(self):
-        print("Installing ack")
+    def _install_ripgrep(self):
+        print("Installing ripgrep (rg) - fast file search tool")
         if is_mac():
             self._install_brew_if_not_present()
-            os.system("brew install ack")
-        if is_debian_based():
-            os.system("sudo apt-get install ack")
+            os.system("brew install ripgrep")
+        elif is_debian_based():
+            os.system("sudo apt-get install ripgrep")
+        elif is_archlinux():
+            os.system("sudo pacman -S ripgrep")
         else:
             print(
-                "Dont know how to install ack for your platform, please do so manually"
+                "Don't know how to install ripgrep for your platform, "
+                "please install manually"
             )
+            print("Visit: https://github.com/BurntSushi/ripgrep#installation")
 
     def _install_tk(self):
         if is_mac():
@@ -65,7 +69,8 @@ Installation successful!
 
         print("Downloading keyboard config ")
         self.download_file(
-            f"https://raw.githubusercontent.com/jeanCarloMachado/PythonSearch/{branch}/docs/config.ini.part1",
+            f"https://raw.githubusercontent.com/jeanCarloMachado/"
+            f"PythonSearch/{branch}/docs/config.ini.part1",
             f"{HOME}/.config/iCanHazShortcut/config.ini.part1",
         )
 
@@ -141,14 +146,6 @@ Installation successful!
 
         if is_debian_based():
             os.system("sudo apt-get install wmctrl")
-
-    def _install_ack(self):
-        if is_mac():
-            os.system("brew install ack")
-        if is_debian_based():
-            os.system("sudo apt-get install ack")
-        if is_archlinux():
-            os.system("sudo pacman -S ack")
 
     def _install_xsel(self):
         if is_debian_based():

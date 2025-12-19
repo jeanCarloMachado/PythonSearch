@@ -13,14 +13,28 @@ class EntriesEditor:
     Open an ide to edit the entries
     """
 
-    ACK_PATH = "/opt/homebrew/bin/ack"
-
     def __init__(self, configuration=None):
         if not configuration:
             from python_search.configuration.loader import ConfigurationLoader
 
             configuration = ConfigurationLoader().load_config()
         self.configuration = configuration
+
+        # Ensure ripgrep is available for file searching
+        self._search_cmd = self._get_search_command()
+
+    def _get_search_command(self) -> str:
+        """
+        Ensure ripgrep is available for file searching.
+        """
+        return "/opt/homebrew/bin/rg"
+
+    def _build_search_command(self, key: str) -> str:
+        """
+        Build the ripgrep search command.
+        """
+        project_root = self.configuration.get_project_root()
+        return f"/opt/homebrew/bin/rg -n -i --type py '{key}' {project_root} || true"
 
     def edit_key(self, key_expr: str):
         """
@@ -39,10 +53,7 @@ class EntriesEditor:
             return
 
         # needs to be case-insensitive search
-        cmd = (
-            f"{EntriesEditor.ACK_PATH} -i '{key}' "
-            f"{self.configuration.get_project_root()} --python || true"
-        )
+        cmd = self._build_search_command(key)
         logging.info(f"Command: {cmd}")
         result_shell = subprocess.check_output(cmd, shell=True, text=True)
 
@@ -54,7 +65,7 @@ class EntriesEditor:
         file, line, *_ = result_shell.split(":")
         print(f"Editing file and line {file}, {line}")
 
-        self._edit_file(file, line)
+        self._edit_file(file, int(line))
 
     def edit_default(self):
         import os

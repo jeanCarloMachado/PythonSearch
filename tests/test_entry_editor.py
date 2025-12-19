@@ -1,11 +1,37 @@
 import os
+import shutil
 import subprocess
 
 from python_search.entry_capture.entries_editor import EntriesEditor
 
 
-def test_ack():
-    assert os.system(f"{EntriesEditor.ACK_PATH} --help") == 0
+def test_ripgrep_available():
+    """Test that ripgrep is available (required search tool)"""
+    has_ripgrep = shutil.which("rg") is not None
+    assert (
+        has_ripgrep
+    ), "ripgrep (rg) is required for file searching. Install with: brew install ripgrep"
+
+
+def test_ripgrep_functionality():
+    """Test ripgrep basic functionality"""
+    assert os.system("rg --help > /dev/null") == 0
+
+
+def test_entries_editor_initialization():
+    """Test that EntriesEditor can initialize with ripgrep"""
+    editor = EntriesEditor()
+    assert (
+        editor._search_cmd == "/opt/homebrew/bin/rg"
+    ), f"Expected '/opt/homebrew/bin/rg', got: {editor._search_cmd}"
+
+
+def test_entries_editor_search_command():
+    """Test that EntriesEditor generates correct ripgrep commands"""
+    editor = EntriesEditor()
+    cmd = editor._build_search_command("test_key")
+    assert "/opt/homebrew/bin/rg -n -i --type py 'test_key'" in cmd
+    assert "|| true" in cmd
 
 
 def test_entries_editor_edit_key_help_command_returns_output():
