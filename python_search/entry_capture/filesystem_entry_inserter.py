@@ -37,13 +37,13 @@ class FilesystemEntryInserter:
                     )
 
         row_entry = str(entry)
-        line_to_add = f"    '{key}': {row_entry},"
+        line_to_add = f"    '{key}': {row_entry},"  # noqa: E231
         self._append_entry(line_to_add)
 
         from python_search.events.run_performed.writer import LogRunPerformedClient
 
         LogRunPerformedClient(self._configuration).send(
-            EntryExecuted(key=key, query_input="", shortcut=False)
+            EntryExecuted(key=key, query_input="")
         )
 
         from python_search.apps.notification_ui import send_notification
