@@ -50,6 +50,9 @@ include = ["python_search"]  # package names should match these glob patterns ([
 exclude = []  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
+[tool.black]
+line-length = 120
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -65,3 +68,4 @@ run_key = 'python_search.entry_runner:main'
 term_ui = 'python_search.search.search_ui.terminal_ui:main'
 register_new_launch_ui = 'python_search.entry_capture.entry_inserter_gui.register_new_gui:launch_ui'
 google_it = 'python_search.apps.google_it:main'
+share_entry = 'python_search.share_entry:main'
