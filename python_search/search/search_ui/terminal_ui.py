@@ -25,8 +25,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 class SearchTerminalUi:
-    MAX_KEY_SIZE = 35
-    MAX_CONTENT_SIZE = 46
+    MAX_KEY_SIZE = 52  # Enlarged by 7 characters from previous 45
+    MAX_CONTENT_SIZE = 53  # Reduced by 7 characters from previous 60
     RUN_KEY_EVENT = "python_search_run_key"
     DEFAULT_DISPLAY_ROWS = 7  # Default number of rows to display at once
     DEBOUNCE_DELAY_MS = 75  # 75ms debounce delay
@@ -52,8 +52,10 @@ class SearchTerminalUi:
         self.selected_query = -1
         self.display_rows = self._calculate_optimal_display_rows()
 
+        # Calculate dynamic sizes based on terminal width
+        self._calculate_optimal_sizes()
+
         self._setup_entries()
-        self.normal_mode = False
 
     def _calculate_optimal_display_rows(self) -> int:
         """Calculate optimal number of display rows based on terminal height"""
@@ -77,6 +79,46 @@ class SearchTerminalUi:
                 f"Failed to calculate optimal display rows: {e}, using default"
             )
             return self.DEFAULT_DISPLAY_ROWS
+
+    def _calculate_optimal_sizes(self) -> None:
+        """Calculate optimal key and content sizes based on terminal width"""
+        try:
+            terminal_size = shutil.get_terminal_size()
+            terminal_width = terminal_size.columns
+
+            # Reserve space for: "99. " (4 chars) + " " (1 char) = 5 chars
+            available_width = terminal_width - 5
+
+            # Allocate roughly 40% for keys, 60% for content
+            key_width = max(30, min(50, int(available_width * 0.4)))
+            content_width = available_width - key_width
+
+            # Ensure content has a reasonable minimum
+            if content_width < 40:
+                key_width = available_width - 40
+                content_width = 40
+
+            # Adjust: enlarge key size by 7, reduce content by 7
+            key_width += 7
+            content_width -= 7
+
+            # Ensure we don't go below reasonable minimums after adjustment
+            if content_width < 33:  # Minimum content width after -7 adjustment
+                adjustment = 33 - content_width
+                key_width -= adjustment
+                content_width = 33
+
+            self.MAX_KEY_SIZE = key_width
+            self.MAX_CONTENT_SIZE = content_width
+
+            logger.debug(
+                f"Terminal width: {terminal_width}, "
+                f"Key size: {self.MAX_KEY_SIZE}, Content size: {self.MAX_CONTENT_SIZE}"
+            )
+
+        except Exception as e:
+            logger.warning(f"Failed to calculate optimal sizes: {e}, using defaults")
+            # Keep the class defaults if calculation fails
 
     def run(self):
         """
@@ -107,13 +149,16 @@ class SearchTerminalUi:
 
     @statsd.timed("ps_render")
     def render(self):
-        # Recalculate display rows in case terminal was resized
+        # Recalculate display rows and sizes in case terminal was resized
         new_display_rows = self._calculate_optimal_display_rows()
         if new_display_rows != self.display_rows:
             self.display_rows = new_display_rows
             # Adjust scroll offset if needed
             if self.selected_row >= self.scroll_offset + self.display_rows:
                 self.scroll_offset = max(0, self.selected_row - self.display_rows + 1)
+
+        # Recalculate optimal sizes for dynamic terminal width adjustment
+        self._calculate_optimal_sizes()
 
         self.print_first_line()
         logger.info("rendering loop started")
@@ -183,10 +228,7 @@ class SearchTerminalUi:
             return " "
 
     def print_first_line(self):
-        if self.normal_mode:
-            content = self.cf.query_enabled("* " + self.query)
-        else:
-            content = self.cf.query(self.query)
+        content = self.cf.query(self.query)
 
         print(
             "\x1b[2J\x1b[H"
@@ -206,12 +248,12 @@ class SearchTerminalUi:
         elif ord_c == 10:
             # enter
             self._run_key()
-        elif c in ["1", "2", "3", "4", "5", "6"] and self.normal_mode:
-            self.selected_row = int(c) - 1
-            self._run_key()
-        # elif ord_c == 27:
-        # swap between modes via esc
-        # self.normal_mode = not self.normal_mode
+        elif c in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            # Run entry by number (1-9)
+            entry_index = int(c) - 1
+            if entry_index < len(self.all_matched_keys):
+                self.selected_row = entry_index
+                self._run_key()
         elif ord_c == 9:
             # tab
             if self.selected_row < len(self.all_matched_keys):
@@ -318,7 +360,9 @@ class SearchTerminalUi:
                 f"{index: 2d}. {self.control_size(key, self.MAX_KEY_SIZE - 4)}"
             )
         )
-        content = self.sanitize_content(entry.get_content_str(strip_new_lines=True))
+        content = self.sanitize_content(
+            entry.get_content_str(strip_new_lines=True), entry
+        )
         sized_content = self.control_size(content, self.MAX_CONTENT_SIZE)
         colored_content = self.color_based_on_type(sized_content, entry)
         body_part = f" {self.cf.bold(colored_content)} "
@@ -328,7 +372,9 @@ class SearchTerminalUi:
         key_input = self.control_size(key, self.MAX_KEY_SIZE - 4)
         body_part = self.color_based_on_type(
             self.control_size(
-                self.sanitize_content(entry.get_content_str(strip_new_lines=True)),
+                self.sanitize_content(
+                    entry.get_content_str(strip_new_lines=True), entry
+                ),
                 self.MAX_CONTENT_SIZE,
             ),
             entry,
@@ -348,12 +394,20 @@ class SearchTerminalUi:
 
         return content
 
-    def sanitize_content(self, line) -> str:
+    def sanitize_content(self, line, entry=None) -> str:
         """
         Transform content into suitable to display in terminal row
         """
         line = line.strip()
         line = line.replace("\\r\\n", "")
+
+        # Remove http:// and https:// prefixes for URL entries
+        if entry and entry.get_type_str() == "url":
+            if line.startswith("https://"):
+                line = line[8:]  # Remove "https://"
+            elif line.startswith("http://"):
+                line = line[7:]  # Remove "http://"
+
         return line
 
     def control_size(self, a_string, num_chars):

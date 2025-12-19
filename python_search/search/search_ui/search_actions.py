@@ -44,7 +44,7 @@ class Actions:
             entry_key: The identifier for the entry whose value should be copied
         """
         command = (
-            f"{SystemPaths.BINARIES_PATH}/share_entry "
+            f"python -m python_search.share_entry "
             f'share_only_value "{entry_key}" &>/dev/null'
         )
         Popen(command, stdout=None, stderr=None, shell=True)
