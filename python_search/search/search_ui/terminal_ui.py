@@ -52,10 +52,16 @@ class SearchTerminalUi:
         self.selected_query = -1
         self.display_rows = self._calculate_optimal_display_rows()
 
+        # Query history cache - keep latest 50 queries in memory
+        self.query_history_cache = []
+        self.query_history_index = -1  # -1 means not browsing history
+        self.MAX_QUERY_HISTORY = 50
+
         # Calculate dynamic sizes based on terminal width
         self._calculate_optimal_sizes()
 
         self._setup_entries()
+        self._load_query_history_cache()
 
     def _calculate_optimal_display_rows(self) -> int:
         """Calculate optimal number of display rows based on terminal height"""
@@ -220,6 +226,34 @@ class SearchTerminalUi:
         self.commands = json.loads(output)
         self.search_logic = QueryLogic(self.commands)
 
+    def _load_query_history_cache(self):
+        """Load the latest query history into memory cache"""
+        try:
+            df = self._get_data_warehouse().event(self.RUN_KEY_EVENT)
+            if len(df) > 0:
+                # Get unique queries sorted by most recent, limit to MAX_QUERY_HISTORY
+                recent_queries = df.sort_values(by="tdw_timestamp", ascending=False)["query"].drop_duplicates()
+                self.query_history_cache = recent_queries.head(self.MAX_QUERY_HISTORY).tolist()
+            else:
+                self.query_history_cache = []
+        except Exception as e:
+            logger.warning(f"Failed to load query history cache: {e}")
+            self.query_history_cache = []
+
+    def _add_query_to_history_cache(self, query: str):
+        """Add a query to the history cache, maintaining max size and uniqueness"""
+        if query and query.strip():
+            # Remove query if it already exists
+            if query in self.query_history_cache:
+                self.query_history_cache.remove(query)
+
+            # Add to front
+            self.query_history_cache.insert(0, query)
+
+            # Maintain max size
+            if len(self.query_history_cache) > self.MAX_QUERY_HISTORY:
+                self.query_history_cache = self.query_history_cache[: self.MAX_QUERY_HISTORY]
+
     def get_caracter(self) -> str:
         try:
             logger.info("getting char")
@@ -242,6 +276,8 @@ class SearchTerminalUi:
             self.query = self.query[:-1]
             self.selected_row = 0
             self.scroll_offset = 0
+            # Reset query history browsing when backspacing
+            self.query_history_index = -1
         elif ord_c == 10:
             # enter
             self._run_key()
@@ -277,6 +313,22 @@ class SearchTerminalUi:
                 # Check if we need to scroll up
                 if self.selected_row < self.scroll_offset:
                     self.scroll_offset = self.selected_row
+                # Reset query history browsing when moving in results
+                self.query_history_index = -1
+            else:
+                # Already at first item, loop through query history
+                if self.query_history_cache:
+                    if self.query_history_index == -1:
+                        # Start browsing history from the beginning
+                        self.query_history_index = 0
+                    else:
+                        # Move to next item in history
+                        self.query_history_index = (self.query_history_index + 1) % len(self.query_history_cache)
+
+                    # Set the query from history and refresh search
+                    self.query = self.query_history_cache[self.query_history_index]
+                    self.selected_row = 0
+                    self.scroll_offset = 0
         elif c == ".":
             self.selected_query += 1
             self.query = self.get_previously_used_query(self.selected_query)
@@ -295,6 +347,8 @@ class SearchTerminalUi:
             self.query = ""
             self.selected_row = 0
             self.scroll_offset = 0
+            # Reset query history browsing when clearing query
+            self.query_history_index = -1
         elif ord_c == 67:
             sys.exit(0)
         elif ord_c == 92 or c == "]":
@@ -307,16 +361,24 @@ class SearchTerminalUi:
             # remove the last word
             self.query = " ".join(list(filter(lambda x: x, self.query.split(" ")))[0:-1])
             self.query += " "
+            # Reset query history browsing when modifying query
+            self.query_history_index = -1
         elif c.isalnum() or c == " ":
             self.query += c
             self.selected_row = 0
             self.scroll_offset = 0
+            # Reset query history browsing when typing
+            self.query_history_index = -1
 
     def _run_key(self):
         if self.selected_row < len(self.all_matched_keys):
             selected_key = self.all_matched_keys[self.selected_row]
             self.actions.run_key(selected_key)
             statsd.increment("ps_run_key")
+
+            # Add query to history cache before writing to data warehouse
+            self._add_query_to_history_cache(self.query)
+
             self._get_data_warehouse().write_event(
                 self.RUN_KEY_EVENT,
                 {
