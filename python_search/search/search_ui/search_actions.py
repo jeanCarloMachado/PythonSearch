@@ -30,10 +30,7 @@ class Actions:
             key: The identifier for the entry to edit
             block: Whether to block execution (currently unused)
         """
-        cmd = (
-            f"/opt/miniconda3/envs/python312/bin/entries_editor "
-            f'edit_key "{key}" &>/dev/null'
-        )
+        cmd = f"/opt/miniconda3/envs/python312/bin/entries_editor " f'edit_key "{key}" &>/dev/null'
         Popen(cmd, stdout=None, stderr=None, shell=True)
 
     def copy_entry_value_to_clipboard(self, entry_key: str) -> None:
@@ -43,10 +40,7 @@ class Actions:
         Args:
             entry_key: The identifier for the entry whose value should be copied
         """
-        command = (
-            f"python -m python_search.share_entry "
-            f'share_only_value "{entry_key}" &>/dev/null'
-        )
+        command = f"{SystemPaths.BINARIES_PATH}/share_entry " f'share_only_value "{entry_key}" &>/dev/null'
         Popen(command, stdout=None, stderr=None, shell=True)
 
     def search_in_google(self, query: str) -> None:
