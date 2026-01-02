@@ -1,5 +1,6 @@
 import os
 import sys
+import select
 from typing import Any
 import json
 import time
@@ -29,7 +30,7 @@ class SearchTerminalUi:
     MAX_CONTENT_SIZE = 53  # Reduced by 7 characters from previous 60
     RUN_KEY_EVENT = "python_search_run_key"
     DEFAULT_DISPLAY_ROWS = 7  # Default number of rows to display at once
-    DEBOUNCE_DELAY_MS = 75  # 75ms debounce delay
+    INPUT_DEBOUNCE_TIMEOUT = 0.05  # 50ms timeout for input debouncing
 
     _documents_future = None
     commands = None
@@ -44,7 +45,6 @@ class SearchTerminalUi:
         self.tdw = None
         self.reloaded = False
         self.first_run = True
-        self._last_search_time = 0
         self.scroll_offset = 0  # For pagination
         self.all_matched_keys = []  # Store all search results
         self.query = ""
@@ -151,10 +151,19 @@ class SearchTerminalUi:
         self.first_run = False
 
         while True:
-            # blocking function call
+            # blocking function call - wait for first character
             c = self.get_caracter()
             logger.info("processing char" + c)
             self.process_chars(c)
+
+            # Show typed query immediately for instant feedback
+            self._render_query_line()
+
+            # Check if more input is coming (non-blocking) - if so, skip the search
+            if self._has_pending_input():
+                continue
+
+            # No more pending input - user paused, now do the search
             self.render()
             # sets query here
             self.previous_query = self.query
@@ -175,23 +184,16 @@ class SearchTerminalUi:
         self.print_first_line()
         logger.info("rendering loop started")
 
-        # Simple debouncing: only search if enough time has passed or query is different
-        current_time = time.time() * 1000  # Convert to milliseconds
-        should_search = (
-            self.query != self.previous_query or (current_time - self._last_search_time) >= self.DEBOUNCE_DELAY_MS
-        )
-
-        if should_search:
-            self._last_search_time = current_time
-            try:
-                # search now returns a list, not a generator
-                self.all_matched_keys = self.search_logic.search(self.query)
-            except Exception as e:
-                logger.error(f"Error during search: {e}")
-                # Keep using previous results or empty list
-                if not hasattr(self, "all_matched_keys") or self.all_matched_keys is None:
-                    self.all_matched_keys = []
-        # If not searching due to debounce, keep using previous results
+        # Debouncing is now handled at input level via _read_all_pending_input()
+        # So we always search when render() is called
+        try:
+            # search now returns a list, not a generator
+            self.all_matched_keys = self.search_logic.search(self.query)
+        except Exception as e:
+            logger.error(f"Error during search: {e}")
+            # Keep using previous results or empty list
+            if not hasattr(self, "all_matched_keys") or self.all_matched_keys is None:
+                self.all_matched_keys = []
 
         # Calculate visible range based on scroll offset
         start_idx = self.scroll_offset
@@ -261,6 +263,25 @@ class SearchTerminalUi:
             return c
         except Exception:
             return " "
+
+    def _has_pending_input(self) -> bool:
+        """
+        Check if there's more input pending in stdin (non-blocking).
+        Uses a short timeout to detect if user is still typing.
+
+        Returns:
+            True if more input is available, False if user has paused
+        """
+        readable, _, _ = select.select([sys.stdin], [], [], self.INPUT_DEBOUNCE_TIMEOUT)
+        return bool(readable)
+
+    def _render_query_line(self):
+        """
+        Render just the query line for instant typing feedback.
+        This is called immediately after each keystroke so users see their input instantly.
+        """
+        content = self.cf.query(self.query)
+        print("\x1b[2J\x1b[H" + self.cf.cursor(f"({len(self.commands)})> ") + f"{self.cf.bold(content)}")
 
     def print_first_line(self):
         content = self.cf.query(self.query)
