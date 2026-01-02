@@ -30,7 +30,7 @@ class SearchTerminalUi:
     MAX_CONTENT_SIZE = 53  # Reduced by 7 characters from previous 60
     RUN_KEY_EVENT = "python_search_run_key"
     DEFAULT_DISPLAY_ROWS = 7  # Default number of rows to display at once
-    INPUT_DEBOUNCE_TIMEOUT = 0.05  # 50ms timeout for input debouncing
+    INPUT_DEBOUNCE_TIMEOUT = 0.005  # 5ms timeout - minimal delay to catch rapid input
 
     _documents_future = None
     commands = None
@@ -154,22 +154,26 @@ class SearchTerminalUi:
             # blocking function call - wait for first character
             c = self.get_caracter()
             logger.info("processing char" + c)
-            self.process_chars(c)
+            query_changed = self.process_chars(c)
 
-            # Show typed query immediately for instant feedback
-            self._render_query_line()
+            if query_changed:
+                # Show typed query immediately for instant feedback
+                self._render_query_line()
 
-            # Check if more input is coming (non-blocking) - if so, skip the search
-            if self._has_pending_input():
-                continue
+                # Check if more input is coming (non-blocking) - if so, skip full render
+                if self._has_pending_input():
+                    continue
 
-            # No more pending input - user paused, now do the search
-            self.render()
-            # sets query here
+                # Query changed and no more pending input - do search and full render
+                self.render(force_search=True)
+            else:
+                # Navigation only - render instantly without search
+                self.render(force_search=False)
+
             self.previous_query = self.query
 
     @statsd.timed("ps_render")
-    def render(self):
+    def render(self, force_search: bool = True):
         # Recalculate display rows and sizes in case terminal was resized
         new_display_rows = self._calculate_optimal_display_rows()
         if new_display_rows != self.display_rows:
@@ -184,16 +188,16 @@ class SearchTerminalUi:
         self.print_first_line()
         logger.info("rendering loop started")
 
-        # Debouncing is now handled at input level via _read_all_pending_input()
-        # So we always search when render() is called
-        try:
-            # search now returns a list, not a generator
-            self.all_matched_keys = self.search_logic.search(self.query)
-        except Exception as e:
-            logger.error(f"Error during search: {e}")
-            # Keep using previous results or empty list
-            if not hasattr(self, "all_matched_keys") or self.all_matched_keys is None:
-                self.all_matched_keys = []
+        # Search only when needed - navigation uses cached results for instant response
+        if force_search or not self.all_matched_keys:
+            try:
+                # search now returns a list, not a generator
+                self.all_matched_keys = self.search_logic.search(self.query)
+            except Exception as e:
+                logger.error(f"Error during search: {e}")
+                # Keep using previous results or empty list
+                if self.all_matched_keys is None:
+                    self.all_matched_keys = []
 
         # Calculate visible range based on scroll offset
         start_idx = self.scroll_offset
@@ -288,7 +292,12 @@ class SearchTerminalUi:
 
         print("\x1b[2J\x1b[H" + self.cf.cursor(f"({len(self.commands)})> ") + f"{self.cf.bold(content)}")
 
-    def process_chars(self, c: str):
+    def process_chars(self, c: str) -> bool:
+        """
+        Process a single character input.
+        Returns True if the query changed (needs search), False for navigation-only actions.
+        """
+        old_query = self.query
         self.typed_up_to_run += c
         ord_c = ord(c)
         # test if the character is a delete (backspace)
@@ -390,6 +399,9 @@ class SearchTerminalUi:
             self.scroll_offset = 0
             # Reset query history browsing when typing
             self.query_history_index = -1
+
+        # Return True if query changed (needs search), False for navigation
+        return self.query != old_query
 
     def _run_key(self):
         if self.selected_row < len(self.all_matched_keys):
