@@ -19,7 +19,7 @@ class Actions:
         Args:
             key: The identifier for the entry to run
         """
-        command = f'{SystemPaths.BINARIES_PATH}/run_key "{key}" &>/dev/null'
+        command = f'run_key "{key}" &>/dev/null'
         Popen(command, stdout=None, stderr=None, shell=True)
 
     def edit_key(self, key: str, block: bool = False) -> None:
@@ -59,8 +59,8 @@ class Actions:
             query: The search query to execute
         """
         command = (
-            f'{SystemPaths.BINARIES_PATH}/clipboard set_content "{query}" && '
-            f"{SystemPaths.BINARIES_PATH}/run_key "
+            f'clipboard set_content "{query}" && '
+            f"run_key "
             f'"search in google using clipboard content" &>/dev/null'
         )
         Popen(command, stdout=None, stderr=None, shell=True)

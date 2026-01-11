@@ -97,7 +97,7 @@ class MacHanzShortcut:
     ) -> str:
         print(f"Generating shortcut for {key}")
         if custom_cmd is None:
-            custom_cmd = f'{SystemPaths.BINARIES_PATH}/run_key "{key}"'
+            custom_cmd = f'run_key "{key}"'
 
         return f"""
 

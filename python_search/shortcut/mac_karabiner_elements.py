@@ -55,8 +55,7 @@ class MacKarabinerElements:
                 "from": {},
                 "to": [
                     {
-                        "shell_command": SystemPaths.BINARIES_PATH
-                        + "/run_key '"
+                        "shell_command": "run_key '"
                         + key
                         + "'"
                     }
