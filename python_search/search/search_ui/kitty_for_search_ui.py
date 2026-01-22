@@ -56,9 +56,7 @@ class KittyForSearchUI:
             env_preset = os.environ.get("PYTHON_SEARCH_WINDOW_PRESET")
 
             if env_width and env_height:
-                self._logger.debug(
-                    f"Using environment variable window size: {env_width}x{env_height}"
-                )
+                self._logger.debug(f"Using environment variable window size: {env_width}x{env_height}")
                 return env_width, env_height
 
             sizer = AdaptiveWindowSizer()
@@ -70,10 +68,7 @@ class KittyForSearchUI:
                     self._logger.debug(f"Using environment preset: {env_preset}")
                     return presets[env_preset]
                 else:
-                    self._logger.warning(
-                        f"Unknown environment preset '{env_preset}', "
-                        f"using adaptive sizing"
-                    )
+                    self._logger.warning(f"Unknown environment preset '{env_preset}', " f"using adaptive sizing")
 
             # Check if a preset is specified in configuration
             preset = configuration.get_window_size_preset()
@@ -83,9 +78,7 @@ class KittyForSearchUI:
                     self._logger.debug(f"Using configuration preset: {preset}")
                     return presets[preset]
                 else:
-                    self._logger.warning(
-                        f"Unknown preset '{preset}', using adaptive sizing"
-                    )
+                    self._logger.warning(f"Unknown preset '{preset}', using adaptive sizing")
 
             # Use adaptive sizing
             self._logger.debug("Using adaptive window sizing")
@@ -130,7 +123,7 @@ class KittyForSearchUI:
             f"-o foreground={theme.text}",
             f'-o font_size="{theme.font_size}"',
             terminal.GLOBAL_TERMINAL_PARAMS,
-            f"{SystemPaths.BINARIES_PATH}/term_ui &",
+            f"{SystemPaths.get_binary_full_path('term_ui')} &",
         ]
         return " ".join(cmd_parts)
 
@@ -143,10 +136,7 @@ class KittyForSearchUI:
             print(f"File {SOCKET_PATH} not found")
             return False
 
-        cmd = (
-            f"{SystemPaths.KITTY_BINNARY} @ --to "
-            f"unix:{SOCKET_PATH} focus-window"  # noqa: E231
-        )
+        cmd = f"{SystemPaths.KITTY_BINNARY} @ --to " f"unix:{SOCKET_PATH} focus-window"  # noqa: E231
         print("Cmd: ", cmd)
         result = os.system(cmd)
         print(result, "Type: ", type(result))

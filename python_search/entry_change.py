@@ -31,7 +31,7 @@ class EntryChangeDetector:
             import subprocess
 
             output = subprocess.getoutput(
-                SystemPaths.BINARIES_PATH + "/pys _entries_loader load_entries_as_json"
+                "pys _entries_loader load_entries_as_json"
             )
             result = hashlib.md5(output.encode())
             result = result.hexdigest()

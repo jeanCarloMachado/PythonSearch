@@ -37,7 +37,7 @@ class FileInterpreter(BaseInterpreter):
 
     def get_executable(self):
         if not os.path.exists(SystemPaths.VIM_BINNARY):
-            raise Exception("Vim binnary not found in path {SystemPaths.VIM_BINNARY}")
+            raise Exception(f"Vim binary not found in path {SystemPaths.VIM_BINNARY}")
         return SystemPaths.VIM_BINNARY
 
     def interpret_default(self):

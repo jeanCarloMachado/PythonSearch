@@ -19,7 +19,7 @@ class Actions:
         Args:
             key: The identifier for the entry to run
         """
-        command = f'{SystemPaths.BINARIES_PATH}/run_key "{key}" &>/dev/null'
+        command = SystemPaths.get_binary_full_path("run_key") + f' "{key}" &>/dev/null'
         Popen(command, stdout=None, stderr=None, shell=True)
 
     def edit_key(self, key: str, block: bool = False) -> None:
@@ -40,7 +40,10 @@ class Actions:
         Args:
             entry_key: The identifier for the entry whose value should be copied
         """
-        command = f"{SystemPaths.BINARIES_PATH}/share_entry " f'share_only_value "{entry_key}" &>/dev/null'
+        command = (
+            f"{SystemPaths.get_binary_full_path('python')} -m python_search.share_entry "
+            f'share_only_value "{entry_key}" &>/dev/null'
+        )
         Popen(command, stdout=None, stderr=None, shell=True)
 
     def search_in_google(self, query: str) -> None:
@@ -53,8 +56,8 @@ class Actions:
             query: The search query to execute
         """
         command = (
-            f'{SystemPaths.BINARIES_PATH}/clipboard set_content "{query}" && '
-            f"{SystemPaths.BINARIES_PATH}/run_key "
+            f"{SystemPaths.get_binary_full_path('clipboard')} set_content \"{query}\" && "
+            f"{SystemPaths.get_binary_full_path('run_key')} "
             f'"search in google using clipboard content" &>/dev/null'
         )
         Popen(command, stdout=None, stderr=None, shell=True)
