@@ -6,7 +6,7 @@ All entries in python search can be assigned to shortcuts so you can get instant
 
 The following systems are supported for generating shortcuts:
 
-- Mac using iCanHazShortcut
+- Mac using Karabiner Elements
 - Linux
   - Gnome
   - XFCE

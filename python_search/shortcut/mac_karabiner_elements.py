@@ -7,9 +7,7 @@ from python_search.host_system.system_paths import SystemPaths
 class MacKarabinerElements:
     def __init__(self, configuration):
         home = os.environ.get("HOME")
-        self.BASE_KARABINER_ELEMENTS_FILE = (
-            f"{SystemPaths.PYTHON_SEARCH_PATH}/karabiner_base.json"
-        )
+        self.BASE_KARABINER_ELEMENTS_FILE = f"{SystemPaths.PYTHON_SEARCH_PATH}/karabiner_base.json"
         self.MAIN_KARABINER_ELEMENTS_FILE = f"{home}/.config/karabiner/karabiner.json"
         self.configuration = configuration
 
@@ -23,43 +21,37 @@ class MacKarabinerElements:
                 continue
 
             if "mac_shortcut" in content:
-                karabiner_content["profiles"][0]["complex_modifications"][
-                    "rules"
-                ].append(self.parse_mac_shortcut(content["mac_shortcut"], content, key))
+                karabiner_content["profiles"][0]["complex_modifications"]["rules"].append(
+                    self.parse_mac_shortcut(content["mac_shortcut"], content, key)
+                )
 
             if "mac_shortcuts" in content:
                 for shortcut in content["mac_shortcuts"]:
-                    karabiner_content["profiles"][0]["complex_modifications"][
-                        "rules"
-                    ].append(self.parse_mac_shortcut(shortcut, content, key))
+                    karabiner_content["profiles"][0]["complex_modifications"]["rules"].append(
+                        self.parse_mac_shortcut(shortcut, content, key)
+                    )
 
         # write the new content to the main file
         with open(self.MAIN_KARABINER_ELEMENTS_FILE, "w") as file:
             json.dump(karabiner_content, file, indent=4)
-            print(
-                f"Karabiner elements file {self.MAIN_KARABINER_ELEMENTS_FILE} updated"
-            )
+            print(f"Karabiner elements file {self.MAIN_KARABINER_ELEMENTS_FILE} updated")
 
     def parse_mac_shortcut(self, shortcut: str, content: dict, key: str):
-        f"""
+        """
         Shortcut:
         is the expression that maps the shortcut
         example: "⌘⇧t"
 
         """
-        print("Processing shortcut: ", shortcut, " for key: ", key)
+        run_key_binary = SystemPaths.get_binary_full_path("run_key")
+        shell_command = f"{run_key_binary} '{key}'"
+        print("Processing shortcut: ", shortcut, " for key: ", key, " with shell command: ", shell_command)
         shortcut_dict = {}
         shortcut_dict["description"] = f"RUN {key} with shortcut {shortcut}"
         shortcut_dict["manipulators"] = [
             {
                 "from": {},
-                "to": [
-                    {
-                        "shell_command": "run_key '"
-                        + key
-                        + "'"
-                    }
-                ],
+                "to": [{"key_code": "shell_command", "shell_command": shell_command}],
                 "type": "basic",
             }
         ]
@@ -69,9 +61,7 @@ class MacKarabinerElements:
             return shortcut_dict
         if shortcut == "right_gui_shift":
             shortcut_dict["manipulators"][0]["from"]["key_code"] = "right_gui"
-            shortcut_dict["manipulators"][0]["from"]["modifiers"] = {
-                "mandatory": ["left_shift"]
-            }
+            shortcut_dict["manipulators"][0]["from"]["modifiers"] = {"mandatory": ["left_shift"]}
             return shortcut_dict
 
         if shortcut == "right_alt":
@@ -84,40 +74,24 @@ class MacKarabinerElements:
         for character in shortcut:
             if character == "⌘":
                 if "modifiers" not in shortcut_dict["manipulators"][0]["from"]:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {
-                        "mandatory": ["left_gui"]
-                    }
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {"mandatory": ["left_gui"]}
                 else:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"][
-                        "mandatory"
-                    ].append("left_gui")
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"]["mandatory"].append("left_gui")
             elif character == "⇧":
                 if "modifiers" not in shortcut_dict["manipulators"][0]["from"]:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {
-                        "mandatory": ["left_shift"]
-                    }
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {"mandatory": ["left_shift"]}
                 else:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"][
-                        "mandatory"
-                    ].append("left_shift")
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"]["mandatory"].append("left_shift")
             elif character == "⌥":
                 if "modifiers" not in shortcut_dict["manipulators"][0]["from"]:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {
-                        "mandatory": ["left_alt"]
-                    }
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {"mandatory": ["left_alt"]}
                 else:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"][
-                        "mandatory"
-                    ].append("left_alt")
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"]["mandatory"].append("left_alt")
             elif character == "⌃":
                 if "modifiers" not in shortcut_dict["manipulators"][0]["from"]:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {
-                        "mandatory": ["left_control"]
-                    }
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"] = {"mandatory": ["left_control"]}
                 else:
-                    shortcut_dict["manipulators"][0]["from"]["modifiers"][
-                        "mandatory"
-                    ].append("left_control")
+                    shortcut_dict["manipulators"][0]["from"]["modifiers"]["mandatory"].append("left_control")
 
             # test if is alphanumeric
             if character.isalnum():

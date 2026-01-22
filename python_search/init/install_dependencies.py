@@ -18,7 +18,6 @@ class InstallDependencies:
         self._install_ripgrep()
         self._install_tk()
         self._install_zsh_mac()
-        self._install_shortcut_mac()
         self._install_wctrl()
         self._install_xsel()
         self._install_ripgrep()
@@ -39,10 +38,7 @@ Installation successful!
         elif is_archlinux():
             os.system("sudo pacman -S ripgrep")
         else:
-            print(
-                "Don't know how to install ripgrep for your platform, "
-                "please install manually"
-            )
+            print("Don't know how to install ripgrep for your platform, " "please install manually")
             print("Visit: https://github.com/BurntSushi/ripgrep#installation")
 
     def _install_tk(self):
@@ -56,37 +52,6 @@ Installation successful!
             return
 
         os.system("brew install zsh")
-
-    def _install_shortcut_mac(self):
-        if not is_mac():
-            return
-
-        os.system("brew install icanhazshortcut")
-
-        HOME = os.environ["HOME"]
-        # the branch to download the files from
-        branch = "main"
-
-        print("Downloading keyboard config ")
-        url = (
-            f"https://raw.githubusercontent.com/jeanCarloMachado/"  # noqa: E231
-            f"PythonSearch/{branch}/docs/config.ini.part1"
-        )
-        self.download_file(
-            url,
-            f"{HOME}/.config/iCanHazShortcut/config.ini.part1",
-        )
-
-        print("Downloading bom script ")
-        url = (
-            f"https://raw.githubusercontent.com/jeanCarloMachado/"  # noqa: E231
-            f"PythonSearch/{branch}/add_bom_to_file.sh"
-        )
-        self.download_file(
-            url,
-            "/usr/local/bin/add_bom_to_file.sh",
-        )
-        os.system("chmod +x /usr/local/bin/add_bom_to_file.sh")
 
     def download_file(self, url, destination):
         print(f"Downloading file from '{url}' into '{destination}'")
@@ -120,10 +85,7 @@ Installation successful!
             return
 
         print("Installing brew for you...")
-        os.system(
-            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/'
-            'Homebrew/install/HEAD/install.sh)"'
-        )
+        os.system('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/' 'Homebrew/install/HEAD/install.sh)"')
 
     def _exists(self, cmd: str):
         result = os.system(f"which {cmd} >/dev/null")
@@ -136,10 +98,7 @@ Installation successful!
         if self._exists("kitty"):
             return
 
-        print(
-            "Looks like kitty is not installed in your platform. "
-            "Installing it for you..."
-        )
+        print("Looks like kitty is not installed in your platform. " "Installing it for you...")
 
         if is_debian_based():
             os.system("sudo apt-get install kitty")
