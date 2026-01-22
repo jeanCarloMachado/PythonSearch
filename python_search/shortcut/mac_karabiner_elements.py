@@ -44,7 +44,7 @@ class MacKarabinerElements:
 
         """
         run_key_binary = SystemPaths.get_binary_full_path("run_key")
-        shell_command = f"{run_key_binary} '{key}'"
+        shell_command = f"/opt/miniconda3/condabin/conda run -n python313 {run_key_binary} '{key}'"
         print("Processing shortcut: ", shortcut, " for key: ", key, " with shell command: ", shell_command)
         shortcut_dict = {}
         shortcut_dict["description"] = f"RUN {key} with shortcut {shortcut}"
