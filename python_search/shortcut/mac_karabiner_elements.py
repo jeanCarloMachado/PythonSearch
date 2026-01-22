@@ -48,13 +48,7 @@ class MacKarabinerElements:
         print("Processing shortcut: ", shortcut, " for key: ", key, " with shell command: ", shell_command)
         shortcut_dict = {}
         shortcut_dict["description"] = f"RUN {key} with shortcut {shortcut}"
-        shortcut_dict["manipulators"] = [
-            {
-                "from": {},
-                "to": [{"key_code": "shell_command", "shell_command": shell_command}],
-                "type": "basic",
-            }
-        ]
+        shortcut_dict["manipulators"] = [{"from": {}, "to": [{"shell_command": shell_command}], "type": "basic"}]
 
         if shortcut == "right_gui":
             shortcut_dict["manipulators"][0]["from"]["key_code"] = "right_gui"
