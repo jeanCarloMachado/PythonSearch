@@ -1,9 +1,7 @@
+from typing import List
+
 from python_search.logger import setup_term_ui_logger
 from python_search.search.search_ui.bm25_search import Bm25Search
-from python_search.search.search_ui.semantic_search import SemanticSearch
-
-
-from typing import Generator, Iterator, List
 
 logger = setup_term_ui_logger()
 
@@ -16,13 +14,11 @@ class QueryLogic:
     def __init__(self, commands: dict[str, str]) -> None:
         self.commands = commands
         if self.ENABLE_BM25_SEARCH:
-            self.search_bm25 = Bm25Search(
-                self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
-            )
+            self.search_bm25 = Bm25Search(self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
         if self.ENABLE_SEMANTIC_SEARCH:
-            self.search_semantic = SemanticSearch(
-                self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN
-            )
+            from python_search.search.search_ui.semantic_search import SemanticSearch
+
+            self.search_semantic = SemanticSearch(self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
         self.last_query = None
         self.in_results_list = []
 

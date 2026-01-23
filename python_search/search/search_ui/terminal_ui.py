@@ -3,13 +3,11 @@ import sys
 import select
 from typing import Any
 import json
-import time
 import shutil
 
 from python_search.core_entities import Entry
 from python_search.search.search_ui.QueryLogic import QueryLogic
 from python_search.search.search_ui.search_actions import Actions
-from python_search.search.search_ui.search_utils import setup_datadog
 
 from python_search.apps.theme.theme import get_current_theme
 from python_search.host_system.system_paths import SystemPaths
@@ -17,9 +15,6 @@ from python_search.logger import setup_term_ui_logger
 from getch import getch
 
 logger = setup_term_ui_logger()
-
-startup_time = time.time_ns()
-statsd = setup_datadog()
 
 # disable hugging face warning about forking token paralelism when reloading entries
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -136,16 +131,12 @@ class SearchTerminalUi:
         """
         Rrun the application main loop
         """
-        statsd.increment("ps_run_triggered")
         # hide cursor
         print("\033[?25l", end="")
         self.query = ""
         self.selected_row = 0
         self.selected_query = -1
         self.scroll_offset = 0
-        end_startup = time.time_ns()
-        duration_startup_seconds = (end_startup - startup_time) / 1000**3
-        statsd.histogram("ps_startup_no_render_seconds", duration_startup_seconds)
 
         self.render()
         self.first_run = False
@@ -174,7 +165,6 @@ class SearchTerminalUi:
 
             self.previous_query = self.query
 
-    @statsd.timed("ps_render")
     def render(self, force_search: bool = True):
         # Recalculate display rows and sizes in case terminal was resized
         new_display_rows = self._calculate_optimal_display_rows()
@@ -409,7 +399,6 @@ class SearchTerminalUi:
         if self.selected_row < len(self.all_matched_keys):
             selected_key = self.all_matched_keys[self.selected_row]
             self.actions.run_key(selected_key)
-            statsd.increment("ps_run_key")
 
             # Add query to history cache before writing to data warehouse
             self._add_query_to_history_cache(self.query)
@@ -423,7 +412,6 @@ class SearchTerminalUi:
                 },
             )
 
-            statsd.gauge("ps_query_len_size", len(self.typed_up_to_run))
             self.typed_up_to_run = ""
 
     def get_previously_used_query(self, position) -> str:
