@@ -156,6 +156,11 @@ class SearchTerminalUi:
             logger.info("processing char" + c)
             query_changed = self.process_chars(c)
 
+            # Force search if entries were reloaded or query changed
+            needs_search = query_changed or self.reloaded
+            if self.reloaded:
+                self.reloaded = False  # Reset the flag after consuming it
+
             if query_changed:
                 # Show typed query immediately for instant feedback
                 self._render_query_line()
@@ -164,11 +169,8 @@ class SearchTerminalUi:
                 if self._has_pending_input():
                     continue
 
-                # Query changed and no more pending input - do search and full render
-                self.render(force_search=True)
-            else:
-                # Navigation only - render instantly without search
-                self.render(force_search=False)
+            # Render with search if query changed or entries were reloaded
+            self.render(force_search=needs_search)
 
             self.previous_query = self.query
 
