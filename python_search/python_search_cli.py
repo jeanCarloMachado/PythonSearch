@@ -159,6 +159,8 @@ def main():
 
     fire.Fire(PythonSearchCli)
 
+def search():
+    PythonSearchCli().search()
 
 if __name__ == "__main__":
     main()
