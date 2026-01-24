@@ -8,17 +8,10 @@ logger = setup_term_ui_logger()
 
 class QueryLogic:
     NUMBER_ENTRIES_TO_RETURN = 50
-    ENABLE_SEMANTIC_SEARCH = False
-    ENABLE_BM25_SEARCH = True
 
     def __init__(self, commands: dict[str, str]) -> None:
         self.commands = commands
-        if self.ENABLE_BM25_SEARCH:
-            self.search_bm25 = Bm25Search(self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
-        if self.ENABLE_SEMANTIC_SEARCH:
-            from python_search.search.search_ui.semantic_search import SemanticSearch
-
-            self.search_semantic = SemanticSearch(self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
+        self.search_bm25 = Bm25Search(self.commands, number_entries_to_return=self.NUMBER_ENTRIES_TO_RETURN)
         self.last_query = None
         self.in_results_list = []
 
@@ -35,32 +28,17 @@ class QueryLogic:
         self.in_results_list = []
 
         try:
-            # Get results from different search methods
             string_results = list(self.string_match(query))
-
-            bm25_results = []
-            if self.ENABLE_BM25_SEARCH:
-                bm25_results = self.search_bm25.search(query)
-
-            semantic_results = []
-            if self.ENABLE_SEMANTIC_SEARCH:
-                semantic_results = self.search_semantic.search(query)
+            bm25_results = self.search_bm25.search(query)
 
             logger.info("Starting query logic merge")
 
-            # Merge results with priority
-            all_results = []
-
             if len(query) <= 3:
                 # For short queries, prioritize exact string matches
-                all_results.extend(string_results)
-                all_results.extend(bm25_results)
+                all_results = string_results + bm25_results
             else:
                 # For longer queries, prioritize BM25 then string matching
-                all_results.extend(bm25_results)
-                all_results.extend(string_results)
-
-            all_results.extend(semantic_results)
+                all_results = bm25_results + string_results
 
             # Remove duplicates while preserving order
             seen = set()

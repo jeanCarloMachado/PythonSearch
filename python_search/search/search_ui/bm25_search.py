@@ -2,7 +2,6 @@ from typing import List
 import os
 from rank_bm25 import BM25Plus as BM25
 import nltk
-from python_search.entry_change import EntryChangeDetector
 
 
 class Bm25Search:
@@ -15,45 +14,81 @@ class Bm25Search:
         self.lemmatizer = nltk.stem.PorterStemmer()
         self.commands = entries
         self.entries: List[str] = list(self.commands.keys())
-        self.entry_change_detector = EntryChangeDetector()
         self.bm25 = self.setup_bm25()
         self.number_entries_to_return = (
-            number_entries_to_return
-            if number_entries_to_return
-            else self.NUMBER_ENTRIES_TO_RETURN
+            number_entries_to_return if number_entries_to_return else self.NUMBER_ENTRIES_TO_RETURN
         )
 
-    def searialize_database(self, bm25):
+    def serialize_database(self, bm25):
         import pickle
 
+        # Store both the bm25 index and the number of entries it was built with
+        cache_data = {
+            "bm25": bm25,
+            "corpus_size": len(self.entries),
+            "entry_keys": self.entries,  # Store actual keys for validation
+        }
         with open(self.DATABASE_LOCATION, "wb") as f:
-            pickle.dump(bm25, f)
+            pickle.dump(cache_data, f)
 
-        print("New bm25 config saved at /tmp/bm25.pickle")
-
-    def desearialize_database(self):
+    def deserialize_database(self):
         import pickle
 
-        with open(self.DATABASE_LOCATION, "rb") as f:
-            return pickle.load(f)
+        try:
+            with open(self.DATABASE_LOCATION, "rb") as f:
+                cache_data = pickle.load(f)
+
+            # Handle old format (just bm25 object) - force rebuild
+            if not isinstance(cache_data, dict) or "bm25" not in cache_data:
+                self._delete_cache()
+                return None
+
+            # Verify corpus size matches current entries
+            cached_size = cache_data.get("corpus_size", 0)
+            current_size = len(self.entries)
+
+            if cached_size != current_size:
+                self._delete_cache()
+                return None
+
+            # If we have stored keys, verify they match exactly
+            cached_keys = cache_data.get("entry_keys")
+            if cached_keys is not None and cached_keys != self.entries:
+                self._delete_cache()
+                return None
+
+            return cache_data["bm25"]
+        except Exception:
+            self._delete_cache()
+            return None
+
+    def _delete_cache(self):
+        """Delete the cache file if it exists"""
+        try:
+            if os.path.exists(self.DATABASE_LOCATION):
+                os.remove(self.DATABASE_LOCATION)
+        except Exception:
+            pass
 
     def setup_bm25(self, force_rebuild=False):
-        if (
-            os.path.exists(self.DATABASE_LOCATION)
-            and self.entry_change_detector.has_changed() is False
-        ):
-            return self.desearialize_database()
+        if force_rebuild:
+            return self.build_bm25()
+
+        # Always try to load and validate cache
+        if os.path.exists(self.DATABASE_LOCATION):
+            bm25 = self.deserialize_database()
+            if bm25 is not None:
+                return bm25
 
         return self.build_bm25()
 
     def build_bm25(self):
         tokenized_corpus = [
-            self.tokenize((key + str(value))) + self.split_key(key)
-            for key, value in self.commands.items()
+            self.tokenize((key + str(value))) + self.split_key(key) for key, value in self.commands.items()
         ]
 
         bm25 = BM25(tokenized_corpus)
-        self.searialize_database(bm25)
+        self.serialize_database(bm25)
 
         return bm25
 
@@ -81,14 +116,11 @@ class Bm25Search:
         tokenized_query = self.tokenize(query)
 
         try:
-            matches = self.bm25.get_top_n(
-                tokenized_query, self.entries, n=self.number_entries_to_return
-            )
+            matches = self.bm25.get_top_n(tokenized_query, self.entries, n=self.number_entries_to_return)
         except Exception:
-            self.build_bm25()
-            matches = self.bm25.get_top_n(
-                tokenized_query, self.entries, n=self.number_entries_to_return
-            )
+            # Rebuild the index and update self.bm25
+            self.bm25 = self.build_bm25()
+            matches = self.bm25.get_top_n(tokenized_query, self.entries, n=self.number_entries_to_return)
 
         return matches
 
