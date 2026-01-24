@@ -70,9 +70,21 @@ class EntriesEditor:
     def edit_default(self):
         import os
 
-        os.system(
-            f"kitty vim '{self.configuration.get_project_root() + '/entries_main.py'}'"
+        terminal = KittyTerminal()
+        editor_params = (
+            f" {terminal.GLOBAL_TERMINAL_PARAMS} "
+            f" -o initial_window_width={self.EDITOR_WIDTH} "
+            f" -o initial_window_height={self.EDITOR_HEIGHT} "
+            f" -o font_size={self.EDITOR_FONT_SIZE} "
         )
+        os.system(
+            f"{terminal.get_kitty_cmd()} {editor_params} vim '{self.configuration.get_project_root()}/entries_main.py'"
+        )
+
+    # Editor-specific window settings (squared window for editing)
+    EDITOR_WIDTH = "100c"
+    EDITOR_HEIGHT = "40c"
+    EDITOR_FONT_SIZE = 14
 
     def _edit_file(self, file_name: str, line: Optional[int] = 30, dry_run=False):
         """
@@ -82,8 +94,15 @@ class EntriesEditor:
         # @ todo make this editor generic
 
         terminal = KittyTerminal()
+        # Use editor-specific window size instead of generic terminal params
+        editor_params = (
+            f" {terminal.GLOBAL_TERMINAL_PARAMS} "
+            f" -o initial_window_width={self.EDITOR_WIDTH} "
+            f" -o initial_window_height={self.EDITOR_HEIGHT} "
+            f" -o font_size={self.EDITOR_FONT_SIZE} "
+        )
         cmd: str = (
-            f" {terminal.get_kitty_cmd()} {terminal.GENERIC_TERMINAL_PARAMS} "
+            f" {terminal.get_kitty_cmd()} {editor_params} "
             f"bash -c 'cd {self.configuration.get_project_root()} && "
             f"{self._get_open_text_editor_command(file_name, line)}'"
         )

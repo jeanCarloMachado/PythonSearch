@@ -218,7 +218,7 @@ class SearchTerminalUi:
         import subprocess
 
         output = subprocess.getoutput(
-            SystemPaths.get_binary_full_path("pys") + " _entries_loader load_entries_as_json 2>/dev/null"
+            SystemPaths.get_binary_full_path("python_search") + " _entries_loader load_entries_as_json 2>/dev/null"
         )
         # print("output", output)
         self.commands = json.loads(output)

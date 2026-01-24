@@ -14,9 +14,8 @@ class KittyTerminal:
     # these parameters are applied both to all kitty windows of pythons search
     # including the generic params and the python search main window
     GLOBAL_TERMINAL_PARAMS = (
-        " -o remember_window_size=yes "
+        " -o remember_window_size=no "
         + " -o confirm_os_window_close=0 "
-        + " -o remember_window_size=n "
         + " -o resize_in_steps=1 "
         + " -o macos_quit_when_last_window_closed=yes "
     )

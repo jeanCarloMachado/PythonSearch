@@ -30,7 +30,7 @@ class Actions:
             key: The identifier for the entry to edit
             block: Whether to block execution (currently unused)
         """
-        cmd = f"/opt/miniconda3/envs/python312/bin/entries_editor " f'edit_key "{key}" &>/dev/null'
+        cmd = SystemPaths.get_binary_full_path("entries_editor") + f' edit_key "{key}" &>/dev/null'
         Popen(cmd, stdout=None, stderr=None, shell=True)
 
     def copy_entry_value_to_clipboard(self, entry_key: str) -> None:
