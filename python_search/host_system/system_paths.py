@@ -40,6 +40,11 @@ class SystemPaths:
         return os.path.dirname(sys.executable)
 
     @staticmethod
+    def get_python_executable_binary_path() -> str:
+        """Returns the full path of the current Python executable."""
+        return os.path.join(SystemPaths.get_python_executable_path(), "python")
+
+    @staticmethod
     def get_binary_full_path(binary_name: str) -> str:
         """Returns the full path of a binary in the Python executable folder."""
         return os.path.join(os.path.dirname(sys.executable), binary_name)

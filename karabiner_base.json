@@ -18,7 +18,7 @@
                         "manipulators": [
                             {
                                 "from": { "key_code": "grave_accent_and_tilde" },
-                                "to": [{ "shell_command": "/opt/miniconda3/envs/python313/bin/python_search register_new_ui" }],
+                                "to": [{ "shell_command": "/opt/miniconda3/envs/python313/bin/run_key 'register new entry django'" }],
                                 "type": "basic"
                             }
                         ]

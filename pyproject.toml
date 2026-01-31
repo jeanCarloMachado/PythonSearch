@@ -70,3 +70,4 @@ register_new_launch_ui = 'python_search.entry_capture.entry_inserter_gui.registe
 google_it = 'python_search.apps.google_it:main'
 share_entry = 'python_search.share_entry:main'
 entries_editor = 'python_search.entry_capture.entries_editor:main'
+collect_input_textual = 'python_search.apps.collect_input_textual:main'
