@@ -371,7 +371,8 @@ class SearchTerminalUi:
             self.scroll_offset = 0
             # Reset query history browsing when clearing query
             self.query_history_index = -1
-        elif ord_c == 67:
+        elif ord_c == 3:
+            # Ctrl+C - exit
             sys.exit(0)
         elif ord_c == 92 or c == "]":
             self._setup_entries()
