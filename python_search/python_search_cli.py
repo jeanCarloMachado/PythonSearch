@@ -111,7 +111,7 @@ class PythonSearchCli:
             EntryExecuted(key=key, query_input="", shortcut=False)
         )
 
-    def configure_shortcuts(self):
+    def shortcuts(self):
         """
         Generate shortcuts for the current configuration
         """

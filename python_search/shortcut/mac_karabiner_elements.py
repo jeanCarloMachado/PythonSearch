@@ -14,7 +14,11 @@ class MacKarabinerElements:
     def generate(self):
         # read json base file
         with open(self.BASE_KARABINER_ELEMENTS_FILE, "r") as file:
-            karabiner_content = json.load(file)
+            raw = file.read()
+
+        python_search_binary = SystemPaths.get_binary_full_path("python_search")
+        raw = raw.replace("/opt/miniconda3/envs/python313/bin/python_search", python_search_binary)
+        karabiner_content = json.loads(raw)
 
         for key, content in list(self.configuration.commands.items()):
             if not isinstance(content, dict):
@@ -44,7 +48,7 @@ class MacKarabinerElements:
 
         """
         run_key_binary = SystemPaths.get_binary_full_path("run_key")
-        shell_command = f"/opt/miniconda3/condabin/conda run -n python313 {run_key_binary} '{key}'"
+        shell_command = f"{run_key_binary} '{key}'"
         print("Processing shortcut: ", shortcut, " for key: ", key, " with shell command: ", shell_command)
         shortcut_dict = {}
         shortcut_dict["description"] = f"RUN {key} with shortcut {shortcut}"
