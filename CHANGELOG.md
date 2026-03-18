@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- `run_before_cmd` on entries: run a shell command synchronously before the main action (after `call_before` if set); respects `directory`; fails fast on non-zero exit.
+
 ## 0.5 - 2024-06-17 Major simplifications
 
 - Tailoring the project towards minimal setup

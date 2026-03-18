@@ -27,6 +27,19 @@ Type: Boolean, default False
 
 ## Before and after hooks
 
+### run_before_cmd
+
+Type: Str (shell command)
+
+Runs synchronously in the shell **after** `call_before` (if any) and **before** the entry’s main action (open URL, run `cmd`, open file, etc.). Uses the same `directory` prefix as `cmd` when set. Fails fast if the command exits non-zero.
+
+Example:
+
+```py
+"run_before_cmd": "osascript -e 'display notification \"Starting\"'",
+"url": "https://example.com",
+```
+
 ### call_after and call_before
 
 Type: Str
