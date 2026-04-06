@@ -448,7 +448,11 @@ class AdaptiveWindowSizer:
         scale_factor = max(0.5, min(3.0, scale_factor))
 
         new_width_chars = int(base_width_chars * scale_factor)
-        new_height_chars = int(base_height_chars * scale_factor)
+
+        # Height should remain compact so the search UI does not grow into a
+        # tall mostly-empty window on large monitors.
+        height_scale_factor = min(scale_factor, 1.2)
+        new_height_chars = int(base_height_chars * height_scale_factor)
 
         # Ensure minimum usable size
         new_width_chars = max(40, new_width_chars)

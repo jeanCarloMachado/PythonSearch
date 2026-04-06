@@ -71,10 +71,9 @@ class SearchTerminalUi:
             # - Use remaining space for content rows
             reserved_lines = 2
 
-            # Calculate optimal rows from the actual visible terminal height.
-            # This keeps the result list aligned with the kitty window size on
-            # larger displays instead of leaving unused rows at the bottom.
-            optimal_rows = max(3, terminal_height - reserved_lines)
+            # Keep the result list compact even on larger displays.
+            max_rows = 9
+            optimal_rows = max(3, min(max_rows, terminal_height - reserved_lines))
 
             # For very small terminals (height <= 10), reduce by 1 more to ensure typing line visibility
             if terminal_height <= 10:
