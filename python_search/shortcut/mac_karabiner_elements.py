@@ -5,6 +5,12 @@ from python_search.host_system.system_paths import SystemPaths
 
 
 class MacKarabinerElements:
+    SPECIAL_KEY_ALIASES = {
+        "↩": "return_or_enter",
+        "⏎": "return_or_enter",
+        "⌤": "return_or_enter",
+    }
+
     def __init__(self, configuration):
         home = os.environ.get("HOME")
         self.BASE_KARABINER_ELEMENTS_FILE = f"{SystemPaths.PYTHON_SEARCH_PATH}/karabiner_base.json"
@@ -66,10 +72,16 @@ class MacKarabinerElements:
             shortcut_dict["manipulators"][0]["from"]["key_code"] = "right_alt"
             return shortcut_dict
 
-        if "return_or_enter" in shortcut:
-            shortcut_dict["manipulators"][0]["from"]["key_code"] = "return_or_enter"
+        normalized_shortcut = shortcut
+        for alias, key_code in self.SPECIAL_KEY_ALIASES.items():
+            if alias in normalized_shortcut:
+                normalized_shortcut = normalized_shortcut.replace(alias, key_code)
 
-        for character in shortcut:
+        if "return_or_enter" in normalized_shortcut:
+            shortcut_dict["manipulators"][0]["from"]["key_code"] = "return_or_enter"
+            normalized_shortcut = normalized_shortcut.replace("return_or_enter", "")
+
+        for character in normalized_shortcut:
             if character == "⌘":
                 if "modifiers" not in shortcut_dict["manipulators"][0]["from"]:
                     shortcut_dict["manipulators"][0]["from"]["modifiers"] = {"mandatory": ["left_gui"]}
