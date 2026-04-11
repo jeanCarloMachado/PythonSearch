@@ -314,6 +314,10 @@ class SearchTerminalUi:
                 self.actions.edit_key(self.all_matched_keys[self.selected_row], block=True)
                 self._setup_entries()
                 self.reloaded = True
+        elif ord_c == 4:
+            # Ctrl+D — LLM-assisted delete (control character, not a typed letter like Tab for edit)
+            if self.selected_row < len(self.all_matched_keys):
+                self.actions.delete_key(self.all_matched_keys[self.selected_row])
         elif c == "'":
             # copy to clipboard
             if self.selected_row < len(self.all_matched_keys):
@@ -364,11 +368,10 @@ class SearchTerminalUi:
         elif c == "+":
             sys.exit(0)
         elif ord_c == 68 or c == ";":
-            # clean query shortcuts
+            # clean query shortcuts (Shift+D or semicolon — not used for delete; letters stay for typing)
             self.query = ""
             self.selected_row = 0
             self.scroll_offset = 0
-            # Reset query history browsing when clearing query
             self.query_history_index = -1
         elif ord_c == 3:
             # Ctrl+C - exit

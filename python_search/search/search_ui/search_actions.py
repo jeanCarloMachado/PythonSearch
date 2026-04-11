@@ -33,6 +33,15 @@ class Actions:
         cmd = SystemPaths.get_binary_full_path("entries_editor") + f' edit_key "{key}" &>/dev/null'
         Popen(cmd, stdout=None, stderr=None, shell=True)
 
+    def delete_key(self, key: str) -> None:
+        """
+        Delete the entry via LLM (new Kitty window).
+
+        Search UI: Ctrl+D on a selected row (non-printing, like Tab for edit).
+        """
+        cmd = SystemPaths.get_binary_full_path("entries_editor") + f' delete_key "{key}" &>/dev/null'
+        Popen(cmd, stdout=None, stderr=None, shell=True)
+
     def copy_entry_value_to_clipboard(self, entry_key: str) -> None:
         """
         Copy the value of an entry to the system clipboard.

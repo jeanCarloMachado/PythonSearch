@@ -1,7 +1,12 @@
 """Module responsible for the logic of editing entry files"""
 
 import logging
+import os
+import shlex
+import stat
 import subprocess
+import sys
+import tempfile
 from typing import Optional
 
 from python_search.apps.terminal import KittyTerminal
@@ -67,9 +72,52 @@ class EntriesEditor:
 
         self._edit_file(file, int(line))
 
-    def edit_default(self):
-        import os
+    def delete_key(self, key_expr: str):
+        """
+        Delete one entry via LLM (OpenAI): ripgrep → shell edit → compile + entry-count check.
+        Opens a new Kitty window with progress; use git restore on failure.
 
+        Search UI: Ctrl+D on a selected row — control character, like Tab for edit (see SearchTerminalUi).
+        """
+        key = str(Key.from_fzf(key_expr))
+        print(f"Deleting key {key!r} (LLM-assisted)")
+        if not key or not len(key):
+            print("No key to delete.")
+            return
+
+        project_root = self.configuration.get_project_root()
+        py = sys.executable
+        fd, script_path = tempfile.mkstemp(suffix=".sh", text=True)
+        os.close(fd)
+        try:
+            with open(script_path, "w", encoding="utf-8") as sf:
+                q_script = shlex.quote(script_path)
+                q_root = shlex.quote(project_root)
+                q_py = shlex.quote(py)
+                q_key = shlex.quote(key)
+                sf.write(
+                    "#!/bin/bash\n"
+                    "set -e\n"
+                    "cleanup() { rm -f " + q_script + "; }\n"
+                    "trap cleanup EXIT\n"
+                    f"cd {q_root}\n"
+                    f"exec {q_py} -m python_search.entry_capture.llm_delete_entry {q_key}\n"
+                )
+            os.chmod(script_path, stat.S_IRWXU)
+        except OSError:
+            try:
+                os.unlink(script_path)
+            except OSError:
+                pass
+            raise
+
+        terminal = KittyTerminal()
+        inner = f"bash {shlex.quote(script_path)}"
+        kitty_cmd = terminal.wrap_cmd_into_terminal(inner, title="Python Search: delete entry (LLM)")
+        logging.info("Kitty delete_key: %s", kitty_cmd)
+        os.system(kitty_cmd)
+
+    def edit_default(self):
         terminal = KittyTerminal()
         editor_params = (
             f" {terminal.GLOBAL_TERMINAL_PARAMS} "
@@ -111,8 +159,6 @@ class EntriesEditor:
         if dry_run:
             logging.info(f"Command to edit file: {cmd}")
             return
-
-        import os
 
         os.system(cmd)
 

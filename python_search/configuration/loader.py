@@ -17,7 +17,7 @@ class ConfigurationLoader:
         return ConfigurationLoader._instance
 
     def load_config(self) -> PythonSearchConfiguration:
-        folder = self.get_entries_project_root()
+        folder = os.path.abspath(self.get_entries_project_root())
         config_location = f"{folder}/entries_main.py"
 
         if not os.path.exists(config_location):
@@ -25,24 +25,32 @@ class ConfigurationLoader:
 
         import sys
 
-        if folder not in sys.path:
-            sys.path.insert(0, folder)
+        # Prefer this project's entries_main (PS_ENTRIES_HOME), not a stale module from another path.
+        try:
+            sys.path.remove(folder)
+        except ValueError:
+            pass
+        sys.path.insert(0, folder)
         from entries_main import config
 
         return config
 
     def reload(self):
         """
-        reload _entries for when we change it
+        Reload entries_main from disk for the current PS_ENTRIES_HOME / current_project path.
         """
-        import importlib
+        import sys
 
+        folder = os.path.abspath(self.get_entries_project_root())
+        sys.modules.pop("entries_main", None)
+        try:
+            sys.path.remove(folder)
+        except ValueError:
+            pass
+        sys.path.insert(0, folder)
         import entries_main
 
-        importlib.reload(entries_main)
-
-        import entries_main
-
+        ConfigurationLoader._instance = entries_main.config
         return entries_main.config
 
     def get_entries_project_root(self):
@@ -50,16 +58,12 @@ class ConfigurationLoader:
         Get entries project folder
         """
         env_name = "PS_ENTRIES_HOME"
-        current_project_location = (
-            os.environ["HOME"] + "/.config/python_search/current_project"
-        )
+        current_project_location = os.environ["HOME"] + "/.config/python_search/current_project"
 
         folder = None
 
         if env_name in os.environ:
-            logging.debug(
-                f"Env exists and takes precedence: {env_name}={os.environ[env_name]}"
-            )
+            logging.debug(f"Env exists and takes precedence: {env_name}={os.environ[env_name]}")
             return os.environ[env_name]
 
         if os.path.isfile(current_project_location):

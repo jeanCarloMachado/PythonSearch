@@ -8,6 +8,15 @@ class EntriesLoader:
     """Class to access the current existing key"""
 
     @staticmethod
+    def count_entries_from_disk() -> int:
+        """
+        Reload ``entries_main`` from disk and return how many keys exist in ``config.commands``.
+        Same source as the Search UI (``load_entries_as_json`` / ``load_only_keys``).
+        """
+        ConfigurationLoader().reload()
+        return len(ConfigurationLoader().load_entries())
+
+    @staticmethod
     def load_only_keys() -> List[str]:
         """
         Return just the key names strings

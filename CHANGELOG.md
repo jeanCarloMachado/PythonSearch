@@ -5,10 +5,17 @@
 ### Added
 - `run_before_cmd` on entries: run a shell command synchronously before the main action (after `call_before` if set); respects `directory`; fails fast on non-zero exit.
 - `run_shortcut` console script: resolve an entry key from a configured shortcut pattern (mac/gnome/xfce, single or list) and run it via `EntryRunner` with `from_shortcut=True` (Python Fire CLI).
+- LLM-assisted delete for a single entry: `python_search.entry_capture.llm_delete_entry` (ripgrep → OpenAI sed/perl plan → apply with logged stdout/stderr → optional OpenAI retries on tool failure, BSD `sed -f` hints). Validates only via `EntriesLoader` before/after delta (same as Search UI).
+- `entries_editor delete_key`: opens Kitty with the delete pipeline; Search UI **Ctrl+D** on a focused result row calls it via `Actions.delete_key` (Tab remains edit; Shift+D / `;` clear the query only).
+- `EntriesLoader.count_entries_from_disk()`: reload config from disk and return `len(load_entries())` for tooling such as LLM delete validation.
+- Tests in `tests/test_llm_delete_entry.py` for loader counts, snippet bounds, mocked delete flow, sed failure retry, and `delete_key --help`.
 
 ### Changed
 - `run_before_cmd` execution in the base interpreter: capture subprocess output, forward stdout/stderr after completion, and append captured output to the error when the command fails; sequential execution is enabled only when `run_before_cmd` is non-empty.
 - URL entries: `run_before_cmd` uses the shared base implementation (no duplicate pre-command path).
+- `ConfigurationLoader.load_config` / `reload`: normalize entries folder to an absolute path, prepend it on `sys.path` (removing duplicates), drop a cached `entries_main` on reload, and refresh the loader singleton so disk edits and `PS_ENTRIES_HOME` match the Search UI and entry counts.
+- Search UI shortcut docs: Tab (edit), Ctrl+D (LLM delete), Shift+D / `;` (clear query).
+
 ### Fixed
 - Exception notifications: call `error_panel` only when that executable is on `PATH`.
 - Serialized entry decoding: treat plain entry text without `:` or with an empty payload after `:` as non-JSON and return `{}` instead of raising.
