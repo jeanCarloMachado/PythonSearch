@@ -23,11 +23,9 @@ class BaseInterpreter:
         if "ask_confirmation" in self.cmd and not self._confirmed_continue():
             return
 
-        if (
-            "call_after" in self.cmd
-            or "call_before" in self.cmd
-            or "run_before_cmd" in self.cmd
-        ):
+        has_run_before_cmd = bool(self.cmd.get("run_before_cmd"))
+
+        if "call_after" in self.cmd or "call_before" in self.cmd or has_run_before_cmd:
             logging.info("Enabled sequential execution flag enabled")
             self.context.enable_sequential_execution()
 
@@ -45,9 +43,7 @@ class BaseInterpreter:
     def _confirmed_continue(self) -> bool:
         from python_search.entry_capture.ask_question_ui import AskQuestion
 
-        result = AskQuestion().ask(
-            f"Type (y) if you wanna to proceed to run command: {self.cmd['cmd']}"
-        )
+        result = AskQuestion().ask(f"Type (y) if you wanna to proceed to run command: {self.cmd['cmd']}")
 
         if result == "y":
             return True
@@ -67,10 +63,13 @@ class BaseInterpreter:
         self.context.get_interpreter().default(self.cmd["call_before"])
 
     def _run_before_cmd(self):
-        if "run_before_cmd" not in self.cmd:
+        if not self.cmd.get("run_before_cmd"):
             return
 
         cmd = self.apply_directory(self.cmd["run_before_cmd"])
+        self.run_shell_pre_command(cmd)
+
+    def run_shell_pre_command(self, cmd: str) -> None:
         logging.info(f"Executing run_before_cmd: {cmd}")
         env = os.environ.copy()
         env["PATH"] = "/opt/homebrew/bin:" + env["PATH"]
@@ -81,13 +80,22 @@ class BaseInterpreter:
             shell=True,
             env=env,
             stdin=None,
-            stdout=sys.stdout,
-            stderr=sys.stderr,
+            capture_output=True,
+            text=True,
         )
+
+        if completed.stdout:
+            sys.stdout.write(completed.stdout)
+
+        if completed.stderr:
+            sys.stderr.write(completed.stderr)
+
         if completed.returncode != 0:
-            raise RuntimeError(
-                f"run_before_cmd failed with exit code {completed.returncode}: {cmd!r}"
-            )
+            details = completed.stderr.strip() or completed.stdout.strip()
+            message = f"run_before_cmd failed with exit code {completed.returncode}: {cmd!r}"
+            if details:
+                message = f"{message}\n{details}"
+            raise RuntimeError(message)
 
     def _call_after(self):
         if "call_after" not in self.cmd:
@@ -117,5 +125,6 @@ class BaseInterpreter:
 
     def apply_directory(self, cmd):
         if "directory" in self.cmd:
-            cmd = f'cd {self.cmd["directory"]} ; {cmd}'
+            sep = "; "
+            cmd = f'cd {self.cmd["directory"]}{sep}{cmd}'
         return cmd

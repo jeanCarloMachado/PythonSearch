@@ -1,6 +1,7 @@
 """Test that all main apis are not breaking"""
 
 import os
+from pathlib import Path
 
 import pytest
 
@@ -10,7 +11,7 @@ binary = "python_search"
 @pytest.mark.skipif("CI" in os.environ, reason="not supported on ci yet")
 def test_all():
     assert_command_does_not_fail(f"{binary} --help")
-    assert_command_does_not_fail(f"{binary} configure_shortcuts --help")
+    assert_command_does_not_fail(f"{binary} shortcuts --help")
     assert_command_does_not_fail(f"{binary} install_missing_dependencies --help")
     assert_command_does_not_fail(f"{binary} new_project --help")
     assert_command_does_not_fail(f"{binary} set_project_location --help")
@@ -20,6 +21,11 @@ def test_all():
 
 def test_standalone_scripts():
     assert_command_does_not_fail("entries_editor --help")
+
+
+def test_run_shortcut_script_is_registered():
+    pyproject_content = Path("pyproject.toml").read_text()
+    assert "run_shortcut = 'python_search.shortcut.runner:main'" in pyproject_content
 
 
 def assert_command_does_not_fail(cmd):

@@ -1,5 +1,6 @@
 from functools import wraps
 import os
+import shutil
 
 
 def notify_exception():
@@ -17,7 +18,8 @@ def notify_exception():
                 import traceback
 
                 send_notification(f"Exception {e}")
-                os.system(f"echo '{traceback.format_exc()}' |  error_panel run")
+                if shutil.which("error_panel"):
+                    os.system(f"echo '{traceback.format_exc()}' | error_panel run")
                 raise e
             return result
 

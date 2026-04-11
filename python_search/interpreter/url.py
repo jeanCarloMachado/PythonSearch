@@ -1,9 +1,5 @@
-import os
-import subprocess
-
 from python_search.apps.browser import Browser
 from python_search.exceptions import CommandDoNotMatchException
-from python_search.host_system.system_paths import SystemPaths
 from python_search.interpreter.base import BaseInterpreter
 from python_search.interpreter.cmd import CmdInterpreter
 from python_search.logger import setup_run_key_logger
@@ -28,10 +24,6 @@ class UrlInterpreter(BaseInterpreter):
     def interpret_default(self):
         logger.info(f'Processing as url: {self.cmd["url"]}')
 
-        # Run preprocessing command if specified
-        if "run_before_cmd" in self.cmd:
-            self._run_before_cmd()
-
         final_cmd = self.cmd
         url = self.cmd["url"]
 
@@ -45,22 +37,14 @@ class UrlInterpreter(BaseInterpreter):
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 
     def _run_before_cmd(self):
-        """Execute a preprocessing command before opening the URL. Waits for completion by default."""
+        """Execute a preprocessing command before opening the URL."""
+        if not self.cmd.get("run_before_cmd"):
+            return
+
         before_cmd = self.cmd["run_before_cmd"]
         logger.info(f"Running preprocessing command: {before_cmd}")
-
-        env = os.environ.copy()
-        env["PATH"] = "/opt/homebrew/bin:" + env["PATH"]
-        env["PATH"] = SystemPaths.get_python_executable_path() + ":" + env["PATH"]
-        env["SHELL"] = "/bin/zsh"
-
-        result = subprocess.run(
-            before_cmd,
-            shell=True,
-            env=env,
-        )
-
-        logger.info(f"Preprocessing command finished with return code: {result.returncode}")
+        super()._run_before_cmd()
+        logger.info("Preprocessing command finished successfully")
 
     def copiable_part(self):
         return self.cmd["url"]

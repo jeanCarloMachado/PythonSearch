@@ -4,6 +4,14 @@
 
 ### Added
 - `run_before_cmd` on entries: run a shell command synchronously before the main action (after `call_before` if set); respects `directory`; fails fast on non-zero exit.
+- `run_shortcut` console script: resolve an entry key from a configured shortcut pattern (mac/gnome/xfce, single or list) and run it via `EntryRunner` with `from_shortcut=True` (Python Fire CLI).
+
+### Changed
+- `run_before_cmd` execution in the base interpreter: capture subprocess output, forward stdout/stderr after completion, and append captured output to the error when the command fails; sequential execution is enabled only when `run_before_cmd` is non-empty.
+- URL entries: `run_before_cmd` uses the shared base implementation (no duplicate pre-command path).
+### Fixed
+- Exception notifications: call `error_panel` only when that executable is on `PATH`.
+- Serialized entry decoding: treat plain entry text without `:` or with an empty payload after `:` as non-JSON and return `{}` instead of raising.
 
 ## 0.5 - 2024-06-17 Major simplifications
 

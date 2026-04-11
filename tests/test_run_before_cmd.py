@@ -18,7 +18,7 @@ def test_run_before_cmd_runs_before_main(monkeypatch):
 
     def fake_run(cmd, **kwargs):
         order.append("before")
-        return MagicMock(returncode=0)
+        return MagicMock(returncode=0, stdout="", stderr="")
 
     monkeypatch.setattr("python_search.interpreter.base.subprocess.run", fake_run)
     ctx = MagicMock()
@@ -34,7 +34,7 @@ def test_run_before_cmd_runs_before_main(monkeypatch):
 
 def test_run_before_cmd_failure_raises(monkeypatch):
     def fake_run(cmd, **kwargs):
-        return MagicMock(returncode=1)
+        return MagicMock(returncode=1, stdout="", stderr="")
 
     monkeypatch.setattr("python_search.interpreter.base.subprocess.run", fake_run)
     ctx = MagicMock()
