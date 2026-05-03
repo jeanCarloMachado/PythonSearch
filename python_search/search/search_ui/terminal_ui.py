@@ -376,6 +376,10 @@ class SearchTerminalUi:
         elif ord_c == 3:
             # Ctrl+C - exit
             sys.exit(0)
+        elif ord_c == 18:
+            # Ctrl+R — reload entries from disk (same as \ or ])
+            self._setup_entries()
+            self.reloaded = True
         elif ord_c == 92 or c == "]":
             self._setup_entries()
             self.reloaded = True
