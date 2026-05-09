@@ -25,6 +25,7 @@ class PythonSearchConfiguration(EntriesGroup):
     _rerank_via_model_enabled = None
     entry_generation = False
     privacy_sensitive_terms = None
+    _terminal_app = "iterm"
 
     def __init__(
         self,
@@ -40,6 +41,7 @@ class PythonSearchConfiguration(EntriesGroup):
         collect_data: bool = False,
         entry_generation=False,
         privacy_sensitive_terms: Optional[List[str]] = None,
+        terminal_app: Optional[Literal["kitty", "iterm"]] = "iterm",
     ):
         """
 
@@ -70,9 +72,7 @@ class PythonSearchConfiguration(EntriesGroup):
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
         self._initialization_time = datetime.datetime.now()
-        self._default_text_editor = (
-            default_text_editor if default_text_editor else "vim"
-        )
+        self._default_text_editor = default_text_editor if default_text_editor else "vim"
         if custom_window_size:
             self._custom_window_size = custom_window_size
 
@@ -82,9 +82,13 @@ class PythonSearchConfiguration(EntriesGroup):
         self.collect_data = collect_data
         self.entry_generation = entry_generation
         self.privacy_sensitive_terms = privacy_sensitive_terms
+        self._terminal_app = terminal_app
 
     def get_text_editor(self):
         return self._default_text_editor
+
+    def get_terminal_app(self):
+        return self._terminal_app
 
     def is_rerank_via_model_enabled(self):
         home = os.path.expanduser("~")
@@ -115,9 +119,7 @@ class PythonSearchConfiguration(EntriesGroup):
 
     def should_use_adaptive_sizing(self) -> bool:
         """Check if adaptive window sizing should be used"""
-        return getattr(self, "adaptive_window_sizing", True) and not hasattr(
-            self, "_custom_window_size"
-        )
+        return getattr(self, "adaptive_window_sizing", True) and not hasattr(self, "_custom_window_size")
 
     def get_window_size_preset(self) -> Optional[str]:
         """Get the window size preset if specified"""

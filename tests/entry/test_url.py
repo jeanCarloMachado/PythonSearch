@@ -21,7 +21,7 @@ class TestUrlCase(unittest.TestCase):
 def test_default_does_not_require_run_before_cmd(monkeypatch):
     monkeypatch.setattr(
         "python_search.interpreter.url.Browser.open_shell_cmd",
-        lambda self, url, browser=None, focus_title=None: f"open {url}",
+        lambda self, url, app_mode=None, browser=None, focus_title=None: f"open {url}",
     )
     monkeypatch.setattr(
         CmdInterpreter,
@@ -40,7 +40,7 @@ def test_default_runs_run_before_cmd_once(monkeypatch):
 
     monkeypatch.setattr(
         "python_search.interpreter.url.Browser.open_shell_cmd",
-        lambda self, url, browser=None, focus_title=None: f"open {url}",
+        lambda self, url, app_mode=None, browser=None, focus_title=None: f"open {url}",
     )
     monkeypatch.setattr(
         CmdInterpreter,
@@ -65,7 +65,7 @@ def test_default_runs_run_before_cmd_once(monkeypatch):
 def test_default_ignores_none_run_before_cmd(monkeypatch):
     monkeypatch.setattr(
         "python_search.interpreter.url.Browser.open_shell_cmd",
-        lambda self, url, browser=None, focus_title=None: f"open {url}",
+        lambda self, url, app_mode=None, browser=None, focus_title=None: f"open {url}",
     )
     monkeypatch.setattr(
         CmdInterpreter,
@@ -85,7 +85,7 @@ def test_default_ignores_none_run_before_cmd(monkeypatch):
 def test_default_ignores_empty_run_before_cmd(monkeypatch):
     monkeypatch.setattr(
         "python_search.interpreter.url.Browser.open_shell_cmd",
-        lambda self, url, browser=None, focus_title=None: f"open {url}",
+        lambda self, url, app_mode=None, browser=None, focus_title=None: f"open {url}",
     )
     monkeypatch.setattr(
         CmdInterpreter,

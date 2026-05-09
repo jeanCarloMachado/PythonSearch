@@ -9,7 +9,7 @@ import sys
 import tempfile
 from typing import Optional
 
-from python_search.apps.terminal import KittyTerminal
+from python_search.apps.terminal import get_terminal, KittyTerminal
 from python_search.core_entities import Key
 
 
@@ -111,11 +111,11 @@ class EntriesEditor:
                 pass
             raise
 
-        terminal = KittyTerminal()
+        terminal = get_terminal()
         inner = f"bash {shlex.quote(script_path)}"
-        kitty_cmd = terminal.wrap_cmd_into_terminal(inner, title="Python Search: delete entry (LLM)")
-        logging.info("Kitty delete_key: %s", kitty_cmd)
-        os.system(kitty_cmd)
+        terminal_cmd = terminal.wrap_cmd_into_terminal(inner, title="Python Search: delete entry (LLM)")
+        logging.info("Terminal delete_key: %s", terminal_cmd)
+        os.system(terminal_cmd)
 
     def edit_default(self):
         terminal = KittyTerminal()

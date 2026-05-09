@@ -1,6 +1,26 @@
 from python_search.configuration.loader import ConfigurationLoader
 
 
+def get_terminal():
+    """
+    Factory function to get the appropriate terminal based on configuration.
+    """
+    config = ConfigurationLoader().get_config_instance()
+    terminal_app = config.get_terminal_app()
+
+    if terminal_app == "kitty":
+        return KittyTerminal()
+    elif terminal_app == "iterm":
+        from python_search.apps.iterm_terminal import ITermTerminal
+
+        return ITermTerminal()
+    else:
+        # Default to iTerm
+        from python_search.apps.iterm_terminal import ITermTerminal
+
+        return ITermTerminal()
+
+
 class KittyTerminal:
     """
     Terminal abstraction for Python Search
@@ -30,9 +50,7 @@ class KittyTerminal:
     def __init__(self):
         self.configuration = ConfigurationLoader().get_config_instance()
 
-    def wrap_cmd_into_terminal(
-        self, cmd, title=None, hold_terminal_open_on_end=True
-    ) -> str:
+    def wrap_cmd_into_terminal(self, cmd, title=None, hold_terminal_open_on_end=True) -> str:
         """
         wraps the command in a terminal but does not execute it
         """
@@ -44,10 +62,7 @@ class KittyTerminal:
         if hold_terminal_open_on_end:
             hold = " --hold "
 
-        final_cmd = (
-            f'{self.get_kitty_cmd()} {hold} '
-            f'{KittyTerminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
-        )
+        final_cmd = f"{self.get_kitty_cmd()} {hold} " f'{KittyTerminal.GENERIC_TERMINAL_PARAMS} -T "{title}" {cmd} '
 
         return final_cmd
 
