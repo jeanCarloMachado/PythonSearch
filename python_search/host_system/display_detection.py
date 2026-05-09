@@ -458,9 +458,9 @@ class AdaptiveWindowSizer:
         new_width_chars = max(40, new_width_chars)
         new_height_chars = max(5, new_height_chars)
 
-        # Ensure we don't exceed screen bounds (rough estimation)
-        max_width_chars = int(display_info.width / 10)  # Rough char width estimation
-        max_height_chars = int(display_info.height / 20)  # Rough char height estimation
+        # Cap width to keep the window usable on very wide displays
+        max_width_chars = min(100, int(display_info.width / 10))
+        max_height_chars = int(display_info.height / 20)
 
         new_width_chars = min(new_width_chars, max_width_chars)
         new_height_chars = min(new_height_chars, max_height_chars)
