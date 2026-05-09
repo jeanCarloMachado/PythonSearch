@@ -12,4 +12,4 @@ class BaseTheme:
         self.text = self.colors["text"]
 
         self.font_size = 19
-        self.font = "SF Pro"
+        self.font = "SF Mono"

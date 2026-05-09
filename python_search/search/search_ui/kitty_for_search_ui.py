@@ -122,6 +122,7 @@ class KittyForSearchUI:
             f"-o background={theme.backgroud}",
             f"-o foreground={theme.text}",
             f'-o font_size="{theme.font_size}"',
+            f'-o font_family="{theme.font}"',
             terminal.GLOBAL_TERMINAL_PARAMS,
             f"{SystemPaths.get_binary_full_path('term_ui')} &",
         ]
