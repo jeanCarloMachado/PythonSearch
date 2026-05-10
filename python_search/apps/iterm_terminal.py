@@ -1,8 +1,6 @@
 import tempfile
 import os
 
-from python_search.apps.theme.theme import get_current_theme
-
 
 class ITermTerminal:
     """
@@ -15,8 +13,6 @@ class ITermTerminal:
         Creates a temporary shell script to avoid complex escaping issues.
         """
         title_str = title if title else "PythonSearch"
-        theme = get_current_theme()
-        font_spec = f"{theme.font} {theme.font_size}"
 
         # Create a temporary script file to execute
         fd, script_path = tempfile.mkstemp(suffix=".sh", prefix="pythonsearch_")
@@ -59,7 +55,6 @@ tell application "iTerm"
             create tab with default profile command "{script_path}"
             tell current session
                 set name to "{title_str}"
-                set normal font to "{font_spec}"
             end tell
         end tell
     on error
@@ -67,7 +62,6 @@ tell application "iTerm"
         tell current window
             tell current session
                 set name to "{title_str}"
-                set normal font to "{font_spec}"
             end tell
         end tell
     end try
