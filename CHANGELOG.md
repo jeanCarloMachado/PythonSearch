@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### Added
+- `select_all` parameter to `collect_input`: prefilled text is selected on window open (uses tkinter `tag_add` for Text widget)
+- `select_all` parameter to `DeclarativeUI.build`: controls text selection after window finalize
+
+### Changed
+- `collect_input` now accepts `--select_all` flag to select prefilled clipboard content automatically
+
+### Added
 - `run_before_cmd` on entries: run a shell command synchronously before the main action (after `call_before` if set); respects `directory`; fails fast on non-zero exit.
 - `run_shortcut` console script: resolve an entry key from a configured shortcut pattern (mac/gnome/xfce, single or list) and run it via `EntryRunner` with `from_shortcut=True` (Python Fire CLI).
 - LLM-assisted delete for a single entry: `python_search.entry_capture.llm_delete_entry` (ripgrep → OpenAI sed/perl plan → apply with logged stdout/stderr → optional OpenAI retries on tool failure, BSD `sed -f` hints). Validates only via `EntriesLoader` before/after delta (same as Search UI).

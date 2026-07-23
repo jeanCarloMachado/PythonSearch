@@ -7,7 +7,9 @@ from python_search.declarative_ui.declarative_ui import DeclarativeUI
 
 class CollectInput:
     """
-    GUI window to capture user input and returns the entered data. It also allows the user to prefill the input field with content from their clipboard.
+    GUI window to capture user input and returns the entered data.
+    It also allows the user to prefill the input field with content from their
+    clipboard.
     """
 
     def launch(
@@ -16,6 +18,8 @@ class CollectInput:
         default_content="",
         prefill_with_clipboard: bool = False,
         set_as_clipboard: bool = False,
+        select_all: bool = False,
+        strip_quotes: bool = False,
     ):
         """
         Launch the _entries capture GUI.
@@ -29,14 +33,18 @@ class CollectInput:
         with contextlib.redirect_stdout(None):
             result = DeclarativeUI().build(
                 [
-                    {"key": "content", "type": "input", "value": default_content},
+                    {"key": "content", "type": "text", "value": default_content},
                 ],
                 title=name,
+                select_all=select_all,
             )
 
+        content = result["content"]
+        if strip_quotes:
+            content = content.replace("'", "").replace('"', "")
         if set_as_clipboard:
-            Clipboard().set_content(result["content"])
-        return result["content"]
+            Clipboard().set_content(content)
+        return content
 
 
 def main():

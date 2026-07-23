@@ -52,7 +52,7 @@ class DeclarativeUI:
         """
         self.title = title
 
-    def build(self, spec: list[UIFieldSpec], title: str | None = None) -> dict[str, str]:
+    def build(self, spec: list[UIFieldSpec], title: str | None = None, select_all: bool = False) -> dict[str, str]:
         """
         Build and display a form window based on the provided specification.
 
@@ -96,7 +96,7 @@ class DeclarativeUI:
                     expand_x=True,
                     expand_y=True,
                     font=("Helvetica", font_size),
-                    size=item.get("size", (20, 5)),
+                    size=item.get("size", (80, 6)),
                 )
             elif item["type"] == "input":
                 element = sg.Input(
@@ -129,6 +129,11 @@ class DeclarativeUI:
         # Workaround for macOS bug where window alpha doesn't apply correctly on first render
         window.read(timeout=100)
         window.set_alpha(1.0)
+
+        if select_all and first_key:
+            widget = window[first_key].Widget
+            widget.tag_add("sel", "1.0", "end")
+            widget.mark_set("insert", "end")
 
         if first_key:
             window[first_key].bind("<Return>", "_Enter")
