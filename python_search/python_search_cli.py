@@ -85,6 +85,12 @@ class PythonSearchCli:
         """
         return RegisterNew().launch_ui()
 
+    def register_new(self, key: str, value: str, type: str = ""):
+        """
+        Register a new entry directly without UI
+        """
+        return RegisterNew().register(key=key, value=value, type=type)
+
     def _copy_entry_content(self, entry_str: str):
         """
         Copies the content of the provided key to the clipboard.

@@ -47,7 +47,7 @@ class RegisterNew:
         self.register(key=result["key"], value=result["value"], type=result["type"])
 
     @notify_exception()
-    def register(self, *, key: str, value: str, type: str):
+    def register(self, *, key: str, value: str, type: str = ""):
         """
         The non ui driven registering api
         Args:
