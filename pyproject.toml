@@ -32,6 +32,8 @@ tiny-data-warehouse = ">=0.1.5"
 datadog = "*"
 rank-bm25 = "^0.2.2"
 nltk = "^3.9.1"
+getch = "^1.0"
+PySimpleGUI = "*"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
 pre-commit = "^2.20.0"
