@@ -88,6 +88,8 @@ class CmdInterpreter(BaseInterpreter):
         env = os.environ
         # add homebrew path to the path
         env["PATH"] = "/opt/homebrew/bin:" + env["PATH"]
+        # add /usr/local/bin to the path (e.g. for code, brew-installed binaries)
+        env["PATH"] = "/usr/local/bin:" + env["PATH"]
         # add python search executable path to the path
         env["PATH"] = SystemPaths.get_python_executable_path() + ":" + env["PATH"]
         env["SHELL"] = "/bin/zsh"
