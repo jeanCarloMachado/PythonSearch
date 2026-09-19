@@ -29,6 +29,7 @@ class ITermTerminal:
             f.write("# Add standard paths\n")
             f.write('export PATH="/opt/homebrew/bin:$PATH"\n')
             f.write('export PATH="$HOME/.local/bin:$PATH"\n')
+            f.write('export PATH="/usr/local/bin:$PATH"\n')
             from python_search.host_system.system_paths import SystemPaths
 
             python_path = SystemPaths.get_python_executable_path()

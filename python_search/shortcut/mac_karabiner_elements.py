@@ -24,6 +24,10 @@ class MacKarabinerElements:
 
         python_search_binary = SystemPaths.get_binary_full_path("python_search")
         raw = raw.replace("/opt/miniconda3/envs/python313/bin/python_search", python_search_binary)
+        run_key_binary = SystemPaths.get_binary_full_path("run_key")
+        raw = raw.replace("/opt/miniconda3/envs/python313/bin/run_key", run_key_binary)
+        # Caps Lock opens the native Rust launcher, which lives outside the Python env.
+        raw = raw.replace("__PS_UI__", MacKarabinerElements.ps_ui_binary())
         karabiner_content = json.loads(raw)
 
         for key, content in list(self.configuration.commands.items()):
@@ -110,3 +114,27 @@ class MacKarabinerElements:
                 shortcut_dict["manipulators"][0]["from"]["key_code"] = character
 
         return shortcut_dict
+
+    @staticmethod
+    def ps_ui_binary() -> str:
+        """
+        Absolute path to the native launcher.
+
+        Karabiner runs shell commands with a minimal PATH, so the binary has to be named in full.
+        """
+        import os
+        import shutil
+
+        candidates = [
+            os.environ.get("PS_UI_BINARY"),
+            os.path.expanduser("~/.local/bin/ps_ui"),
+            shutil.which("ps_ui"),
+        ]
+        for candidate in candidates:
+            if candidate and os.path.exists(candidate):
+                return candidate
+
+        raise Exception(
+            "Could not find the ps_ui binary. Build and install it with "
+            "PythonSearch/rust/install.sh, or set PS_UI_BINARY."
+        )

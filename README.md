@@ -59,6 +59,30 @@ python_search search
 
 Read our documentaiton here for more in [depth knwoledge](https://docs.google.com/document/d/1Y_-kdEea9IQshUU-anWKC8sDUJ_y3XRvQJWZ6CV3pWw/edit#heading=h.kwxo59w3vr4x).
 
+## Native launcher (macOS)
+
+On macOS there is a second front end: a Spotlight-style panel written in Rust, in
+**[`rust/`](rust/README.md)**. It is a single self-contained binary with no runtime dependencies.
+
+A resident daemon holds the entries in memory and ranks them in-process, so searching never starts
+a Python interpreter — the terminal UI boots two of them per launch. Running an entry still shells
+out to `run_key`, so every interpreter behaviour is shared between the two front ends.
+
+```sh
+rust/install.sh     # build, install to ~/.local/bin/ps_ui, register the daemon
+ps_ui show          # open the panel
+```
+
+| | terminal UI (`term_ui`) | native launcher (`ps_ui`) |
+|---|---|---|
+| Startup | two Python interpreters per launch | resident, ~10 ms to show |
+| Search | BM25 in Python over the full corpus | in-memory fuzzy match, 0.1–2 ms |
+| Rendering | full ANSI repaint per keystroke | GPU, in a real macOS panel |
+| Host | a Kitty window | its own borderless window with vibrancy |
+
+Both read the same entries and run the same executor; `term_ui` is untouched and remains available
+via `python_search search`. See [`rust/README.md`](rust/README.md) for the source layout, key
+bindings, ranking, and the macOS-specific notes.
 
 ## Got an issue?
 

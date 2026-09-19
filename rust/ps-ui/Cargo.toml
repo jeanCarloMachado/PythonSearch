@@ -1,0 +1,23 @@
+[package]
+name = "ps-ui"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "ps_ui"
+path = "src/main.rs"
+
+[dependencies]
+ps-core = { path = "../ps-core" }
+ps-mac = { path = "../ps-mac" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+eframe = { version = "0.36", default-features = false, features = ["wgpu"] }
+egui = "0.36"
+notify = "6"
+notify-debouncer-mini = "0.4"
+image = { version = "0.25", default-features = false, features = ["png"] }
+dirs.workspace = true
+raw-window-handle = "0.6"
