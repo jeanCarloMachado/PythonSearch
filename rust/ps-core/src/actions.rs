@@ -11,6 +11,7 @@ const GOOGLE_SEARCH_ENTRY: &str = "search in google using clipboard content";
 /// This is deliberately the same boundary as `search_ui/search_actions.py`: every interpreter
 /// behaviour (`call_before`, `call_after`, `app_mode`, `focus_match`, `callable`) stays in Python,
 /// so the launcher cannot drift from what `term_ui` does. All spawns are fire and forget.
+#[derive(Clone)]
 pub struct Actions {
     bin_dir: Option<PathBuf>,
 }
@@ -19,6 +20,14 @@ impl Actions {
     pub fn resolve() -> Self {
         Actions {
             bin_dir: paths::resolve_binaries_dir(),
+        }
+    }
+
+    /// Point at an explicit binaries directory instead of resolving one from the environment.
+    /// Exists for tests, which stand in a fake `python_search` rather than touching the real one.
+    pub fn with_bin_dir(bin_dir: PathBuf) -> Self {
+        Actions {
+            bin_dir: Some(bin_dir),
         }
     }
 
@@ -104,6 +113,29 @@ impl Actions {
         });
     }
 
+    /// Register a new entry. Equivalent to `RegisterNew.register` in Python, invoked through the
+    /// `python_search register_new` console script so the insertion logic stays in one place.
+    ///
+    /// Unlike the other actions here this waits for the process and reports failure, rather than
+    /// firing and forgetting: it is a one-shot, user-initiated write, not a background side effect,
+    /// so a bad key or a binary-resolution problem should surface instead of silently doing nothing.
+    pub fn register_new(&self, key: &str, value: &str, entry_type: &str) -> Result<(), String> {
+        let binary = self.binary("python_search");
+        let output = Command::new(&binary)
+            .args(["register_new", key, value, "--type", entry_type])
+            .stdin(Stdio::null())
+            .output()
+            .map_err(|error| format!("failed to run {}: {error}", binary.display()))?;
+
+        if output.status.success() {
+            Ok(())
+        } else {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            let message = stderr.lines().last().unwrap_or("unknown error");
+            Err(message.to_string())
+        }
+    }
+
     /// Regenerate the entries dump. Runs in the background; the watcher picks up the new file.
     pub fn dump_entries(&self) -> std::io::Result<std::process::Child> {
         Command::new(self.binary("python_search"))
@@ -140,4 +172,86 @@ pub fn log_run(key: &str, query: &str) -> f64 {
     let path = dir.join(format!("{timestamp:.6}.json"));
     let _ = std::fs::write(path, record.to_string());
     timestamp
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Actions;
+    use std::io::Write;
+    use std::os::unix::fs::PermissionsExt;
+
+    /// A directory holding a fake `python_search` script, so tests exercise the real subprocess
+    /// plumbing (arg order, exit status, stderr capture) without touching the real installation or
+    /// writing to the user's actual entries.
+    struct FakeBinDir {
+        dir: std::path::PathBuf,
+    }
+
+    impl FakeBinDir {
+        /// `body` is a POSIX shell script body; `$1 $2 ...` are `python_search`'s own arguments.
+        fn new(body: &str) -> Self {
+            let dir = std::env::temp_dir().join(format!(
+                "ps-core-actions-test-{}-{:?}",
+                std::process::id(),
+                std::thread::current().id()
+            ));
+            std::fs::create_dir_all(&dir).unwrap();
+
+            let script_path = dir.join("python_search");
+            let mut script = std::fs::File::create(&script_path).unwrap();
+            writeln!(script, "#!/bin/sh").unwrap();
+            writeln!(script, "{body}").unwrap();
+            drop(script);
+            std::fs::set_permissions(&script_path, std::fs::Permissions::from_mode(0o755))
+                .unwrap();
+
+            FakeBinDir { dir }
+        }
+
+        fn actions(&self) -> Actions {
+            Actions::with_bin_dir(self.dir.clone())
+        }
+    }
+
+    impl Drop for FakeBinDir {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.dir);
+        }
+    }
+
+    #[test]
+    fn register_new_ok_on_successful_exit() {
+        let fake = FakeBinDir::new("exit 0");
+        let result = fake.actions().register_new("a key", "a value", "snippet");
+        assert_eq!(result, Ok(()));
+    }
+
+    #[test]
+    fn register_new_reports_stderr_on_failure() {
+        let fake = FakeBinDir::new("echo 'Exception: Key is required' >&2; exit 1");
+        let result = fake.actions().register_new("", "a value", "snippet");
+        assert_eq!(result, Err("Exception: Key is required".to_string()));
+    }
+
+    #[test]
+    fn register_new_passes_key_value_and_type_positionally() {
+        // Echoes the arguments it actually received back on stdout via stderr (so a *failing* exit
+        // gets them into the `Err` message this test asserts on), proving the call shape matches
+        // what `python_search register_new KEY VALUE --type TYPE` expects.
+        let fake = FakeBinDir::new(r#"echo "$1|$2|$3|$4|$5" >&2; exit 1"#);
+        let result = fake.actions().register_new("my key", "my value", "url");
+        assert_eq!(
+            result,
+            Err("register_new|my key|my value|--type|url".to_string())
+        );
+    }
+
+    #[test]
+    fn register_new_errors_when_binary_is_missing() {
+        let fake = FakeBinDir::new("exit 0");
+        std::fs::remove_file(fake.dir.join("python_search")).unwrap();
+
+        let result = fake.actions().register_new("a key", "a value", "snippet");
+        assert!(result.is_err());
+    }
 }

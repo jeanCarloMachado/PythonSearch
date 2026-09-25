@@ -25,14 +25,12 @@ class ShareEntry:
         return result
 
     def share_only_key(self, key):
-        key = str(Key.from_fzf(key))
         Clipboard().set_content(key, enable_notifications=True, notify=True)
 
     def share_only_value(self, key: str):
         """
         deprecated name
         """
-        key = str(Key.from_fzf(key))
         if key not in self._entries:
             raise Exception(f"Entry {key} not found")
 

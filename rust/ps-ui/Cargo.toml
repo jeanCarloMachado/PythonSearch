@@ -8,6 +8,10 @@ rust-version.workspace = true
 name = "ps_ui"
 path = "src/main.rs"
 
+[[bin]]
+name = "register_new_rust"
+path = "src/bin/register.rs"
+
 [dependencies]
 ps-core = { path = "../ps-core" }
 ps-mac = { path = "../ps-mac" }

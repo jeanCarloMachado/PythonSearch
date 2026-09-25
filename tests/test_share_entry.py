@@ -107,6 +107,38 @@ class TestShareEntry:
             "test content value", enable_notifications=True, notify=True
         )
 
+    @patch("python_search.share_entry.Clipboard")
+    @patch("python_search.share_entry.ConfigurationLoader")
+    def test_share_only_value_handles_keys_containing_colons(
+        self, mock_loader, mock_clipboard
+    ):
+        """
+        Validates that share_only_value looks up the exact key it is given,
+        without truncating at a colon.
+
+        Business rule: Callers (the Rust and Python search UIs) always pass the
+        entry's real key, never an fzf-formatted "key: snippet" line. Keys that
+        legitimately contain a colon (URLs, "Task: ..." entries) must still be
+        found, otherwise ⌘C/copy silently fails to find the entry.
+
+        This test can break if a colon-splitting key normalization (e.g.
+        `Key.from_fzf`) is reintroduced in `share_only_value`.
+        """
+        key_with_colon = "https://example.com/some:page"
+        mock_entries = {key_with_colon: {"url": key_with_colon}}
+        mock_loader.return_value.load_entries.return_value = mock_entries
+        mock_clipboard_instance = MagicMock()
+        mock_clipboard.return_value = mock_clipboard_instance
+
+        share_entry = ShareEntry()
+
+        result = share_entry.share_only_value(key_with_colon)
+
+        assert result == key_with_colon
+        mock_clipboard_instance.set_content.assert_called_once_with(
+            key_with_colon, enable_notifications=True, notify=True
+        )
+
     @patch("python_search.share_entry.ConfigurationLoader")
     def test_share_only_value_raises_exception_for_nonexistent_entry(self, mock_loader):
         """

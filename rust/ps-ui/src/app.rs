@@ -5,6 +5,9 @@ use egui::{
 };
 use ps_core::{usage::MAX_QUERY_HISTORY, Actions, Index, Match};
 
+/// How long the "Copied" toast stays on screen before the panel hides itself.
+const COPY_FLASH_SECONDS: f64 = 0.45;
+
 /// What the user asked the launcher to do with the selected row.
 pub enum Outcome {
     None,
@@ -32,6 +35,8 @@ pub struct Launcher {
     reloading: bool,
     /// Transient confirmation shown in the hint row: (message, when it was set).
     toast: Option<(String, f64)>,
+    /// When copying should hide the panel, once the "Copied" toast has had a moment to be seen.
+    copy_hide_at: Option<f64>,
     /// Queries that previously led to a run, most recent first. Arrowing up past the first row
     /// walks this, as the terminal UI does.
     query_history: Vec<String>,
@@ -58,6 +63,7 @@ impl Launcher {
             focused: true,
             reloading: false,
             toast: None,
+            copy_hide_at: None,
             query_history: Vec::new(),
             history_index: None,
         };
@@ -154,6 +160,15 @@ impl Launcher {
         // Run after the rows are laid out, so the click handling does not borrow across the paint.
         if activated && self.run_selected() {
             return Outcome::Hide;
+        }
+
+        if let Some(hide_at) = self.copy_hide_at {
+            let now = ui.ctx().input(|i| i.time);
+            if now >= hide_at {
+                self.copy_hide_at = None;
+                return Outcome::Hide;
+            }
+            ui.ctx().request_repaint();
         }
 
         outcome
@@ -591,7 +606,11 @@ impl Launcher {
                         (Key::C, true, _) => {
                             if let Some(key) = self.selected_key() {
                                 self.actions.copy_value(&key);
-                                outcome = Outcome::Hide;
+                                let now = ctx.input(|i| i.time);
+                                self.show_toast("Copied", now);
+                                // Hide shortly after, once the toast has had a moment to register,
+                                // rather than instantly — otherwise the confirmation never renders.
+                                self.copy_hide_at = Some(now + COPY_FLASH_SECONDS);
                             }
                         }
                         (Key::R, true, _) | (Key::R, _, true) => self.reload_requested = true,

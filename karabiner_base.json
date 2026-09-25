@@ -34,6 +34,25 @@
                 "type": "basic"
               }
             ]
+          },
+          {
+            "description": "REGISTER NEW PYTHON SEARCH (native Rust form)",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "r",
+                  "modifiers": {
+                    "mandatory": ["left_alt"]
+                  }
+                },
+                "to": [
+                  {
+                    "shell_command": "__REGISTER_NEW_RUST__"
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
           }
         ]
       },

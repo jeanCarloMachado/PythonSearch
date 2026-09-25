@@ -110,6 +110,7 @@ To roll back to the terminal UI, set that `shell_command` back to
 | `ps_ui ui` | run the window directly, without a daemon — useful when iterating on the UI |
 | `ps_ui search <query>` | headless ranking with timings, for debugging relevance |
 | `ps_ui screenshot` | write the panel's framebuffer to `~/.python_search/screenshot.png` |
+| `register_new_rust` | standalone form to register a new entry (key/value/type), prefilled from the clipboard |
 
 ## Keys
 

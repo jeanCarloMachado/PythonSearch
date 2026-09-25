@@ -28,6 +28,16 @@ class MacKarabinerElements:
         raw = raw.replace("/opt/miniconda3/envs/python313/bin/run_key", run_key_binary)
         # Caps Lock opens the native Rust launcher, which lives outside the Python env.
         raw = raw.replace("__PS_UI__", MacKarabinerElements.ps_ui_binary())
+        # Alt+R opens the native Rust "register new entry" form, also outside the Python env. It
+        # shells out to `python_search register_new`, so — like the daemon's LaunchAgent plist —
+        # it needs PS_BIN_PATH baked in: Karabiner launches with a minimal PATH/no login shell, so
+        # the binary-resolution fallbacks in `ps_core::paths::resolve_binaries_dir` have nothing to
+        # find `python_search` with otherwise.
+        bin_dir = os.path.dirname(python_search_binary)
+        register_new_rust_command = (
+            f"PS_BIN_PATH={bin_dir} {MacKarabinerElements.register_new_rust_binary()}"
+        )
+        raw = raw.replace("__REGISTER_NEW_RUST__", register_new_rust_command)
         karabiner_content = json.loads(raw)
 
         for key, content in list(self.configuration.commands.items()):
@@ -137,4 +147,28 @@ class MacKarabinerElements:
         raise Exception(
             "Could not find the ps_ui binary. Build and install it with "
             "PythonSearch/rust/install.sh, or set PS_UI_BINARY."
+        )
+
+    @staticmethod
+    def register_new_rust_binary() -> str:
+        """
+        Absolute path to the native "register new entry" form.
+
+        Karabiner runs shell commands with a minimal PATH, so the binary has to be named in full.
+        """
+        import os
+        import shutil
+
+        candidates = [
+            os.environ.get("REGISTER_NEW_RUST_BINARY"),
+            os.path.expanduser("~/.local/bin/register_new_rust"),
+            shutil.which("register_new_rust"),
+        ]
+        for candidate in candidates:
+            if candidate and os.path.exists(candidate):
+                return candidate
+
+        raise Exception(
+            "Could not find the register_new_rust binary. Build and install it with "
+            "PythonSearch/rust/install.sh, or set REGISTER_NEW_RUST_BINARY."
         )

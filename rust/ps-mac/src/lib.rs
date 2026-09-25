@@ -26,6 +26,7 @@ mod stub {
     pub fn apply_panel_chrome(_handle: RawWindowHandle, _corner_radius: f64) {}
     pub fn hide_from_dock() {}
     pub fn center_on_active_screen(_handle: RawWindowHandle, _width: f64, _height: f64) {}
+    pub fn center_on_main_screen(_handle: RawWindowHandle, _width: f64, _height: f64) {}
     pub fn is_dark_mode() -> bool {
         true
     }
@@ -33,6 +34,7 @@ mod stub {
         12
     }
     pub fn set_floating(_handle: RawWindowHandle, _floating: bool) {}
+    pub fn set_movable(_handle: RawWindowHandle, _movable: bool) {}
     pub fn order_out(_handle: RawWindowHandle) {}
     pub fn order_front(_handle: RawWindowHandle) {}
     pub fn is_key_window(_handle: RawWindowHandle) -> bool {

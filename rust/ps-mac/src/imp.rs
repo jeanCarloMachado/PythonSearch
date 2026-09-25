@@ -263,6 +263,35 @@ fn center_on_active_screen_now(handle: RawWindowHandle, width: f64, height: f64)
 
 }
 
+/// Position a window dead-centre on the primary screen, ignoring the mouse. Used by satellite
+/// windows (e.g. the register-new form) that should always open in the same place rather than
+/// trailing the pointer like the mouse-following launcher panel does.
+pub fn center_on_main_screen(handle: RawWindowHandle, width: f64, height: f64) {
+    let handle = MainThreadHandle(handle);
+    on_main_queue(move || center_on_main_screen_now(handle.get(), width, height));
+}
+
+fn center_on_main_screen_now(handle: RawWindowHandle, width: f64, height: f64) {
+    let Some(window) = window_from_handle(handle) else {
+        return;
+    };
+    let Some(mtm) = MainThreadMarker::new() else {
+        return;
+    };
+
+    let Some(visible) = NSScreen::mainScreen(mtm).map(|screen| screen.visibleFrame()) else {
+        return;
+    };
+
+    let x = visible.origin.x + (visible.size.width - width) / 2.0;
+    let y = visible.origin.y + (visible.size.height - height) / 2.0;
+
+    window.setFrame_display(
+        NSRect::new(NSPoint::new(x, y), NSSize::new(width, height)),
+        true,
+    );
+}
+
 pub fn is_dark_mode() -> bool {
     let Some(mtm) = MainThreadMarker::new() else {
         return true;
@@ -454,4 +483,20 @@ fn set_floating_now(handle: RawWindowHandle, floating: bool) {
     if std::env::var("PS_DEBUG").is_ok() {
         eprintln!("window level -> {} (floating={floating})", window.level());
     }
+}
+
+/// Let the user move the window by dragging it, which `apply_panel_chrome` turns off.
+///
+/// The launcher panel is placed by code and should stay put, but the register form is a normal
+/// little dialog — it needs `movable` back on for AppKit to honour the drag egui starts.
+pub fn set_movable(handle: RawWindowHandle, movable: bool) {
+    let handle = MainThreadHandle(handle);
+    on_main_queue(move || set_movable_now(handle.get(), movable));
+}
+
+fn set_movable_now(handle: RawWindowHandle, movable: bool) {
+    let Some(window) = window_from_handle(handle) else {
+        return;
+    };
+    window.setMovable(movable);
 }

@@ -10,12 +10,13 @@ INSTALL_DIR="${PS_INSTALL_DIR:-$HOME/.local/bin}"
 LABEL="com.jeanmachado.pythonsearch"
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
 
-echo "==> Building release binary"
+echo "==> Building release binaries"
 cargo build --release --manifest-path "$HERE/Cargo.toml" -p ps-ui
 
-echo "==> Installing to $INSTALL_DIR/ps_ui"
+echo "==> Installing to $INSTALL_DIR"
 mkdir -p "$INSTALL_DIR"
 install -m 0755 "$HERE/target/release/ps_ui" "$INSTALL_DIR/ps_ui"
+install -m 0755 "$HERE/target/release/register_new_rust" "$INSTALL_DIR/register_new_rust"
 
 # The PythonSearch console scripts live next to whichever python has the package installed.
 BIN_DIR="$(dirname "$(command -v run_key)")"

@@ -1,6 +1,8 @@
 import os
+import shlex
 import subprocess
 import sys
+import tempfile
 from typing import Optional
 
 from python_search.apps.notification_ui import send_notification
@@ -92,7 +94,27 @@ class CmdInterpreter(BaseInterpreter):
         env["PATH"] = "/usr/local/bin:" + env["PATH"]
         # add python search executable path to the path
         env["PATH"] = SystemPaths.get_python_executable_path() + ":" + env["PATH"]
+        # append the monorepo conda env bin path so its CLI binaries (e.g. `monorepo`) are found
+        env["PATH"] = env["PATH"] + ":" + os.path.expanduser(
+            "~/miniconda3/envs/python313/bin"
+        )
         env["SHELL"] = "/bin/zsh"
+
+        # cli_cmd entries are wrapped in a visible terminal (errors show there);
+        # plain cmd entries run silently, so we notify on failure (and, with
+        # notify_output, on success too).
+        #
+        # This wait-and-notify has to happen *inside* the detached shell
+        # process, not in a Python thread here: run_key is a one-shot CLI
+        # that returns and exits almost immediately after this call, well
+        # before a command doing real work (e.g. a network call) finishes.
+        # A background thread would just get killed with it. The subprocess
+        # itself, spawned with start_new_session=True, already reliably
+        # outlives this process (that's the whole point of detaching it), so
+        # it's the only thing that can safely wait for its own completion.
+        wrapped_in_terminal = WRAP_IN_TERMINAL in self.cmd
+        if not wrapped_in_terminal:
+            cmd = self._wrap_with_notifications(cmd)
 
         p = subprocess.Popen(
             cmd,
@@ -108,6 +130,37 @@ class CmdInterpreter(BaseInterpreter):
         )
 
         return {"pid": p.pid}
+
+    def _wrap_with_notifications(self, cmd):
+        # notify_output (default False): always notify with the full stdout/stderr,
+        # not just on failure. Only applies to plain "cmd" entries (not "cli_cmd"),
+        # since a terminal-wrapped command's output lives in a separate Terminal
+        # window we never capture.
+        notify_output = self.cmd.get("notify_output", False)
+        notify_send = SystemPaths.get_binary_full_path("notify_send")
+        output_path = tempfile.mktemp(suffix=".log")
+
+        success_notify = (
+            f'msg=$(cat {shlex.quote(output_path)}); '
+            f'[ -z "$msg" ] && msg="(no output)"; '
+            f'{shlex.quote(notify_send)} "$msg"'
+            if notify_output
+            else "true"
+        )
+
+        return (
+            # a subshell, not a `{ ...; }` group: a bare `exit` inside cmd
+            # must only end the wrapped command, not this whole wrapper
+            # script (which still needs to run the notify/cleanup steps below).
+            f"( {cmd} ) > {shlex.quote(output_path)} 2>&1; "
+            f"__rc=$?; "
+            f'if [ "$__rc" -ne 0 ]; then '
+            f"msg=$(grep -v '^[[:space:]]*$' {shlex.quote(output_path)} | tail -1); "
+            f'[ -z "$msg" ] && msg="exit code $__rc"; '
+            f'{shlex.quote(notify_send)} "Entry Failed: $msg"; '
+            f"else {success_notify}; fi; "
+            f"rm -f {shlex.quote(output_path)}"
+        )
 
     def return_result(self, result):
         if "notify-result" in self.cmd:

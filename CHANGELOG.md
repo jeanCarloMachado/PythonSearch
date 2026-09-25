@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### Added
+- Native Rust "register new entry" form: `register_new_rust` binary alongside `ps_ui`, invoked via Alt+R outside the Python environment with full clipboard prefill and native window positioning.
+- `Actions.register_new()` in Rust core: calls `python_search register_new` and waits for completion with stderr capture for error reporting (unlike fire-and-forget daemon actions).
+- Window positioning for satellite forms (register-new): centered on primary screen, movable, distinct from the mouse-following launcher panel.
+- Notification wrapping for silent cmd entries: on failure, toast the last stderr line; with `notify_output: true`, toast stdout/stderr even on success; wrapping runs inside the detached subprocess so notifications survive the CLI exit.
+- PATH configuration in cmd interpreter: appends conda env bin paths so monorepo CLI tools (e.g. `monorepo` command) resolve from Karabiner's minimal environment.
+- Tests in `rust/ps-core/src/actions.rs` for `register_new` success/failure, stderr capture, argument order, and missing-binary detection.
+- Test for `share_only_value` with colons in keys (URLs, "Task: ..." entries) to prevent silent copy failures.
 - `run_before_cmd` on entries: run a shell command synchronously before the main action (after `call_before` if set); respects `directory`; fails fast on non-zero exit.
 - `run_shortcut` console script: resolve an entry key from a configured shortcut pattern (mac/gnome/xfce, single or list) and run it via `EntryRunner` with `from_shortcut=True` (Python Fire CLI).
 - LLM-assisted delete for a single entry: `python_search.entry_capture.llm_delete_entry` (ripgrep → OpenAI sed/perl plan → apply with logged stdout/stderr → optional OpenAI retries on tool failure, BSD `sed -f` hints). Validates only via `EntriesLoader` before/after delta (same as Search UI).
@@ -11,12 +18,15 @@
 - Tests in `tests/test_llm_delete_entry.py` for loader counts, snippet bounds, mocked delete flow, sed failure retry, and `delete_key --help`.
 
 ### Changed
+- Launcher copy-to-clipboard UX: show "Copied" toast for 450ms before auto-hiding, rather than hiding instantly; improves visual feedback on successful copy.
 - `run_before_cmd` execution in the base interpreter: capture subprocess output, forward stdout/stderr after completion, and append captured output to the error when the command fails; sequential execution is enabled only when `run_before_cmd` is non-empty.
 - URL entries: `run_before_cmd` uses the shared base implementation (no duplicate pre-command path).
 - `ConfigurationLoader.load_config` / `reload`: normalize entries folder to an absolute path, prepend it on `sys.path` (removing duplicates), drop a cached `entries_main` on reload, and refresh the loader singleton so disk edits and `PS_ENTRIES_HOME` match the Search UI and entry counts.
 - Search UI shortcut docs: Tab (edit), Ctrl+D (LLM delete), Shift+D / `;` (clear query).
+- Karabiner config template: registers new entries via native Rust form (Alt+R), preserving Python `register_new` console script for Rust form's subprocess call.
 
 ### Fixed
+- `share_only_value` now uses the exact key passed, no longer truncates at colons: prevents silent failures on URLs and colon-containing entry keys.
 - Exception notifications: call `error_panel` only when that executable is on `PATH`.
 - Serialized entry decoding: treat plain entry text without `:` or with an empty payload after `:` as non-JSON and return `{}` instead of raising.
 
