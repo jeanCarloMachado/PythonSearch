@@ -52,6 +52,7 @@ class CmdInterpreter(BaseInterpreter):
         cmd = self.apply_directory(self.cmd["cmd"])
 
         cmd = self._try_to_wrap_in_terminal(cmd)
+        cmd = self._try_to_notify_output(cmd)
 
         logger.info(f"Command to run: {cmd}")
         result = self._execute(cmd)
@@ -73,6 +74,34 @@ class CmdInterpreter(BaseInterpreter):
         logger.info(f"Command to run: {cmd}")
 
         return cmd
+
+    def _try_to_notify_output(self, cmd):
+        """
+        With "notify_output", show the command's combined stdout/stderr as a system notification once
+        it finishes, titled as a failure when it exits non-zero. Empty output (e.g. a cancelled input
+        prompt) sends nothing. Done in the shell because run_key exits before the command finishes.
+        """
+        if not self.cmd.get("notify_output"):
+            return cmd
+
+        from python_search.environment import is_mac
+
+        if is_mac():
+            notify = (
+                "osascript -e 'on run argv' "
+                "-e 'display notification (item 2 of argv) with title (item 1 of argv)' "
+                "-e 'end run' \"$title\" \"$output\""
+            )
+        else:
+            notify = 'notify-send -u "$urgency" "$title" "$output"'
+
+        return (
+            f'output="$( ( {cmd} ) 2>&1 )"; status=$?; '
+            'title="Python Search"; urgency=normal; '
+            'if [ "$status" -ne 0 ]; then title="Python Search: command failed ($status)"; urgency=critical; '
+            'output="$(printf "%s" "$output" | tail -n 5)"; fi; '
+            f'[ -n "$output" ] && {notify}'
+        )
 
     def _get_window_title(self):
         if "window_title" in self.cmd:
