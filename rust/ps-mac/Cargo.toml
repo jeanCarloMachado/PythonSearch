@@ -4,6 +4,12 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 
+[dependencies]
+raw-window-handle = "0.6"
+
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+libc = "0.2"
+
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2 = "0.6"
 objc2-foundation = { version = "0.3", features = ["NSString", "NSGeometry", "NSThread", "NSCalendar", "NSDate"] }
@@ -20,5 +26,4 @@ objc2-app-kit = { version = "0.3", features = [
     "NSWorkspace",
     "NSAppearance",
 ] }
-raw-window-handle = "0.6"
 dispatch2 = "0.3"

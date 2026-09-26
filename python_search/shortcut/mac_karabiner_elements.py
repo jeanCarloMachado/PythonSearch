@@ -2,6 +2,7 @@ import json
 import os
 
 from python_search.host_system.system_paths import SystemPaths
+from python_search.shortcut.shortcuts import entry_shortcuts, is_caps_lock, is_right_command
 
 
 class MacKarabinerElements:
@@ -44,16 +45,10 @@ class MacKarabinerElements:
             if not isinstance(content, dict):
                 continue
 
-            if "mac_shortcut" in content:
+            for shortcut in entry_shortcuts(content):
                 karabiner_content["profiles"][0]["complex_modifications"]["rules"].append(
-                    self.parse_mac_shortcut(content["mac_shortcut"], content, key)
+                    self.parse_mac_shortcut(shortcut, content, key)
                 )
-
-            if "mac_shortcuts" in content:
-                for shortcut in content["mac_shortcuts"]:
-                    karabiner_content["profiles"][0]["complex_modifications"]["rules"].append(
-                        self.parse_mac_shortcut(shortcut, content, key)
-                    )
 
         # write the new content to the main file
         with open(self.MAIN_KARABINER_ELEMENTS_FILE, "w") as file:
@@ -74,12 +69,16 @@ class MacKarabinerElements:
         shortcut_dict["description"] = f"RUN {key} with shortcut {shortcut}"
         shortcut_dict["manipulators"] = [{"from": {}, "to": [{"shell_command": shell_command}], "type": "basic"}]
 
-        if shortcut == "right_gui":
+        if shortcut == "right_gui" or is_right_command(shortcut):
             shortcut_dict["manipulators"][0]["from"]["key_code"] = "right_gui"
             return shortcut_dict
         if shortcut == "right_gui_shift":
             shortcut_dict["manipulators"][0]["from"]["key_code"] = "right_gui"
             shortcut_dict["manipulators"][0]["from"]["modifiers"] = {"mandatory": ["left_shift"]}
+            return shortcut_dict
+
+        if is_caps_lock(shortcut):
+            shortcut_dict["manipulators"][0]["from"]["key_code"] = "caps_lock"
             return shortcut_dict
 
         if shortcut == "right_alt":

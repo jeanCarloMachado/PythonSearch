@@ -51,6 +51,25 @@ Example:
     "call_after": "python_search run_key 'localhost 5000'",
 ```
 
+## shortcut / shortcuts
+
+Type: Str / List[Str]
+
+Global hotkeys that run the entry, e.g. `"shortcuts": ["⌘⇧E"]`. See [shortcuts.md](shortcuts.md)
+for the full reference.
+
+## notify_output
+
+Type: Boolean, default False. Applies to `cmd` entries.
+
+Shows the command's combined stdout/stderr as a system notification when it finishes (notify-send
+on Linux, osascript on macOS). When the command exits non-zero the notification is titled as a
+failure and shows the last 5 lines. Empty output sends nothing.
+
+```py
+"git pull monorepo": {"cmd": "git -C ~/prj/monorepo pull", "notify_output": True},
+```
+
 ## Ask confirmation
 
 "ask_confirmation": True,
@@ -64,5 +83,5 @@ To get a popup asking to continue before doing so.
 
 ## Other
 
-"file": ""HOME + "/Desktop/books/StaffEng-Digital.pdf""",
+"file": HOME + "/Desktop/books/StaffEng-Digital.pdf",  # opens with the default app (open / xdg-open)
 "disable_sequential_execution": True,

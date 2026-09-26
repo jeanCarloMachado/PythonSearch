@@ -59,9 +59,22 @@ python_search search
 
 Read our documentaiton here for more in [depth knwoledge](https://docs.google.com/document/d/1Y_-kdEea9IQshUU-anWKC8sDUJ_y3XRvQJWZ6CV3pWw/edit#heading=h.kwxo59w3vr4x).
 
-## Native launcher (macOS)
+## Shortcuts
 
-On macOS there is a second front end: a Spotlight-style panel written in Rust, in
+Give any entry a global hotkey with one `shortcut` / `shortcuts` field, written in Mac glyph
+notation. The same definition is used on macOS (Karabiner), GNOME and XFCE:
+
+```py
+"open mail": {"url": "https://mail.google.com", "shortcuts": ["⌥M"]},
+"launcher": {"cmd": "ps_ui show", "shortcut": "capslock"},
+```
+
+Then run `python_search shortcuts`. See [docs/shortcuts.md](docs/shortcuts.md) for the notation and
+per-platform details.
+
+## Native launcher (macOS and Linux)
+
+There is a second front end: a Spotlight-style launcher written in Rust, in
 **[`rust/`](rust/README.md)**. It is a single self-contained binary with no runtime dependencies.
 
 A resident daemon holds the entries in memory and ranks them in-process, so searching never starts
@@ -69,20 +82,31 @@ a Python interpreter — the terminal UI boots two of them per launch. Running a
 out to `run_key`, so every interpreter behaviour is shared between the two front ends.
 
 ```sh
-rust/install.sh     # build, install to ~/.local/bin/ps_ui, register the daemon
-ps_ui show          # open the panel
+rust/install.sh     # macOS: build, install to ~/.local/bin/ps_ui, register the LaunchAgent
+ps_ui show          # open the launcher
 ```
+
+On Linux (X11 or Wayland) build it with `cargo build --release -p ps-ui` in `rust/`, start
+`ps_ui daemon` at login, and bind `ps_ui show` to a key through an entry shortcut. See
+[`rust/README.md`](rust/README.md#linux).
 
 | | terminal UI (`term_ui`) | native launcher (`ps_ui`) |
 |---|---|---|
 | Startup | two Python interpreters per launch | resident, ~10 ms to show |
 | Search | BM25 in Python over the full corpus | in-memory fuzzy match, 0.1–2 ms |
-| Rendering | full ANSI repaint per keystroke | GPU, in a real macOS panel |
-| Host | a Kitty window | its own borderless window with vibrancy |
+| Rendering | full ANSI repaint per keystroke | GPU (a macOS panel, or a window on Linux) |
+| Host | a Kitty window | its own borderless window |
 
 Both read the same entries and run the same executor; `term_ui` is untouched and remains available
 via `python_search search`. See [`rust/README.md`](rust/README.md) for the source layout, key
-bindings, ranking, and the macOS-specific notes.
+bindings, ranking, and platform notes.
+
+## Documentation
+
+- [Entry options](docs/entries_options.md): every field an entry can have
+- [Shortcuts](docs/shortcuts.md): global hotkeys for entries
+- [Terminal configuration](TERMINAL_CONFIG.md): iTerm, Kitty or Terminator for `cli_cmd` entries
+- [Changelog](CHANGELOG.md)
 
 ## Got an issue?
 
@@ -110,3 +134,59 @@ Copyright 2022 Jean Carlo Machado
 
 
 See also our [website](https://jeancarlomachado.github.io/PythonSearch/)
+
+## Binaries
+
+Installing the Python package (`pip install python-search`, or `poetry install` for development)
+puts these console scripts on your `PATH`. They are defined in `pyproject.toml` under
+`[tool.poetry.scripts]`:
+
+| Binary | What it does |
+|---|---|
+| `python_search` | Main CLI: `search`, `shortcuts`, `register_new`, `new_project`, and more. Run it with no arguments for the full list |
+| `pys` | Shortcut for `python_search search` |
+| `term_ui` | The terminal search UI on its own |
+| `run_key` | Run one entry by key, e.g. `run_key 'open mail'` |
+| `run_shortcut` | Run the entry that owns a shortcut, e.g. `run_shortcut '⌘⇧E'` |
+| `entries_editor` | Open an entry's definition in the editor (`edit_key`) or delete it (`delete_key`) |
+| `share_entry` | Share an entry (`share_key <key>`) |
+| `collect_input` | GUI window that asks for text (optionally prefilled from the clipboard) and prints it |
+| `collect_input_textual` | Terminal (Textual) version of `collect_input` |
+| `clipboard` | Read and write the clipboard |
+| `browser` | Open a URL in the configured browser, cross-platform |
+| `google_it` | Google a query, or open it directly if it is a URL |
+| `notify_send` | Show a system notification |
+| `register_new_launch_ui` | Broken: points at `entry_capture/entry_inserter_gui/register_new_gui.py`, which no longer exists. Use `python_search register_new_ui` |
+
+The Rust workspace in [`rust/`](rust/README.md) adds one more:
+
+| Binary | What it does |
+|---|---|
+| `ps_ui` | Native launcher: `daemon`, `show`, `hide`, `toggle`, `reload`, `quit`, `ui`, `search <query>`, `screenshot` |
+
+`rust/install.sh` is a macOS helper script, not a binary: it builds `ps_ui`, installs it, and
+registers the LaunchAgent.
+
+### Building the Rust binaries
+
+To build every binary in the Rust workspace and put it on your `PATH`:
+
+```sh
+cd rust
+cargo build --release --workspace
+
+# copy every built executable to ~/.local/bin
+mkdir -p ~/.local/bin
+find target/release -maxdepth 1 -type f -perm -u+x -exec install -m 0755 {} ~/.local/bin/ \;
+```
+
+If `~/.local/bin` (the installed binaries) or `~/.cargo/bin` (`cargo` itself, from rustup) is not on
+your `PATH` yet, add them to your shell profile (`~/.bashrc` or `~/.zshrc`) and open a new shell:
+
+```sh
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+```
+
+Check it with `which ps_ui`. You need a Rust toolchain of 1.82 or newer (`rustup update`). On macOS,
+`rust/install.sh` does the same for `ps_ui` and also registers the daemon as a LaunchAgent; on Linux
+start `ps_ui daemon` at login yourself (see [`rust/README.md`](rust/README.md#linux)).

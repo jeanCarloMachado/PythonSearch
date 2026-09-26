@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 
 
@@ -31,7 +32,7 @@ def _read_python_search_path() -> str:
 class SystemPaths:
     PYTHON_SEARCH_PATH = _read_python_search_path()
 
-    KITTY_BINNARY = "/opt/homebrew/bin/kitty"
+    KITTY_BINNARY = shutil.which("kitty") or "/opt/homebrew/bin/kitty"
     VIM_BINNARY = "/usr/bin/vim"
 
     @staticmethod

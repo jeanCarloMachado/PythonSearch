@@ -31,7 +31,7 @@ impl fmt::Display for EntryType {
     }
 }
 
-/// One record of `~/.python_search/data/entries.json`.
+/// One record of the JSON printed by `python_search _entries_loader print_entries`.
 #[derive(Debug, Clone, Deserialize)]
 pub struct Entry {
     pub key: String,
@@ -46,9 +46,9 @@ pub struct Entry {
     #[serde(default)]
     pub description: Option<String>,
     #[serde(default)]
-    pub mac_shortcuts: Vec<String>,
+    pub shortcuts: Vec<String>,
     #[serde(default)]
-    pub mac_shortcut: Option<String>,
+    pub shortcut: Option<String>,
 }
 
 impl Entry {
@@ -71,9 +71,9 @@ impl Entry {
 
     /// The shortcut glyphs to show as a hint on the row, if the entry has one bound.
     pub fn shortcut(&self) -> Option<&str> {
-        self.mac_shortcuts
+        self.shortcuts
             .first()
             .map(String::as_str)
-            .or(self.mac_shortcut.as_deref())
+            .or(self.shortcut.as_deref())
     }
 }

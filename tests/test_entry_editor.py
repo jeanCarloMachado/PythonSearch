@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import sys
 
 from python_search.entry_capture.entries_editor import EntriesEditor
 
@@ -19,19 +20,31 @@ def test_ripgrep_functionality():
 
 
 def test_entries_editor_initialization():
-    """Test that EntriesEditor can initialize with ripgrep"""
+    """Test that EntriesEditor uses the ripgrep found on PATH"""
     editor = EntriesEditor()
-    assert (
-        editor._search_cmd == "/opt/homebrew/bin/rg"
-    ), f"Expected '/opt/homebrew/bin/rg', got: {editor._search_cmd}"
+    assert editor._search_cmd == shutil.which("rg")
 
 
 def test_entries_editor_search_command():
-    """Test that EntriesEditor generates correct ripgrep commands"""
+    """Test that EntriesEditor searches for the key as a dict key"""
     editor = EntriesEditor()
     cmd = editor._build_search_command("test_key")
-    assert "/opt/homebrew/bin/rg -n -i --type py 'test_key'" in cmd
-    assert "|| true" in cmd
+    assert cmd[:6] == [shutil.which("rg"), "-n", "-i", "--type", "py", "--sort"]
+    assert cmd[7] == "^\\s*[\"']test_key[\"']\\s*:"
+
+
+def test_entries_editor_finds_key_declaration_not_other_mentions(tmp_path):
+    """The key's own declaration is found, not a line that merely mentions it"""
+    (tmp_path / "a_usage.py").write_text('if tab == "calendar":\n    x = "google calendar"\n')
+    (tmp_path / "b_entries.py").write_text('entries = {\n    "google calendar": {\n        "url": "x",\n    },\n}\n')
+    editor = EntriesEditor()
+    editor.configuration.get_project_root = lambda: str(tmp_path)
+
+    out = subprocess.run(
+        editor._build_search_command("google calendar"), capture_output=True, text=True
+    ).stdout
+
+    assert out.splitlines()[0] == f"{tmp_path}/b_entries.py:2:    \"google calendar\": {{"
 
 
 def test_entries_editor_edit_key_help_command_returns_output():
@@ -56,7 +69,7 @@ def test_entries_editor_edit_key_help_command_returns_output():
     """
     # setup
     cmd = [
-        "python",
+        sys.executable,
         "-m",
         "python_search.entry_capture.entries_editor",
         "edit_key",
@@ -68,7 +81,7 @@ def test_entries_editor_edit_key_help_command_returns_output():
         cmd,
         capture_output=True,
         text=True,
-        cwd="/Users/jean.machado@getyourguide.com/prj/PythonSearch",
+        cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     )
 
     # assert

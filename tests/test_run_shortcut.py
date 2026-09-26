@@ -6,11 +6,11 @@ from python_search.shortcut.runner import ShortcutRunner
 from tests.utils import build_config
 
 
-def test_run_shortcut_uses_matching_mac_shortcut():
+def test_run_shortcut_uses_matching_shortcut():
     configuration = build_config(
         {
-            "open mail": {"mac_shortcuts": ["⌥M", "⌘⇧M"]},
-            "open search": {"mac_shortcut": "⌥Space"},
+            "open mail": {"shortcuts": ["⌥M", "⌘⇧M"]},
+            "open search": {"shortcut": "⌥Space"},
         }
     )
     runner = ShortcutRunner(configuration=configuration)
@@ -24,13 +24,13 @@ def test_run_shortcut_uses_matching_mac_shortcut():
 def test_run_shortcut_matches_case_and_whitespace_insensitively():
     configuration = build_config(
         {
-            "open reports": {"gnome_shortcut": "Control+Shift+R"},
+            "open reports": {"shortcut": "⌘⇧R"},
         }
     )
     runner = ShortcutRunner(configuration=configuration)
     runner._entry_runner = MagicMock()
 
-    runner.run("control + shift + r")
+    runner.run("⌘ ⇧ r")
 
     runner._entry_runner.run.assert_called_once_with("open reports", from_shortcut=True)
 
@@ -38,7 +38,7 @@ def test_run_shortcut_matches_case_and_whitespace_insensitively():
 def test_run_shortcut_raises_when_pattern_is_not_configured():
     configuration = build_config(
         {
-            "open search": {"mac_shortcut": "⌥Space"},
+            "open search": {"shortcut": "⌥Space"},
         }
     )
     runner = ShortcutRunner(configuration=configuration)

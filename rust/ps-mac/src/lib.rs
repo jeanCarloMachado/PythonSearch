@@ -27,11 +27,24 @@ mod stub {
     pub fn hide_from_dock() {}
     pub fn center_on_active_screen(_handle: RawWindowHandle, _width: f64, _height: f64) {}
     pub fn center_on_main_screen(_handle: RawWindowHandle, _width: f64, _height: f64) {}
+    /// Follows GNOME's `color-scheme` setting; dark when it cannot be read.
     pub fn is_dark_mode() -> bool {
-        true
+        std::process::Command::new("gsettings")
+            .args(["get", "org.gnome.desktop.interface", "color-scheme"])
+            .output()
+            .map(|output| {
+                let scheme = String::from_utf8_lossy(&output.stdout);
+                !output.status.success() || scheme.contains("dark")
+            })
+            .unwrap_or(true)
     }
     pub fn local_hour() -> u8 {
-        12
+        let mut tm: libc::tm = unsafe { std::mem::zeroed() };
+        let now = unsafe { libc::time(std::ptr::null_mut()) };
+        if unsafe { libc::localtime_r(&now, &mut tm) }.is_null() {
+            return 12;
+        }
+        tm.tm_hour.clamp(0, 23) as u8
     }
     pub fn set_floating(_handle: RawWindowHandle, _floating: bool) {}
     pub fn set_movable(_handle: RawWindowHandle, _movable: bool) {}
@@ -44,3 +57,18 @@ mod stub {
 
 #[cfg(not(target_os = "macos"))]
 pub use stub::*;
+
+#[cfg(all(test, not(target_os = "macos")))]
+mod tests {
+    #[test]
+    fn local_hour_matches_the_system_clock() {
+        let expected = std::process::Command::new("date")
+            .arg("+%H")
+            .output()
+            .map(|output| String::from_utf8_lossy(&output.stdout).trim().parse::<u8>().unwrap())
+            .unwrap();
+        // Tolerate the hour rolling over between the two reads.
+        let hour = super::local_hour();
+        assert!(hour == expected || hour == (expected + 1) % 24, "{hour} vs {expected}");
+    }
+}

@@ -15,14 +15,12 @@ entries = {
     # NEW_ENTRIES_HERE
     "python search open search ui": {
         "cmd": "python_search_search run",
-        "xfce_shortcut": "<Control>space",
-        "mac_shortcuts": ["⌥Space"],
+        "shortcuts": ["⌥Space"],
     },
     "register new entry ui": {
         # cmd scripts will be executed in a terminal in the background
         "cmd": "python_search register_new from_clipboard",
-        "xfce_shortcut": "<Control>r",
-        "mac_shortcuts": ["⌥R"],
+        "shortcuts": ["⌥R"],
     },
     # cli cmds will additional open a new terminal window and execute the  command
     "edit current project _entries source code": {
@@ -45,8 +43,7 @@ entries = {
     # example with shortcuts
     "gmail application": {
         "url": "https://mail.google.com/",
-        "mac_shortcuts": ["⌥M"],
-        "xfce_shortcut": "<Super>m",
+        "shortcuts": ["⌥M"],
     },
     # _entries are python code, you can import them from other python scripts
     # or you can generate them dynamically like in the example below

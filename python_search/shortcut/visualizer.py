@@ -1,4 +1,5 @@
 from python_search.configuration.loader import ConfigurationLoader
+from python_search.shortcut.shortcuts import entry_shortcuts
 
 
 class ShortcutsVisualizer:
@@ -9,15 +10,8 @@ class ShortcutsVisualizer:
         shortcuts_to_keys = []
 
         for key, content in list(self.configuration.commands.items()):
-            if not isinstance(content, dict):
-                continue
-
-            if "mac_shortcut" in content:
-                shortcuts_to_keys.append((content["mac_shortcut"], key))
-
-            if "mac_shortcuts" in content:
-                for shortcut in content["mac_shortcuts"]:
-                    shortcuts_to_keys.append((shortcut, key))
+            for shortcut in entry_shortcuts(content):
+                shortcuts_to_keys.append((shortcut, key))
         # sort
 
         shortcuts_to_keys = sorted(

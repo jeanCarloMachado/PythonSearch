@@ -1,4 +1,5 @@
 use crate::paths;
+use crate::Entry;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -136,15 +137,37 @@ impl Actions {
         }
     }
 
-    /// Regenerate the entries dump. Runs in the background; the watcher picks up the new file.
-    pub fn dump_entries(&self) -> std::io::Result<std::process::Child> {
-        Command::new(self.binary("python_search"))
-            .args(["_entries_loader", "dump_entries"])
-            .stdin(Stdio::null())
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .spawn()
+    /// Load every entry by running the Python entries functions and reading their JSON from stdout.
+    ///
+    /// Blocks for as long as Python takes (~150 ms plus interpreter start), so callers keep it off
+    /// the UI thread once the window is up.
+    pub fn load_entries(&self) -> anyhow::Result<Vec<Entry>> {
+        parse_entries(&self.load_entries_json()?)
     }
+
+    /// The raw JSON behind `load_entries`, for callers that pass it on to another process.
+    pub fn load_entries_json(&self) -> anyhow::Result<Vec<u8>> {
+        use anyhow::Context;
+
+        let binary = self.binary("python_search");
+        let output = Command::new(&binary)
+            .args(["_entries_loader", "print_entries"])
+            .stdin(Stdio::null())
+            .stderr(Stdio::inherit())
+            .output()
+            .with_context(|| format!("could not run {}", binary.display()))?;
+
+        if !output.status.success() {
+            anyhow::bail!("{} print_entries exited with {}", binary.display(), output.status);
+        }
+        Ok(output.stdout)
+    }
+}
+
+/// Parse the JSON printed by `python_search _entries_loader print_entries`.
+pub fn parse_entries(json: &[u8]) -> anyhow::Result<Vec<Entry>> {
+    use anyhow::Context;
+    serde_json::from_slice(json).context("malformed entries from print_entries")
 }
 
 /// Append a run event in the same shape `python_search/events/run_performed/` writes, so the Python

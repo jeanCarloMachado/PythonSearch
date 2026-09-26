@@ -1,4 +1,9 @@
-import os
+import shlex
+import subprocess
+
+from python_search.host_system.system_paths import SystemPaths
+from python_search.shortcut.keyd import Keyd
+from python_search.shortcut.shortcuts import entry_shortcuts, keyd_remap, to_linux_accelerator
 
 
 class XFCE:
@@ -7,15 +12,31 @@ class XFCE:
 
     def generate(self):
         print("Generating XFCE-Shortcuts")
-        os.system(
-            "xfconf-query -c xfce4-keyboard-shortcuts -p '/commands/custom/<Super>r' -n -t string -s firefox"
-        )
+        run_key = SystemPaths.get_binary_full_path("run_key")
 
         for key, content in list(self.configuration.commands.items()):
-            if not isinstance(content, dict):
-                continue
-
-            if "xfce_shortcut" in content:
-                command = f"""xfconf-query -c xfce4-keyboard-shortcuts -p '/commands/custom/{content['xfce_shortcut']}' -n -t string -s 'run_key "{key}"' """
-                print(command)
-                os.system(command)
+            for shortcut in entry_shortcuts(content):
+                accelerator = to_linux_accelerator(shortcut)
+                if accelerator is None:
+                    print(f"Skipping {shortcut} for '{key}': not bindable on Linux")
+                    continue
+                remap = keyd_remap(shortcut)
+                if remap:
+                    Keyd().ensure(*remap)
+                command = f"{shlex.quote(run_key)} {shlex.quote(key)} --from_shortcut=True"
+                print(f"{accelerator} -> {command}")
+                subprocess.run(
+                    [
+                        "xfconf-query",
+                        "-c",
+                        "xfce4-keyboard-shortcuts",
+                        "-p",
+                        f"/commands/custom/{accelerator}",
+                        "-n",
+                        "-t",
+                        "string",
+                        "-s",
+                        command,
+                    ],
+                    check=False,
+                )

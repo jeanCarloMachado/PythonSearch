@@ -18,3 +18,8 @@ opt-level = 3
 lto = "thin"
 codegen-units = 1
 strip = true
+
+# egui-winit ignores the Super key on Linux; the vendored copy maps it to `command` so the
+# macOS ⌘ shortcuts in ps-ui work with Super. See vendor/egui-winit/src/lib.rs (ModifiersChanged).
+[patch.crates-io]
+egui-winit = { path = "vendor/egui-winit" }

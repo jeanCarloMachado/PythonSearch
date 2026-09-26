@@ -47,8 +47,8 @@ class EntriesLoader:
         "tags",
         "created_at",
         "description",
-        "mac_shortcut",
-        "mac_shortcuts",
+        "shortcut",
+        "shortcuts",
         "app_mode",
         "focus_match",
         "app_focus_title",
@@ -68,6 +68,39 @@ class EntriesLoader:
         The write is atomic so a reader never observes a partial file.
         """
         path = path or EntriesLoader.DEFAULT_DUMP_PATH
+        records = EntriesLoader.entries_records()
+
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        tmp_path = f"{path}.tmp.{os.getpid()}"
+        with open(tmp_path, "w") as f:
+            json.dump(records, f, ensure_ascii=False)
+        os.replace(tmp_path, path)
+
+        EntriesLoader._write_dump_metadata(path)
+
+        print(f"Dumped {len(records)} entries to {path}")
+        return path
+
+    @staticmethod
+    def print_entries() -> None:
+        """
+        Write the same records as dump_entries to stdout, so the Rust launcher gets them straight from
+        the entries functions instead of a file on disk.
+
+        Anything the entries modules print while loading is sent to stderr so stdout stays valid JSON.
+        """
+        import contextlib
+        import sys
+
+        stdout = sys.stdout
+        with contextlib.redirect_stdout(sys.stderr):
+            records = EntriesLoader.entries_records()
+        json.dump(records, stdout, ensure_ascii=False)
+        stdout.flush()
+
+    @staticmethod
+    def entries_records() -> List[dict]:
+        """The rich, machine readable form of every entry, shared by dump_entries and print_entries."""
         entries = ConfigurationLoader().load_entries()
 
         records = []
@@ -83,17 +116,7 @@ class EntriesLoader:
                     if field in value:
                         record[field.replace("-", "_")] = EntriesLoader._jsonable(value[field])
             records.append(record)
-
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        tmp_path = f"{path}.tmp.{os.getpid()}"
-        with open(tmp_path, "w") as f:
-            json.dump(records, f, ensure_ascii=False)
-        os.replace(tmp_path, path)
-
-        EntriesLoader._write_dump_metadata(path)
-
-        print(f"Dumped {len(records)} entries to {path}")
-        return path
+        return records
 
     @staticmethod
     def _jsonable(value):

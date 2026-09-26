@@ -91,3 +91,28 @@ pub fn listen(sender: Sender<Command>, wake: impl Fn() + Send + 'static) -> Resu
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Command;
+
+    #[test]
+    fn every_command_survives_the_socket_round_trip() {
+        for command in [
+            Command::Show,
+            Command::Hide,
+            Command::Toggle,
+            Command::Reload,
+            Command::Quit,
+            Command::Screenshot,
+        ] {
+            assert_eq!(Command::parse(&format!("{}\n", command.as_str())), Some(command));
+        }
+    }
+
+    #[test]
+    fn unknown_commands_are_ignored() {
+        assert_eq!(Command::parse("open"), None);
+        assert_eq!(Command::parse(""), None);
+    }
+}

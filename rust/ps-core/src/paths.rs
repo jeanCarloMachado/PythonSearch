@@ -41,16 +41,31 @@ pub fn resolve_binaries_dir() -> Option<PathBuf> {
         }
     }
 
-    if let Some(path) = std::env::var_os("PATH") {
-        for dir in std::env::split_paths(&path) {
-            if dir.join("run_key").exists() {
-                return Some(dir);
+    // `~/.local/bin` is searched too, since a desktop-launched daemon may not have it on PATH.
+    let mut dirs: Vec<PathBuf> = std::env::var_os("PATH")
+        .map(|path| std::env::split_paths(&path).collect())
+        .unwrap_or_default();
+    if let Some(home) = dirs::home_dir() {
+        dirs.push(home.join(".local/bin"));
+    }
+    for dir in dirs {
+        if dir.join("run_key").exists() {
+            return Some(dir);
+        }
+        // Only `python_search` may be linked onto PATH; the other scripts sit next to its target.
+        if let Some(target_dir) = std::fs::canonicalize(dir.join("python_search"))
+            .ok()
+            .and_then(|target| target.parent().map(PathBuf::from))
+        {
+            if target_dir.join("run_key").exists() {
+                return Some(target_dir);
             }
         }
     }
 
     // Last resort: ask a login shell, which has the user's full environment.
-    let output = std::process::Command::new("/bin/zsh")
+    let shell = std::env::var("SHELL").unwrap_or_else(|_| "/bin/sh".to_string());
+    let output = std::process::Command::new(shell)
         .args(["-lc", "command -v run_key"])
         .output()
         .ok()?;

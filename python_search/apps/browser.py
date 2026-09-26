@@ -95,13 +95,29 @@ class Browser:
 
             return f"open -a 'Google Chrome' {url}"
 
-        return f"google-chrome {url}"
+        binary = self._linux_chrome_binary() or "google-chrome"
+        if self._focus_title or self._app_mode:
+            return f"{binary} --app={url}"
+        return f"{binary} {url}"
+
+    @staticmethod
+    def _linux_chrome_binary() -> Optional[str]:
+        """Arch and some other distros only install `google-chrome-stable`."""
+        import shutil
+
+        for name in ("google-chrome", "google-chrome-stable"):
+            if shutil.which(name):
+                return name
+        return None
 
     def fail_safe(self, url: str):
+        """Chrome is the default browser; Firefox is only used on Linux when Chrome is missing."""
         if self._is_mac():
             return self._chrome(url)
 
         if self._is_linux():
+            if self._linux_chrome_binary():
+                return self._chrome(url)
             return self._firefox(url)
 
         raise Exception(

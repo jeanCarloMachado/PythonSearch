@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.entry_runner import EntryRunner
+from python_search.shortcut.shortcuts import entry_shortcuts
 
 
 class ShortcutRunner:
@@ -22,36 +23,11 @@ class ShortcutRunner:
             if not isinstance(content, dict):
                 continue
 
-            for configured_shortcut in self._extract_shortcuts(content):
+            for configured_shortcut in entry_shortcuts(content):
                 if self._normalize_shortcut(configured_shortcut) == normalized_shortcut:
                     return key
 
         raise Exception(f"No key found for shortcut pattern: {shortcut_pattern}")
-
-    @staticmethod
-    def _extract_shortcuts(content: dict) -> list[str]:
-        result = []
-        shortcut_fields = [
-            "mac_shortcut",
-            "mac_shortcuts",
-            "gnome_shortcut",
-            "gnome_shortcuts",
-            "xfce_shortcut",
-            "xfce_shortcuts",
-        ]
-
-        for field in shortcut_fields:
-            if field not in content:
-                continue
-
-            value = content[field]
-            if isinstance(value, list):
-                result.extend(str(shortcut) for shortcut in value)
-                continue
-
-            result.append(str(value))
-
-        return result
 
     @staticmethod
     def _normalize_shortcut(shortcut: str) -> str:

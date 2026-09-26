@@ -1,6 +1,6 @@
 # ps_ui — native launcher for PythonSearch
 
-A Spotlight-style macOS launcher for PythonSearch entries. One self-contained binary: no runtime
+A Spotlight-style launcher for PythonSearch entries, on macOS and Linux (X11 and Wayland). One self-contained binary: no runtime
 dependencies, no terminal emulator, no Python on the search path.
 
 ## Why
@@ -20,7 +20,7 @@ Caps Lock ──karabiner──> `ps_ui show`  (~8 ms, all process startup)
                    ps_ui daemon (LaunchAgent, always resident)
                        ├─ 10,751 entries in RAM, nucleo fuzzy matcher
                        ├─ eframe/egui window, pre-created, hidden
-                       └─ file watcher → background `dump_entries`
+                       └─ `reload` → background `print_entries`
                              │
    Enter ────────────────────┴──> `run_key "<key>"`   (unchanged Python)
 ```
@@ -51,8 +51,7 @@ rust/
     ├── src/main.rs               daemon, show/hide, reload, focus tracking
     ├── src/app.rs                layout, input handling, rendering
     ├── src/theme.rs              palettes, metrics, fonts, time-of-day switch
-    ├── src/daemon.rs             unix socket protocol
-    └── src/watcher.rs            entries file watcher
+    └── src/daemon.rs             unix socket protocol
 ```
 
 | Crate | Role |
@@ -68,9 +67,8 @@ window. `ps-mac` is the only crate that touches AppKit.
 
 | File | Change |
 |---|---|
-| `python_search/search/entries_loader.py` | `dump_entries()` — the rich JSON export this reads |
+| `python_search/search/entries_loader.py` | `print_entries()` — the rich JSON export this reads from stdout |
 | `python_search/shortcut/mac_karabiner_elements.py` | expands `__PS_UI__` to the installed binary |
-| `karabiner_base.json` | Caps Lock opens the launcher |
 | `DESIGN.md` | describes both front ends |
 
 `terminal_ui.py`, `QueryLogic.py`, `bm25_search.py`, `kitty_for_search_ui.py` and every interpreter
@@ -83,29 +81,70 @@ are untouched — `term_ui` remains a working fallback.
 ps_ui show       # confirm the panel appears
 ```
 
-`install.sh` builds, installs to `~/.local/bin/ps_ui`, generates the entries dump, and registers the
-LaunchAgent so the daemon starts at login and restarts if it crashes. It deliberately does **not**
-rebind Caps Lock — see below.
+`install.sh` (macOS only) builds, installs to `~/.local/bin/ps_ui`, generates the entries dump, and
+registers the LaunchAgent so the daemon starts at login and restarts if it crashes. It deliberately
+does **not** bind a hotkey — see below.
 
-### The Caps Lock binding
+### Binding a hotkey
 
-Caps Lock opens the native launcher. `karabiner_base.json` holds the placeholder
-`__PS_UI__ show`, which `python_search/shortcut/mac_karabiner_elements.py` expands to the absolute
-path of the installed binary when generating `~/.config/karabiner/karabiner.json` — Karabiner runs
-shell commands with a minimal PATH, so the full path is required.
+The launcher is bound like any other entry, with a [shortcut](../docs/shortcuts.md):
 
-Regenerate after changing anything with `python_search shortcuts`.
+```py
+"launcher": {"cmd": "ps_ui show", "shortcut": "capslock"},
+```
 
-To roll back to the terminal UI, set that `shell_command` back to
-`python_search search focus_or_open` and regenerate. `term_ui` is untouched and still works.
+Then run `python_search shortcuts`. On macOS this becomes a Karabiner rule; on Linux keyd maps Caps
+Lock to Ctrl+Alt+Super+Space and GNOME/XFCE bind that. `karabiner_base.json` still expands a
+`__PS_UI__` placeholder to the installed binary path, for hand-written rules that call `ps_ui`
+directly.
+
+To roll back to the terminal UI, point the entry at `python_search search focus_or_open` and
+regenerate. `term_ui` is untouched and still works.
+
+## Linux
+
+```sh
+cargo build --release -p ps-ui
+install -m 0755 target/release/ps_ui ~/.local/bin/ps_ui
+ps_ui daemon &      # start it at login, e.g. from your desktop's autostart
+ps_ui show
+```
+
+winit cannot hide and re-show a window on Wayland, so the Linux daemon has no resident window.
+It holds the entries JSON and starts a fresh `ps_ui ui --entries-stdin` window process for every
+`show`, piping the entries in, so opening a window never runs Python:
+
+```mermaid
+sequenceDiagram
+    participant K as hotkey
+    participant D as ps_ui daemon
+    participant P as python_search
+    participant W as ps_ui ui --entries-stdin
+    D->>P: _entries_loader print_entries (startup, reload)
+    P-->>D: entries JSON on stdout
+    K->>D: show (unix socket ~/.python_search/ps.sock)
+    D->>W: spawn, write entries to stdin
+    W->>W: search, Enter → run_key "<key>"
+    Note over W: Esc or window closed → process exits
+    W->>D: reload (only after ⌘R / Ctrl+R in the window)
+```
+
+`show` always opens a new, focused window (replacing an open one), because Wayland does not let a
+window raise itself. `toggle` and `hide` close it. As on macOS the theme follows the time of day;
+`PS_UI_THEME=system` reads GNOME's `color-scheme` instead. `ps_ui screenshot` does nothing through the
+Linux daemon, since the window runs in its own process.
+
+The ⌘ key bindings use Super on Linux. Upstream egui-winit drops the Super modifier there, so the
+workspace patches it with the vendored copy in `vendor/egui-winit` (see `[patch.crates-io]` in
+`Cargo.toml`).
 
 ## Commands
 
 | Command | What it does |
 |---|---|
-| `ps_ui daemon` | run the resident daemon (what the LaunchAgent invokes) |
+| `ps_ui daemon` | run the resident daemon (what the LaunchAgent invokes; on Linux, start it yourself) |
 | `ps_ui show` / `hide` / `toggle` | poke the running daemon |
-| `ps_ui reload` | force a re-dump and reindex |
+| `ps_ui reload` | reload entries from Python (`print_entries`) and reindex |
 | `ps_ui quit` | stop the daemon |
 | `ps_ui ui` | run the window directly, without a daemon — useful when iterating on the UI |
 | `ps_ui search <query>` | headless ranking with timings, for debugging relevance |
@@ -125,7 +164,7 @@ To roll back to the terminal UI, set that `shell_command` back to
 | Tab | open the entry's definition in the editor |
 | ⌘⌫ | delete the entry (LLM-assisted, as in `term_ui`) |
 | Ctrl+G | google the query — the equivalent of `?` in the terminal UI |
-| ⌘R / Ctrl+R | re-dump and reindex, with a spinner and a confirmation |
+| ⌘R / Ctrl+R | reload entries and reindex, with a spinner and a confirmation |
 | Ctrl+U / Ctrl+W | clear the query / drop the trailing word |
 | Esc / Ctrl+C | hide (the daemon stays resident) |
 
@@ -185,9 +224,10 @@ the NLTK import that costs `term_ui` ~390 ms of its startup.
 
 The entries database is executable Python — ~14 entry groups are produced by function calls and
 `entries/dates/important_dates.py` is date-relative — so it cannot be parsed statically.
-`EntriesLoader.dump_entries()` writes a rich JSON dump (the full attribute bag, not just type and
-content) atomically to `~/.python_search/data/entries.json`. The daemon loads it once at startup and
-re-dumps in the background when `entries_main.py` or `entries/**` change.
+`ps_ui` runs `python_search _entries_loader print_entries`, which calls the entries functions and
+writes the rich records (the full attribute bag, not just type and content) as JSON to stdout. The
+daemon loads them once at startup and again only when asked to (`ps_ui reload` or the in-app
+reload); editing entries does not trigger a reload on its own.
 
 ## macOS notes
 

@@ -20,8 +20,10 @@ serde.workspace = true
 serde_json.workspace = true
 eframe = { version = "0.36", default-features = false, features = ["wgpu"] }
 egui = "0.36"
-notify = "6"
-notify-debouncer-mini = "0.4"
 image = { version = "0.25", default-features = false, features = ["png"] }
 dirs.workspace = true
 raw-window-handle = "0.6"
+
+# eframe is built without default features, which drops winit's Linux windowing backends.
+[target.'cfg(target_os = "linux")'.dependencies]
+eframe = { version = "0.36", default-features = false, features = ["wgpu", "wayland", "x11"] }

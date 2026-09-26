@@ -1,5 +1,43 @@
 # Changelog
 
+## 2026-09-26
+
+### Added
+- One `shortcut` / `shortcuts` field on entries, written in Mac glyph notation (`⌘⌥⌃⇧` + key), replaces the per-platform `mac_shortcut(s)` and `xfce_shortcut(s)` fields. `python_search/shortcut/shortcuts.py` translates it for Karabiner, GNOME and XFCE; `capslock` and `right_command` can be bound on every platform.
+- keyd integration (`python_search/shortcut/keyd.py`): on Linux, `python_search shortcuts` maps Caps Lock / right Super to a key combination in `/etc/keyd/default.conf` (via `sudo`) so desktops can bind them.
+- Terminator terminal (`terminal_app="terminator"`), used by default on Linux since iTerm only exists on macOS.
+- `python_search _entries_loader print_entries`: writes the rich entry records as JSON to stdout (entries modules' own prints go to stderr), so the Rust launcher reads entries without a dump file.
+- Native launcher (`ps_ui`) runs on Linux (X11 and Wayland): the daemon keeps entries in memory and opens each window as a `ps_ui ui --entries-stdin` process fed over stdin; `PS_UI_THEME=system` follows GNOME's `color-scheme`.
+- `notify_output` on `cmd` entries: show the command's output as a system notification when it finishes (notify-send / osascript), flagged as a failure with the last 5 lines when it exits non-zero (8a7f733).
+- Rust native launcher `ps_ui` in `rust/` (ps-core, ps-mac, ps-ui crates): resident daemon, in-memory fuzzy ranking with usage boost, AppKit panel, LaunchAgent install script; `EntriesLoader.dump_entries()` export and `__PS_UI__` expansion in the Karabiner config (f772af4).
+- `python_search register_new <key> <value> [--type]` to register an entry without the UI (96e2531).
+- Configurable terminal app for `cli_cmd` entries via `terminal_app` (`iterm` default, `kitty`), see `TERMINAL_CONFIG.md` (7f10731).
+- `app_mode` and `focus_match` on URL entries (6a26351).
+- Ctrl+R in the terminal UI reloads entries from disk (81bb3e9).
+- Tests for shortcut translation, keyd, `print_entries`, terminal selection, browser binary lookup, and Rust entry parsing / daemon protocol.
+
+### Changed
+- GNOME shortcuts only manage keybindings under the `python-search-` prefix instead of resetting all custom keybindings, so hand-made shortcuts survive; GNOME and shell-extension bindings on the same accelerator are released so the entry shortcut wins.
+- XFCE shortcuts use the shared translation and call `run_key` by absolute path with `--from_shortcut=True`.
+- `file` entries open with the platform's default app (`open` on macOS, `xdg-open` on Linux) as a background `cmd` instead of in Vim inside a terminal (1d82a5b).
+- `ps_ui` no longer watches entry files: entries are reloaded only on `ps_ui reload` or the in-app reload (⌘R / Ctrl+R). The file watcher and the `notify` dependencies are removed.
+- The Caps Lock → `ps_ui show` binding moved from `karabiner_base.json` into an entry (`"shortcut": "capslock"`).
+- Linux: Chrome is the default browser (`google-chrome` or `google-chrome-stable`, with `--app` for `app_mode` / `focus_match`); Firefox is only used when Chrome is missing.
+- `rg` and `kitty` are resolved from `PATH` before falling back to Homebrew paths; `ps_ui` also looks in `~/.local/bin` and uses `$SHELL` instead of `/bin/zsh` to find the PythonSearch binaries.
+- Entry editor locates an entry by matching it as a dict key (`"key": `) rather than any occurrence of the text.
+- `cmd` entries get `/usr/local/bin` on `PATH` (d46027b).
+- Kitty terminals use the theme font (SF Mono) (f31f2bf, 3845b27); iTerm sessions keep their own font (b4b5408).
+- Adaptive window width is capped at 100 columns on wide displays (72b0d11).
+- PySimpleGUI added as a dependency (72037b5).
+
+### Fixed
+- `ps_ui` on Wayland: opens at full list height (a resize before the first configure was dropped, cutting results off), asks the compositor for focus, and exits when closed by the window manager.
+- Entry editor no longer fails when ripgrep finds no match (exit code 1).
+- `ps_ui` ⌘ key bindings work with Super on Linux: `rust/vendor/egui-winit` is a patched copy (via `[patch.crates-io]`) that maps Super to egui's `command` modifier, which upstream ignores.
+
+### Removed
+- Per-platform shortcut fields `mac_shortcut(s)`, `xfce_shortcut(s)`: migrate them to `shortcut` / `shortcuts`.
+
 ## [Unreleased]
 
 ### Added

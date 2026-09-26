@@ -1,4 +1,5 @@
 from python_search.configuration.loader import ConfigurationLoader
+from python_search.environment import is_mac
 
 
 def get_terminal():
@@ -6,19 +7,25 @@ def get_terminal():
     Factory function to get the appropriate terminal based on configuration.
     """
     config = ConfigurationLoader().get_config_instance()
-    terminal_app = config.get_terminal_app()
+    return terminal_for(config.get_terminal_app(), is_mac())
 
+
+def terminal_for(terminal_app, on_mac: bool):
+    """
+    Pick the terminal for the configured app. iTerm, the default, only exists on macOS, so
+    elsewhere it falls back to Terminator.
+    """
     if terminal_app == "kitty":
         return KittyTerminal()
-    elif terminal_app == "iterm":
-        from python_search.apps.iterm_terminal import ITermTerminal
 
-        return ITermTerminal()
-    else:
-        # Default to iTerm
-        from python_search.apps.iterm_terminal import ITermTerminal
+    if terminal_app == "terminator" or not on_mac:
+        from python_search.apps.terminator_terminal import TerminatorTerminal
 
-        return ITermTerminal()
+        return TerminatorTerminal()
+
+    from python_search.apps.iterm_terminal import ITermTerminal
+
+    return ITermTerminal()
 
 
 class KittyTerminal:

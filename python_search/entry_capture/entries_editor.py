@@ -2,14 +2,17 @@
 
 import logging
 import os
+import re
 import shlex
+import shutil
 import stat
 import subprocess
 import sys
 import tempfile
-from typing import Optional
+from typing import List, Optional
 
 from python_search.apps.terminal import get_terminal, KittyTerminal
+from python_search.apps.terminator_terminal import TerminatorTerminal
 from python_search.core_entities import Key
 
 
@@ -32,14 +35,15 @@ class EntriesEditor:
         """
         Ensure ripgrep is available for file searching.
         """
-        return "/opt/homebrew/bin/rg"
+        return shutil.which("rg") or "/opt/homebrew/bin/rg"
 
-    def _build_search_command(self, key: str) -> str:
+    def _build_search_command(self, key: str) -> List[str]:
         """
-        Build the ripgrep search command.
+        Build the ripgrep command that finds where the key is declared as a dict key, e.g. `"key": {`.
         """
         project_root = self.configuration.get_project_root()
-        return f"/opt/homebrew/bin/rg -n -i --type py '{key}' {project_root} || true"
+        pattern = "^\\s*[\"']" + re.escape(key) + "[\"']\\s*:"
+        return [self._search_cmd, "-n", "-i", "--type", "py", "--sort", "path", pattern, project_root]
 
     def edit_key(self, key_expr: str):
         """
@@ -60,7 +64,8 @@ class EntriesEditor:
         # needs to be case-insensitive search
         cmd = self._build_search_command(key)
         logging.info(f"Command: {cmd}")
-        result_shell = subprocess.check_output(cmd, shell=True, text=True)
+        # rg exits with 1 when nothing matches
+        result_shell = subprocess.run(cmd, capture_output=True, text=True).stdout
 
         if not result_shell:
             print("Could not find match edit main file, output: ", result_shell)
@@ -118,16 +123,7 @@ class EntriesEditor:
         os.system(terminal_cmd)
 
     def edit_default(self):
-        terminal = KittyTerminal()
-        editor_params = (
-            f" {terminal.GLOBAL_TERMINAL_PARAMS} "
-            f" -o initial_window_width={self.EDITOR_WIDTH} "
-            f" -o initial_window_height={self.EDITOR_HEIGHT} "
-            f" -o font_size={self.EDITOR_FONT_SIZE} "
-        )
-        os.system(
-            f"{terminal.get_kitty_cmd()} {editor_params} vim '{self.configuration.get_project_root()}/entries_main.py'"
-        )
+        self._edit_file(f"{self.configuration.get_project_root()}/entries_main.py", line=None)
 
     # Editor-specific window settings (squared window for editing)
     EDITOR_WIDTH = "100c"
@@ -139,21 +135,24 @@ class EntriesEditor:
         edit a configuration file given the name and line
         """
 
-        # @ todo make this editor generic
+        editor_cmd = f"cd {self.configuration.get_project_root()} && {self._get_open_text_editor_command(file_name, line)}"
 
-        terminal = KittyTerminal()
-        # Use editor-specific window size instead of generic terminal params
-        editor_params = (
-            f" {terminal.GLOBAL_TERMINAL_PARAMS} "
-            f" -o initial_window_width={self.EDITOR_WIDTH} "
-            f" -o initial_window_height={self.EDITOR_HEIGHT} "
-            f" -o font_size={self.EDITOR_FONT_SIZE} "
-        )
-        cmd: str = (
-            f" {terminal.get_kitty_cmd()} {editor_params} "
-            f"bash -c 'cd {self.configuration.get_project_root()} && "
-            f"{self._get_open_text_editor_command(file_name, line)}'"
-        )
+        terminal = get_terminal()
+        if isinstance(terminal, TerminatorTerminal):
+            # opens as a tab in the running Terminator window
+            cmd = terminal.wrap_cmd_into_terminal(
+                editor_cmd, title="Python Search: edit entries", hold_terminal_open_on_end=False
+            )
+        else:
+            kitty = KittyTerminal()
+            # Use editor-specific window size instead of generic terminal params
+            editor_params = (
+                f" {kitty.GLOBAL_TERMINAL_PARAMS} "
+                f" -o initial_window_width={self.EDITOR_WIDTH} "
+                f" -o initial_window_height={self.EDITOR_HEIGHT} "
+                f" -o font_size={self.EDITOR_FONT_SIZE} "
+            )
+            cmd = f" {kitty.get_kitty_cmd()} {editor_params} bash -c '{editor_cmd}'"
         print(cmd)
 
         if dry_run:
@@ -164,6 +163,8 @@ class EntriesEditor:
 
     def _get_open_text_editor_command(self, file, line):
         # vim only supported
+        if line is None:
+            return f"vim {file}"
         return f"vim {file} +{line}"
 
 

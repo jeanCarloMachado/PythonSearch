@@ -41,7 +41,7 @@ class PythonSearchConfiguration(EntriesGroup):
         collect_data: bool = False,
         entry_generation=False,
         privacy_sensitive_terms: Optional[List[str]] = None,
-        terminal_app: Optional[Literal["kitty", "iterm"]] = "iterm",
+        terminal_app: Optional[Literal["kitty", "iterm", "terminator"]] = "iterm",
     ):
         """
 
