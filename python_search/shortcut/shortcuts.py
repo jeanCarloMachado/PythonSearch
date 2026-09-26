@@ -7,8 +7,8 @@ Shortcuts are declared once per entry, in the Mac glyph notation, and translated
 Modifiers are ⌘ (Command, Super on Linux), ⌥ (Option/Alt), ⌃ (Control) and ⇧ (Shift), followed by a
 single key: a letter, a digit, punctuation, "Space", or ↩/⏎/⌤ for Return.
 
-"capslock" on its own binds the Caps Lock key, and "right_command" the right Command (Super) key. Linux
-desktops cannot bind either key alone, so keyd remaps each to a combination (KEYD_REMAPS, see keyd.py) and
+"capslock" on its own binds the Caps Lock key, "right_command" the right Command (Super) key and "right_alt"
+the right Option (Alt) key. Linux desktops cannot bind any of these keys alone, so keyd remaps each to a combination (KEYD_REMAPS, see keyd.py) and
 the matching accelerator is bound instead.
 """
 
@@ -28,8 +28,13 @@ RIGHT_COMMAND = "rightcommand"
 KEYD_RIGHT_COMMAND = "C-A-M-r"
 RIGHT_COMMAND_LINUX_ACCELERATOR = "<Control><Alt><Super>r"
 
+RIGHT_ALT = "rightalt"
+# On Linux keyd turns the right Option (Alt) key into this combination.
+KEYD_RIGHT_ALT = "C-A-M-o"
+RIGHT_ALT_LINUX_ACCELERATOR = "<Control><Alt><Super>o"
+
 # Karabiner-only bindings that fire on a lone modifier key; Linux desktops cannot bind those.
-MODIFIER_ONLY_SHORTCUTS = ("right_gui", "right_gui_shift", "right_alt")
+MODIFIER_ONLY_SHORTCUTS = ("right_gui", "right_gui_shift")
 
 RETURN_GLYPHS = ("↩", "⏎", "⌤")
 
@@ -86,12 +91,18 @@ def is_right_command(shortcut: str) -> bool:
     return _normalize(shortcut) == RIGHT_COMMAND
 
 
+def is_right_alt(shortcut: str) -> bool:
+    return _normalize(shortcut) == RIGHT_ALT
+
+
 def keyd_remap(shortcut: str) -> Optional[Tuple[str, str]]:
     """The (keyd key name, combination) keyd must map for this shortcut to work on Linux, if any."""
     if is_caps_lock(shortcut):
         return "capslock", KEYD_CAPS_LOCK
     if is_right_command(shortcut):
         return "rightmeta", KEYD_RIGHT_COMMAND
+    if is_right_alt(shortcut):
+        return "rightalt", KEYD_RIGHT_ALT
     return None
 
 
@@ -107,6 +118,8 @@ def to_linux_accelerator(shortcut: str) -> Optional[str]:
         return CAPS_LOCK_LINUX_ACCELERATOR
     if is_right_command(shortcut):
         return RIGHT_COMMAND_LINUX_ACCELERATOR
+    if is_right_alt(shortcut):
+        return RIGHT_ALT_LINUX_ACCELERATOR
 
     remaining = shortcut.replace(" ", "")
     modifiers = ""

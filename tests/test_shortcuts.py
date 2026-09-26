@@ -41,10 +41,16 @@ def test_right_command_is_bound_to_the_keyd_combination(shortcut):
     assert keyd_remap(shortcut) == ("rightmeta", "C-A-M-r")
 
 
+@pytest.mark.parametrize("shortcut", ["right_alt", "Right_Alt", "rightalt"])
+def test_right_alt_is_bound_to_the_keyd_combination(shortcut):
+    assert to_linux_accelerator(shortcut) == "<Control><Alt><Super>o"
+    assert keyd_remap(shortcut) == ("rightalt", "C-A-M-o")
+
+
 def test_keyd_remap_is_none_for_regular_shortcuts():
     assert keyd_remap("⌘⇧T") is None
 
 
-@pytest.mark.parametrize("shortcut", ["right_gui", "right_gui_shift", "right_alt", "⌘⇧"])
+@pytest.mark.parametrize("shortcut", ["right_gui", "right_gui_shift", "⌘⇧"])
 def test_to_linux_accelerator_skips_unbindable(shortcut):
     assert to_linux_accelerator(shortcut) is None

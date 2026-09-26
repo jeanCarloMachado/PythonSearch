@@ -2,7 +2,7 @@ import json
 import os
 
 from python_search.host_system.system_paths import SystemPaths
-from python_search.shortcut.shortcuts import entry_shortcuts, is_caps_lock, is_right_command
+from python_search.shortcut.shortcuts import entry_shortcuts, is_caps_lock, is_right_alt, is_right_command
 
 
 class MacKarabinerElements:
@@ -81,7 +81,7 @@ class MacKarabinerElements:
             shortcut_dict["manipulators"][0]["from"]["key_code"] = "caps_lock"
             return shortcut_dict
 
-        if shortcut == "right_alt":
+        if is_right_alt(shortcut):
             shortcut_dict["manipulators"][0]["from"]["key_code"] = "right_alt"
             return shortcut_dict
 
