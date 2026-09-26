@@ -74,7 +74,9 @@ class BaseInterpreter:
         env = os.environ.copy()
         env["PATH"] = "/opt/homebrew/bin:" + env["PATH"]
         env["PATH"] = SystemPaths.get_python_executable_path() + ":" + env["PATH"]
-        env["SHELL"] = "/bin/zsh"
+        # only force zsh where it exists (mac); on linux keep the inherited SHELL
+        if os.path.exists("/bin/zsh"):
+            env["SHELL"] = "/bin/zsh"
         completed = subprocess.run(
             cmd,
             shell=True,

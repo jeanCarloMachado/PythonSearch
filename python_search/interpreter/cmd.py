@@ -127,7 +127,9 @@ class CmdInterpreter(BaseInterpreter):
         env["PATH"] = env["PATH"] + ":" + os.path.expanduser(
             "~/miniconda3/envs/python313/bin"
         )
-        env["SHELL"] = "/bin/zsh"
+        # only force zsh where it exists (mac); on linux keep the inherited SHELL
+        if os.path.exists("/bin/zsh"):
+            env["SHELL"] = "/bin/zsh"
 
         # cli_cmd entries are wrapped in a visible terminal (errors show there);
         # plain cmd entries run silently, so we notify on failure (and, with
