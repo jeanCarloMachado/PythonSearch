@@ -1,7 +1,6 @@
 import os
 from typing import Any
 
-from python_search.host_system.system_paths import SystemPaths
 from python_search.context import Context
 from python_search.environment import is_mac
 from python_search.exceptions import CommandDoNotMatchException
@@ -36,9 +35,8 @@ class FileInterpreter(BaseInterpreter):
         )
 
     def get_executable(self):
-        if not os.path.exists(SystemPaths.VIM_BINNARY):
-            raise Exception(f"Vim binary not found in path {SystemPaths.VIM_BINNARY}")
-        return SystemPaths.VIM_BINNARY
+        """Platform default opener: `open` on mac, `xdg-open` on linux"""
+        return "open" if is_mac() else "xdg-open"
 
     def interpret_default(self):
         executable = self.get_executable()
@@ -46,7 +44,7 @@ class FileInterpreter(BaseInterpreter):
         cmd = f'{executable} "{self.cmd["file"]}"'
 
         final_cmd = {}
-        final_cmd["cli_cmd"] = cmd
+        final_cmd["cmd"] = cmd
 
         return CmdInterpreter(final_cmd, self.context).interpret_default()
 
