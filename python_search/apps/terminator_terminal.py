@@ -10,6 +10,10 @@ class TerminatorTerminal:
 
     # width x height in pixels; terminator's default window is too small
     GEOMETRY = "1400x900"
+    FOCUS_CMD = (
+        "gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/WindowManager "
+        "--method org.gnome.Shell.Extensions.WindowManager.FocusByWmClass terminator"
+    )
 
     def wrap_cmd_into_terminal(self, cmd, title=None, hold_terminal_open_on_end=True) -> str:
         """
@@ -29,6 +33,9 @@ class TerminatorTerminal:
 
             python_path = SystemPaths.get_python_executable_path()
             f.write(f'export PATH="{python_path}:$PATH"\n')  # noqa: E231
+            # A tab opened in a running window doesn't take focus on GNOME Wayland (it only shows a
+            # "Terminator is ready" notification), so ask the window-manager@monorepo extension to focus it.
+            f.write(f"{self.FOCUS_CMD} >/dev/null 2>&1\n")
             f.write("\n# Run the actual command\n")
             f.write(f"{cmd}\n")
             if hold_terminal_open_on_end:

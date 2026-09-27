@@ -40,6 +40,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- Terminator tabs opened in a running window now focus properly on GNOME Wayland by calling the window manager extension's FocusByWmClass method.
+
 ### Added
 - Native Rust "register new entry" form: `register_new_rust` binary alongside `ps_ui`, invoked via Alt+R outside the Python environment with full clipboard prefill and native window positioning.
 - `Actions.register_new()` in Rust core: calls `python_search register_new` and waits for completion with stderr capture for error reporting (unlike fire-and-forget daemon actions).

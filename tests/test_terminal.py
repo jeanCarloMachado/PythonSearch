@@ -30,6 +30,7 @@ def test_terminator_runs_the_command_from_a_script():
         content = open(script).read()
         assert "\nhtop\n" in content
         assert "read\n" in content
+        assert "FocusByWmClass terminator" in content
     finally:
         os.remove(script)
 
