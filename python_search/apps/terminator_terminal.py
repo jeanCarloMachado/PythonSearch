@@ -49,7 +49,8 @@ class TerminatorTerminal:
 
         # `--new-tab` reuses a running Terminator window; geometry only applies when none is open.
         # `bash -i` runs the script with the user's interactive environment (aliases, PATH).
+        # GDK_BACKEND=x11 because under native Wayland dragging a tab out into a new window doesn't work.
         return (
-            f"terminator --new-tab --geometry={self.GEOMETRY} --title {shlex.quote(title_str)} "
+            f"env GDK_BACKEND=x11 terminator --new-tab --geometry={self.GEOMETRY} --title {shlex.quote(title_str)} "
             f"-x bash -i {shlex.quote(script_path)}"
         )

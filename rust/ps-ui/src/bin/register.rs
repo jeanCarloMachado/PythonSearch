@@ -79,8 +79,18 @@ fn main() -> eframe::Result<()> {
     )
 }
 
+/// Same commands as `python_search/apps/clipboard.py`: `pbpaste` on macOS, `xsel` elsewhere.
 fn read_clipboard() -> String {
-    std::process::Command::new("pbpaste")
+    #[cfg(target_os = "macos")]
+    let mut command = std::process::Command::new("pbpaste");
+    #[cfg(not(target_os = "macos"))]
+    let mut command = {
+        let mut command = std::process::Command::new("xsel");
+        command.args(["--clipboard", "--output"]);
+        command
+    };
+
+    command
         .output()
         .map(|out| String::from_utf8_lossy(&out.stdout).trim_end().to_string())
         .unwrap_or_default()

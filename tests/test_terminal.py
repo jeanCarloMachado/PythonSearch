@@ -23,9 +23,9 @@ def test_terminator_runs_the_command_from_a_script():
     cmd = TerminatorTerminal().wrap_cmd_into_terminal("htop", title="htop mac")
 
     args = shlex.split(cmd)
-    assert args[:5] == ["terminator", "--new-tab", "--geometry=1400x900", "--title", "htop mac"]
-    assert args[5:8] == ["-x", "bash", "-i"]
-    script = args[8]
+    assert args[:7] == ["env", "GDK_BACKEND=x11", "terminator", "--new-tab", "--geometry=1400x900", "--title", "htop mac"]
+    assert args[7:10] == ["-x", "bash", "-i"]
+    script = args[10]
     try:
         content = open(script).read()
         assert "\nhtop\n" in content

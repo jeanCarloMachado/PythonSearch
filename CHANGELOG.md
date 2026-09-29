@@ -42,6 +42,10 @@
 
 ### Fixed
 - Terminator tabs opened in a running window now focus properly on GNOME Wayland by calling the window manager extension's FocusByWmClass method.
+- Browser: Firefox is now the default browser on Linux (Chrome falls back only when Firefox is missing).
+- Terminator terminal on Linux now uses GDK_BACKEND=x11 to work around Wayland issues with dragging tabs into new windows.
+- Rust launcher copy-to-clipboard: native "Copied" badge displays on the row, and copy works via ⌘C on macOS and Ctrl+Insert (keyd-remapped ⌘C) on Linux.
+- Rust launcher clipboard reading now uses `pbpaste` on macOS and `xsel` on Linux, matching Python's implementation.
 
 ### Added
 - Native Rust "register new entry" form: `register_new_rust` binary alongside `ps_ui`, invoked via Alt+R outside the Python environment with full clipboard prefill and native window positioning.

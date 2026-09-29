@@ -6,7 +6,7 @@ use egui::{
 use ps_core::{usage::MAX_QUERY_HISTORY, Actions, Index, Match};
 
 /// How long the "Copied" toast stays on screen before the panel hides itself.
-const COPY_FLASH_SECONDS: f64 = 0.45;
+const COPY_FLASH_SECONDS: f64 = 0.7;
 
 /// What the user asked the launcher to do with the selected row.
 pub enum Outcome {
@@ -361,8 +361,26 @@ impl Launcher {
         );
         cursor_x += key_width + 16.0;
 
-        // Shortcut hint, if the entry has one bound via Karabiner.
         let mut right_edge = rect.right() - Metrics::SIDE_PADDING;
+
+        // "Copied" badge on the row that was just copied, so the confirmation sits where the eye is.
+        if selected && self.copy_hide_at.is_some() {
+            let font = TextStyle::Name(text::CHIP.into()).resolve(ui.style());
+            let galley = painter.layout_no_wrap("Copied".to_string(), font, self.palette.accent);
+            let badge = Rect::from_min_max(
+                egui::pos2(right_edge - galley.size().x - 16.0, mid - 10.0),
+                egui::pos2(right_edge, mid + 10.0),
+            );
+            painter.rect_filled(badge, CornerRadius::same(10), Color32::WHITE);
+            painter.galley(
+                egui::pos2(badge.left() + 8.0, mid - galley.size().y / 2.0),
+                galley,
+                Color32::WHITE,
+            );
+            right_edge = badge.left() - 12.0;
+        }
+
+        // Shortcut hint, if the entry has one bound via Karabiner.
         if let Some(shortcut) = entry.shortcut() {
             let font = TextStyle::Name(text::CHIP.into()).resolve(ui.style());
             let galley = painter.layout_no_wrap(
@@ -535,6 +553,8 @@ impl Launcher {
                         "key {key:?} pressed={pressed} repeat={repeat} cmd={} ctrl={} alt={}",
                         modifiers.command, modifiers.ctrl, modifiers.alt
                     );
+                } else if matches!(event, egui::Event::Copy) {
+                    eprintln!("copy");
                 } else if let egui::Event::Text(text) = &event {
                     eprintln!("text {text:?}");
                 } else if let egui::Event::PointerButton {
@@ -548,6 +568,15 @@ impl Launcher {
                 }
             }
             match event {
+                // egui-winit swallows the copy chord and sends this instead of a Key event: ⌘C on
+                // macOS, but the physical Ctrl+C on Linux, which dismisses like the terminal UI.
+                egui::Event::Copy => {
+                    if cfg!(target_os = "linux") {
+                        outcome = Outcome::Hide;
+                    } else {
+                        self.copy_selected(ctx);
+                    }
+                }
                 egui::Event::Text(text) => {
                     // Modifier combinations arrive as Key events; only real typing lands here, so
                     // every printable character stays usable as query text.
@@ -603,16 +632,8 @@ impl Launcher {
                                 outcome = Outcome::Hide;
                             }
                         }
-                        (Key::C, true, _) => {
-                            if let Some(key) = self.selected_key() {
-                                self.actions.copy_value(&key);
-                                let now = ctx.input(|i| i.time);
-                                self.show_toast("Copied", now);
-                                // Hide shortly after, once the toast has had a moment to register,
-                                // rather than instantly — otherwise the confirmation never renders.
-                                self.copy_hide_at = Some(now + COPY_FLASH_SECONDS);
-                            }
-                        }
+                        // ⌘C on Linux: keyd remaps it to Ctrl+Insert so it also copies in terminals.
+                        (Key::Insert, _, true) => self.copy_selected(ctx),
                         (Key::R, true, _) | (Key::R, _, true) => self.reload_requested = true,
                         (Key::ArrowDown, _, _) | (Key::N, _, true) => self.move_selection(1),
                         (Key::ArrowUp, _, _) | (Key::P, _, true) => {
@@ -670,6 +691,18 @@ impl Launcher {
         // should not count as an action.
         let _ = Modifiers::default();
         outcome
+    }
+
+    fn copy_selected(&mut self, ctx: &egui::Context) {
+        let Some(key) = self.selected_key() else {
+            return;
+        };
+        self.actions.copy_value(&key);
+        let now = ctx.input(|i| i.time);
+        self.show_toast("Copied", now);
+        // Hide shortly after, once the confirmation has had a moment to register, rather than
+        // instantly — otherwise it never renders.
+        self.copy_hide_at = Some(now + COPY_FLASH_SECONDS);
     }
 
     fn run_index(&mut self, index: usize, outcome: &mut Outcome) {

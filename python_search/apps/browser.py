@@ -111,14 +111,16 @@ class Browser:
         return None
 
     def fail_safe(self, url: str):
-        """Chrome is the default browser; Firefox is only used on Linux when Chrome is missing."""
+        """Chrome is the default on Mac; Firefox is the default on Linux, falling back to Chrome when Firefox is missing."""
+        import shutil
+
         if self._is_mac():
             return self._chrome(url)
 
         if self._is_linux():
-            if self._linux_chrome_binary():
-                return self._chrome(url)
-            return self._firefox(url)
+            if shutil.which("firefox") or not self._linux_chrome_binary():
+                return self._firefox(url)
+            return self._chrome(url)
 
         raise Exception(
             "No supported browser found. Please install chrome/firefox or customize your browser in python_search/apps/browser.py"
