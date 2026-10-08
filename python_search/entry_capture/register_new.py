@@ -95,7 +95,7 @@ class RegisterNew:
         self.register(key=key, value=value, type=type)
 
     def _sanitize_key(self, key):
-        return key.replace("\n", " ").replace(":", " ").strip()
+        return key.replace("\n", " ").replace(":", " ").replace("\\", "").strip()
 
 
 def main():
