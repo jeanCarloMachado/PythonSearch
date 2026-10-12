@@ -1,12 +1,19 @@
 import pytest
 
-from python_search.shortcut.shortcuts import entry_shortcuts, keyd_remap, to_linux_accelerator
+from python_search.shortcut.shortcuts import LINUX, MAC, entry_shortcuts, keyd_remap, to_linux_accelerator
 
 
 def test_entry_shortcuts_reads_both_fields():
     content = {"shortcut": "⌥C", "shortcuts": ["⌘⇧M", "⌥M"]}
 
     assert entry_shortcuts(content) == ["⌥C", "⌘⇧M", "⌥M"]
+
+
+def test_entry_shortcuts_reads_only_current_platform_fields():
+    content = {"shortcuts": ["⌘1"], "shortcut_mac": "⌥C", "shortcuts_linux": ["⌥M"]}
+
+    assert entry_shortcuts(content, platform=MAC) == ["⌘1", "⌥C"]
+    assert entry_shortcuts(content, platform=LINUX) == ["⌘1", "⌥M"]
 
 
 def test_entry_shortcuts_ignores_non_dict_entries():
