@@ -118,15 +118,24 @@ const DARK_FROM_HOUR: u8 = 19;
 
 /// Whether to render dark right now.
 ///
-/// Driven by the time of day rather than the system appearance, so the panel is dark at night even
-/// when macOS is left in light mode. `PS_UI_THEME` overrides it: `dark`, `light`, or `system` to
-/// follow macOS instead.
+/// `PS_UI_THEME` wins: `dark`, `light`, or `system` to follow macOS. Otherwise
+/// `~/.python_search/theme` (`dark`/`light`, written by the system wide theme switch). Without
+/// either, the time of day decides, so the panel is dark at night even when macOS is left in light
+/// mode. Called every frame while visible, so a theme switch shows up without restarting the daemon.
 pub fn dark_mode_now() -> bool {
     match std::env::var("PS_UI_THEME").as_deref() {
         Ok("dark") => return true,
         Ok("light") => return false,
         Ok("system") => return ps_mac::is_dark_mode(),
         _ => {}
+    }
+
+    if let Ok(theme) = std::fs::read_to_string(ps_core::paths::theme_file()) {
+        match theme.trim() {
+            "dark" => return true,
+            "light" => return false,
+            _ => {}
+        }
     }
 
     let hour = ps_mac::local_hour();

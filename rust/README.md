@@ -5,8 +5,8 @@ dependencies, no terminal emulator, no Python on the search path.
 
 ## Why
 
-The terminal UI (`term_ui`) boots two Python interpreters per launch, repaints the whole screen on
-every keystroke, and scores a 10k-entry BM25 corpus in Python as you type. This replaces the UI
+The old terminal UI (`term_ui`, since removed) booted two Python interpreters per launch, repainted the whole screen on
+every keystroke, and scored a 10k-entry BM25 corpus in Python as you type. This replaced the UI
 half of that. Python remains the source of truth for entries and the executor for every action, so
 interpreter semantics (`call_before`, `call_after`, `app_mode`, `focus_match`, `callable`) are
 unchanged.
@@ -71,8 +71,8 @@ window. `ps-mac` is the only crate that touches AppKit.
 | `python_search/shortcut/mac_karabiner_elements.py` | expands `__PS_UI__` to the installed binary |
 | `DESIGN.md` | describes both front ends |
 
-`terminal_ui.py`, `QueryLogic.py`, `bm25_search.py`, `kitty_for_search_ui.py` and every interpreter
-are untouched — `term_ui` remains a working fallback.
+The Python terminal UI (`terminal_ui.py`, `QueryLogic.py`, `bm25_search.py`,
+`kitty_for_search_ui.py`) has been removed; `python_search search` now opens `ps_ui`.
 
 ## Install
 
@@ -98,8 +98,11 @@ Lock to Ctrl+Alt+Super+Space and GNOME/XFCE bind that. `karabiner_base.json` sti
 `__PS_UI__` placeholder to the installed binary path, for hand-written rules that call `ps_ui`
 directly.
 
-To roll back to the terminal UI, point the entry at `python_search search focus_or_open` and
-regenerate. `term_ui` is untouched and still works.
+### Theme
+
+The palette is dark or light from, in order: `PS_UI_THEME` (`dark`, `light`, `system`), the
+contents of `~/.python_search/theme` (`dark` or `light`, re-read every frame so a running daemon
+switches live), else the time of day (light 07:00–19:00).
 
 ## Linux
 

@@ -21,6 +21,13 @@ pub fn searches_performed_dir() -> PathBuf {
     data_dir().join("searches_performed")
 }
 
+/// Holds `dark` or `light`, written by the user's system wide theme switcher.
+pub fn theme_file() -> PathBuf {
+    dirs::home_dir()
+        .expect("no home directory")
+        .join(".python_search/theme")
+}
+
 /// Socket the resident daemon listens on.
 pub fn daemon_socket() -> PathBuf {
     dirs::home_dir()
