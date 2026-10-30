@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -y
-          sudo apt install gnome-keyring curl
+          sudo apt install -y gnome-keyring curl ripgrep
           curl -sSL https://install.python-poetry.org | python3 -
           poetry --version
           poetry config --local virtualenvs.create true
