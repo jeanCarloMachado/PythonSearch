@@ -107,3 +107,73 @@ fn urls_drop_their_scheme_for_display() {
         .unwrap();
     assert_eq!(url.display_content(), "example.com/clv");
 }
+
+#[test]
+fn bm25_finds_words_deep_in_the_content() {
+    // Past the 96 characters the fuzzy content haystack sees.
+    let long = format!("{} kubernetes rollout notes", "filler text ".repeat(20));
+    let mut index = Index::from_entries(vec![
+        entry("ops notes", EntryType::Snippet, &long),
+        entry("another unrelated", EntryType::Snippet, "nothing to see"),
+    ]);
+    assert_eq!(top_key(&mut index, "kubernetes"), "ops notes");
+}
+
+#[test]
+fn bm25_matches_the_last_word_as_a_prefix_while_typing() {
+    let long = format!("{} kubernetes rollout notes", "filler text ".repeat(20));
+    let mut index = Index::from_entries(vec![entry("ops notes", EntryType::Snippet, &long)]);
+    assert_eq!(top_key(&mut index, "kubern"), "ops notes");
+    // Once the word is finished with a space, it no longer expands.
+    assert!(index.search("kubern ").is_empty());
+}
+
+#[test]
+fn bm25_breaks_fuzzy_ties_by_word_relevance() {
+    // Both keys fuzzy match "rust" identically, and the tiebreak alone would pick the shorter key.
+    // Only "rust notes" is actually about rust beyond its title.
+    let mut index = Index::from_entries(vec![
+        entry("rust tips", EntryType::Url, "https://example.com/a"),
+        entry("rust notes", EntryType::Snippet, "rust borrow checker and rust lifetimes"),
+    ]);
+    assert_eq!(top_key(&mut index, "rust"), "rust notes");
+}
+
+#[test]
+fn recently_created_entries_win_ties() {
+    let today = {
+        let days = (ps_core::usage::now() / 86_400.0) as i64;
+        // Civil date from days since epoch, to write today's created_at without a date crate.
+        let z = days + 719_468;
+        let era = z.div_euclid(146_097);
+        let doe = z - era * 146_097;
+        let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+        let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+        let mp = (5 * doy + 2) / 153;
+        let day = doy - (153 * mp + 2) / 5 + 1;
+        let month = if mp < 10 { mp + 3 } else { mp - 9 };
+        let year = yoe + era * 400 + i64::from(month <= 2);
+        format!("{year:04}-{month:02}-{day:02}T09:00:00.000000")
+    };
+    let with_date = |key: &str, created_at: &str| -> Entry {
+        serde_json::from_value(serde_json::json!({
+            "key": key, "type": "url", "content": "x", "created_at": created_at,
+        }))
+        .unwrap()
+    };
+    // Same fuzzy and BM25 score; the old one would win the alphabetical tiebreak.
+    let mut index = Index::from_entries(vec![
+        with_date("report a", "2021-03-01T00:00:00.000000"),
+        with_date("report b", &today),
+    ]);
+    assert_eq!(top_key(&mut index, "report"), "report b");
+}
+
+#[test]
+fn created_at_parses_to_a_unix_timestamp() {
+    let entry: Entry = serde_json::from_value(serde_json::json!({
+        "key": "k", "type": "url", "content": "x", "created_at": "2026-10-30T12:30:00.000000",
+    }))
+    .unwrap();
+    assert_eq!(entry.created_timestamp(), Some(1_793_318_400.0));
+}

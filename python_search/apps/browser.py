@@ -15,6 +15,10 @@ class Browser:
 
     BROWSERS = Literal["firefox", "chrome"]
     _app_mode = False
+    LINUX_FOCUS_FIREFOX_CMD = (
+        "gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell/Extensions/WindowManager "
+        "--method org.gnome.Shell.Extensions.WindowManager.FocusByWmClass firefox"
+    )
 
     def __init__(
         self,
@@ -84,7 +88,11 @@ class Browser:
         self.open(sys.stdin.read())
 
     def _firefox(self, url: str):
-        return "open -a Firefox {url}" if self._is_mac() else f"firefox {url}"
+        if self._is_mac():
+            return f"open -a Firefox {url}"
+        # A tab opened in a running window doesn't take focus on GNOME Wayland, so ask the
+        # window-manager@monorepo extension to focus it.
+        return f"firefox {url}; {self.LINUX_FOCUS_FIREFOX_CMD} >/dev/null 2>&1"
 
     def _chrome(self, url: str):
         if self._is_mac():
@@ -111,14 +119,18 @@ class Browser:
         return None
 
     def fail_safe(self, url: str):
-        """Chrome is the default on Mac; Firefox is the default on Linux, falling back to Chrome when Firefox is missing."""
+        """Chrome is the default on Mac. On Linux, Firefox opens new sessions and Chrome
+        opens app mode (--app windows); each falls back to the other when missing."""
         import shutil
 
         if self._is_mac():
             return self._chrome(url)
 
         if self._is_linux():
-            if shutil.which("firefox") or not self._linux_chrome_binary():
+            has_chrome = self._linux_chrome_binary() is not None
+            if (self._app_mode or self._focus_title) and has_chrome:
+                return self._chrome(url)
+            if shutil.which("firefox") or not has_chrome:
                 return self._firefox(url)
             return self._chrome(url)
 

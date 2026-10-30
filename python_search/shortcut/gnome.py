@@ -9,6 +9,7 @@ from python_search.entries_group import EntriesGroup
 from python_search.host_system.system_paths import SystemPaths
 from python_search.shortcut.keyd import Keyd
 from python_search.shortcut.shortcuts import (
+    LINUX,
     entry_shortcuts,
     keyd_remap,
     to_linux_accelerator,
@@ -50,7 +51,7 @@ class Gnome:
 
         bindings = {}
         for key, content in list(self.configuration.commands.items()):
-            for shortcut in entry_shortcuts(content):
+            for shortcut in entry_shortcuts(content, LINUX):
                 accelerator = to_linux_accelerator(shortcut)
                 if accelerator is None:
                     print(f"Skipping {shortcut} for '{key}': not bindable on Linux")

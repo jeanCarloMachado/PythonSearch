@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-10-30
+
+### Added
+- BM25 word ranking in the Rust launcher (`rust/ps-core/src/bm25.rs`), fused with the nucleo fuzzy score. It indexes every entry's key, description, tags and content, matches the last word as a prefix while it is being typed, breaks fuzzy ties in favour of entries that contain the query words, and finds words beyond the 96-character fuzzy content window. Search latency on the 10.9k-entry dump is unchanged.
+- Creation recency in the Rust launcher's ranking boost: entries with a recent `created_at` get a boost that halves every 30 days, on top of the existing usage frequency and last-run recency, so newly added entries win ties before they have run history.
+
+### Changed
+- Rust launcher result rows are easier to tell apart: each row is two lines (key on top at full width, content's first line beneath in smaller text), keys stay at full contrast with matched characters in the accent colour instead of dimming the rest, type chips are coloured per entry type (url, file, snippet, cmd, callable), and a hairline separates rows.
+- Linux browser choice: Firefox opens plain URLs and is focused through the GNOME window-manager extension after opening (tabs in a running window don't take focus on Wayland); `app_mode` / `focus_match` URLs open in Chrome when it is installed.
+- `cmd` entries add the conda env bin dir to `PATH` only when it exists, checking both `~/miniconda3/envs/python313/bin` (mac) and `~/miniforge3/envs/py313/bin` (linux).
+
+## 2026-10-10
+
+### Added
+- Platform-specific shortcut fields on entries: `shortcut_mac`/`shortcuts_mac` bind only on macOS and `shortcut_linux`/`shortcuts_linux` only on Linux; `shortcut`/`shortcuts` still apply to both. Karabiner reads the mac fields, GNOME/XFCE the linux ones, and the fields are passed through in the entries dump.
+
 ## 2026-09-26
 
 ### Added

@@ -36,8 +36,8 @@ pub struct KeyUsage {
 pub struct UsageStats {
     by_key: HashMap<String, KeyUsage>,
     max_count: u32,
-    /// Distinct queries (or keys, for runs logged without one) that led to a run, most recent
-    /// first, capped at [`MAX_QUERY_HISTORY`].
+    /// Distinct typed queries that led to a run, most recent first, capped at
+    /// [`MAX_QUERY_HISTORY`].
     recent_queries: Vec<String>,
 }
 
@@ -69,13 +69,12 @@ impl UsageStats {
                 .and_then(|t| t.parse::<f64>().ok())
                 .unwrap_or(0.0);
             stats.record(&record.key, timestamp);
-            // Runs logged before the query was recorded — and every run triggered by a shortcut —
-            // have no query. The key itself is what the user would have to retype, so it stands in.
-            let recall = record
-                .query_input
-                .filter(|q| !q.trim().is_empty())
-                .unwrap_or_else(|| record.key.clone());
-            queries.push((timestamp, recall));
+            // Only what was actually typed belongs in the history. Runs triggered by a shortcut,
+            // and the Python side's own record of a launcher run, have no query; standing their key
+            // in flooded the history with entries that were never searched for.
+            if let Some(query) = record.query_input.filter(|q| !q.trim().is_empty()) {
+                queries.push((timestamp, query));
+            }
         }
 
         // Newest first, keeping only the first occurrence of each query.

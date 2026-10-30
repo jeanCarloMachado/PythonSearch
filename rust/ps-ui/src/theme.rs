@@ -20,7 +20,17 @@ pub struct Palette {
     /// inactive windows; without it there is no way to tell that typing will go somewhere else.
     pub selection_inactive: Color32,
     pub separator: Color32,
+    /// Field and button fill in the register form; the launcher itself no longer uses it.
+    #[allow(dead_code)]
     pub chip_bg: Color32,
+    /// Hairline between result rows, fainter than `separator` so the list reads as one block.
+    pub row_divider: Color32,
+    /// One hue per entry type, so a column of chips can be scanned by colour before reading.
+    pub type_url: Color32,
+    pub type_file: Color32,
+    pub type_snippet: Color32,
+    pub type_cmd: Color32,
+    pub type_callable: Color32,
     /// Query text drawn on top of the selection fill.
     pub selected_text: Color32,
     /// The panel's own background. Near-opaque: the vibrancy backdrop alone leaves the content
@@ -39,6 +49,12 @@ impl Palette {
             selection_inactive: Color32::from_rgba_unmultiplied(0x7A, 0x7A, 0x82, 0x8A),
             separator: Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0x18),
             chip_bg: Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0x1A),
+            row_divider: Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0x0C),
+            type_url: Color32::from_rgb(0x64, 0xB5, 0xFF),
+            type_file: Color32::from_rgb(0xC3, 0x9B, 0xFF),
+            type_snippet: Color32::from_rgb(0xFF, 0xB8, 0x5C),
+            type_cmd: Color32::from_rgb(0x5E, 0xD6, 0x8A),
+            type_callable: Color32::from_rgb(0xFF, 0x8A, 0xB3),
             selected_text: Color32::WHITE,
             panel_bg: Color32::from_rgba_unmultiplied(0x1E, 0x1E, 0x20, 0xFA),
         }
@@ -54,6 +70,12 @@ impl Palette {
             selection_inactive: Color32::from_rgba_unmultiplied(0xB0, 0xB0, 0xB8, 0xC0),
             separator: Color32::from_rgba_unmultiplied(0x00, 0x00, 0x00, 0x14),
             chip_bg: Color32::from_rgba_unmultiplied(0x00, 0x00, 0x00, 0x0E),
+            row_divider: Color32::from_rgba_unmultiplied(0x00, 0x00, 0x00, 0x0C),
+            type_url: Color32::from_rgb(0x00, 0x63, 0xCC),
+            type_file: Color32::from_rgb(0x7A, 0x3E, 0xC8),
+            type_snippet: Color32::from_rgb(0xA8, 0x5A, 0x00),
+            type_cmd: Color32::from_rgb(0x1A, 0x7F, 0x3C),
+            type_callable: Color32::from_rgb(0xC2, 0x2D, 0x6A),
             selected_text: Color32::WHITE,
             panel_bg: Color32::from_rgba_unmultiplied(0xF7, 0xF7, 0xF9, 0xFA),
         }
@@ -77,6 +99,18 @@ impl Palette {
         }
     }
 
+    /// The hue for an entry type's chip.
+    pub fn type_color(&self, entry_type: ps_core::EntryType) -> Color32 {
+        use ps_core::EntryType;
+        match entry_type {
+            EntryType::Url => self.type_url,
+            EntryType::File => self.type_file,
+            EntryType::Snippet => self.type_snippet,
+            EntryType::CliCmd => self.type_cmd,
+            EntryType::Callable => self.type_callable,
+        }
+    }
+
     pub fn key_on(&self, selected: bool) -> Color32 {
         if selected {
             Color32::WHITE
@@ -93,7 +127,8 @@ pub struct Metrics;
 impl Metrics {
     pub const WINDOW_WIDTH: f32 = 720.0;
     pub const QUERY_ROW_HEIGHT: f32 = 68.0;
-    pub const ROW_HEIGHT: f32 = 46.0;
+    /// Two lines: the key, and the content beneath it.
+    pub const ROW_HEIGHT: f32 = 54.0;
     pub const HINT_ROW_HEIGHT: f32 = 30.0;
     pub const SIDE_PADDING: f32 = 22.0;
     pub const CORNER_RADIUS: f32 = 14.0;
@@ -189,7 +224,7 @@ pub fn install(ctx: &egui::Context) {
         ),
         (
             TextStyle::Name(text::CONTENT.into()),
-            FontId::new(13.0, FontFamily::Proportional),
+            FontId::new(12.5, FontFamily::Proportional),
         ),
         (
             TextStyle::Name(text::CHIP.into()),

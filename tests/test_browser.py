@@ -23,7 +23,7 @@ class TestBrowser(unittest.TestCase):
 
     def test_open_firefox_on_linux(self):
         def mock_system(cmd):
-            self.assertEqual(cmd, "firefox 'http://example.com'")
+            self.assertEqual(cmd, "firefox 'http://example.com'; " + Browser.LINUX_FOCUS_FIREFOX_CMD + " >/dev/null 2>&1")
 
         def mock_is_mac():
             return False
@@ -46,7 +46,18 @@ class TestBrowser(unittest.TestCase):
             "shutil.which", side_effect=lambda name: f"/usr/bin/{name}"
         ):
             cmd = b.open_shell_cmd(url="http://example.com")
-        self.assertEqual(cmd, "firefox 'http://example.com'")
+        self.assertEqual(cmd, "firefox 'http://example.com'; " + Browser.LINUX_FOCUS_FIREFOX_CMD + " >/dev/null 2>&1")
+
+    def test_app_mode_is_chrome_on_linux(self):
+        b = Browser(
+            system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True
+        )
+        with unittest.mock.patch(
+            "shutil.which",
+            side_effect=lambda name: None if name == "google-chrome" else f"/usr/bin/{name}",
+        ):
+            cmd = b.open_shell_cmd(url="http://example.com", app_mode=True)
+        self.assertEqual(cmd, "google-chrome-stable --app='http://example.com'")
 
     def test_default_falls_back_to_chrome_without_firefox_on_linux(self):
         b = Browser(
@@ -60,6 +71,17 @@ class TestBrowser(unittest.TestCase):
         ):
             cmd = b.open_shell_cmd(url="http://example.com")
         self.assertEqual(cmd, "google-chrome-stable 'http://example.com'")
+
+    def test_default_falls_back_to_firefox_without_chrome_on_linux(self):
+        b = Browser(
+            system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True
+        )
+        with unittest.mock.patch(
+            "shutil.which",
+            side_effect=lambda name: "/usr/bin/firefox" if name == "firefox" else None,
+        ):
+            cmd = b.open_shell_cmd(url="http://example.com")
+        self.assertEqual(cmd, "firefox 'http://example.com'; " + Browser.LINUX_FOCUS_FIREFOX_CMD + " >/dev/null 2>&1")
 
     def test_fail_safe_no_supported_browser(self):
         def mock_is_mac():

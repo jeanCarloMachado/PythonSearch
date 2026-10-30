@@ -2,7 +2,7 @@ import json
 import os
 
 from python_search.host_system.system_paths import SystemPaths
-from python_search.shortcut.shortcuts import entry_shortcuts, is_caps_lock, is_right_alt, is_right_command
+from python_search.shortcut.shortcuts import MAC, entry_shortcuts, is_caps_lock, is_right_alt, is_right_command
 
 
 class MacKarabinerElements:
@@ -45,7 +45,7 @@ class MacKarabinerElements:
             if not isinstance(content, dict):
                 continue
 
-            for shortcut in entry_shortcuts(content):
+            for shortcut in entry_shortcuts(content, MAC):
                 karabiner_content["profiles"][0]["complex_modifications"]["rules"].append(
                     self.parse_mac_shortcut(shortcut, content, key)
                 )

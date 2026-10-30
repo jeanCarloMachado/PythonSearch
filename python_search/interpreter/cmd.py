@@ -124,9 +124,11 @@ class CmdInterpreter(BaseInterpreter):
         # add python search executable path to the path
         env["PATH"] = SystemPaths.get_python_executable_path() + ":" + env["PATH"]
         # append the monorepo conda env bin path so its CLI binaries (e.g. `monorepo`) are found
-        env["PATH"] = env["PATH"] + ":" + os.path.expanduser(
-            "~/miniconda3/envs/python313/bin"
-        )
+        # (miniconda3/python313 on mac, miniforge3/py313 on linux)
+        for conda_bin in ("~/miniconda3/envs/python313/bin", "~/miniforge3/envs/py313/bin"):
+            conda_bin = os.path.expanduser(conda_bin)
+            if os.path.isdir(conda_bin):
+                env["PATH"] = env["PATH"] + ":" + conda_bin
         # only force zsh where it exists (mac); on linux keep the inherited SHELL
         if os.path.exists("/bin/zsh"):
             env["SHELL"] = "/bin/zsh"

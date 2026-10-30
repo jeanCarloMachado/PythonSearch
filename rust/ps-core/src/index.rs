@@ -1,3 +1,4 @@
+use crate::bm25::{truncate_chars, Bm25};
 use crate::entry::Entry;
 use crate::usage::UsageStats;
 use anyhow::{Context, Result};
@@ -16,9 +17,23 @@ const CONTENT_WEIGHT: f32 = 0.35;
 /// kilobytes long, and a match buried that deep is noise, not intent.
 const MAX_CONTENT_HAYSTACK: usize = 96;
 
+/// How much a BM25 hit adds, as a fraction of the best fuzzy score for the query. The top BM25 entry
+/// gets the full amount, the rest proportionally less. Half: enough that whole-word relevance
+/// reorders fuzzy near-ties and surfaces words deep in the content, not enough to bury a clean key
+/// match under an entry that merely mentions the words.
+const BM25_WEIGHT: f32 = 0.5;
+
 /// How much the usage boost can inflate a score, as a fraction. Applied multiplicatively so it
 /// reorders near-ties without letting a frequently used entry outrank a clearly better match.
 const USAGE_INFLUENCE: f32 = 0.35;
+
+/// Half life of the creation recency boost, in seconds. A month: an entry added this week is
+/// probably what the user is about to look for, one from last year has no claim to it.
+const CREATED_HALF_LIFE: f64 = 30.0 * 24.0 * 3600.0;
+
+/// How much creation recency adds to the boost, on the same scale as usage (roughly 0..=2.5). A new
+/// entry has no run history yet, so without this it would start at the very bottom of every tie.
+const WEIGHT_CREATED: f32 = 1.0;
 
 pub struct Match {
     pub index: usize,
@@ -43,15 +58,21 @@ pub struct Index {
     usage: UsageStats,
     /// When each entry was last run, parallel to `entries`. Drives the empty-query ordering.
     last_used: Vec<f64>,
-    /// `usage.boost()` per entry, parallel to `entries`. Precomputed because the boost depends on
+    /// `created_at` per entry as a unix timestamp, parallel to `entries`. 0 when unknown.
+    created: Vec<f64>,
+    /// `usage.boost()` plus creation recency per entry, parallel to `entries`. Precomputed because the boost depends on
     /// wall clock time, and calling `SystemTime::now()` once per entry per keystroke dominated the
     /// search cost.
     boosts: Vec<f32>,
     matcher: Matcher,
+    bm25: Bm25,
     /// Reused across queries so the hot loop never allocates.
     scratch: Vec<Match>,
-    /// Which entries matched on their key in phase one, so phase two does not re-score them.
-    key_matched: Vec<bool>,
+    /// Which entries already have a fuzzy match this query, so later passes do not re-score them.
+    fuzzy_matched: Vec<bool>,
+    /// This query's BM25 score per entry, parallel to `entries`, zero for entries it did not match.
+    bm25_scores: Vec<f32>,
+    bm25_hits: Vec<u32>,
     indices_buffer: Vec<u32>,
 }
 
@@ -73,18 +94,30 @@ impl Index {
             })
             .collect();
         let capacity = entries.len();
+        let bm25 = Bm25::build(&entries);
+        let created = entries
+            .iter()
+            .map(|e| e.created_timestamp().unwrap_or(0.0))
+            .collect();
 
-        Index {
+        let mut index = Index {
             entries,
+            bm25,
             haystacks,
             usage: UsageStats::default(),
+            created,
             boosts: vec![0.0; capacity],
             last_used: vec![0.0; capacity],
             matcher: Matcher::new(Config::DEFAULT),
             scratch: Vec::with_capacity(capacity),
-            key_matched: vec![false; capacity],
+            fuzzy_matched: vec![false; capacity],
+            bm25_scores: vec![0.0; capacity],
+            bm25_hits: Vec::new(),
             indices_buffer: Vec::with_capacity(64),
-        }
+        };
+        // Creation recency applies before usage history has loaded, and without any.
+        index.refresh_boosts();
+        index
     }
 
     pub fn set_usage(&mut self, usage: UsageStats) {
@@ -103,8 +136,12 @@ impl Index {
     pub fn refresh_boosts(&mut self) {
         let now = crate::usage::now();
         self.boosts.clear();
-        self.boosts
-            .extend(self.entries.iter().map(|e| self.usage.boost_at(&e.key, now)));
+        self.boosts.extend(
+            self.entries
+                .iter()
+                .zip(&self.created)
+                .map(|(e, &created)| self.usage.boost_at(&e.key, now) + created_boost(created, now)),
+        );
         self.last_used.clear();
         self.last_used
             .extend(self.entries.iter().map(|e| self.usage.last_used(&e.key)));
@@ -137,45 +174,87 @@ impl Index {
         let mut scratch = std::mem::take(&mut self.scratch);
         scratch.clear();
 
+        // BM25 first: it is an inverted index lookup, so it costs only as much as the query words'
+        // postings, and its hits tell the content pass below which entries are worth scoring.
+        let (scores, hits) = (&mut self.bm25_scores, &mut self.bm25_hits);
+        let bm25_best = self.bm25.search(query, |index, score| {
+            scores[index] = score;
+            hits.push(index as u32);
+        });
+
         // Phase one: keys only. This is the cheap pass and it satisfies most queries.
-        self.key_matched.fill(false);
+        self.fuzzy_matched.fill(false);
         for (index, haystack) in self.haystacks.iter().enumerate() {
             // `Pattern::indices` costs several times more than `score`, so highlight offsets are
             // computed afterwards for the handful of rows the UI will actually draw.
             let Some(score) = pattern.score(haystack.key.slice(..), &mut self.matcher) else {
                 continue;
             };
-            self.key_matched[index] = true;
+            self.fuzzy_matched[index] = true;
             scratch.push(Match {
                 index,
-                score: score as f32 * (1.0 + USAGE_INFLUENCE * self.boosts[index]),
+                score: score as f32,
                 key_indices: Vec::new(),
                 matched_key: true,
             });
         }
 
-        // Phase two: content, only when the key pass did not already fill the result list. A
-        // content hit is weighted low enough that it could not have displaced a key hit anyway, so
-        // when there are enough key matches this whole pass is dead work. Skipping it is what keeps
-        // a multi word query under a millisecond over 10k entries.
-        if scratch.len() < MAX_RESULTS {
-            for (index, haystack) in self.haystacks.iter().enumerate() {
-                if self.key_matched[index] {
-                    continue;
-                }
-                let Some(score) = pattern.score(haystack.content.slice(..), &mut self.matcher)
-                else {
-                    continue;
-                };
-                let score = score as f32 * CONTENT_WEIGHT;
+        // Phase two: content. A fuzzy content hit is weighted low enough that it could not displace
+        // a key hit on its own, so when the key pass already filled the result list only the BM25
+        // hits are scored, since BM25 may lift them. Skipping the rest is what keeps a multi word
+        // query under a millisecond over 10k entries.
+        let content_candidates: Box<dyn Iterator<Item = usize>> = if scratch.len() < MAX_RESULTS {
+            Box::new(0..self.entries.len())
+        } else {
+            Box::new(self.bm25_hits.iter().map(|&index| index as usize))
+        };
+        for index in content_candidates {
+            if self.fuzzy_matched[index] {
+                continue;
+            }
+            let content = self.haystacks[index].content.slice(..);
+            let Some(score) = pattern.score(content, &mut self.matcher) else {
+                continue;
+            };
+            self.fuzzy_matched[index] = true;
+            scratch.push(Match {
+                index,
+                score: score as f32 * CONTENT_WEIGHT,
+                key_indices: Vec::new(),
+                matched_key: false,
+            });
+        }
+
+        // Entries only BM25 found: the words are there, but past the fuzzy content haystack, or
+        // spelled in a way the fuzzy pattern does not accept as a whole.
+        for &index in &self.bm25_hits {
+            if !self.fuzzy_matched[index as usize] {
                 scratch.push(Match {
-                    index,
-                    score: score * (1.0 + USAGE_INFLUENCE * self.boosts[index]),
+                    index: index as usize,
+                    score: 0.0,
                     key_indices: Vec::new(),
                     matched_key: false,
                 });
             }
         }
+
+        // Fuse. BM25 is scaled to the query's best fuzzy score so the two are in the same units
+        // whatever the query length; with no fuzzy match at all, BM25 alone orders the results.
+        let fuzzy_best = scratch.iter().map(|m| m.score).fold(0.0f32, f32::max);
+        let bm25_scale = if fuzzy_best > 0.0 { fuzzy_best } else { 1.0 };
+        for m in &mut scratch {
+            let bm25 = if bm25_best > 0.0 {
+                self.bm25_scores[m.index] / bm25_best
+            } else {
+                0.0
+            };
+            let relevance = m.score + BM25_WEIGHT * bm25_scale * bm25;
+            m.score = relevance * (1.0 + USAGE_INFLUENCE * self.boosts[m.index]);
+        }
+        for &index in &self.bm25_hits {
+            self.bm25_scores[index as usize] = 0.0;
+        }
+        self.bm25_hits.clear();
 
         // Partial sort: we only ever render the top MAX_RESULTS, so sorting the full match set is
         // wasted work when a common prefix matches thousands of entries.
@@ -263,9 +342,11 @@ impl Index {
     }
 }
 
-fn truncate_chars(value: &str, max: usize) -> &str {
-    match value.char_indices().nth(max) {
-        Some((offset, _)) => &value[..offset],
-        None => value,
+/// 1 for an entry created today, halving every [`CREATED_HALF_LIFE`], 0 when the date is unknown.
+fn created_boost(created: f64, now: f64) -> f32 {
+    if created <= 0.0 {
+        return 0.0;
     }
+    let age = (now - created).max(0.0);
+    WEIGHT_CREATED * 0.5f64.powf(age / CREATED_HALF_LIFE) as f32
 }

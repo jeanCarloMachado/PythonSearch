@@ -18,7 +18,7 @@ Caps Lock ──karabiner──> `ps_ui show`  (~8 ms, all process startup)
                              │ unix socket ~/.python_search/ps.sock
                              ▼
                    ps_ui daemon (LaunchAgent, always resident)
-                       ├─ 10,751 entries in RAM, nucleo fuzzy matcher
+                       ├─ 10,751 entries in RAM, nucleo fuzzy + BM25
                        ├─ eframe/egui window, pre-created, hidden
                        └─ `reload` → background `print_entries`
                              │
@@ -36,6 +36,7 @@ rust/
 │
 ├── ps-core/                      no UI, no macOS. Fully testable.
 │   ├── src/index.rs              ranking, two-phase search, default listing
+│   ├── src/bm25.rs               inverted index, BM25 word scoring
 │   ├── src/usage.rs              run history, recency ordering, boost
 │   ├── src/actions.rs            shells out to run_key / entries_editor / share_entry
 │   ├── src/entry.rs              entry model and display rules
@@ -206,8 +207,11 @@ list is never empty.
 For an actual query, `nucleo-matcher` (the matcher behind Helix and fzf-class tools) runs over two
 haystacks per entry: the key at full weight, the content at 0.35. The result is multiplied by a usage boost derived from
 `~/.python_search/data/searches_performed/` — history PythonSearch has been collecting for years
-but never used for ranking. The boost is multiplicative and capped so it reorders near-ties without
-letting a frequently used entry outrank a clearly better match.
+but never used for ranking. That boost combines how often an entry is run with how recently (a
+two-week half life), plus how recently the entry was **created** (`created_at`, a one-month half
+life), so a just-added entry is not stuck at the bottom of every tie before it has any run history.
+The boost is multiplicative and capped so it reorders near-ties without letting a frequently used or
+brand-new entry outrank a clearly better match.
 
 Content is only scanned when the key pass did not fill the result list, which is what keeps the
 common case in the low hundreds of microseconds.
@@ -219,9 +223,20 @@ search/clv          142 µs
 search/clv model    1.9 ms     # worst case: few key hits, so the content pass runs
 ```
 
-BM25Plus was deliberately not ported. nucleo already handles the initials matching that
-`bm25_search.py::split_key` hand-rolled (`gsu` → `git status update`), without the 2.7 MB pickle or
-the NLTK import that costs `term_ui` ~390 ms of its startup.
+Alongside nucleo, `ps-core/src/bm25.rs` scores whole words with Okapi BM25 over an in-memory
+inverted index built at load time. Every entry is indexed, with its key weighted 3×, its description
+and tags 2× and its first 4096 characters of content 1×. The last query word is matched as a prefix
+while it is still being typed, so `clv mod` finds `model`. The two scores are fused: each entry's
+BM25 score is normalised to the query's best BM25 hit and added at up to half the best fuzzy score,
+before the usage boost. In practice BM25:
+
+- breaks fuzzy near-ties in favour of entries that actually contain the words, weighting rare words
+  above common ones;
+- finds words deep in the content that the 96-character fuzzy haystack never sees.
+
+nucleo still handles initials (`gsu` → `git status update`) and typos. Python's `bm25_search.py`
+was not ported: the Rust index is rebuilt from the entries in memory, with no pickle and no NLTK
+import, and it does not measurably change the timings above.
 
 ## Data flow
 

@@ -1,4 +1,5 @@
 pub mod actions;
+pub mod bm25;
 pub mod entry;
 pub mod index;
 pub mod paths;
