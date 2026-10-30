@@ -23,6 +23,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      # ubuntu-22.04 ships Python 3.10; the project requires >=3.12
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       # Runs a single command using the runners shell
       - name: Install dependencies
         run: |
