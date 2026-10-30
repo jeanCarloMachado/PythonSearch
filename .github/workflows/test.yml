@@ -16,24 +16,38 @@ on:
 jobs:
   test:
     # The type of runner that the job will run on
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      # pin the Python the project requires (>=3.12)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       # Runs a single command using the runners shell
       - name: Install dependencies
         run: |
           sudo apt update -y
-          sudo apt install gnome-keyring curl
+          sudo apt install -y gnome-keyring curl ripgrep
           curl -sSL https://install.python-poetry.org | python3 -
           poetry --version
           poetry config --local virtualenvs.create true
           poetry install
 
 
+
+      # SystemPaths and the entries loader fail fast without these, so point them at this checkout
+      # and at a fresh project made from the bundled entries_main.py template
+      - name: Configure PythonSearch
+        run: |
+          mkdir -p ~/.config/python_search ~/python_search_entries
+          echo "PYTHON_SEARCH_PATH=$GITHUB_WORKSPACE" > ~/.config/python_search/config
+          cp python_search/init/entries_main.py ~/python_search_entries/
+          echo "$HOME/python_search_entries" > ~/.config/python_search/current_project
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script

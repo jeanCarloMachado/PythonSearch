@@ -11,7 +11,6 @@ from python_search.events.run_performed.entity import EntryExecuted
 from python_search.events.run_performed.writer import LogRunPerformedClient
 from python_search.host_system.window_hide import HideWindow
 from python_search.search.entries_loader import EntriesLoader
-from python_search.search.search_ui.kitty_for_search_ui import KittyForSearchUI
 from python_search.search.search_ui.semantic_search import SemanticSearch
 
 
@@ -62,7 +61,6 @@ class PythonSearchCli:
         self.events = python_search.events
         self._semantic_search = SemanticSearch
         self._entries_loader = EntriesLoader
-        self._kitty_search = KittyForSearchUI
 
     def run_key(self, key: str):
         EntryRunner(self._get_configuration()).run(key)
@@ -74,10 +72,13 @@ class PythonSearchCli:
 
     def search(self):
         """
-        Opens the Search UI. Main entrypoint of the application
+        Opens the Search UI (the native ps_ui launcher). Main entrypoint of the application
         """
+        import subprocess
 
-        KittyForSearchUI.focus_or_open(self.configuration)
+        from python_search.shortcut.mac_karabiner_elements import MacKarabinerElements
+
+        subprocess.run([MacKarabinerElements.ps_ui_binary(), "show"], check=True)
 
     def register_new_ui(self):
         """

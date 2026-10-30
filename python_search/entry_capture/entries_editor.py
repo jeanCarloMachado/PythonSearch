@@ -16,6 +16,14 @@ from python_search.apps.terminator_terminal import TerminatorTerminal
 from python_search.core_entities import Key
 
 
+def _rg_escape(text: str) -> str:
+    """
+    Escape only Rust regex metacharacters. `re.escape` also escapes spaces, which ripgrep < 14
+    (e.g. Ubuntu 22.04's) rejects as an unrecognized escape and then matches nothing.
+    """
+    return re.sub(r"([\\.+*?()|\[\]{}^$#&\-~])", r"\\\1", text)
+
+
 class EntriesEditor:
     """
     Open an ide to edit the entries
@@ -42,7 +50,7 @@ class EntriesEditor:
         Build the ripgrep command that finds where the key is declared as a dict key, e.g. `"key": {`.
         """
         project_root = self.configuration.get_project_root()
-        pattern = "^\\s*[\"']" + re.escape(key) + "[\"']\\s*:"
+        pattern = "^\\s*[\"']" + _rg_escape(key) + "[\"']\\s*:"
         return [self._search_cmd, "-n", "-i", "--type", "py", "--sort", "path", pattern, project_root]
 
     def edit_key(self, key_expr: str):

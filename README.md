@@ -90,16 +90,10 @@ On Linux (X11 or Wayland) build it with `cargo build --release -p ps-ui` in `rus
 `ps_ui daemon` at login, and bind `ps_ui show` to a key through an entry shortcut. See
 [`rust/README.md`](rust/README.md#linux).
 
-| | terminal UI (`term_ui`) | native launcher (`ps_ui`) |
-|---|---|---|
-| Startup | two Python interpreters per launch | resident, ~10 ms to show |
-| Search | BM25 in Python over the full corpus | in-memory fuzzy match, 0.1–2 ms |
-| Rendering | full ANSI repaint per keystroke | GPU (a macOS panel, or a window on Linux) |
-| Host | a Kitty window | its own borderless window |
-
-Both read the same entries and run the same executor; `term_ui` is untouched and remains available
-via `python_search search`. See [`rust/README.md`](rust/README.md) for the source layout, key
-bindings, ranking, and platform notes.
+`ps_ui` is resident (~10 ms to show), fuzzy matches in memory (0.1–2 ms) and renders on the GPU.
+`python_search search` (and `pys`) open it too. It follows `~/.python_search/theme` (`dark` or
+`light`) when present, otherwise the time of day. See [`rust/README.md`](rust/README.md) for the
+source layout, key bindings, ranking, and platform notes.
 
 ## Documentation
 
@@ -144,8 +138,7 @@ puts these console scripts on your `PATH`. They are defined in `pyproject.toml` 
 | Binary | What it does |
 |---|---|
 | `python_search` | Main CLI: `search`, `shortcuts`, `register_new`, `new_project`, and more. Run it with no arguments for the full list |
-| `pys` | Shortcut for `python_search search` |
-| `term_ui` | The terminal search UI on its own |
+| `pys` | Shortcut for `python_search search` (opens `ps_ui`) |
 | `run_key` | Run one entry by key, e.g. `run_key 'open mail'` |
 | `run_shortcut` | Run the entry that owns a shortcut, e.g. `run_shortcut '⌘⇧E'` |
 | `entries_editor` | Open an entry's definition in the editor (`edit_key`) or delete it (`delete_key`) |

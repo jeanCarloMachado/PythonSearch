@@ -1,5 +1,6 @@
 from python_search.configuration.loader import ConfigurationLoader
 from python_search.environment import is_mac
+from python_search.host_system.system_paths import SystemPaths
 
 
 def get_terminal():
@@ -74,6 +75,4 @@ class KittyTerminal:
         return final_cmd
 
     def get_kitty_cmd(self):
-        from python_search.search.search_ui.kitty_for_search_ui import get_kitty_cmd
-
-        return get_kitty_cmd()
+        return SystemPaths.KITTY_BINNARY

@@ -32,7 +32,6 @@ tiny-data-warehouse = ">=0.1.5"
 datadog = "*"
 rank-bm25 = "^0.2.2"
 nltk = "^3.9.1"
-getch = "^1.0"
 PySimpleGUI = "*"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
@@ -68,7 +67,6 @@ notify_send = 'python_search.apps.notification_ui:main'
 browser = 'python_search.apps.browser:main'
 run_key = 'python_search.entry_runner:main'
 run_shortcut = 'python_search.shortcut.runner:main'
-term_ui = 'python_search.search.search_ui.terminal_ui:main'
 register_new_launch_ui = 'python_search.entry_capture.entry_inserter_gui.register_new_gui:launch_ui'
 google_it = 'python_search.apps.google_it:main'
 share_entry = 'python_search.share_entry:main'

@@ -3,21 +3,6 @@ import os
 import sys
 
 
-def setup_term_ui_logger():
-    logger = logging.getLogger("term-ui")
-    logger.setLevel(logging.INFO)
-
-    ch = logging.StreamHandler()
-    if os.environ.get("PS_DEBUG"):
-        ch.setLevel(logging.INFO)
-    else:
-        ch.setLevel(logging.WARNING)
-
-    logger.addHandler(ch)
-
-    return logger
-
-
 def setup_run_key_logger():
     """
     Code has to be fast
