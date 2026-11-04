@@ -313,32 +313,28 @@ impl Launcher {
         let mid = rect.center().y;
         let mut cursor_x = rect.left() + Metrics::SIDE_PADDING;
 
-        // Type chip.
+        // Type chip, tinted with the type's own hue so a column of rows can be scanned by colour.
+        let type_color = self.palette.type_color(entry.entry_type);
         let chip_font = TextStyle::Name(text::CHIP.into()).resolve(ui.style());
-        let label = entry.entry_type.label();
         let chip_galley = painter.layout_no_wrap(
-            label.to_string(),
+            entry.entry_type.label().to_string(),
             chip_font,
-            if selected {
-                Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0xDD)
-            } else {
-                self.palette.text_dim
-            },
+            if selected { Color32::WHITE } else { type_color },
         );
         let chip_width = 40.0;
         let chip_rect = Rect::from_center_size(
             egui::pos2(cursor_x + chip_width / 2.0, mid),
             egui::vec2(chip_width, 18.0),
         );
-        if !selected {
-            painter.rect_filled(chip_rect, CornerRadius::same(5), self.palette.chip_bg);
-        } else {
+        if selected {
             painter.rect_stroke(
                 chip_rect,
                 CornerRadius::same(5),
-                Stroke::new(1.0, Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0x55)),
+                Stroke::new(1.0, Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0x77)),
                 egui::StrokeKind::Inside,
             );
+        } else {
+            painter.rect_filled(chip_rect, CornerRadius::same(5), type_color.gamma_multiply(0.16));
         }
         painter.galley(
             egui::pos2(
@@ -349,17 +345,7 @@ impl Launcher {
             Color32::WHITE,
         );
         cursor_x += chip_width + 14.0;
-
-        // Key, with matched characters emphasised.
-        let key_width = (rect.width() * 0.46).min(340.0);
-        let key_job = self.key_layout(ui, entry.key.as_str(), &m.key_indices, selected, key_width);
-        let key_galley = painter.layout_job(key_job);
-        painter.galley(
-            egui::pos2(cursor_x, mid - key_galley.size().y / 2.0),
-            key_galley,
-            Color32::WHITE,
-        );
-        cursor_x += key_width + 16.0;
+        let text_left = cursor_x;
 
         let mut right_edge = rect.right() - Metrics::SIDE_PADDING;
 
@@ -401,31 +387,49 @@ impl Launcher {
             right_edge -= width + 16.0;
         }
 
-        // Content, filling whatever horizontal space is left.
-        let content_width = (right_edge - cursor_x).max(0.0);
-        if content_width > 30.0 {
+        // Two lines: the key on top at full width, the content beneath it, smaller and quieter, so
+        // every row reads as one title with its detail rather than two competing columns.
+        let text_width = (right_edge - cursor_x).max(0.0);
+        let key_job = self.key_layout(ui, entry.key.as_str(), &m.key_indices, selected, text_width);
+        let key_galley = painter.layout_job(key_job);
+        let key_height = key_galley.size().y;
+        painter.galley(
+            egui::pos2(cursor_x, mid - key_height + 1.0),
+            key_galley,
+            Color32::WHITE,
+        );
+
+        let content = entry.display_content();
+        if text_width > 30.0 && !content.is_empty() {
             let font = TextStyle::Name(text::CONTENT.into()).resolve(ui.style());
-            let mut galley = painter.layout_no_wrap(
-                entry.display_content().to_string(),
-                font.clone(),
-                self.palette.content_on(selected),
-            );
-            if galley.size().x > content_width {
-                let truncated = truncate_to_width(ui, entry.display_content(), &font, content_width);
+            // Only the first line: a multi line snippet would otherwise render as one run-on line.
+            let first_line = content.lines().next().unwrap_or("");
+            let mut galley =
+                painter.layout_no_wrap(first_line.to_string(), font.clone(), self.palette.content_on(selected));
+            if galley.size().x > text_width {
+                let truncated = truncate_to_width(ui, first_line, &font, text_width);
                 galley = painter.layout_no_wrap(truncated, font, self.palette.content_on(selected));
             }
-            painter.galley(
-                egui::pos2(cursor_x, mid - galley.size().y / 2.0),
-                galley,
-                Color32::WHITE,
+            painter.galley(egui::pos2(cursor_x, mid + 3.0), galley, Color32::WHITE);
+        }
+
+        // Hairline under the row, aligned with the text column. Dropped next to the selection,
+        // where the fill already separates the rows.
+        let next_selected = match_index + 1 == self.selected;
+        let last_visible = match_index + 1 >= self.scroll_offset + self.visible_rows();
+        if !selected && !next_selected && !last_visible {
+            painter.hline(
+                text_left..=rect.right() - 8.0,
+                rect.bottom() - 0.5,
+                Stroke::new(1.0, self.palette.row_divider),
             );
         }
 
         activated
     }
 
-    /// Lay out the key with the fuzzy-matched characters in the medium weight and full colour, and
-    /// the rest dimmed. This is what makes it obvious *why* a row matched.
+    /// Lay out the key with the fuzzy-matched characters picked out in the accent colour. This is
+    /// what makes it obvious *why* a row matched.
     fn key_layout(
         &self,
         ui: &Ui,
@@ -435,11 +439,15 @@ impl Launcher {
         max_width: f32,
     ) -> LayoutJob {
         let base_font = TextStyle::Name(text::KEY.into()).resolve(ui.style());
-        let strong = self.palette.key_on(selected);
-        let weak = if selected {
-            Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0xB0)
+        // The whole key stays at full contrast, so it reads as a title. Matched characters are
+        // marked by colour (or, on the selection fill where blue would vanish, an underline)
+        // rather than by dimming everything else, which made keys blend into the content column.
+        let base = self.palette.key_on(selected);
+        let matched_color = if selected { Color32::WHITE } else { self.palette.accent };
+        let underline = if selected {
+            Stroke::new(1.0, Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0xCC))
         } else {
-            self.palette.text_dim
+            Stroke::NONE
         };
 
         let mut job = LayoutJob::default();
@@ -454,7 +462,8 @@ impl Launcher {
                 0.0,
                 TextFormat {
                     font_id: base_font.clone(),
-                    color: if is_match { strong } else { weak },
+                    color: if is_match { matched_color } else { base },
+                    underline: if is_match { underline } else { Stroke::NONE },
                     ..Default::default()
                 },
             );

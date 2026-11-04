@@ -3,7 +3,7 @@ import subprocess
 
 from python_search.host_system.system_paths import SystemPaths
 from python_search.shortcut.keyd import Keyd
-from python_search.shortcut.shortcuts import entry_shortcuts, keyd_remap, to_linux_accelerator
+from python_search.shortcut.shortcuts import LINUX, entry_shortcuts, keyd_remap, to_linux_accelerator
 
 
 class XFCE:
@@ -15,7 +15,7 @@ class XFCE:
         run_key = SystemPaths.get_binary_full_path("run_key")
 
         for key, content in list(self.configuration.commands.items()):
-            for shortcut in entry_shortcuts(content):
+            for shortcut in entry_shortcuts(content, LINUX):
                 accelerator = to_linux_accelerator(shortcut)
                 if accelerator is None:
                     print(f"Skipping {shortcut} for '{key}': not bindable on Linux")

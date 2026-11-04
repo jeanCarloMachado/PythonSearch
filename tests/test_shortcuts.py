@@ -54,3 +54,19 @@ def test_keyd_remap_is_none_for_regular_shortcuts():
 @pytest.mark.parametrize("shortcut", ["right_gui", "right_gui_shift", "⌘⇧"])
 def test_to_linux_accelerator_skips_unbindable(shortcut):
     assert to_linux_accelerator(shortcut) is None
+
+
+def test_entry_shortcuts_adds_only_the_platform_specific_fields():
+    content = {
+        "shortcuts": ["⌥M"],
+        "shortcut_mac": "⌘M",
+        "shortcuts_linux": ["⌥W", "⌘⇧W"],
+    }
+
+    assert entry_shortcuts(content, "mac") == ["⌥M", "⌘M"]
+    assert entry_shortcuts(content, "linux") == ["⌥M", "⌥W", "⌘⇧W"]
+
+
+def test_entry_shortcuts_rejects_unknown_platforms():
+    with pytest.raises(ValueError):
+        entry_shortcuts({"shortcut": "⌥M"}, "windows")

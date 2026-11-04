@@ -3,6 +3,10 @@ Shortcuts are declared once per entry, in the Mac glyph notation, and translated
 
     "open mail": {"url": "...", "shortcuts": ["⌥M", "⌘⇧M"]},
     "open search": {"cmd": "...", "shortcut": "⌥Space"},
+    "open whatsapp": {"cmd": "...", "shortcut_mac": "⌥W", "shortcuts_linux": ["⌥W", "⌘⇧W"]},
+
+`shortcut`/`shortcuts` apply on every platform; `shortcut_mac`/`shortcuts_mac` only on macOS and
+`shortcut_linux`/`shortcuts_linux` only on Linux.
 
 Modifiers are ⌘ (Command, Super on Linux), ⌥ (Option/Alt), ⌃ (Control) and ⇧ (Shift), followed by a
 single key: a letter, a digit, punctuation, "Space", or ↩/⏎/⌤ for Return.
@@ -17,6 +21,13 @@ from __future__ import annotations
 from typing import List, Optional, Tuple
 
 SHORTCUT_FIELDS = ("shortcut", "shortcuts")
+MAC = "mac"
+LINUX = "linux"
+PLATFORM_SHORTCUT_FIELDS = {
+    MAC: ("shortcut_mac", "shortcuts_mac"),
+    LINUX: ("shortcut_linux", "shortcuts_linux"),
+}
+ALL_SHORTCUT_FIELDS = SHORTCUT_FIELDS + PLATFORM_SHORTCUT_FIELDS[MAC] + PLATFORM_SHORTCUT_FIELDS[LINUX]
 
 CAPS_LOCK = "capslock"
 # On Linux keyd turns Caps Lock into this combination, and the desktop binds the matching accelerator.
@@ -62,13 +73,26 @@ LINUX_KEY_NAMES = {
 }
 
 
-def entry_shortcuts(content) -> List[str]:
-    """Every shortcut declared on an entry, from both `shortcut` and `shortcuts`."""
+def current_platform() -> str:
+    from python_search.environment import is_mac
+
+    return MAC if is_mac() else LINUX
+
+
+def entry_shortcuts(content, platform: Optional[str] = None) -> List[str]:
+    """
+    Every shortcut an entry declares for `platform` (default: the current one): the shared
+    `shortcut`/`shortcuts` fields plus that platform's `shortcut_<platform>`/`shortcuts_<platform>`.
+    """
     if not isinstance(content, dict):
         return []
+    if platform is None:
+        platform = current_platform()
+    if platform not in PLATFORM_SHORTCUT_FIELDS:
+        raise ValueError(f"Unknown platform {platform!r}, expected one of {list(PLATFORM_SHORTCUT_FIELDS)}")
 
     result = []
-    for field in SHORTCUT_FIELDS:
+    for field in SHORTCUT_FIELDS + PLATFORM_SHORTCUT_FIELDS[platform]:
         value = content.get(field)
         if value is None:
             continue
