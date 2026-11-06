@@ -1,4 +1,5 @@
 import os
+import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
 from python_search.environment import is_mac
@@ -22,6 +23,9 @@ end tell'
         """
         Focuses on a window with the given app and title
         """
+        if app == "Google Chrome" and is_mac():
+            return self._focus_mac_chrome_window(title)
+
         cmd = f"""
         osascript -e '
         tell application "System Events"
@@ -36,6 +40,33 @@ end tell'
         print(f" trying to focus {result}")
 
         return True if result == 0 else False
+
+    def _focus_mac_chrome_window(self, title) -> bool:
+        """
+        Uses Chrome's own scripting rather than System Events, which needs an Accessibility
+        grant that shortcuts run by Karabiner don't have. Returns False only when no window
+        matches: a failed script raises, so it can't be mistaken for a missing window.
+        Matches the tab title because Chrome truncates the middle of window titles here.
+        """
+        script = f"""
+        tell application "Google Chrome"
+            repeat with chrome_window in windows
+                if title of active tab of chrome_window contains "{title}" then
+                    set index of chrome_window to 1
+                    activate
+                    return "focused"
+                end if
+            end repeat
+            return "not found"
+        end tell
+        """
+        result = subprocess.run(
+            ["osascript", "-e", script], capture_output=True, text=True
+        )
+        if result.returncode != 0:
+            raise RuntimeError(f"Could not focus Chrome window: {result.stderr}")
+
+        return result.stdout.strip() == "focused"
 
     def async_focus_register_new(self):
         if not is_mac():
