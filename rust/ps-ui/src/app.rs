@@ -471,6 +471,17 @@ impl Launcher {
         job
     }
 
+    /// Match count plus the build's commit and time, so it is obvious which build is running.
+    fn status_text(&self) -> String {
+        format!(
+            "{} of {}   ·   {} · {}",
+            self.matches.len(),
+            self.index.len(),
+            env!("PS_UI_GIT_SHA"),
+            env!("PS_UI_BUILT_AT"),
+        )
+    }
+
     fn hint_row(&self, ui: &mut Ui) {
         let (rect, _) = ui.allocate_exact_size(
             egui::vec2(ui.available_width(), Metrics::HINT_ROW_HEIGHT),
@@ -534,7 +545,7 @@ impl Launcher {
                 painter.text(
                     right,
                     Align2::RIGHT_CENTER,
-                    format!("{} of {}", self.matches.len(), self.index.len()),
+                    self.status_text(),
                     font,
                     self.palette.text_faint,
                 );
@@ -543,7 +554,7 @@ impl Launcher {
             painter.text(
                 right,
                 Align2::RIGHT_CENTER,
-                format!("{} of {}", self.matches.len(), self.index.len()),
+                self.status_text(),
                 font,
                 self.palette.text_faint,
             );

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-11
+
+### Added
+- The Rust launcher's hint row shows the build's git commit and build time next to the match count, so it is obvious which build the running daemon is. `rust/ps-ui/build.rs` bakes both in at compile time.
+
 ## 2026-10-30
 
 ### Added
