@@ -73,6 +73,11 @@ impl Actions {
         self.spawn("share_entry", &["share_only_value", key]);
     }
 
+    /// Copy the entry's key (its name) to the clipboard, through the `clipboard` console script.
+    pub fn copy_key(&self, key: &str) {
+        self.spawn("clipboard", &["set_content", key]);
+    }
+
     /// Google the current query, mirroring `Actions.search_in_google` in the terminal UI (bound
     /// to `?` there).
     ///

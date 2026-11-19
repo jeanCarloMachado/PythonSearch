@@ -494,7 +494,7 @@ impl Launcher {
         painter.text(
             egui::pos2(rect.left() + Metrics::SIDE_PADDING, mid),
             Align2::LEFT_CENTER,
-            "↩ open      ⌘C copy      Tab edit      ^G google      Esc / ^C close",
+            "↩ open      ⌘C copy      ⌘K copy key      Tab edit      ^G google      Esc / ^C close",
             font.clone(),
             self.palette.text_faint,
         );
@@ -654,6 +654,8 @@ impl Launcher {
                         }
                         // ⌘C on Linux: keyd remaps it to Ctrl+Insert so it also copies in terminals.
                         (Key::Insert, _, true) => self.copy_selected(ctx),
+                        // ⌘K copies the entry's key (its name) rather than its value.
+                        (Key::K, true, _) => self.copy_selected_key(ctx),
                         (Key::R, true, _) | (Key::R, _, true) => self.reload_requested = true,
                         (Key::ArrowDown, _, _) | (Key::N, _, true) => self.move_selection(1),
                         (Key::ArrowUp, _, _) | (Key::P, _, true) => {
@@ -718,6 +720,18 @@ impl Launcher {
             return;
         };
         self.actions.copy_value(&key);
+        self.flash_copied(ctx);
+    }
+
+    fn copy_selected_key(&mut self, ctx: &egui::Context) {
+        let Some(key) = self.selected_key() else {
+            return;
+        };
+        self.actions.copy_key(&key);
+        self.flash_copied(ctx);
+    }
+
+    fn flash_copied(&mut self, ctx: &egui::Context) {
         let now = ctx.input(|i| i.time);
         self.show_toast("Copied", now);
         // Hide shortly after, once the confirmation has had a moment to register, rather than

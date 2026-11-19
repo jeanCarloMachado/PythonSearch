@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-19
+
+### Added
+- ⌘K in the Rust launcher copies the selected entry's key (its name) to the clipboard, alongside ⌘C which copies its value.
+
 ## 2026-11-11
 
 ### Added
