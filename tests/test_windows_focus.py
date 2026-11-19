@@ -10,7 +10,9 @@ class TestFocusMacChromeWindow(unittest.TestCase):
         result = subprocess.CompletedProcess([], returncode, stdout, stderr)
         with unittest.mock.patch(
             "python_search.host_system.windows_focus.is_mac", return_value=True
-        ), unittest.mock.patch("subprocess.run", return_value=result):
+        ), unittest.mock.patch.object(Focus, "_main_mac_chrome_pid", return_value=123), unittest.mock.patch(
+            "subprocess.run", return_value=result
+        ):
             return Focus().focus_window("Google Chrome", "someone@example.com")
 
     def test_focused_window(self):

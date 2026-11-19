@@ -4,11 +4,12 @@ from python_search.apps.browser import Browser
 
 
 class TestBrowser(unittest.TestCase):
-    def test_open_chrome_on_mac(self):
+    @unittest.mock.patch.object(Browser, "_mac_chrome_last_used_profile", return_value="Profile 1")
+    def test_open_chrome_on_mac(self, _):
         def mock_system(cmd):
             self.assertEqual(
                 cmd,
-                Browser.MAC_CHROME_BINARY + " 'http://example.com' >/dev/null 2>&1 &",
+                Browser.MAC_CHROME_BINARY + " --profile-directory='Profile 1' 'http://example.com' >/dev/null 2>&1 &",
             )
 
         def mock_is_mac():
@@ -24,14 +25,16 @@ class TestBrowser(unittest.TestCase):
         )
         b.open(url="http://example.com", browser="chrome")
 
-    def test_default_is_chrome_binary_on_mac(self):
+    @unittest.mock.patch.object(Browser, "_mac_chrome_last_used_profile", return_value="Profile 1")
+    def test_default_is_chrome_binary_on_mac(self, _):
         b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
         cmd = b.open_shell_cmd(url="http://example.com")
         self.assertEqual(
-            cmd, Browser.MAC_CHROME_BINARY + " 'http://example.com' >/dev/null 2>&1 &"
+            cmd, Browser.MAC_CHROME_BINARY + " --profile-directory='Profile 1' 'http://example.com' >/dev/null 2>&1 &"
         )
 
-    def test_mac_chrome_does_not_route_through_launch_services(self):
+    @unittest.mock.patch.object(Browser, "_mac_chrome_last_used_profile", return_value="Profile 1")
+    def test_mac_chrome_does_not_route_through_launch_services(self, _):
         """`open -a` can hand the URL to an automation Chrome (e.g. Playwright) and open
         it in the wrong profile; a --user-data-dir would pin a profile other than the user's."""
         b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
@@ -39,17 +42,19 @@ class TestBrowser(unittest.TestCase):
         self.assertNotIn("open -a", cmd)
         self.assertNotIn("--user-data-dir", cmd)
 
-    def test_mac_chrome_runs_in_background(self):
+    @unittest.mock.patch.object(Browser, "_mac_chrome_last_used_profile", return_value="Profile 1")
+    def test_mac_chrome_runs_in_background(self, _):
         """If Chrome isn't running, the binary becomes the browser and would block os.system."""
         b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
         cmd = b.open_shell_cmd(url="http://example.com", browser="chrome")
         self.assertTrue(cmd.endswith(" &"))
 
-    def test_app_mode_uses_chrome_binary_on_mac(self):
+    @unittest.mock.patch.object(Browser, "_mac_chrome_last_used_profile", return_value="Profile 1")
+    def test_app_mode_uses_chrome_binary_on_mac(self, _):
         b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
         with unittest.mock.patch("python_search.apps.browser.send_notification"):
             cmd = b.open_shell_cmd(url="http://example.com", app_mode=True, browser="chrome")
-        self.assertEqual(cmd, Browser.MAC_CHROME_BINARY + " --app='http://example.com'")
+        self.assertEqual(cmd, Browser.MAC_CHROME_BINARY + " --profile-directory='Profile 1' --app='http://example.com'")
 
     def test_mac_chrome_binary_path_is_shell_escaped(self):
         self.assertEqual(
@@ -59,7 +64,9 @@ class TestBrowser(unittest.TestCase):
 
     def test_open_firefox_on_linux(self):
         def mock_system(cmd):
-            self.assertEqual(cmd, "firefox 'http://example.com'; " + Browser.LINUX_FOCUS_FIREFOX_CMD + " >/dev/null 2>&1")
+            self.assertEqual(
+                cmd, "firefox 'http://example.com'; " + Browser.LINUX_FOCUS_FIREFOX_CMD + " >/dev/null 2>&1"
+            )
 
         def mock_is_mac():
             return False
@@ -75,19 +82,13 @@ class TestBrowser(unittest.TestCase):
         b.open(url="http://example.com", browser="firefox")
 
     def test_default_is_firefox_on_linux(self):
-        b = Browser(
-            system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True
-        )
-        with unittest.mock.patch(
-            "shutil.which", side_effect=lambda name: f"/usr/bin/{name}"
-        ):
+        b = Browser(system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True)
+        with unittest.mock.patch("shutil.which", side_effect=lambda name: f"/usr/bin/{name}"):
             cmd = b.open_shell_cmd(url="http://example.com")
         self.assertEqual(cmd, "firefox 'http://example.com'; " + Browser.LINUX_FOCUS_FIREFOX_CMD + " >/dev/null 2>&1")
 
     def test_app_mode_is_chrome_on_linux(self):
-        b = Browser(
-            system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True
-        )
+        b = Browser(system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True)
         with unittest.mock.patch(
             "shutil.which",
             side_effect=lambda name: None if name == "google-chrome" else f"/usr/bin/{name}",
@@ -96,22 +97,16 @@ class TestBrowser(unittest.TestCase):
         self.assertEqual(cmd, "google-chrome-stable --app='http://example.com'")
 
     def test_default_falls_back_to_chrome_without_firefox_on_linux(self):
-        b = Browser(
-            system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True
-        )
+        b = Browser(system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True)
         with unittest.mock.patch(
             "shutil.which",
-            side_effect=lambda name: "/usr/bin/google-chrome-stable"
-            if name == "google-chrome-stable"
-            else None,
+            side_effect=lambda name: "/usr/bin/google-chrome-stable" if name == "google-chrome-stable" else None,
         ):
             cmd = b.open_shell_cmd(url="http://example.com")
         self.assertEqual(cmd, "google-chrome-stable 'http://example.com'")
 
     def test_default_falls_back_to_firefox_without_chrome_on_linux(self):
-        b = Browser(
-            system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True
-        )
+        b = Browser(system_func=None, is_mac_func=lambda: False, is_linux_func=lambda: True)
         with unittest.mock.patch(
             "shutil.which",
             side_effect=lambda name: "/usr/bin/firefox" if name == "firefox" else None,
@@ -126,13 +121,11 @@ class TestBrowser(unittest.TestCase):
         def mock_is_linux():
             return False
 
-        b = Browser(
-            system_func=None, is_mac_func=mock_is_mac, is_linux_func=mock_is_linux
-        )
+        b = Browser(system_func=None, is_mac_func=mock_is_mac, is_linux_func=mock_is_linux)
         with self.assertRaises(Exception) as context:
             b.open(url="http://example.com")
         self.assertTrue(
-            "No supported browser found. Please install chrome/firefox or customize your browser in python_search/apps/browser.py"
+            "No supported browser found. Please install chrome/firefox or customize your browser in python_search/apps/browser.py"  # noqa: E501
             in str(context.exception)
         )
 

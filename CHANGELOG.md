@@ -10,6 +10,10 @@
 - ⌘N in the Rust launcher runs the Nth *visible* row, matching the keycap, instead of the Nth match from the top of the list after scrolling.
 - ⌘1–⌘9 reach the Rust launcher on macOS even when an entry has a global ⌘N shortcut. Karabiner sees keys before any app, so the generated ⌘1–⌘9 entry rules now carry a `frontmost_application_unless` condition on the `ps_ui` binary: they fire everywhere else but yield to the launcher while it is focused. The condition is written by the generator, so it survives `python_search shortcuts`.
 
+### Changed
+- On macOS, Chrome URLs open in the most recently used Chrome profile (read from Chrome's `Local State`) via `--profile-directory` on the Chrome binary launch. Added `Browser.mac_chrome_last_used_profile_email()`.
+- `send_notification` runs the notifier directly (no shell), uses `notify-send` with a title on Linux, and raises when the notifier is missing or fails instead of failing silently.
+
 ## 2026-11-11
 
 ### Added
