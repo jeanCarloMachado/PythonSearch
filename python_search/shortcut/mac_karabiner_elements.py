@@ -122,7 +122,21 @@ class MacKarabinerElements:
                 character = character.lower()
                 shortcut_dict["manipulators"][0]["from"]["key_code"] = character
 
+        self._yield_launcher_row_keys(shortcut_dict["manipulators"][0])
         return shortcut_dict
+
+    @staticmethod
+    def _yield_launcher_row_keys(manipulator: dict) -> None:
+        """
+        ⌘1–⌘9 run row N in the Rust launcher. Karabiner sees keys before any app, so a global
+        entry shortcut on the same chord would swallow it; skip the entry while ps_ui is frontmost.
+        """
+        from_ = manipulator["from"]
+        if from_.get("modifiers", {}).get("mandatory") != ["left_gui"]:
+            return
+        if from_.get("key_code") not in [str(n) for n in range(1, 10)]:
+            return
+        manipulator["conditions"] = [{"type": "frontmost_application_unless", "file_paths": ["/ps_ui$"]}]
 
     @staticmethod
     def ps_ui_binary() -> str:

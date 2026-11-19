@@ -4,6 +4,11 @@
 
 ### Added
 - ⌘K in the Rust launcher copies the selected entry's key (its name) to the clipboard, alongside ⌘C which copies its value.
+- Rust launcher rows show an outlined ⌘1–⌘9 keycap (Super+1–9 on Linux) on the first nine visible rows, so the run-row-N shortcut is discoverable.
+
+### Fixed
+- ⌘N in the Rust launcher runs the Nth *visible* row, matching the keycap, instead of the Nth match from the top of the list after scrolling.
+- ⌘1–⌘9 reach the Rust launcher on macOS even when an entry has a global ⌘N shortcut. Karabiner sees keys before any app, so the generated ⌘1–⌘9 entry rules now carry a `frontmost_application_unless` condition on the `ps_ui` binary: they fire everywhere else but yield to the launcher while it is focused. The condition is written by the generator, so it survives `python_search shortcuts`.
 
 ## 2026-11-11
 

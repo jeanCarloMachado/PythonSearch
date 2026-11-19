@@ -366,6 +366,47 @@ impl Launcher {
             right_edge = badge.left() - 12.0;
         }
 
+        // Row hint: ⌘1–⌘9 (Super+1–9 on Linux) run the first nine visible rows.
+        let row_number = match_index.wrapping_sub(self.scroll_offset) + 1;
+        if (1..=9).contains(&row_number) {
+            let font = TextStyle::Name(text::CHIP.into()).resolve(ui.style());
+            let label = if cfg!(target_os = "macos") {
+                format!("⌘{row_number}")
+            } else {
+                format!("Super+{row_number}")
+            };
+            let galley = painter.layout_no_wrap(
+                label,
+                font,
+                if selected {
+                    Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0xCC)
+                } else {
+                    self.palette.text_faint
+                },
+            );
+            // Drawn as an outlined keycap so it reads differently from the entry's own shortcut.
+            let keycap = Rect::from_min_max(
+                egui::pos2(right_edge - galley.size().x - 12.0, mid - 10.0),
+                egui::pos2(right_edge, mid + 10.0),
+            );
+            painter.rect_stroke(
+                keycap,
+                CornerRadius::same(5),
+                Stroke::new(1.0, if selected {
+                    Color32::from_rgba_unmultiplied(0xFF, 0xFF, 0xFF, 0x77)
+                } else {
+                    self.palette.text_faint.gamma_multiply(0.5)
+                }),
+                egui::StrokeKind::Inside,
+            );
+            painter.galley(
+                egui::pos2(keycap.left() + 6.0, mid - galley.size().y / 2.0),
+                galley,
+                Color32::WHITE,
+            );
+            right_edge = keycap.left() - 16.0;
+        }
+
         // Shortcut hint, if the entry has one bound via Karabiner.
         if let Some(shortcut) = entry.shortcut() {
             let font = TextStyle::Name(text::CHIP.into()).resolve(ui.style());
@@ -739,7 +780,9 @@ impl Launcher {
         self.copy_hide_at = Some(now + COPY_FLASH_SECONDS);
     }
 
+    /// Run the `index`-th visible row (⌘1 is the top row on screen, even after scrolling).
     fn run_index(&mut self, index: usize, outcome: &mut Outcome) {
+        let index = self.scroll_offset + index;
         if index < self.matches.len() {
             self.selected = index;
             if self.run_selected() {

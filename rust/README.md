@@ -163,7 +163,7 @@ workspace patches it with the vendored copy in `vendor/egui-winit` (see `[patch.
 | ⌘A | select the whole query, so the next keystroke replaces it |
 | ↑ ↓, Ctrl+P / Ctrl+N | move the selection; ↑ on the first row walks the previous queries |
 | Enter | run the selected entry |
-| ⌘1–⌘9 | run row N |
+| ⌘1–⌘9 | run the Nth visible row (each row shows its keycap) |
 | ⌘C | copy the entry's value |
 | Tab | open the entry's definition in the editor |
 | ⌘⌫ | delete the entry (LLM-assisted, as in `term_ui`) |
