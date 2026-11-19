@@ -6,7 +6,10 @@ from python_search.apps.browser import Browser
 class TestBrowser(unittest.TestCase):
     def test_open_chrome_on_mac(self):
         def mock_system(cmd):
-            self.assertEqual(cmd, "open -a 'Google Chrome' 'http://example.com'")
+            self.assertEqual(
+                cmd,
+                Browser.MAC_CHROME_BINARY + " 'http://example.com' >/dev/null 2>&1 &",
+            )
 
         def mock_is_mac():
             return True
@@ -20,6 +23,39 @@ class TestBrowser(unittest.TestCase):
             is_linux_func=mock_is_linux,
         )
         b.open(url="http://example.com", browser="chrome")
+
+    def test_default_is_chrome_binary_on_mac(self):
+        b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
+        cmd = b.open_shell_cmd(url="http://example.com")
+        self.assertEqual(
+            cmd, Browser.MAC_CHROME_BINARY + " 'http://example.com' >/dev/null 2>&1 &"
+        )
+
+    def test_mac_chrome_does_not_route_through_launch_services(self):
+        """`open -a` can hand the URL to an automation Chrome (e.g. Playwright) and open
+        it in the wrong profile; a --user-data-dir would pin a profile other than the user's."""
+        b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
+        cmd = b.open_shell_cmd(url="http://example.com", browser="chrome")
+        self.assertNotIn("open -a", cmd)
+        self.assertNotIn("--user-data-dir", cmd)
+
+    def test_mac_chrome_runs_in_background(self):
+        """If Chrome isn't running, the binary becomes the browser and would block os.system."""
+        b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
+        cmd = b.open_shell_cmd(url="http://example.com", browser="chrome")
+        self.assertTrue(cmd.endswith(" &"))
+
+    def test_app_mode_uses_chrome_binary_on_mac(self):
+        b = Browser(system_func=None, is_mac_func=lambda: True, is_linux_func=lambda: False)
+        with unittest.mock.patch("python_search.apps.browser.send_notification"):
+            cmd = b.open_shell_cmd(url="http://example.com", app_mode=True, browser="chrome")
+        self.assertEqual(cmd, Browser.MAC_CHROME_BINARY + " --app='http://example.com'")
+
+    def test_mac_chrome_binary_path_is_shell_escaped(self):
+        self.assertEqual(
+            Browser.MAC_CHROME_BINARY,
+            "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome",
+        )
 
     def test_open_firefox_on_linux(self):
         def mock_system(cmd):

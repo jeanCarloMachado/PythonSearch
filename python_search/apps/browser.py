@@ -94,14 +94,20 @@ class Browser:
         # window-manager@monorepo extension to focus it.
         return f"firefox {url}; {self.LINUX_FOCUS_FIREFOX_CMD} >/dev/null 2>&1"
 
+    MAC_CHROME_BINARY = "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome"
+
     def _chrome(self, url: str):
         if self._is_mac():
             if self._focus_title or self._app_mode:
                 send_notification("Open new chrome in app mode, can be a bit slow")
 
-                return f"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --app={url}"
+                return f"{self.MAC_CHROME_BINARY} --app={url}"
 
-            return f"open -a 'Google Chrome' {url}"
+            # Not `open -a 'Google Chrome'`: with an automation Chrome (e.g. Playwright) running
+            # from the same bundle, LaunchServices can hand the URL to it and open it in its
+            # throwaway profile. The binary without --user-data-dir always reaches the user's
+            # Chrome. Backgrounded because it stays in the foreground if Chrome isn't running yet.
+            return f"{self.MAC_CHROME_BINARY} {url} >/dev/null 2>&1 &"
 
         binary = self._linux_chrome_binary() or "google-chrome"
         if self._focus_title or self._app_mode:
