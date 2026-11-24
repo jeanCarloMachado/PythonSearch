@@ -1,5 +1,6 @@
 import datetime
 import os
+import sys
 from typing import Optional, List, Tuple, Literal
 
 from python_search.entries_group import EntriesGroup
@@ -72,7 +73,7 @@ class PythonSearchConfiguration(EntriesGroup):
         self.tags_dependent_inserter_marks = tags_dependent_inserter_marks
 
         self._initialization_time = datetime.datetime.now()
-        self._default_text_editor = default_text_editor if default_text_editor else "vim"
+        self._default_text_editor = default_text_editor or self._resolve_text_editor()
         if custom_window_size:
             self._custom_window_size = custom_window_size
 
@@ -83,6 +84,14 @@ class PythonSearchConfiguration(EntriesGroup):
         self.entry_generation = entry_generation
         self.privacy_sensitive_terms = privacy_sensitive_terms
         self._terminal_app = terminal_app
+
+    @staticmethod
+    def _resolve_text_editor() -> str:
+        if os.environ.get("EDITOR"):
+            return os.environ["EDITOR"]
+        if sys.platform == "darwin":
+            return "/opt/homebrew/bin/nvim"
+        return "vim"
 
     def get_text_editor(self):
         return self._default_text_editor

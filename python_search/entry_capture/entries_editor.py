@@ -143,7 +143,9 @@ class EntriesEditor:
         edit a configuration file given the name and line
         """
 
-        editor_cmd = f"cd {self.configuration.get_project_root()} && {self._get_open_text_editor_command(file_name, line)}"
+        editor_cmd = (
+            f"cd {self.configuration.get_project_root()} && {self._get_open_text_editor_command(file_name, line)}"
+        )
 
         terminal = get_terminal()
         if isinstance(terminal, TerminatorTerminal):
@@ -170,10 +172,10 @@ class EntriesEditor:
         os.system(cmd)
 
     def _get_open_text_editor_command(self, file, line):
-        # vim only supported
+        editor = self.configuration.get_text_editor()
         if line is None:
-            return f"vim {file}"
-        return f"vim {file} +{line}"
+            return f"{editor} {file}"
+        return f"{editor} {file} +{line}"
 
 
 def main():

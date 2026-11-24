@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-24
+
+### Changed
+- The entries editor opens files with the configured text editor instead of hardcoded `vim`. The default editor resolves from `$EDITOR`, then `/opt/homebrew/bin/nvim` on macOS, then `vim`.
+
 ## 2026-11-19
 
 ### Added
